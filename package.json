@@ -15,12 +15,14 @@
     "build:pkg:win": "cd server && pkg -t win app.js",
     "build:staging": "vue-cli-service build --mode staging",
     "dev": "vue-cli-service serve --report",
-    "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:build-mac": "vue-cli-service electron:build -p never -m",
+    "electron:build-win": "vue-cli-service electron:build -p never -w",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
-  "main": "background.js",
+  "main": "./src/electron/main.js",
   "dependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
