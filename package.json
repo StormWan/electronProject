@@ -8,14 +8,19 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "dev": "vue-cli-service serve --report",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "app": "cd server && nodemon app",
-    "build:staging": "vue-cli-service build --mode staging",
+    "build:pkg:mac": "cd server && pkg -t macos app.js",
     "build:pkg:win": "cd server && pkg -t win app.js",
-    "build:pkg:mac": "cd server && pkg -t macos app.js"
+    "build:staging": "vue-cli-service build --mode staging",
+    "dev": "vue-cli-service serve --report",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
+  "main": "background.js",
   "dependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
@@ -30,6 +35,9 @@
     "compression-webpack-plugin": "6.1.1",
     "core-js": "^3.6.5",
     "dayjs": "^1.11.2",
+    "electron": "^22.0.1",
+    "electron-builder": "^23.6.0",
+    "electron-devtools-installer": "^3.2.0",
     "element-plus": "^2.0.4",
     "html2canvas": "^1.4.1",
     "husky": "^8.0.2",
@@ -68,6 +76,7 @@
     "prettier": "^2.2.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
     "webpack-bundle-analyzer": "^4.6.1"
   },
   "license": "MIT"
