@@ -5,7 +5,14 @@
         <div class="group-chat-switch" @click="closeGroup">
           <FontIcon iconName="ArrowRight" />
         </div>
-        <div class="notice-title">群公告</div>
+        <div class="notice-title" @click="onclick">群公告</div>
+      </div>
+      <div class="group-view-content" v-if="groupProfile">
+        <el-scrollbar>
+          <p v-for="item in 10" :key="item">
+            {{ groupProfile.notification }}
+          </p>
+        </el-scrollbar>
       </div>
     </div>
     <div class="group-box">
@@ -37,6 +44,7 @@ import { UserFilled } from "@element-plus/icons-vue";
 import FontIcon from "@/layout/FontIcon/indx.vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
+import { updateGroupProfile } from "@/api/im-sdk-api";
 const nick = ref("");
 const { state, commit, dispatch } = useStore();
 const {
@@ -66,6 +74,14 @@ const toggle = (item) => {
   const { userID } = item;
   nick.value = userID;
 };
+const onclick = () => {
+  const { groupID } = groupProfile.value;
+  // updateGroupProfile({
+  //   convId: groupID,
+  //   modify: "notification",
+  //   text: "公告12",
+  // });
+};
 const navigate = (item) => {
   dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${item.userID}` });
 };
@@ -76,12 +92,20 @@ const navigate = (item) => {
   width: 220px;
   background: rgb(246, 247, 249);
   border-left: 1px solid rgb(0 0 0 / 5%);
+  position: relative;
   .group-notice {
     height: 170px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+    .group-view-content {
+      position: absolute;
+      width: 100%;
+      top: 42px;
+      height: calc(170px - 42px);
+    }
   }
   .group-view-header {
-    position: relative;
+    position: absolute;
+    width: 100%;
     height: 59px;
     display: flex;
     align-items: center;

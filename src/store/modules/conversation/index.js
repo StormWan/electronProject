@@ -19,10 +19,12 @@ const conversation = {
   // namespaced: true, //命名空间
   state: {
     showMsgBox: false, //是否显示输入框
+    showCheckbox: false, //是否显示多选框
     isShowModal: false, // @好友弹框
     noMore: false, // 加载更多  false ? 显示loading : 没有更多
     networkStatus: true, // 网络状态
     needScrollDown: -1, // 是否向下滚动 true ? 0 : -1
+    forwardData: new Map(),
     uploadProgress: new Map(), //上传进度
     downloadProgress: new Map(), //下载进度
     historyMessageList: new Map(), //历史消息
@@ -113,6 +115,7 @@ const conversation = {
           state.currentConversation = null;
           state.currentMessageList = [];
           state.showMsgBox = false;
+          state.showCheckbox = false;
           break;
         }
         // 加载更多状态
@@ -155,7 +158,7 @@ const conversation = {
             state.currentConversation = payload;
             // 系统消息关闭聊天框
             state.showMsgBox = conversationID == "@TIM#SYSTEM" ? false : true;
-
+            state.showCheckbox = false
             if (state.currentConversation) {
               const history = state.historyMessageList.get(conversationID);
               state.currentMessageList = history;
@@ -204,6 +207,30 @@ const conversation = {
     */
     TOGGLE_LIST(state, action) {
       state.activetab = action
+    },
+    SET_FORWARD_DATA(state, action) {
+      const { type, payload } = action
+      const { ID } = payload
+      switch (type) {
+        case 'set':
+          state.forwardData.set(ID, payload)
+          break;
+        case 'del':
+          state.forwardData.delete(ID)
+          break;
+      }
+    },
+    /**
+   * @description: 设置多选框状态
+   */
+    SET_CHEC_BOX(state, flag) {
+      state.showCheckbox = flag
+    },
+    /**
+   * @description: 设置聊天框状态
+   */
+    SET_SHOW_MSG_BOX(state, flag) {
+      state.showMsgBox = flag
     }
   },
   actions: {

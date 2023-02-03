@@ -2,6 +2,7 @@
 <template>
   <section
     class="message-info-view-content"
+    v-show="currentConversation"
     :class="[showMsgBox ? '' : 'style-MsgBox']"
     id="svgTop"
   >
@@ -12,7 +13,11 @@
       always
     >
       <div class="message-view" ref="messageViewRef">
-        <div v-for="(item, index) in currentMessageList" :key="item.ID">
+        <div
+          v-for="(item, index) in currentMessageList"
+          :key="item.ID"
+          :class="{ 'reset-select': !showCheckbox }"
+        >
           <!-- 加载更多 -->
           <LoadMore
             :noMore="noMore"
@@ -30,9 +35,19 @@
           <div
             v-if="!item.isTimeDivider && !item.isDeleted"
             class="message-view__item"
-            :class="ISown(item) ? 'is-self' : 'is-other'"
+            :class="{
+              'is-self': ISown(item),
+              'is-other': !ISown(item),
+              'style-choice': showCheckbox,
+            }"
             :id="item.ID"
+            @click="handleChecked($event, item)"
           >
+            <Checkbox
+              @click.stop="handleCilck($event, item, 'input')"
+              v-show="showCheckbox"
+              class="input-check"
+            />
             <!-- 头像 -->
             <div
               class="picture"
@@ -63,6 +78,7 @@
             </div>
           </div>
         </div>
+
         <!-- 右键菜单 -->
         <contextmenu ref="contextmenu">
           <contextmenu-item
@@ -107,24 +123,31 @@ import { throttle } from "@/utils/throttle";
 import { useEventListener } from "@/utils/hooks/index";
 import { useState } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
+import Checkbox from "./components/Checkbox.vue";
 import TextElemItem from "./components/TextElemItem";
 import TipsElemItem from "./components/TipsElemItem";
 import groupTipElement from "./components/groupTipElement.vue";
+import GroupSystemNoticeElem from "./components/GroupSystemNoticeElem.vue";
 import ImageElemItem from "./components/ImageElemItem";
 import LoadMore from "./components/LoadMore.vue";
 import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { deleteMsgList, revokeMsg, getMsgList } from "@/api/im-sdk-api";
 import emitter from "@/utils/mitt-bus";
+import { useWatermark } from "@/utils/hooks/useWatermark";
 
 const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
+const watermarkText = ref("pure-admin");
 const { state, dispatch, commit } = useStore();
+const { setWatermark, clear } = useWatermark();
 const {
   noMore,
   userInfo,
   showMsgBox,
+  forwardData,
+  showCheckbox,
   needScrollDown,
   currentMessageList,
   currentConversation,
@@ -132,6 +155,8 @@ const {
   userInfo: (state) => state.data.user,
   noMore: (state) => state.conversation.noMore,
   showMsgBox: (state) => state.conversation.showMsgBox,
+  forwardData: (state) => state.conversation.forwardData,
+  showCheckbox: (state) => state.conversation.showCheckbox,
   needScrollDown: (state) => state.conversation.needScrollDown,
   currentMessageList: (state) => state.conversation.currentMessageList,
   currentConversation: (state) => state.conversation.currentConversation,
@@ -199,6 +224,32 @@ const updateLoadMore = (newValue) => {
       elRef?.scrollIntoViewIfNeeded();
     }
   });
+};
+// 多选框
+const handleCilck = (e, item) => {
+  // 处理触发两次bug
+  if (e.target.tagName == "INPUT") return;
+  const el = document.getElementById(`${item.ID}`);
+  el.parentNode.classList.toggle("style-select");
+};
+
+const handleChecked = (e, item) => {
+  const _el = document.getElementById(`${item.ID}`);
+  const el = _el.getElementsByTagName("input")[0];
+  _el.parentNode.classList.toggle("style-select");
+  if (el.checked) {
+    el.checked = false;
+    commit("SET_FORWARD_DATA", {
+      type: "del",
+      payload: item,
+    });
+  } else {
+    el.checked = true;
+    commit("SET_FORWARD_DATA", {
+      type: "set",
+      payload: item,
+    });
+  }
 };
 
 const ISown = (item) => {
@@ -291,6 +342,7 @@ const loadMsgComponents = (elem_type, item) => {
     TipsElemItem: TipsElemItem,
     ImageElemItem: ImageElemItem,
     groupTipElement: groupTipElement,
+    GroupSystemNoticeElem: GroupSystemNoticeElem,
   };
   // 撤回消息
   if (item.isRevoked) {
@@ -311,7 +363,7 @@ const loadMsgComponents = (elem_type, item) => {
       resp = "groupTipElement";
       break;
     case "TIMGroupSystemNoticeElem": // 系统通知
-      resp = "";
+      resp = "GroupSystemNoticeElem";
       break;
     default:
       resp = "";
@@ -391,12 +443,15 @@ const ClickMenuItem = (data) => {
     case "revoke":
       revokes(Info); //撤回
       break;
+    case "multiSelect":
+      multiSelect(Info); //多选
+      break;
     case "delete":
       fndelete(Info); //删除
       break;
   }
 };
-//删除消息
+// 删除消息
 const fndelete = async (data) => {
   let { code } = await deleteMsgList(data);
   if (code == 0) {
@@ -409,6 +464,10 @@ const fndelete = async (data) => {
       },
     });
   }
+};
+// 多选
+const multiSelect = (data) => {
+  commit("SET_CHEC_BOX", true);
 };
 // 撤回消息
 const revokes = (data) => {
@@ -430,14 +489,20 @@ emitter.on("updataScroll", (e) => {
   UpdataScrollInto();
 });
 
-onMounted(() => {});
+onMounted(() => {
+  nextTick(() => {
+    setWatermark(watermarkText.value);
+  });
+});
 
 onUpdated(() => {
   console.log("onUpdated");
   UpdataScrollInto();
 });
-
-onBeforeUnmount(() => {});
+onBeforeUpdate(() => {});
+onBeforeUnmount(() => {
+  clear();
+});
 
 // eslint-disable-next-line no-undef
 defineExpose({ UpdateScrollbar, UpdataScrollInto });
@@ -463,7 +528,7 @@ $self-msg-color: #c2e8ff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.09);
 }
 .style-MsgBox {
-  height: calc(100% - 60px);
+  height: calc(100% - 60px) !important;
 }
 
 .scrollbar-item {
@@ -497,10 +562,30 @@ $self-msg-color: #c2e8ff;
   padding: 0 16px 30px 16px;
   box-sizing: border-box;
 }
+.style-select {
+  border-radius: 3px;
+  background: hsl(220deg 20% 91%);
+}
+.reset-select {
+  border-radius: 3px;
+  background: #fff;
+}
+.style-choice {
+  padding-left: 35px;
+}
 .message-view__item {
   display: flex;
   flex-direction: row;
   margin-top: 12px;
+  position: relative;
+  .input-check {
+    font-size: 12px;
+    margin: 0 10px;
+    position: absolute;
+    left: 0;
+    // width: 100%;
+    height: 100%;
+  }
 }
 .is-other {
   .picture {
