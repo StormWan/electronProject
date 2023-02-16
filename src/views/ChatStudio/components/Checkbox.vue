@@ -1,6 +1,5 @@
 <template>
-  <label class="container">
-    <!-- checked="checked" -->
+  <label class="container input-check">
     <input type="checkbox" class="check-btn" />
     <div class="checkmark"></div>
   </label>
@@ -20,7 +19,6 @@ export default defineComponent({
   components: {},
   computed: {},
   props: {},
-  data() {},
   methods: {},
   setup(props, { attrs, emit, expose, slots }) {
     onMounted(() => {});
@@ -31,6 +29,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.input-check {
+  font-size: 12px;
+  margin: 0 10px;
+  position: absolute;
+  left: 0;
+  height: 100%;
+}
 .container input {
   position: absolute;
   opacity: 0;
@@ -40,14 +45,10 @@ export default defineComponent({
 }
 
 .container {
-  display: block;
-  position: relative;
   cursor: pointer;
-  font-size: 20px;
   user-select: none;
 }
 
-/* Create a custom checkbox */
 .checkmark {
   position: relative;
   top: 0;
@@ -59,26 +60,22 @@ export default defineComponent({
   transition: 0.15s;
 }
 
-/* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
   background-color: limegreen;
   border-radius: 25px;
   transition: 0.15s;
 }
 
-/* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-/* Show the checkmark when checked */
 .container input:checked ~ .checkmark:after {
   display: block;
 }
 
-/* Style the checkmark/indicator */
 .container .checkmark:after {
   left: 0.45em;
   top: 0.25em;

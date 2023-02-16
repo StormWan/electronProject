@@ -43,7 +43,7 @@
         <div class="message-item-right-top">
           <div class="message-chat-name">
             <span v-if="item.type === 'C2C'">
-              {{ item.userProfile.userID }}
+              {{ item.userProfile.nick }}
             </span>
             <span v-else-if="item.type === 'GROUP'">
               {{ item.groupProfile.name }}
@@ -120,7 +120,7 @@ const fnNews = (data) => {
   const { messageForShow, fromAccount } = lastMessage;
   const { username } = UserInfo.value;
   if (type == "GROUP" && username !== fromAccount) {
-    return `${fromAccount}: ${messageForShow}`;
+    return `${lastMessage.nick}: ${messageForShow}`;
   }
   return messageForShow;
 };
@@ -172,8 +172,6 @@ const handleConvListClick = (data) => {
     type: "UPDATE_CURRENT_SELECTED_CONVERSATION",
     payload: data,
   });
-  // 关闭群窗口
-  commit("setgroupDrawer", false);
   // 群详情信息
   commit("setGroupProfile", data);
   // 获取会话列表

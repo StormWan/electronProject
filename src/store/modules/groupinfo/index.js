@@ -1,9 +1,13 @@
-import { getGroupMemberList, getGroupProfile } from "@/api/im-sdk-api/index";
+import {
+  getGroupMemberList,
+  getGroupProfile,
+  getGroupList,
+} from "@/api/im-sdk-api/index";
 export default {
   // namespaced: true,
   state: {
     groupDrawer: false, // 群聊开关
-    groupList: [],
+    groupList: [], //群组列表
     groupProfile: null,
     currentMemberList: [], // 当前群组成员列表
   },
@@ -28,27 +32,35 @@ export default {
     },
   },
   mutations: {
-    setgroupDrawer(state, payload) {
-      state.groupDrawer = payload;
-    },
+    // setgroupDrawer(state, payload) {
+    //   state.groupDrawer = payload;
+    // },
     setGroupProfile(state, payload) {
       const { type } = payload;
       if (type == "GROUP") {
         const { groupID } = payload.groupProfile;
         getGroupProfile({ groupID }).then((data) => {
           state.groupProfile = data;
-          console.log(state.groupProfile);
+          // console.log(state.groupProfile);
         });
       }
     },
   },
   actions: {
-    async getGroupMemberList({ state, commit }, payload) {
-      const { groupID } = payload;
+    async getGroupMemberList({ state, commit, getters }, payload) {
+      // const { groupID } = payload;
+      console.log(getters.toAccount)
+      const groupID = getters.toAccount
       // groupID offset count
       const { memberList, offset } = await getGroupMemberList({ groupID });
+      console.log(memberList)
       state.currentMemberList = memberList;
-      console.log(memberList);
+    },
+    async getGroupList({ state }, payload) {
+      // state.groupList =
+      const list = await getGroupList();
+      console.log(list);
+      state.groupList = list;
     },
   },
 };

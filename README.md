@@ -1,8 +1,11 @@
 <p align="center">
-  <a target="blank">
-    <img src="./images/log.png" alt="Logo" width="168" height="168">
+  <a>
+    <img src="./images/log.png" alt="logo" width="168" height="168">
   </a>
-  <h2 align="center" style="font-weight: 600;font: bold 200% Consolas, Monaco, monospace;color: #999;">
+  <h2 
+     align="center" 
+     style="font-weight: 600;font: bold 200% Consolas, Monaco, monospace;color: #999;"
+     >
     PURE ADMIN
   </h2>
   <p align="center">
@@ -12,7 +15,9 @@
       <strong>🌎 在线预览</strong>
     </a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a><strong>💬 联系作者</strong></a>
+    <a href="https://jq.qq.com/?_wv=1027&k=Cd4Ihd2J" target="blank">
+      <strong>💬 联系作者</strong>
+    </a> 
     <br />
     <br />
   </p>
@@ -32,13 +37,15 @@
   - 支持消息撤回
   - 截图功能(开发中)
   - 动态水印
+  - 链接识别
   - 聊天消息多选转发功能(开发中)
-  - 支持「文字」「图片」「动态表情包」发送
+  - 支持「文字」「图片」「动态表情包」格式消息发送
   - 消息输入框使用富文本框 `wangEditor 5`开发(后续支持多类型消息混发)。
 - 🎮 九宫格拼图游戏(自动拼图)
 - 🌚 光明/黑暗 模式切换`自动根据系统主题改变`(开发中)
 - ⚡️ 自定义SVG图标组件`svg-sprite-loader`
-- 🔴 国际化(开发中)
+- 🔴 国际化` vue-i18n `(开发中)
+  - vscode扩展插件 `i18n-ally`自动翻译
 - 🔧 Prettier + ESLint规范 `自动格式化`
 - 🛠 更多特性开发中
 

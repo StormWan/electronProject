@@ -1,6 +1,5 @@
 <template>
-  <div class="list-container">
-    <Sidebar />
+  <div class="style-news">
     <!-- 聊天列表 -->
     <div class="message-left">
       <!-- 搜索框 -->
@@ -10,16 +9,17 @@
         <el-tab-pane label="未读" name="unread"></el-tab-pane>
         <el-tab-pane label="@我" name="mention"></el-tab-pane>
       </el-tabs>
-      <div :class="['scroll-container', !networkStatus ? 'style-net' : '']">
+      <div class="scroll-container" :class="{ 'style-net': !networkStatus }">
         <!-- 连接已断开 -->
         <networklink :show="!networkStatus" />
         <!-- 会话列表 -->
         <ConversationList />
       </div>
     </div>
-    <!-- 聊天框 :class="['message-right', groupDrawer ? 'style-group' : '']"-->
+    <!-- 聊天框 -->
     <div
-      :class="{ 'message-right': true, 'style-group': groupDrawer }"
+      class="message-right"
+      :class="{ 'style-group': groupDrawer }"
       id="svgBox"
     >
       <Header />
@@ -43,7 +43,7 @@
       <Editor />
     </div>
     <!-- 群详情 -->
-    <GroupDetails />
+    <!-- <GroupDetails /> -->
   </div>
 </template>
 
@@ -84,10 +84,12 @@ const {
   networkStatus,
   conver,
   user,
+  outside,
   groupDrawer,
   showMsgBox,
   conversationList,
 } = useState({
+  outside: (state) => state.conversation.outside,
   networkStatus: (state) => state.conversation.networkStatus,
   user: (state) => state.data.user,
   conver: (state) => state.conversation.currentConversation,
@@ -106,18 +108,26 @@ useEventListener(window, "offline", () => {
   commit("SET_NETWORK_STATUS", false);
 });
 onActivated(() => {
-  console.log("onActivated");
+  // console.log("onActivated");
   commit("updataScroll");
 });
 onDeactivated(() => {
-  console.log("onDeactivated");
-  commit("setgroupDrawer", false);
+  // console.log("onDeactivated");
+  // commit("setgroupDrawer", false);
 });
-onMounted(() => {});
-onUnmounted(() => {});
+onMounted(() => {
+  // console.log("onMounted");
+});
+onUnmounted(() => {
+  // console.log("onUnmounted");
+});
 </script>
 
 <style lang="scss" scoped>
+.style-news {
+  width: 100%;
+  display: flex;
+}
 .demo-tabs {
   :deep(.el-tabs__header) {
     margin: 0;
@@ -127,25 +137,22 @@ onUnmounted(() => {});
     margin: 0;
   }
 }
-.list-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-}
 .message-left {
   width: 280px;
 }
 .message-right {
   background: #fff;
   border-left: 1px solid rgba(0, 0, 0, 0.09);
-  width: calc(100% - 280px - 68px);
+  width: calc(100% - 280px);
+  //  - 68px
   height: 100%;
   position: relative;
   overflow: hidden;
   min-width: 274px;
 }
 .style-group {
-  width: calc(100% - 280px - 68px - 220px);
+  width: calc(100% - 280px - 220px);
+  // - 68px
 }
 .scroll-container {
   height: calc(100% - 60px - 40px);

@@ -3,21 +3,28 @@
     <div class="touxiang">
       <Portrait :size="40" shape="square" @click="dialogVisible = true" />
     </div>
-    <!-- h -->
-    <list-component :list="list" :active-index="activeIndex" @toggle="toggle" />
-
-    <!-- <ul v-for="item in list" :key="item.icon">
+    <ul>
       <li
         class="aside-item"
-        v-debounce-click:200="onClick"
-        @click="active = item.icon"
+        v-for="item in list"
+        :key="item.icon"
+        @click="toggle(item)"
       >
-        <div :class="['aside-list', active == item.icon ? 'current' : '']">
-          <svg-icon :iconClass="item.icon" class="style-svg" />
+        <div
+          v-show="visibile(item)"
+          class="aside-list"
+          :class="{ current: outside == item.icon }"
+        >
+          <svg-icon
+            v-if="item.icon !== 'test'"
+            :iconClass="item.icon"
+            class="style-svg"
+          />
+          <el-icon v-else><SwitchFilled /></el-icon>
           <div class="icon-title">{{ item.title }}</div>
         </div>
       </li>
-    </ul> -->
+    </ul>
 
     <!-- <el-dialog
       v-model="dialogVisible"
@@ -54,6 +61,8 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import SvgIcon from "@/components/SvgIcon";
+import { useState, useGetters } from "@/utils/hooks/useMapper";
+const { production } = require("@/config/vue.custom.config");
 
 const { state, dispatch, commit } = useStore();
 const dialogVisible = ref(false);
@@ -72,8 +81,31 @@ const list = [
     icon: "application",
     title: "应用",
   },
+  {
+    icon: "test",
+    title: "测试",
+    show: production,
+  },
 ];
+const { outside } = useState({
+  outside: (state) => state.conversation.outside,
+});
+function visibile(item) {
+  if (item.icon == "test" && item.show) {
+    return false;
+  } else {
+    return true;
+  }
+}
+function onClick() {
+  console.log("Only triggered once when clicked many times quickly");
+}
 
+function toggle(item) {
+  // window.TIMProxy.notifyMe();
+  // window.TIMProxy.saveSelfToLocalStorage();
+  commit("TAGGLE_OUE_SIDE", item.icon);
+}
 function Debounce(fn, delay, immediate) {
   let timer = null;
   return function () {
@@ -93,58 +125,13 @@ function Debounce(fn, delay, immediate) {
     }
   };
 }
-
-function onClick() {
-  console.log("Only triggered once when clicked many times quickly");
-}
-
-function toggle(index) {
-  // window.TIMProxy.notifyMe();
-  // window.TIMProxy.saveSelfToLocalStorage();
-  activeIndex.value = index;
-}
-
+// v-debounce-click:200="onClick"
 const VDebounceClick = {
   mounted(el, binding) {
     const { arg, value } = binding;
     el.addEventListener("click", Debounce(value, arg), false);
   },
 };
-
-const ListComponent = (props, { slots, emit, attrs }) => {
-  const { list, activeIndex } = props;
-  // h 接收三个参数
-  // type 元素的类型
-  // propsOrChildren 数据对象, 这里主要表示(props, attrs, dom props, class 和 style)
-  // children 子节点
-  return h(
-    "ul",
-    list.map((item, index) => {
-      return h(
-        "li",
-        {
-          key: index,
-          class: "aside-item",
-          onClick: () => {
-            emit("toggle", index);
-          },
-        },
-        [
-          h(
-            "div",
-            {
-              class: ["aside-list", index === activeIndex ? "current" : ""],
-            },
-            h(SvgIcon, { iconClass: item.icon, class: "style-svg" }),
-            h("div", { class: "icon-title" }, item.title)
-          ),
-        ]
-      );
-    })
-  );
-};
-
-ListComponent.props = ["list", "activeIndex"];
 </script>
 
 <style lang="scss" scoped>

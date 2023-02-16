@@ -45,8 +45,11 @@
           >
             <Checkbox
               @click.stop="handleCilck($event, item, 'input')"
-              v-show="showCheckbox"
-              class="input-check"
+              v-show="
+                showCheckbox &&
+                !item.isRevoked &&
+                item.type !== 'TIMGroupTipElem'
+              "
             />
             <!-- 头像 -->
             <div
@@ -103,6 +106,7 @@ import {
   nextTick,
   onMounted,
   onUpdated,
+  onUnmounted,
   onBeforeUpdate,
   computed,
   onBeforeUnmount,
@@ -165,7 +169,7 @@ const {
 const NameComponent = (props) => {
   const { item } = props;
   // 撤回消息 群提示消息 不显示
-  const { isRevoked, type, from, conversationType } = item;
+  const { isRevoked, type, from, nick, conversationType } = item;
   const show = isRevoked || type == "TIMGroupTipElem";
   // 系统消息
   const isSystem = from == "@TIM#SYSTEM";
@@ -181,24 +185,8 @@ const NameComponent = (props) => {
       class: "message_name",
     },
     [
-      isSystem
-        ? h(
-            "span",
-            {
-              class: "isSystem",
-            },
-            "系统"
-          )
-        : null,
-      isGroup
-        ? h(
-            "span",
-            {
-              class: "isGroup",
-            },
-            from
-          )
-        : null,
+      isSystem ? h("span", { class: "isSystem" }, "系统") : null,
+      isGroup ? h("span", { class: "isGroup" }, nick) : null,
     ]
   );
 };
@@ -234,6 +222,8 @@ const handleCilck = (e, item) => {
 };
 
 const handleChecked = (e, item) => {
+  if (item.type == "TIMGroupTipElem") return;
+  if (item.isRevoked) return;
   const _el = document.getElementById(`${item.ID}`);
   const el = _el.getElementsByTagName("input")[0];
   _el.parentNode.classList.toggle("style-select");
@@ -494,11 +484,14 @@ onMounted(() => {
     setWatermark(watermarkText.value);
   });
 });
-
+// onUnmounted(() => {
+//   console.log("onUnmounted");
+//   UpdataScrollInto();
+// });
 onUpdated(() => {
-  console.log("onUpdated");
   UpdataScrollInto();
 });
+
 onBeforeUpdate(() => {});
 onBeforeUnmount(() => {
   clear();
@@ -578,14 +571,6 @@ $self-msg-color: #c2e8ff;
   flex-direction: row;
   margin-top: 12px;
   position: relative;
-  .input-check {
-    font-size: 12px;
-    margin: 0 10px;
-    position: absolute;
-    left: 0;
-    // width: 100%;
-    height: 100%;
-  }
 }
 .is-other {
   .picture {

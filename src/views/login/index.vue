@@ -202,9 +202,10 @@ emitter.on("showload", (flag) => {
 
 const loadAll = () => {
   return [
-    { value: "临江仙", link: "" },
-    { value: "黄泳康", link: "" },
-    { value: "ROLE_USER", link: "" },
+    { value: "linjx", link: "" },
+    { value: "admin", link: "" },
+    { value: "zhangal", link: "" },
+    // { value: "huangyk", link: "" },
   ];
 };
 

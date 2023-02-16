@@ -1,14 +1,14 @@
 <template>
   <el-drawer
     v-model="drawer"
-    size="285px"
-    title="设置"
+    size="360px"
+    :title="t('common.setup')"
     :with-header="true"
     :show-close="true"
   >
     <ul class="setting width-full">
       <li>
-        <span>关闭侧边栏</span>
+        <span>{{ t("common.closeSidebar") }}</span>
         <el-switch
           v-model="sidebar"
           inline-prompt
@@ -19,7 +19,7 @@
         />
       </li>
       <li>
-        <span>侧边栏logo</span>
+        <span>{{ t("common.sidebarLogo") }}</span>
         <el-switch
           v-model="logoVal"
           inline-prompt
@@ -32,7 +32,7 @@
         />
       </li>
       <li>
-        <span>主题</span>
+        <span>{{ t("common.theme") }}</span>
         <el-select v-model="themecolor" placeholder="主题颜色">
           <el-option
             v-for="item in options"
@@ -43,7 +43,7 @@
         </el-select>
       </li>
       <li>
-        <span>语言</span>
+        <span>{{ t("common.language") }}</span>
         <el-select v-model="language" placeholder="选择语言">
           <el-option
             v-for="item in languages"
@@ -59,32 +59,36 @@
 
 <script setup>
 import { Close, Check } from "@element-plus/icons-vue";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { changeAppearance } from "@/utils/common";
 import { CircleCloseFilled } from "@element-plus/icons-vue";
 import { useDark, useToggle } from "@vueuse/core";
-import i18n from "@/locales";
+import { useI18n } from "vue-i18n";
 
-const options = [
-  {
-    value: "auto",
-    label: "自动",
-  },
-  {
-    value: "light",
-    label: "浅色",
-  },
-  {
-    value: "dark",
-    label: "深色",
-  },
-];
+const { locale, t } = useI18n();
+console.log();
+const options = computed(() => {
+  return [
+    {
+      value: "auto",
+      label: t("common.auto"),
+    },
+    {
+      value: "light",
+      label: t("common.light"),
+    },
+    {
+      value: "dark",
+      label: t("common.dark"),
+    },
+  ];
+});
 
 const languages = [
   {
-    value: "zh",
+    value: "zh-CN",
     label: "中文",
   },
   {
@@ -159,7 +163,7 @@ const languageChange = (val) => {
     key: "lang",
     value: val,
   });
-  i18n.global.locale = val;
+  locale.value = val;
 };
 </script>
 

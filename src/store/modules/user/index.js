@@ -24,7 +24,6 @@ const user = {
     isSDKReady: false, // TIM SDK 是否 ready
     userID: 0,
     userSig: "",
-    sdkAppID: 0,
     message: null,
   },
   getters: {},
@@ -70,15 +69,10 @@ const user = {
       const { code, data } = await TIM_login({ userID, userSig });
       console.log({ code, data }, "TIM_LOG_IN");
       if (code == 0) {
-        let info = {
-          userID,
-          userSig,
-          sdkAppID: "",
-        };
         commit("showMessage", { message: "IM初始化成功!" });
+        commit("GET_USER_INFO", { userID, userSig });
         commit("toggleIsLogin", true);
-        commit("GET_USER_INFO", info);
-        console.log(info, "GET_USER_INFO");
+        console.log({ userID, userSig }, "GET_USER_INFO");
       } else {
         console.log("err");
       }
@@ -101,7 +95,7 @@ const user = {
       let userSig = rootState.data?.user?.userSig;
       let isSDKReady = state?.isSDKReady;
       setTimeout(() => {
-        window.TIMProxy.init()
+        window.TIMProxy.init();
         dispatch("TIM_LOG_IN", { userID, userSig });
       }, 500);
     },
