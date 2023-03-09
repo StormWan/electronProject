@@ -2,10 +2,17 @@ import {
   getGroupMemberList,
   getGroupProfile,
   getGroupList,
+  deleteConversation,
 } from "@/api/im-sdk-api/index";
+
+import { quitGroup, createGroup, dismissGroup } from "@/api/im-sdk-api/group";
+
 export default {
   // namespaced: true,
   state: {
+    isShowAddBook: false, // 地址本状态
+    popover: false, // 卡片
+    seat: null,
     groupDrawer: false, // 群聊开关
     groupList: [], //群组列表
     groupProfile: null,
@@ -32,35 +39,52 @@ export default {
     },
   },
   mutations: {
-    // setgroupDrawer(state, payload) {
-    //   state.groupDrawer = payload;
-    // },
     setGroupProfile(state, payload) {
       const { type } = payload;
       if (type == "GROUP") {
         const { groupID } = payload.groupProfile;
         getGroupProfile({ groupID }).then((data) => {
           state.groupProfile = data;
-          // console.log(state.groupProfile);
         });
       }
+    },
+    setAddbookStatus(state, status) {
+      state.isShowAddBook = status;
+    },
+    setPopoverStatus(state, payload) {
+      const { status, seat } = payload;
+      state.popover = status;
+      state.seat = seat;
     },
   },
   actions: {
     async getGroupMemberList({ state, commit, getters }, payload) {
-      // const { groupID } = payload;
-      console.log(getters.toAccount)
-      const groupID = getters.toAccount
-      // groupID offset count
+      const groupID = getters.toAccount;
       const { memberList, offset } = await getGroupMemberList({ groupID });
-      console.log(memberList)
       state.currentMemberList = memberList;
     },
     async getGroupList({ state }, payload) {
-      // state.groupList =
       const list = await getGroupList();
-      console.log(list);
       state.groupList = list;
+    },
+    // 退出群聊
+    async QUIT_GROUP({ state, dispatch }, payload) {
+      const { groupId, convId } = payload;
+      const { code } = await quitGroup({ groupId });
+      if (code !== 0) return;
+      dispatch("DELETE_SESSION", { convId });
+    },
+    // 创建群聊
+    async CREATE_GROUP({ state }, payload) {
+      const { groupName } = payload;
+      await createGroup({ groupName });
+    },
+    // 解散群组
+    async DISMISS_GROUP({ state, dispatch, commit }, payload) {
+      const { groupId, convId } = payload;
+      const { code, groupID } = await dismissGroup(groupId);
+      if (code !== 0) return;
+      dispatch("DELETE_SESSION", { convId });
     },
   },
 };

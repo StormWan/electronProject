@@ -42,7 +42,6 @@ export const dragControllerDiv = (node) => {
 
 // 复制
 export const fncopy = async (data) => {
-  console.log(data);
   const { elements } = data;
   const { content, type } = elements[0];
   // 文本
@@ -52,7 +51,6 @@ export const fncopy = async (data) => {
 };
 
 export const GroupSystemNotice = (message) => {
-  console.log(message);
   const groupName =
     message.payload.groupProfile.name || message.payload.groupProfile.groupID;
   switch (message.payload.operationType) {

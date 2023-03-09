@@ -1,6 +1,10 @@
+// element-plus国际化
+import elementZhLocale from "element-plus/lib/locale/lang/zh-cn";
 // zh-CN
 export default {
+  ...elementZhLocale,
   common: {
+    createGroupChat: "创建群聊",
     language: "语言",
     setup: "设置",
     theme: "主题",

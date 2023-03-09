@@ -177,24 +177,6 @@ onUnmounted(() => {
   // cursor: row-resize;
   font-size: 12px;
 }
-:deep(.group-chat-switch) {
-  position: absolute;
-  right: 0;
-  background: rgb(218, 218, 218);
-  border-radius: 2px 0 0 2px;
-  width: 10px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  &:hover {
-    background: rgb(137, 210, 243);
-  }
-  .el-icon {
-    font-size: 14px !important;
-    color: #fff;
-  }
-}
 .back-to-the-bottom {
   position: absolute;
   width: 70px;

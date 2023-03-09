@@ -1,6 +1,10 @@
+// element-plus国际化
+import elementEnLocale from "element-plus/lib/locale/lang/en";
 // en
 export default {
+  ...elementEnLocale,
   common: {
+    createGroupChat: "Create Group Chat",
     language: "Language",
     setup: "Setup",
     theme: "Theme",
@@ -49,8 +53,7 @@ export default {
     verifyCodeSixReg: "Please enter a 6-digit verify code",
     phoneReg: "Please enter the phone",
     phoneCorrectReg: "Please enter the correct phone number format",
-    passwordRuleReg:
-      "The password format should be any combination of 8-18 digits",
+    passwordRuleReg: "The password format should be any combination of 8-18 digits",
     passwordSureReg: "Please enter confirm password",
     passwordDifferentReg: "The two passwords do not match!",
     passwordUpdateReg: "Password has been updated",

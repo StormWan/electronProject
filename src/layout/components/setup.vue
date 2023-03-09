@@ -68,7 +68,7 @@ import { useDark, useToggle } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 
 const { locale, t } = useI18n();
-console.log();
+
 const options = computed(() => {
   return [
     {

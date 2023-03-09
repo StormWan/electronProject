@@ -12,7 +12,7 @@
       draggable="true"
       class="message-item"
       v-for="item in tabList"
-      :key="item"
+      :key="item.conversationID"
       :class="fnClass(item)"
       @click="handleConvListClick(item)"
       @drop="dropHandler(e, item)"
@@ -27,7 +27,7 @@
       <FontIcon
         iconName="close"
         class="close-btn"
-        @click.stop="closeMsg(item)"
+        @click.stop="removeConv(item)"
       />
       <el-badge is-dot :hidden="isShowCount(item) || !isNotify(item)">
         <img
@@ -103,8 +103,6 @@ import { addTimeDivider } from "@/utils/addTimeDivider";
 import { TIMpingConv, setMessageRemindType } from "@/api/im-sdk-api";
 
 const contextMenuItemInfo = ref([]);
-// eslint-disable-next-line no-undef
-// const emit = defineEmits(["convChange"]);
 
 const { state, getters, dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
@@ -140,12 +138,8 @@ const fnClass = (item) => {
   }
 };
 
-const closeMsg = (conv) => {
-  console.log(conv);
-};
 // 消息列表 右键菜单
 const handleContextMenuEvent = (e, item) => {
-  console.log(item);
   contextMenuItemInfo.value = item;
   // 会话
   RIGHT_CLICK_CHAT_LIST.map((t) => {
@@ -167,6 +161,7 @@ const dragleaveHandler = (e) => {};
 
 // 会话点击
 const handleConvListClick = (data) => {
+  console.log(data);
   // 切换会话
   commit("SET_CONVERSATION", {
     type: "UPDATE_CURRENT_SELECTED_CONVERSATION",
@@ -198,9 +193,7 @@ const handleClickMenuItem = (item) => {
 // 消息免打扰
 const disableRecMsg = async (data, off) => {
   const { type, toAccount, messageRemindType } = data;
-  // 系统消息
   if (type == "@TIM#SYSTEM") return;
-  // if (messageRemindType == "") return;
   await setMessageRemindType({
     userID: toAccount,
     RemindType: messageRemindType,
@@ -209,7 +202,8 @@ const disableRecMsg = async (data, off) => {
 };
 // 删除会话
 const removeConv = async (data) => {
-  console.log(data);
+  const { conversationID } = data;
+  dispatch("DELETE_SESSION", { convId: conversationID });
 };
 // 置顶
 const pingConv = async (data, off) => {
@@ -315,6 +309,7 @@ onMounted(() => {});
         max-width: 140px;
       }
       .message-time {
+        font-family: MicrosoftYaHei;
         font-size: 10px;
         color: rgba(0, 0, 0, 0.45);
       }

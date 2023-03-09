@@ -41,6 +41,7 @@
           class="avatar"
           v-for="item in currentMemberList"
           :key="item.userID"
+          @click="navigate(item)"
         >
           <el-icon
             class="style-close"
@@ -51,7 +52,7 @@
             <CircleCloseFilled />
           </el-icon>
           <UserAvatar
-            :className="'avatar-item'"
+            className="avatar-item"
             :url="item.avatar"
             :nickName="item.nick"
           />
@@ -70,7 +71,12 @@
     <div class="divider"></div>
     <!-- 退出 转让 -->
     <div class="group-operator">
-      <el-button type="danger" @click="handleQuitGroup"> 退出群组 </el-button>
+      <el-button v-if="isOwner" type="danger" @click="dismissGroup">
+        解散群组
+      </el-button>
+      <el-button v-else type="danger" @click="handleQuitGroup">
+        退出群组
+      </el-button>
       <div class="group-operator--divider"></div>
       <el-button type="primary" plain v-show="isOwner" @click="transferGroup">
         转让群组
@@ -116,18 +122,6 @@
         </span>
       </template>
     </el-dialog>
-
-    <!-- <el-dialog v-model="dialogVisible1" title="删除成员" width="30%" draggable>
-      <span>确定将 {{ groupMember.nick }} 移出群聊！</span>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible1 = false"> 取消 </el-button>
-          <el-button type="primary" @click="delGroupmembers()">
-            确定
-          </el-button>
-        </span>
-      </template>
-    </el-dialog> -->
   </div>
 </template>
 
@@ -143,7 +137,9 @@ import {
   addGroupMember,
   deleteGroupMember,
 } from "@/api/im-sdk-api";
+import { useI18n } from "vue-i18n";
 
+const { locale, t } = useI18n();
 const { state, commit, dispatch } = useStore();
 const {
   user,
@@ -152,6 +148,7 @@ const {
   showMsgBox,
   groupProfile,
   currentMemberList,
+  currentConversation,
 } = useState({
   user: (state) => state.data.user,
   userProfile: (state) => state.user.currentUserProfile,
@@ -159,6 +156,7 @@ const {
   groupDrawer: (state) => state.groupinfo.groupDrawer,
   groupProfile: (state) => state.groupinfo.groupProfile,
   currentMemberList: (state) => state.groupinfo.currentMemberList,
+  currentConversation: (state) => state.conversation.currentConversation,
 });
 const { isOwner, isAdmin, toAccount } = useGetters([
   "isOwner",
@@ -166,10 +164,9 @@ const { isOwner, isAdmin, toAccount } = useGetters([
   "toAccount",
 ]);
 const input = ref("");
-const value = ref(true);
+const value = ref(false);
 const Refdrawerlist = ref();
 const dialogVisible = ref(false);
-const dialogVisible1 = ref(false);
 const groupMember = ref([]);
 
 const openDetails = () => {
@@ -180,15 +177,10 @@ const close = () => {
   input.value = "";
   dialogVisible.value = false;
 };
-const delGroupmembers = () => {
-  // dialogVisible1.value = false;
-  // const { userID } = groupMember.value;
-  // console.log(userID);
-};
 const RemovePeople = (item) => {
   ElMessageBox.confirm(`确定将 ${item.nick} 移出群聊?`, "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
+    confirmButtonText: `${t("el.datepicker.confirm")}`,
+    cancelButtonText: `${t("el.datepicker.cancel")}`,
     type: "warning",
   })
     .then(() => {
@@ -227,8 +219,45 @@ const navigate = (item) => {
 const groupMemberAdd = () => {
   dialogVisible.value = true;
 };
-const transferGroup = () => {};
-const handleQuitGroup = () => {};
+const dismissGroup = () => {
+  ElMessageBox.confirm("确定解散群聊?", "提示", {
+    confirmButtonText: `${t("el.datepicker.confirm")}`,
+    cancelButtonText: `${t("el.datepicker.cancel")}`,
+    type: "warning",
+  })
+    .then(() => {
+      const { conversationID } = currentConversation.value;
+      dispatch("DISMISS_GROUP", {
+        convId: conversationID,
+        groupId: toAccount.value,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+const transferGroup = () => {
+  console.log();
+};
+
+const handleQuitGroup = () => {
+  ElMessageBox.confirm("确定退出群聊?", "提示", {
+    confirmButtonText: `${t("el.datepicker.confirm")}`,
+    cancelButtonText: `${t("el.datepicker.cancel")}`,
+    type: "warning",
+  })
+    .then(() => {
+      const { conversationID } = currentConversation.value;
+      dispatch("QUIT_GROUP", {
+        convId: conversationID,
+        groupId: toAccount.value,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log(groupProfile.value);
+    });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -246,6 +275,10 @@ const handleQuitGroup = () => {};
 .member-list-drawer--item {
   display: flex;
   align-items: center;
+  padding: 5px 0;
+  .member-list-drawer--item__name {
+    margin-left: 8px;
+  }
 }
 .group-accountecment {
   padding: 12px 0;

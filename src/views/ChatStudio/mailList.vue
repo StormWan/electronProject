@@ -1,6 +1,6 @@
 <template>
-  <div class="flex-box width-full style-mail">
-    <div class="abv">
+  <div class="flex width-full style-mail">
+    <div class="abv" v-if="false">
       <el-tabs v-model="activeName" class="style-tabs" @tab-click="taggleClick">
         <el-tab-pane label="通讯录" name="first">
           <el-tree
@@ -66,19 +66,19 @@ const group_list = ref([
   },
 ]);
 
-watch(
-  groupList,
-  (data) => {
-    const list = groupList.value;
-    list.map((t) => {
-      group_list.value[0].children.push(t);
-    });
-  },
-  {
-    deep: true,
-    immediate: true,
-  }
-);
+// watch(
+//   groupList,
+//   data => {
+//     const list = groupList.value;
+//     list.map(t => {
+//       group_list.value[0].children.push(t);
+//     });
+//   },
+//   {
+//     deep: true,
+//     immediate: true,
+//   }
+// );
 </script>
 
 <style lang="scss" scoped>

@@ -20,7 +20,7 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer"); // 打包�
 const { dependencies, devDependencies, name, version } = pkg;
 const __APP_INFO__ = {
   pkg: { dependencies, devDependencies, name, version },
-  lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
+  lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss"),
 };
 
 const path = require("path");
@@ -46,7 +46,7 @@ module.exports = {
     // 是否使用css分离插件 默认生产环境下是true, 开发环境下是false.
     extract: production,
     // 是否为CSS开启source map.设置为true之后可能会影响构建的性能.
-    sourceMap: false,
+    sourceMap: true,
     // 向CSS相关的loader传递选项(支持:css-loader postcss-loader sass-loader less-loader stylus-loader).
     /* loaderOptions: {
       sass: {
@@ -68,7 +68,6 @@ module.exports = {
       //     chunkFilename: `static/css/[name].css`,
       //   },
       // ]);
-
       // const analyzer = new BundleAnalyzerPlugin({
       //   analyzerPort: 9999
       // })
@@ -96,7 +95,7 @@ module.exports = {
   },
   // webpack配置
   configureWebpack: {
-    externals,
+    // externals,
     plugins: [
       // setup语法糖通过defineOptions定义组件name
       // DefineOptions()
@@ -109,13 +108,13 @@ module.exports = {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
-      // 压缩配置
+      // 压缩配置 用于生成Gzip压缩的文件，从而减小文件的体积，加快网站的加载速度
       // new CompressionPlugin({
+      //   algorithm: "gzip", // 使用gzip压缩
       //   test: /\.(js|css|html)?$/i, // 压缩文件格式
-      //   filename: '[path].gz[query]', // 压缩后的文件名
-      //   algorithm: 'gzip', // 使用gzip压缩
-      //   minRatio: 0.8 // 压缩率小于1才会压缩
-      // })
+      //   threshold: 10240,
+      //   minRatio: 0.8, // 压缩率小于1才会压缩
+      // }),
     ],
     // webpack 的性能提示
     // performance,

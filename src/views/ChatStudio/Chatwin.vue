@@ -1,4 +1,3 @@
-<!-- eslint-disable no-undef -->
 <template>
   <section
     class="message-info-view-content"
@@ -44,7 +43,7 @@
             @click="handleChecked($event, item)"
           >
             <Checkbox
-              @click.stop="handleCilck($event, item, 'input')"
+              @click.stop="handleCilck($event, item)"
               v-show="
                 showCheckbox &&
                 !item.isRevoked &&
@@ -59,6 +58,7 @@
               <el-avatar
                 :size="36"
                 shape="square"
+                @click.stop="onclickavatar($event, item)"
                 :src="item.avatar || circleUrl"
               >
               </el-avatar>
@@ -81,7 +81,8 @@
             </div>
           </div>
         </div>
-
+        <!-- 卡片 -->
+        <MyPopover :cardData="cardData" />
         <!-- 右键菜单 -->
         <contextmenu ref="contextmenu">
           <contextmenu-item
@@ -111,6 +112,7 @@ import {
   computed,
   onBeforeUnmount,
   toRefs,
+  defineAsyncComponent,
 } from "vue";
 import {
   squareUrl,
@@ -128,12 +130,9 @@ import { useEventListener } from "@/utils/hooks/index";
 import { useState } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import Checkbox from "./components/Checkbox.vue";
-import TextElemItem from "./components/TextElemItem";
-import TipsElemItem from "./components/TipsElemItem";
-import groupTipElement from "./components/groupTipElement.vue";
-import GroupSystemNoticeElem from "./components/GroupSystemNoticeElem.vue";
-import ImageElemItem from "./components/ImageElemItem";
+
 import LoadMore from "./components/LoadMore.vue";
+import MyPopover from "@/views/components/MyPopover/index.vue";
 import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { deleteMsgList, revokeMsg, getMsgList } from "@/api/im-sdk-api";
 import emitter from "@/utils/mitt-bus";
@@ -143,6 +142,7 @@ const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
+const cardData = ref(null);
 const watermarkText = ref("pure-admin");
 const { state, dispatch, commit } = useStore();
 const { setWatermark, clear } = useWatermark();
@@ -206,7 +206,6 @@ const updateLoadMore = (newValue) => {
       elRef?.scrollIntoView({
         block: "start",
       });
-      // ({ behavior: 'smooth', block: 'center' })
     } else {
       // console.log(elRef);
       elRef?.scrollIntoViewIfNeeded();
@@ -246,17 +245,29 @@ const ISown = (item) => {
   return item.from == userInfo.value.username;
 };
 
+const onclickavatar = (e, item) => {
+  const isSelf = ISown(item);
+  if (isSelf) return;
+  cardData.value = item;
+  commit("setPopoverStatus", {
+    status: true,
+    seat: e,
+  });
+};
+
+const loadMoreFn = () => {
+  if (!noMore.value) {
+    const current = currentMessageList.value?.length - 1;
+    // 第一条消息 加载更多 节点
+    const offsetTopScreen = messageViewRef.value?.children?.[current];
+    const top = offsetTopScreen?.getBoundingClientRect().top;
+    const canLoadData = top > 50; //滚动到顶部
+    canLoadData && getMoreMsg();
+  }
+};
+const debouncedFunc = debounce(loadMoreFn, 250); //防抖处理
 const scrollbar = ({ scrollLeft, scrollTop }) => {
-  debounce(() => {
-    if (!noMore.value) {
-      const current = currentMessageList.value?.length - 1;
-      // 第一条消息 加载更多 节点
-      const offsetTopScreen = messageViewRef.value?.children?.[current];
-      const top = offsetTopScreen?.getBoundingClientRect().top;
-      const canLoadData = top > 50; //滚动到顶部
-      canLoadData && getMoreMsg();
-    }
-  }); //防抖处理
+  debouncedFunc();
 };
 
 const UpdateScrollbar = () => {
@@ -282,12 +293,11 @@ const getMoreMsg = async () => {
     const { conversationID, toAccount } = Conv;
     const msg = validatelastMessage(msglist);
     const { ID } = msg;
-    console.log(ID);
     const result = await getMsgList({
       conversationID: conversationID,
       nextReqMessageID: ID,
     });
-    console.log(result, "getMsgList");
+    // console.log(result, "getMsgList");
     const { isCompleted, messageList, nextReqMessageID } = result;
     let noMore = true;
     let Loadmore = messageList.length < HISTORY_MESSAGE_COUNT;
@@ -319,7 +329,7 @@ const getMoreMsg = async () => {
       type: "UPDATE_NOMORE",
       payload: true,
     });
-    console.log(e, "err更多消息");
+    // console.log(e, "err更多消息");
   }
 };
 
@@ -327,12 +337,25 @@ const getMoreMsg = async () => {
 const loadMsgComponents = (elem_type, item) => {
   // console.log(elem_type, item);
   let resp = "";
-  let CompMap = {
-    TextElemItem: TextElemItem,
-    TipsElemItem: TipsElemItem,
-    ImageElemItem: ImageElemItem,
-    groupTipElement: groupTipElement,
-    GroupSystemNoticeElem: GroupSystemNoticeElem,
+  const CompMap = {
+    TextElemItem: defineAsyncComponent(() =>
+      import("./ElemItemTypes/TextElemItem.vue")
+    ),
+    TipsElemItem: defineAsyncComponent(() =>
+      import("./ElemItemTypes/TipsElemItem.vue")
+    ),
+    ImageElemItem: defineAsyncComponent(() =>
+      import("./ElemItemTypes/ImageElemItem.vue")
+    ),
+    CustomElemItem: defineAsyncComponent(() =>
+      import("./ElemItemTypes/CustomElemItem.vue")
+    ),
+    groupTipElement: defineAsyncComponent(() =>
+      import("./ElemItemTypes/groupTipElement.vue")
+    ),
+    GroupSystemNoticeElem: defineAsyncComponent(() =>
+      import("./ElemItemTypes/GroupSystemNoticeElem.vue")
+    ),
   };
   // 撤回消息
   if (item.isRevoked) {
@@ -347,13 +370,16 @@ const loadMsgComponents = (elem_type, item) => {
       resp = "ImageElemItem";
       break;
     case "TIMFileElem": // 文件消息
-      resp = "";
+      resp = "FileElemItem";
       break;
     case "TIMGroupTipElem": // 群消息提示
       resp = "groupTipElement";
       break;
     case "TIMGroupSystemNoticeElem": // 系统通知
       resp = "GroupSystemNoticeElem";
+      break;
+    case "TIMCustomElem": // 自定义消息
+      resp = "CustomElemItem";
       break;
     default:
       resp = "";
@@ -381,6 +407,9 @@ const Megtype = (elem_type) => {
       break;
     case "TIMGroupSystemNoticeElem":
       resp = "message-view__system"; // 系统通知
+      break;
+    case "TIMCustomElem":
+      resp = "message-view__text message-view__custom"; // 自定义消息
       break;
     default:
       resp = "";

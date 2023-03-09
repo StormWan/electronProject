@@ -1,7 +1,5 @@
 <template>
-  <div class="message-view__item--text">
-    {{ message.from }}
-  </div>
+  <div class="message-view__item--text">{{ payload.extension }}</div>
 </template>
 
 <script>
@@ -12,22 +10,30 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
-// import { GroupSystemNotice } from "../utils/utils";
+import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 export default defineComponent({
-  name: "GroupSystemNoticeElem",
+  name: "CustomElemItem",
   components: {},
+  computed: {},
   props: {
     message: {
       type: Object,
       default: null,
     },
   },
+  data() {
+    return {};
+  },
+  methods: {},
   setup(props, { attrs, emit, expose, slots }) {
     const state = reactive({ text: "wewe" });
+    const { message } = toRefs(props);
+    const { payload } = message.value;
 
     onMounted(() => {});
     onBeforeUnmount(() => {});
     return {
+      payload,
       ...toRefs(state),
     };
   },

@@ -3,7 +3,7 @@
     <div class="message-info-views">
       <header-view :list="Conver" />
     </div>
-    <div class="flex-box">
+    <div class="flex">
       <div
         class="message-info-add"
         v-show="Conver.type == 'GROUP'"
@@ -20,15 +20,7 @@
         <FontIcon iconName="MoreFilled" class="icon-hover" />
       </div>
     </div>
-    <!-- 群聊开关 -->
-    <!-- <div
-      class="group-chat-switch"
-      @click="openGroup"
-      v-show="!groupDrawer"
-      v-if="Conver && Conver.type == 'GROUP'"
-    >
-      <FontIcon iconName="ArrowLeft" />
-    </div> -->
+
     <Drawer
       title="群详情"
       classModal="drawer-group"
@@ -78,7 +70,11 @@ const HeaderView = (props) => {
       const {
         groupProfile: { name, groupID },
       } = list;
-      fn = h("span", { class: "style-group" }, name || groupID);
+      fn = h(
+        "span",
+        { onClick: () => openSetup(), class: "style-group" },
+        name || groupID
+      );
       break;
     case "@TIM#SYSTEM":
       fn = h("span", { class: "style-system" }, "系统通知");
@@ -102,8 +98,13 @@ const HeaderView = (props) => {
   justify-content: space-between;
   width: 100%;
   position: relative;
-  // .message-info-views {}
+  .message-info-views {
+    :deep(.style-group) {
+      cursor: pointer;
+    }
+  }
 }
+
 .message-info-setup {
   margin-left: 10px;
 }

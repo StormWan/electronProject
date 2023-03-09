@@ -1,15 +1,15 @@
 {
   "name": "pure-admin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "author": {
-    "name": "huangyk",
+    "name": "Hyk260",
     "email": "2607881950@qq.com"
   },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint --fix",
     "app": "cd server && nodemon app",
     "build:pkg:mac": "cd server && pkg -t macos app.js",
     "build:pkg:win": "cd server && pkg -t win app.js",
@@ -20,7 +20,8 @@
     "electron:build-mac": "vue-cli-service electron:build -p never -m",
     "electron:build-win": "vue-cli-service electron:build -p never -w",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "prepare": "husky install"
   },
   "main": "./src/electron/main.js",
   "dependencies": {
@@ -42,11 +43,12 @@
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-localshortcut": "^3.2.1",
-    "element-plus": "^2.0.4",
+    "element-plus": "^2.2.32",
     "element-resize-detector": "^1.2.4",
     "html2canvas": "^1.4.1",
-    "husky": "^8.0.2",
+    "husky": ">=6",
     "js-cookie": "^3.0.1",
+    "lint-staged": ">=10",
     "lodash": "^4.17.21",
     "lottie-web": "^5.10.0",
     "mitt": "^3.0.0",
@@ -85,6 +87,27 @@
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "webpack-bundle-analyzer": "^4.6.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.{js,vue,html}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add -n"
+    ],
+    "*.{css,sass,scss}": [
+      "prettier --write",
+      "git add -n"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hyk260"
   },
   "license": "MIT"
 }

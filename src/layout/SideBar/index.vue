@@ -33,7 +33,7 @@ import Logo from "../components/Logo.vue";
 
 const Refelmenu = ref();
 const route = useRoute();
-const store = useStore();
+
 const props = defineProps({
   vislbile: {
     type: Boolean,
@@ -59,9 +59,6 @@ const handleOpen = (key, keyPath) => {
 const handleClose = (key, keyPath) => {
   // console.log(key, keyPath)
 };
-onMounted(() => {
-  // console.log(Refelmenu.value);
-});
 </script>
 
 <style lang="scss" scoped>
@@ -79,9 +76,7 @@ onMounted(() => {
   height: 100%;
 }
 .sidebar-container {
-  // background: #fff;
   background: var(--color-body-bg);
-  // border-right: 1px solid #e6e6e6;
   box-shadow: 0 0 1px #888;
   z-index: 11;
   height: 100%;
