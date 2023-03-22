@@ -22,7 +22,7 @@
       @contextmenu.prevent="handleContextMenuEvent($event, item)"
     >
       <!-- 置顶图标 -->
-      <div class="pinned-tag" v-if="item.isPinned"></div>
+      <div class="pinned-tag" v-show="item.isPinned"></div>
       <!-- 关闭按钮 -->
       <FontIcon
         iconName="close"
@@ -61,7 +61,7 @@
         </div>
         <!-- 未读消息红点 -->
         <template v-if="!isShowCount(item) && !isNotify(item)">
-          <el-badge :value="item.unreadCount" :max="9" />
+          <el-badge :value="item.unreadCount" :max="99" />
         </template>
         <!-- 消息免打扰 -->
         <template v-if="isNotify(item)">
@@ -106,11 +106,11 @@ const contextMenuItemInfo = ref([]);
 
 const { state, getters, dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { Selected, UserInfo, currentMessageList, conversationList } = useState({
+const { Selected, UserInfo, messageList, Conver } = useState({
   UserInfo: (state) => state.data.user,
   Selected: (state) => state.conversation.currentConversation,
-  currentMessageList: (state) => state.conversation.currentMessageList,
-  conversationList: (state) => state.conversation.conversationList,
+  messageList: (state) => state.conversation.currentMessageList,
+  Conver: (state) => state.conversation.currentConversation,
 });
 
 const fnNews = (data) => {
@@ -161,7 +161,11 @@ const dragleaveHandler = (e) => {};
 
 // 会话点击
 const handleConvListClick = (data) => {
-  console.log(data);
+  if (Conver.value) {
+    const { conversationID: id } = Conver.value;
+    const newId = data?.conversationID;
+    if (id == newId) return;
+  }
   // 切换会话
   commit("SET_CONVERSATION", {
     type: "UPDATE_CURRENT_SELECTED_CONVERSATION",
@@ -171,6 +175,7 @@ const handleConvListClick = (data) => {
   commit("setGroupProfile", data);
   // 获取会话列表
   dispatch("GET_MESSAGE_LIST", data);
+  commit("updataScroll");
 };
 
 const handleClickMenuItem = (item) => {
@@ -192,11 +197,11 @@ const handleClickMenuItem = (item) => {
 };
 // 消息免打扰
 const disableRecMsg = async (data, off) => {
-  const { type, toAccount, messageRemindType } = data;
+  const { type, toAccount, messageRemindType: remindType } = data;
   if (type == "@TIM#SYSTEM") return;
   await setMessageRemindType({
     userID: toAccount,
-    RemindType: messageRemindType,
+    RemindType: remindType,
     type,
   });
 };

@@ -17,40 +17,22 @@
           :key="item.ID"
           :class="{ 'reset-select': !showCheckbox }"
         >
-          <!-- 加载更多 -->
-          <LoadMore
-            :noMore="noMore"
-            v-if="index === currentMessageList.length - 1"
-          />
+          <LoadMore :index="index" />
           <div class="message-view__item--blank"></div>
-          <!-- 时间 -->
-          <div
-            class="message-view__item--time-divider"
-            v-if="item.isTimeDivider"
-          >
+          <div class="message-view__item--time-divider" v-if="isTime(item)">
             {{ timeFormat(item.time * 1000, true) }}
           </div>
-          <!-- 消息 is-self is-other-->
           <div
-            v-if="!item.isTimeDivider && !item.isDeleted"
+            v-if="!isTime(item) && !item.isDeleted"
             class="message-view__item"
             :class="{
               'is-self': ISown(item),
               'is-other': !ISown(item),
               'style-choice': showCheckbox,
             }"
-            :id="item.ID"
             @click="handleChecked($event, item)"
           >
-            <Checkbox
-              @click.stop="handleCilck($event, item)"
-              v-show="
-                showCheckbox &&
-                !item.isRevoked &&
-                item.type !== 'TIMGroupTipElem'
-              "
-            />
-            <!-- 头像 -->
+            <Checkbox :item="item" @click.stop="handleCilck($event, item)" />
             <div
               class="picture"
               v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'"
@@ -63,16 +45,15 @@
               >
               </el-avatar>
             </div>
-            <!-- 内容 -->
             <div
               :class="msgOne(item)"
               v-contextmenu:contextmenu
               @contextmenu.prevent="ContextMenuEvent($event, item)"
             >
               <name-component :item="item" />
-              <!-- message-view__text message-view__img -->
-              <div :class="Megtype(item.type)">
+              <div :class="Megtype(item.type)" :id="item.ID">
                 <component
+                  :key="item.ID"
                   :is="loadMsgComponents(item.type, item)"
                   :message="item"
                 >
@@ -81,21 +62,19 @@
             </div>
           </div>
         </div>
-        <!-- 卡片 -->
-        <MyPopover :cardData="cardData" />
-        <!-- 右键菜单 -->
-        <contextmenu ref="contextmenu">
-          <contextmenu-item
-            v-for="item in RIGHT_CLICK_MENU_LIST"
-            :key="item.id"
-            @click="ClickMenuItem(item)"
-            v-show="isRight"
-          >
-            {{ item.text }}
-          </contextmenu-item>
-        </contextmenu>
       </div>
     </el-scrollbar>
+    <MyPopover />
+    <contextmenu ref="contextmenu">
+      <contextmenu-item
+        v-for="item in RIGHT_CLICK_MENU_LIST"
+        :key="item.id"
+        @click="ClickMenuItem(item)"
+        v-show="isRight"
+      >
+        {{ item.text }}
+      </contextmenu-item>
+    </contextmenu>
   </section>
 </template>
 
@@ -121,6 +100,7 @@ import {
   RIGHT_CLICK_MENU_LIST,
 } from "./utils/menu";
 import { useStore } from "vuex";
+import { ElMessageBox } from "element-plus";
 import { fncopy, dragControllerDiv } from "./utils/utils";
 
 import { timeFormat } from "@/utils/timeFormat";
@@ -130,7 +110,6 @@ import { useEventListener } from "@/utils/hooks/index";
 import { useState } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import Checkbox from "./components/Checkbox.vue";
-
 import LoadMore from "./components/LoadMore.vue";
 import MyPopover from "@/views/components/MyPopover/index.vue";
 import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
@@ -138,11 +117,19 @@ import { deleteMsgList, revokeMsg, getMsgList } from "@/api/im-sdk-api";
 import emitter from "@/utils/mitt-bus";
 import { useWatermark } from "@/utils/hooks/useWatermark";
 
+import TextElemItem from "./ElemItemTypes/TextElemItem.vue";
+import TipsElemItem from "./ElemItemTypes/TipsElemItem.vue";
+import ImageElemItem from "./ElemItemTypes/ImageElemItem.vue";
+import FileElemItem from "./ElemItemTypes/FileElemItem.vue";
+import CustomElemItem from "./ElemItemTypes/CustomElemItem.vue";
+import groupTipElement from "./ElemItemTypes/groupTipElement.vue";
+import GroupSystemNoticeElem from "./ElemItemTypes/GroupSystemNoticeElem.vue";
+
 const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
-const cardData = ref(null);
+// const cardData = ref(null);
 const watermarkText = ref("pure-admin");
 const { state, dispatch, commit } = useStore();
 const { setWatermark, clear } = useWatermark();
@@ -191,12 +178,6 @@ const NameComponent = (props) => {
   );
 };
 
-const UpdataScrollInto = () => {
-  nextTick(() => {
-    messageViewRef.value?.firstElementChild?.scrollIntoView();
-  });
-};
-
 const updateLoadMore = (newValue) => {
   nextTick(() => {
     const ViewRef = messageViewRef.value;
@@ -221,6 +202,7 @@ const handleCilck = (e, item) => {
 };
 
 const handleChecked = (e, item) => {
+  if (!showCheckbox.value) return;
   if (item.type == "TIMGroupTipElem") return;
   if (item.isRevoked) return;
   const _el = document.getElementById(`${item.ID}`);
@@ -241,6 +223,9 @@ const handleChecked = (e, item) => {
   }
 };
 
+const isTime = (item) => {
+  return item?.isTimeDivider;
+};
 const ISown = (item) => {
   return item.from == userInfo.value.username;
 };
@@ -248,10 +233,11 @@ const ISown = (item) => {
 const onclickavatar = (e, item) => {
   const isSelf = ISown(item);
   if (isSelf) return;
-  cardData.value = item;
+  // cardData.value = item;
   commit("setPopoverStatus", {
     status: true,
     seat: e,
+    cardData: item,
   });
 };
 
@@ -270,7 +256,15 @@ const scrollbar = ({ scrollLeft, scrollTop }) => {
   debouncedFunc();
 };
 
-const UpdateScrollbar = () => {
+const updateScrollBarHeight = () => {
+  nextTick(() => {
+    // messageViewRef.value?.firstElementChild?.scrollIntoView();
+    const ViewRef = messageViewRef.value;
+    scrollbarRef.value?.scrollTo(0, ViewRef?.scrollHeight);
+  });
+};
+
+const updateScrollbar = () => {
   scrollbarRef.value.update();
 };
 
@@ -338,24 +332,13 @@ const loadMsgComponents = (elem_type, item) => {
   // console.log(elem_type, item);
   let resp = "";
   const CompMap = {
-    TextElemItem: defineAsyncComponent(() =>
-      import("./ElemItemTypes/TextElemItem.vue")
-    ),
-    TipsElemItem: defineAsyncComponent(() =>
-      import("./ElemItemTypes/TipsElemItem.vue")
-    ),
-    ImageElemItem: defineAsyncComponent(() =>
-      import("./ElemItemTypes/ImageElemItem.vue")
-    ),
-    CustomElemItem: defineAsyncComponent(() =>
-      import("./ElemItemTypes/CustomElemItem.vue")
-    ),
-    groupTipElement: defineAsyncComponent(() =>
-      import("./ElemItemTypes/groupTipElement.vue")
-    ),
-    GroupSystemNoticeElem: defineAsyncComponent(() =>
-      import("./ElemItemTypes/GroupSystemNoticeElem.vue")
-    ),
+    TextElemItem: TextElemItem,
+    TipsElemItem: TipsElemItem,
+    ImageElemItem: ImageElemItem,
+    FileElemItem: FileElemItem,
+    CustomElemItem: CustomElemItem,
+    groupTipElement: groupTipElement,
+    GroupSystemNoticeElem: GroupSystemNoticeElem,
   };
   // 撤回消息
   if (item.isRevoked) {
@@ -456,24 +439,31 @@ const ClickMenuItem = (data) => {
   const Info = MenuItemInfo.value;
   const { id, text } = data;
   switch (id) {
-    case "copy":
-      fncopy(Info); //复制
+    case "copy": //复制
+      fncopy(Info);
       break;
-    case "revoke":
-      revokes(Info); //撤回
+    case "revoke": //撤回
+      revokes(Info);
       break;
-    case "multiSelect":
-      multiSelect(Info); //多选
+    case "multiSelect": //多选
+      multiSelect(Info);
       break;
-    case "delete":
-      fndelete(Info); //删除
+    case "delete": //删除
+      fndelete(Info);
       break;
   }
 };
 // 删除消息
 const fndelete = async (data) => {
-  let { code } = await deleteMsgList(data);
-  if (code == 0) {
+  try {
+    const formEl = await ElMessageBox.confirm("确定删除?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    });
+    if (formEl == "cancel") return;
+    const { code } = await deleteMsgList(data);
+    if (code !== 0) return;
     const { conversationID, toAccount, to } = data;
     commit("SET_HISTORYMESSAGE", {
       type: "DELETE_MESSAGE",
@@ -482,6 +472,8 @@ const fndelete = async (data) => {
         message: data,
       },
     });
+  } catch (error) {
+    console.log(error);
   }
 };
 // 多选
@@ -490,7 +482,7 @@ const multiSelect = (data) => {
 };
 // 撤回消息
 const revokes = (data) => {
-  revokeMsg(data);
+  const { code, message } = revokeMsg(data);
 };
 
 watch(
@@ -505,7 +497,7 @@ watch(
 );
 
 emitter.on("updataScroll", (e) => {
-  UpdataScrollInto();
+  updateScrollBarHeight();
 });
 
 onMounted(() => {
@@ -513,27 +505,24 @@ onMounted(() => {
     setWatermark(watermarkText.value);
   });
 });
-// onUnmounted(() => {
-//   console.log("onUnmounted");
-//   UpdataScrollInto();
-// });
-onUpdated(() => {
-  UpdataScrollInto();
-});
-
+onUnmounted(() => {});
+onUpdated(() => {});
 onBeforeUpdate(() => {});
 onBeforeUnmount(() => {
   clear();
 });
 
 // eslint-disable-next-line no-undef
-defineExpose({ UpdateScrollbar, UpdataScrollInto });
+defineExpose({ updateScrollbar, updateScrollBarHeight });
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 $other-msg-color: #f0f2f5;
 $self-msg-color: #c2e8ff;
-
+.scrollbar-content {
+  height: 100%;
+}
 .message_name {
   margin-bottom: 5px;
   color: rgba(0, 0, 0, 0.45);

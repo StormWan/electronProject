@@ -1,5 +1,13 @@
 <template>
   <div>
+    <el-button type="primary" @click="setTheme('light')">白色</el-button>
+    <el-button type="primary" @click="setTheme('dark')">黑色</el-button>
+    <p>设置主题色 {{ theme }}</p>
+    <br />
+    <el-button type="primary" @click="setState(true)">true</el-button>
+    <el-button type="primary" @click="setState(false)">false</el-button>
+    <p>useToggle {{ state }}</p>
+    <br />
     <el-button
       v-for="{ title, onclick } in buttons"
       :key="title"
@@ -29,12 +37,20 @@ import {
   onBeforeUnmount,
 } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-import { getGroupList, getFriendList } from "@/api/im-sdk-api";
-import { accountCheck } from "@/api/rest-api";
+import { getFriendList } from "@/api/im-sdk-api";
+import { getGroupList } from "@/api/im-sdk-api/group";
+import { accountCheck, restSendMsg } from "@/api/rest-api";
+import { ACCESS_TOKEN } from "@/store/mutation-types";
+import { setCookies, getCookies } from "@/utils/Cookies";
+import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
+import { useToggle } from "@/utils/hooks/index";
+import axios from "axios";
 import io from "socket.io-client";
 
+const variable = process.env;
+
 export default defineComponent({
-  name: "Componentname",
+  name: "Test",
   components: {},
   computed: {
     ...mapState({
@@ -57,6 +73,30 @@ export default defineComponent({
           title: "地址本",
           onclick: () => this.openAddress(),
         },
+        {
+          title: "设置Cookes",
+          onclick: () => this.setCookies(),
+        },
+        {
+          title: "获取Cookes",
+          onclick: () => this.getCookies(),
+        },
+        {
+          title: "单发单聊消息",
+          onclick: () => this.sendMsg(),
+        },
+        {
+          title: "环境变量",
+          onclick: () => {
+            console.log(variable);
+          },
+        },
+        {
+          title: "openapi",
+          onclick: () => {
+            this.callApi();
+          },
+        },
       ],
       message: "Hello, world!",
     };
@@ -73,8 +113,17 @@ export default defineComponent({
     test1() {
       this.getGroupList();
     },
+    setCookies() {
+      setCookies("key", "123", 10);
+    },
+    getCookies() {
+      console.log(getCookies(ACCESS_TOKEN));
+    },
+    sendMsg() {
+      restSendMsg();
+    },
     async test2() {
-      const res = await accountCheck({ userid: "wangj" });
+      const res = await accountCheck({ userid: "admin" });
       console.log(res);
     },
     handleGroupClick(groupID) {
@@ -88,15 +137,52 @@ export default defineComponent({
     handleonClick(key) {
       console.log(key);
     },
+    callApi() {
+      console.log(process.env.VUE_APP_API_URL);
+      console.log(process.env.VUE_APP_API_KEY);
+      // axios.defaults.withCredentials = true;
+      const apiKey = process.env.VUE_APP_API_KEY;
+      const prompt = "你好 叫什么名字";
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${apiKey}`;
+      axios.defaults.headers.post["Content-Type"] = "application/json";
+      axios
+        .post(
+          process.env.VUE_APP_API_URL,
+          {
+            prompt: prompt,
+            max_tokens: 128,
+          }
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${process.env.VUE_APP_API_KEY}`,
+          //     "Access-Control-Allow-Credentials": "true",
+          //     "Access-Control-Allow-Origin": "http://localhost:8082",
+          //   },
+          // }
+        )
+        .then((response) => {
+          console.log(response.data.choices[0].text);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({ text: "" });
+    // const state = reactive({ text: "" });
+    const { theme, setTheme } = useDataThemeChange();
+    const [state, setState] = useToggle();
 
     onMounted(() => {});
     onBeforeUnmount(() => {});
     return {
+      state,
+      setState,
+      theme,
+      setTheme,
       accountCheck,
-      ...toRefs(state),
+      // ...toRefs(state),
     };
   },
 });

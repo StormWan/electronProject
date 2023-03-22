@@ -76,7 +76,7 @@
           type="primary"
           class="login-btn"
           @click="LoginBtn(ruleFormRef)"
-          :loading="showload"
+          :loading="false"
         >
           <template #loading>
             <div class="custom-loading">
@@ -124,7 +124,7 @@ import {
   onBeforeUnmount,
   watch,
 } from "vue";
-import { login } from "@/api/user";
+import { login, getuser } from "@/api/user";
 import { operates, thirdParty } from "./utils/enums";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
@@ -137,7 +137,6 @@ import emitter from "@/utils/mitt-bus";
 const { production } = require("@/config/vue.custom.config");
 
 const restaurants = ref([]);
-const showload = ref(false);
 const keep = ref(false);
 const ruleFormRef = ref();
 const imgCode = ref("");
@@ -183,20 +182,9 @@ const onkeypress = ({ code }) => {
   }
 };
 
-emitter.on("showload", (flag) => {
-  showload.value = flag;
-});
-
-const loadAll = () => {
-  return [
-    { value: "linjx", link: "" },
-    { value: "admin", link: "" },
-    { value: "zhangal", link: "" },
-  ];
-};
-
-onMounted(() => {
-  restaurants.value = loadAll();
+onMounted(async () => {
+  const { loadAll } = await getuser();
+  restaurants.value = loadAll;
   window.document.addEventListener("keypress", onkeypress);
 });
 

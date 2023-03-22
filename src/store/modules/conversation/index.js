@@ -1,10 +1,15 @@
-import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
+import {
+  CONVERSATIONTYPE,
+  GET_MESSAGE_LIST,
+  HISTORY_MESSAGE_COUNT,
+} from "@/store/mutation-types";
 import { addTimeDivider } from "@/utils/addTimeDivider";
 import {
   getMsgList,
   deleteConversation,
   getConversationProfile,
   setMessageRead,
+  getUnreadMsg,
 } from "@/api/im-sdk-api";
 import { deepClone } from "@/utils/clone";
 
@@ -15,6 +20,7 @@ const getBaseTime = (list) => {
 const conversation = {
   // namespaced: true, //命名空间
   state: {
+    TotalUnreadMsg: 0, // 未读消息总数
     showMsgBox: false, //是否显示输入框
     showCheckbox: false, //是否显示多选框
     isShowModal: false, // @好友弹框
@@ -28,6 +34,8 @@ const conversation = {
     currentMessageList: [], //当前消息列表(窗口聊天消息)
     currentConversation: null, //跳转窗口的属性
     conversationList: [], //会话列表数据
+    currentReplyMsg: null,
+    currentReplyUser: null,
     activetab: "whole",
     outside: "news", // 侧边栏初始状态
   },
@@ -38,7 +46,7 @@ const conversation = {
       switch (type) {
         // 添加消息 首次进入会话是调用
         case CONVERSATIONTYPE.ADD_MESSAGE: {
-          console.log("ADD_MESSAGE_添加消息");
+          console.log("添加消息");
           const { convId, message } = payload;
           state.historyMessageList.set(convId, message);
           if (state.currentConversation) {
@@ -56,7 +64,7 @@ const conversation = {
         }
         // 添加更多消息
         case CONVERSATIONTYPE.ADD_MORE_MESSAGE: {
-          console.log("ADD_MORE_MESSAGE_添加更多消息");
+          console.log("添加更多消息");
           const { convId, messages } = payload;
           let history = state.historyMessageList.get(convId);
           let baseTime = getBaseTime(history);
@@ -70,7 +78,7 @@ const conversation = {
         }
         // 更新消息
         case CONVERSATIONTYPE.UPDATE_MESSAGES: {
-          console.log("UPDATE_MESSAGES_更新消息");
+          console.log("更新消息");
           const { convId, message } = payload;
           let newMessageList = [];
           newMessageList = state.currentMessageList;
@@ -86,7 +94,9 @@ const conversation = {
           const { convId, message } = payload;
           const history = state.historyMessageList.get(convId);
           if (!history) return;
-          const newHistory = history.filter((item) => !item.isTimeDivider && !item.isDeleted);
+          const newHistory = history.filter(
+            (item) => !item.isTimeDivider && !item.isDeleted
+          );
           const newHistoryList = addTimeDivider(newHistory.reverse()).reverse();
           state.historyMessageList.set(convId, newHistoryList);
           state.currentMessageList = newHistoryList;
@@ -112,6 +122,8 @@ const conversation = {
           state.currentMessageList = [];
           state.showMsgBox = false;
           state.showCheckbox = false;
+          state.currentReplyUser = null;
+          state.currentReplyMsg = null;
           break;
         }
         // 加载更多状态
@@ -231,13 +243,16 @@ const conversation = {
     async [GET_MESSAGE_LIST]({ commit, dispatch, state, rootState }, action) {
       let isSDKReady = rootState.user.isSDKReady;
       const { conversationID, type, toAccount } = action;
-      let status = !state.currentMessageList || state.currentMessageList?.length == 0;
+      let status =
+        !state.currentMessageList || state.currentMessageList?.length == 0;
       // 当前会话有值
       if (state.currentConversation && isSDKReady && status) {
-        const { isCompleted, messageList, nextReqMessageID } = await getMsgList({
-          conversationID: conversationID,
-          count: 15,
-        });
+        const { isCompleted, messageList, nextReqMessageID } = await getMsgList(
+          {
+            conversationID: conversationID,
+            count: 15,
+          }
+        );
         // 添加时间
         const addTimeDividerResponse = addTimeDivider(messageList).reverse();
         commit("SET_HISTORYMESSAGE", {
@@ -289,34 +304,38 @@ const conversation = {
     async DELETE_SESSION({ state, commit, dispatch }, action) {
       const { convId } = action;
       const { code } = await deleteConversation({ convId });
-      if (code !== 0) return
-      dispatch("CLEAR_CURRENT_MSG")
+      if (code !== 0) return;
+      dispatch("CLEAR_CURRENT_MSG");
     },
     // 清除当前消息记录
     async CLEAR_CURRENT_MSG({ state, commit }, action) {
       state.currentConversation = null;
       state.currentMessageList = [];
-      commit("SET_SHOW_MSG_BOX", false)
-    }
+      commit("SET_SHOW_MSG_BOX", false);
+    },
+    // 获取未读消息总数
+    async GET_TOTAL_UNREAD_MSG({ state, rootState }) {
+      const isSDKReady = rootState.user.isSDKReady;
+      if (!isSDKReady) return;
+      state.TotalUnreadMsg = await getUnreadMsg();
+    },
   },
   getters: {
     toAccount: (state) => {
-      if (!state.currentConversation || !state.currentConversation.conversationID) {
-        return "";
-      }
-      const { type, conversationID } = state.currentConversation;
+      const { currentConversation: Conve } = state;
+      if (!Conve || !Conve.conversationID) return "";
+      const { type, conversationID: ID } = Conve;
       switch (type) {
         case "C2C":
-          return conversationID.replace("C2C", "");
+          return ID.replace("C2C", "");
         case "GROUP":
-          return conversationID.replace("GROUP", "");
+          return ID.replace("GROUP", "");
         default:
-          return conversationID;
+          return ID;
       }
     },
     tabList(state) {
-      const { activetab } = state;
-      switch (activetab) {
+      switch (state.activetab) {
         case "unread":
           return state.conversationList.filter((t) => t.unreadCount > 0);
         case "mention":

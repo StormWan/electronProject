@@ -4,6 +4,7 @@ import tim from "@/utils/im-sdk/tim";
 import storage from "storejs";
 import store from "@/store";
 import emitter from "@/utils/mitt-bus";
+
 function kickedOutReason(type) {
   switch (type) {
     case TIM.TYPES.KICKED_OUT_MULT_ACCOUNT:
@@ -23,6 +24,8 @@ function checkoutNetState(state) {
     case TIM.TYPES.NET_STATE_CONNECTING:
       return { message: "当前网络不稳定", type: "warning" };
     case TIM.TYPES.NET_STATE_DISCONNECTED:
+      store.dispatch("LOG_OUT");
+      store.dispatch("TIM_LOG_OUT");
       return { message: "当前网络不可用", type: "error" };
     default:
       return "";
@@ -36,11 +39,9 @@ export default class TIMProxy {
   // 静态方法
   constructor() {
     this.userProfile = {}; // IM用户信息
-    this.isLogin = false; // IM登陆状态
     this.isSDKReady = false; // TIM SDK 是否 ready
-    this.userID = 0;
+    this.userID = "";
     this.userSig = "";
-    this.sdkAppID = 0;
     this.tim = null;
     this.TIM = null;
     // this.init();
@@ -74,7 +75,7 @@ export default class TIMProxy {
   }
   // 初始化
   init() {
-    console.log("TIMProxy init")
+    console.log("TIMProxy init");
     this.tim = tim;
     this.TIM = TIM;
     // 监听SDK
@@ -108,14 +109,14 @@ export default class TIMProxy {
     tim.on(TIM.EVENT.FRIEND_GROUP_LIST_UPDATED, this.onFriendGroupListUpdated);
   }
   onReadyStateUpdate({ name }) {
-    const isSDKReady = name === TIM.EVENT.SDK_READY ? true : false;
+    const isSDKReady = name === TIM.EVENT.SDK_READY;
     store.commit("toggleIsSDKReady", isSDKReady);
-    if (isSDKReady) {
-      store.dispatch("GET_MYPROFILE");
-    }
+    if (!isSDKReady) return;
+    store.dispatch("GET_MY_PROFILE");
   }
   onUpdateConversationList({ data, name }) {
-    console.log(data, "onUpdateConversationList_会话列表更新");
+    console.log(data, "会话列表更新");
+    store.dispatch("GET_TOTAL_UNREAD_MSG");
     store.commit("SET_CONVERSATION", {
       type: "REPLACE_CONV_LIST",
       payload: data,
@@ -160,7 +161,7 @@ export default class TIMProxy {
     store.commit("updataScroll");
   }
   onMessageRevoked({ data, name }) {
-    console.log(data, "onMessageRevoked_撤回消息");
+    console.log(data, "撤回消息");
     store.commit("SET_HISTORYMESSAGE", {
       type: "RECALL_MESSAGE",
       payload: {
@@ -170,7 +171,7 @@ export default class TIMProxy {
     });
   }
   onUpdateGroupList({ data, name }) {
-    console.log(data, "onUpdateGroupList_群组列表更新");
+    console.log(data, "群组列表更新");
     // commit('updateGroupList', data)
   }
   onKickOut({ data }) {
@@ -183,6 +184,7 @@ export default class TIMProxy {
     store.dispatch("TIM_LOG_OUT");
   }
   onError({ data }) {
+    console.log(data);
     if (data.message !== "Network Error") {
       store.commit("showMessage", {
         message: data.message,

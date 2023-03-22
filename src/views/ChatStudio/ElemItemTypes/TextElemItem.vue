@@ -1,6 +1,10 @@
 <template>
   <div class="message-view__item--text">
     <template v-if="message.conversationType == 'GROUP' || 'C2C'">
+      <ReplyElem
+        v-if="message.cloudCustomData"
+        :originalMsg="JSON.parse(message.cloudCustomData)"
+      />
       <template v-for="item in decodeText(message.payload.text)" :key="item">
         <span
           v-if="item.name === 'text'"
@@ -11,7 +15,12 @@
         >
           <analysis-url :text="item.text" />
         </span>
-        <img class="emoji" v-else-if="item.name === 'img'" :src="item.src" alt="表情包" />
+        <img
+          class="emoji"
+          v-else-if="item.name === 'img'"
+          :src="item.src"
+          alt="表情包"
+        />
       </template>
     </template>
   </div>
@@ -20,6 +29,7 @@
 <script setup>
 import { decodeText } from "@/utils/decodeText";
 import { toRefs, h } from "vue";
+import ReplyElem from "./ReplyElem.vue";
 const reg =
   /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
 // eslint-disable-next-line no-undef
@@ -30,6 +40,7 @@ const props = defineProps({
   },
 });
 const { message } = toRefs(props);
+console.log(message);
 // 标签转义
 function html2Escape(str) {
   return str.replace(/[<>&"]/g, function (c) {
@@ -91,10 +102,12 @@ function AnalysisUrl(props) {
   padding: 10px 14px;
   box-sizing: border-box;
   border-radius: 3px;
+  word-break: break-all;
   :deep(.linkUrl) {
     color: blue;
     cursor: pointer;
     text-decoration: underline;
+    word-wrap: break-word;
   }
 }
 .emoji {

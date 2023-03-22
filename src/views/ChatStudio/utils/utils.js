@@ -1,5 +1,12 @@
 import useClipboard from "vue-clipboard3";
 import TIM from "tim-js-sdk";
+import {
+  CreateTextMsg,
+  CreateTextAtMsg,
+  CreateFiletMsg,
+  CreateImgtMsg,
+  sendMsg,
+} from "@/api/im-sdk-api";
 
 const { toClipboard } = useClipboard();
 
@@ -33,7 +40,7 @@ export const dragControllerDiv = (node) => {
       document.onmouseup = null;
       svgResize.releaseCapture && svgResize.releaseCapture();
       // 手动更新滚动条高度
-      node.UpdateScrollbar();
+      node.updateScrollbar();
     };
     svgResize.setCapture && svgResize.setCapture();
     return false;
@@ -82,5 +89,42 @@ export const GroupSystemNotice = (message) => {
       return `${message.payload.operatorID}拒接加群：${groupName}`;
     case 255:
       return "自定义群系统通知: " + message.payload.userDefinedField;
+  }
+};
+
+export const renderFileIcon = (fileType = "") => {
+  let type;
+  if (fileType == "xlsx" || fileType == "xls") {
+    type = "表格";
+  } else if (fileType == "doc" || fileType == "docx") {
+    type = "文档";
+  } else if (fileType == "pptx" || fileType == "ppt") {
+    type = "ppt";
+  } else if (fileType == "rar" || fileType == "zip") {
+    type = "压缩包";
+  } else if (fileType == "txt") {
+    type = "txt";
+  } else if (fileType == "pdf") {
+    type = "pdf";
+  } else {
+    type = "通用";
+  }
+  return require(`@/assets/message/${type}.png`);
+};
+
+export const getMsgElemItem = (type, data, videoInfoList) => {
+  switch (type) {
+    case "text": {
+      return "";
+    }
+    case "block-video": {
+      return "";
+    }
+    case "block-file": {
+      return "";
+    }
+    case "block-image": {
+      return "";
+    }
   }
 };

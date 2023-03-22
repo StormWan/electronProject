@@ -1,11 +1,11 @@
+import { getGroupProfile, deleteConversation } from "@/api/im-sdk-api/index";
 import {
-  getGroupMemberList,
-  getGroupProfile,
   getGroupList,
-  deleteConversation,
-} from "@/api/im-sdk-api/index";
-
-import { quitGroup, createGroup, dismissGroup } from "@/api/im-sdk-api/group";
+  getGroupMemberList,
+  quitGroup,
+  createGroup,
+  dismissGroup,
+} from "@/api/im-sdk-api/group";
 
 export default {
   // namespaced: true,
@@ -52,20 +52,25 @@ export default {
       state.isShowAddBook = status;
     },
     setPopoverStatus(state, payload) {
-      const { status, seat } = payload;
+      const { status, seat, cardData } = payload;
       state.popover = status;
       state.seat = seat;
+      state.cardData = cardData;
+    },
+    setGroupStatus(state, status) {
+      state.groupDrawer = status;
     },
   },
   actions: {
     async getGroupMemberList({ state, commit, getters }, payload) {
       const groupID = getters.toAccount;
-      const { memberList, offset } = await getGroupMemberList({ groupID });
+      const { memberList, code } = await getGroupMemberList({ groupID });
       state.currentMemberList = memberList;
     },
     async getGroupList({ state }, payload) {
-      const list = await getGroupList();
-      state.groupList = list;
+      const { code, groupList } = await getGroupList();
+      if (code !== 0) return;
+      state.groupList = groupList;
     },
     // 退出群聊
     async QUIT_GROUP({ state, dispatch }, payload) {

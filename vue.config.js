@@ -68,10 +68,10 @@ module.exports = {
       //     chunkFilename: `static/css/[name].css`,
       //   },
       // ]);
-      // const analyzer = new BundleAnalyzerPlugin({
-      //   analyzerPort: 9999
-      // })
-      // config.plugin('webpack-bundle-analyzer').use(analyzer)
+      const analyzer = new BundleAnalyzerPlugin({
+        analyzerPort: 9999,
+      });
+      config.plugin("webpack-bundle-analyzer").use(analyzer);
     }
     // svg-sprite-loader 配置
     const svgRule = config.module.rule("svg"); // 找到svg-loader
@@ -85,6 +85,16 @@ module.exports = {
 
     // 根路径
     config.resolve.alias.set("@", resolve("src"));
+
+    // // 删除预加载
+    // config.plugins.delete('preload');
+    // config.plugins.delete('prefetch');
+    // // 压缩代码
+    // config.optimization.minimize(true);
+    // // 分割代码
+    // config.optimization.splitChunks({
+    //   chunks: 'all',
+    // });
 
     config.plugin("html").tap((args) => {
       args[0].title = title; // 修改标题
