@@ -109,6 +109,9 @@ export function timeFormat(timestamp, mustIncludeTime = false) {
     // 不同年
     ret = formatDate(srcDate, "yyyy/M/d") + timeExtraStr; // 一周以上，显示年月日
   }
+  if (timestamp == 0) {
+    ret = "刚刚";
+  }
   return ret;
 }
 

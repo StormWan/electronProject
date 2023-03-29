@@ -7,7 +7,7 @@
         </div>
       </template>
       <span style="font-size: 15px">
-        Pure-Admin 是一个基于Vue3、Element-Plus的后台管理模板
+        {{ name }} 是一个基于Vue3、Element-Plus的后台管理模板
       </span>
     </el-card>
     <el-card class="style-card" shadow="hover">
@@ -27,16 +27,11 @@
         >
           <el-tag>{{ lastBuildTime }}</el-tag>
         </el-descriptions-item>
-        <!-- <el-descriptions-item label="文档地址" label-align="left" align="left">
-          <a target="_blank">
+        <el-descriptions-item label="文档地址" label-align="left" align="left">
+          <a>
             <span class="style-color">文档地址</span>
           </a>
-        </el-descriptions-item> -->
-        <!-- <el-descriptions-item label="预览地址" label-align="left" align="left">
-          <a href="https://github.com/Hyk260" target="_blank">
-            <span class="style-color">预览地址</span>
-          </a>
-        </el-descriptions-item> -->
+        </el-descriptions-item>
         <el-descriptions-item label="QQ交流群" label-align="left" align="left">
           <a href="https://jq.qq.com/?_wv=1027&k=Cd4Ihd2J" target="_blank">
             <span class="style-color">

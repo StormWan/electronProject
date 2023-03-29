@@ -18,7 +18,6 @@
     </el-button>
     <el-button type="primary" @click="test1">获取群组列表</el-button>
     <el-button type="primary" @click="test2"> 查询帐号 </el-button>
-    <el-button type="primary" @click="refresh"> Refresh </el-button>
 
     <div v-for="item in groupList" :key="item.groupID">
       <p @click="handleGroupClick(item.groupID)">
@@ -44,10 +43,8 @@ import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { setCookies, getCookies } from "@/utils/Cookies";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useToggle } from "@/utils/hooks/index";
-import axios from "axios";
+import { chatGpt } from "@/api/index";
 import io from "socket.io-client";
-
-const variable = process.env;
 
 export default defineComponent({
   name: "Test",
@@ -88,13 +85,13 @@ export default defineComponent({
         {
           title: "环境变量",
           onclick: () => {
-            console.log(variable);
+            console.log(process.env);
           },
         },
         {
           title: "openapi",
-          onclick: () => {
-            this.callApi();
+          onclick: async () => {
+            await this.callApi();
           },
         },
       ],
@@ -130,47 +127,14 @@ export default defineComponent({
       this.TAGGLE_OUE_SIDE("news");
       this.CHEC_OUT_CONVERSATION({ convId: `GROUP${groupID}` });
     },
-    refresh() {},
-    fileupload() {
-      console.log(123);
-    },
-    handleonClick(key) {
-      console.log(key);
-    },
-    callApi() {
+    fileupload() {},
+    async callApi() {
       console.log(process.env.VUE_APP_API_URL);
       console.log(process.env.VUE_APP_API_KEY);
-      // axios.defaults.withCredentials = true;
-      const apiKey = process.env.VUE_APP_API_KEY;
-      const prompt = "你好 叫什么名字";
-
-      axios.defaults.headers.common["Authorization"] = `Bearer ${apiKey}`;
-      axios.defaults.headers.post["Content-Type"] = "application/json";
-      axios
-        .post(
-          process.env.VUE_APP_API_URL,
-          {
-            prompt: prompt,
-            max_tokens: 128,
-          }
-          // {
-          //   headers: {
-          //     Authorization: `Bearer ${process.env.VUE_APP_API_KEY}`,
-          //     "Access-Control-Allow-Credentials": "true",
-          //     "Access-Control-Allow-Origin": "http://localhost:8082",
-          //   },
-          // }
-        )
-        .then((response) => {
-          console.log(response.data.choices[0].text);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     },
   },
   setup(props, { attrs, emit, expose, slots }) {
-    // const state = reactive({ text: "" });
+    const data = reactive({ text: "" });
     const { theme, setTheme } = useDataThemeChange();
     const [state, setState] = useToggle();
 
@@ -182,7 +146,7 @@ export default defineComponent({
       theme,
       setTheme,
       accountCheck,
-      // ...toRefs(state),
+      ...toRefs(data),
     };
   },
 });

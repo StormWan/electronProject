@@ -3,8 +3,6 @@ node_modules
 /server
 /dist
 
-yarn.lock
-
 # local env files
 *.d.ts
 .env.local 

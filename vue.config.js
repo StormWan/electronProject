@@ -29,10 +29,10 @@ const resolve = (dir) => {
 };
 
 module.exports = {
-  // 是否在保存的时候检查
+  // 是否开启 eslint 校验
   lintOnSave: false,
   // 开发以及生产环境的路径配置
-  publicPath: production ? "/" : "/",
+  publicPath: process.env.VUE_APP_PUBLIC_PATH,
   // 打包时输出的文件目录
   outputDir: "dist",
   //是否为生产环境构建生成 source map?
@@ -68,10 +68,10 @@ module.exports = {
       //     chunkFilename: `static/css/[name].css`,
       //   },
       // ]);
-      const analyzer = new BundleAnalyzerPlugin({
-        analyzerPort: 9999,
-      });
-      config.plugin("webpack-bundle-analyzer").use(analyzer);
+      // const analyzer = new BundleAnalyzerPlugin({
+      //   analyzerPort: 9999,
+      // });
+      // config.plugin("webpack-bundle-analyzer").use(analyzer);
     }
     // svg-sprite-loader 配置
     const svgRule = config.module.rule("svg"); // 找到svg-loader

@@ -286,3 +286,11 @@ export const deleteConversation = async (params) => {
     ID,
   };
 };
+// 设置自己的自定义状态
+export const setSelfStatus = (status) => {
+  const { code, data } = tim.setSelfStatus({ customStatus: status });
+};
+// 查询自己的用户状态
+export const getUserStatus = (id) => {
+  const { code, data } = tim.getUserStatus({ userIDList: [id] });
+};

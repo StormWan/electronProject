@@ -12,7 +12,7 @@ const getConfig = (key) => {
     const arr = key.split(".");
     if (arr && arr.length) {
       let data = config;
-      arr.forEach(v => {
+      arr.forEach((v) => {
         if (data && typeof data[v] !== "undefined") {
           data = data[v];
         } else {
@@ -30,7 +30,7 @@ export const getServerConfig = async (app) => {
   app.config.globalProperties.$config = getConfig();
   return axios({
     method: "get",
-    url: `${VUE_APP_PUBLIC_PATH}serverConfig.json`
+    url: `${VUE_APP_PUBLIC_PATH}serverConfig.json`,
   })
     .then(({ data: config }) => {
       let $config = app.config.globalProperties.$config;

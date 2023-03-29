@@ -42,6 +42,7 @@ import { useState } from "@/utils/hooks/useMapper";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
 import config from "@/config/defaultSettings";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
+import { setSelfStatus, getUserStatus } from "@/api/im-sdk-api/index";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   // cardData: {

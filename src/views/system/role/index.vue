@@ -1,141 +1,172 @@
 <template>
-  <div class="content-role content-wrap">
-    <div class="Role-top">
-      <el-form
-        label-width="100px"
-        :model="formLabelAlign"
-        style="max-width: 460px"
+  <el-scrollbar>
+    <div class="content-wrap">
+      <el-row>
+        <el-col :span="24" style="margin-bottom: 24px">
+          <el-card>
+            <template #header>
+              <div class="style-header">
+                <el-form
+                  label-width="100px"
+                  :model="formLabelAlign"
+                  class="flex"
+                >
+                  <el-form-item label="角色名称">
+                    <el-input
+                      v-model="formLabelAlign.name"
+                      placeholder="请输入角色名称"
+                    />
+                  </el-form-item>
+                  <el-form-item label="角色标识">
+                    <el-input
+                      v-model="formLabelAlign.region"
+                      placeholder="请输入角色标识"
+                    />
+                  </el-form-item>
+                  <el-form-item label="状态">
+                    <el-input v-model="formLabelAlign.type" />
+                  </el-form-item>
+                </el-form>
+              </div>
+            </template>
+            <el-skeleton animated :rows="12" :loading="false">
+              <template #default>
+                <div class="mb-5">
+                  <el-button size="small" plain @click="AddRoleBtn">
+                    新增角色
+                  </el-button>
+                  <el-button
+                    v-show="ShowDelBtn"
+                    size="small"
+                    type="danger"
+                    @click="Deletelot"
+                  >
+                    删除角色
+                  </el-button>
+                </div>
+                <!-- 表格 -->
+                <el-table
+                  border
+                  height="410"
+                  :data="tableData"
+                  style="width: 100%"
+                  tooltip-effect="dark"
+                  @selection-change="handleSelectionChange"
+                >
+                  <el-table-column type="selection" />
+                  <el-table-column
+                    prop="roleName"
+                    label="角色名称"
+                    width="200"
+                  />
+                  <el-table-column prop="info" label="说明" width="200" />
+                  <el-table-column
+                    prop="createTime"
+                    label="创建时间"
+                    width="200"
+                  >
+                    <template #default="scope">
+                      {{ formatTime(scope.row.createTime) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="updateTime"
+                    label="更新时间"
+                    sortable
+                    width="200"
+                  >
+                    <template #default="scope">
+                      {{ formatTime(scope.row.updateTime) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="isDefaultRole"
+                    label="角色类型"
+                    width="200"
+                  >
+                    <template #default="scope">
+                      <el-tag :type="scope.row.isDefaultRole ? '' : 'success'">
+                        {{ scope.row.isDefaultRole ? "内置" : "自定义" }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column fixed="right" label="操作">
+                    <template #default="scope">
+                      <el-button
+                        type="text"
+                        size="small"
+                        @click="DelColumn(scope, tableData)"
+                      >
+                        删除
+                      </el-button>
+                      <el-button
+                        type="text"
+                        size="small"
+                        @click="ModifyBtn(scope, tableData)"
+                      >
+                        修改
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <!-- 分页 -->
+                <el-pagination
+                  small
+                  background
+                  align="center"
+                  class="mt-5"
+                  :default-current-page="5"
+                  :total="tableData.length"
+                  :page-sizes="[10, 15, 20]"
+                  @size-change="handleSizeChange"
+                  @current-change="handlePageChange"
+                  layout="total, sizes, prev, pager, next, jumper"
+                >
+                </el-pagination>
+              </template>
+            </el-skeleton>
+          </el-card>
+        </el-col>
+      </el-row>
+      <!-- 弹框 -->
+      <el-dialog
+        v-model="dialogFormVisible"
+        :title="infoText ? '添加角色' : '编辑角色'"
       >
-        <el-form-item label="角色名称">
-          <el-input
-            v-model="formLabelAlign.name"
-            placeholder="请输入角色名称"
-          />
-        </el-form-item>
-        <el-form-item label="角色标识">
-          <el-input
-            v-model="formLabelAlign.region"
-            placeholder="请输入角色标识"
-          />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-input v-model="formLabelAlign.type" />
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="role-header">
-      <header>
-        <div>
-          <el-button type="primary" @click="AddRoleBtn"> 新增角色 </el-button>
-          <el-button v-show="ShowDelBtn" type="danger" @click="Deletelot">
-            删除角色
-          </el-button>
-        </div>
-      </header>
-      <!-- 表格 -->
-      <el-table
-        border
-        height="410"
-        :data="tableData"
-        style="width: 100%"
-        tooltip-effect="dark"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" />
-        <el-table-column prop="roleName" label="角色名称" width="200" />
-        <el-table-column prop="info" label="说明" width="200" />
-        <el-table-column prop="createTime" label="创建时间" width="200">
-          <template #default="scope">
-            {{ formatTime(scope.row.createTime) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="updateTime"
-          label="更新时间"
-          sortable
-          width="200"
+        <el-form
+          ref="ruleFormRef"
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          label-width="120px"
+          class="demo-ruleForm"
         >
-          <template #default="scope">
-            {{ formatTime(scope.row.updateTime) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="isDefaultRole" label="角色类型" width="200">
-          <template #default="scope">
-            <el-tag :type="scope.row.isDefaultRole ? '' : 'success'">
-              {{ scope.row.isDefaultRole ? "内置" : "自定义" }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作">
-          <template #default="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="DelColumn(scope, tableData)"
-            >
-              删除
+          <el-form-item label="姓名" prop="name">
+            <el-input
+              v-model="ruleForm.name"
+              autocomplete="off"
+              style="width: 216px"
+            />
+          </el-form-item>
+          <el-form-item label="说明" prop="info">
+            <el-select v-model="ruleForm.info" placeholder="角色类型">
+              <el-option label="普通用户" value="普通用户" />
+              <el-option label="管理员" value="管理员" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="resetForm(ruleFormRef)"> 重置 </el-button>
+            <el-button @click="dialogFormVisible = false"> 取消 </el-button>
+            <el-button type="primary" @click="determine(infoText, ruleFormRef)">
+              确定
             </el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="ModifyBtn(scope, tableData)"
-            >
-              修改
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        small
-        background
-        align="center"
-        class="pagination"
-        :default-current-page="5"
-        :total="tableData.length"
-        :page-sizes="[10, 15, 20]"
-        @size-change="handleSizeChange"
-        @current-change="handlePageChange"
-        layout="total, sizes, prev, pager, next, jumper"
-      >
-      </el-pagination>
+          </span>
+        </template>
+      </el-dialog>
     </div>
-
-    <!-- 弹框 -->
-    <el-dialog
-      v-model="dialogFormVisible"
-      :title="infoText ? '添加角色' : '编辑角色'"
-    >
-      <el-form
-        ref="ruleFormRef"
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        label-width="120px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" autocomplete="off" style="width:216px" />
-        </el-form-item>
-        <el-form-item label="说明" prop="info">
-          <el-select v-model="ruleForm.info" placeholder="角色类型">
-            <el-option label="普通用户" value="普通用户" />
-            <el-option label="管理员" value="管理员" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="resetForm(ruleFormRef)"> 重置 </el-button>
-          <el-button @click="dialogFormVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click="determine(infoText, ruleFormRef)">
-            确定
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script setup>
@@ -151,7 +182,7 @@ import { chunk } from "lodash";
 
 const ruleFormRef = ref();
 const tableData = ref([]);
-const PageData = ref([])
+const PageData = ref([]);
 const dialogTableVisible = ref(false);
 const dialogFormVisible = ref(false);
 const infoText = ref(true);
@@ -175,7 +206,8 @@ const formLabelAlign = reactive({
 const rules = reactive({
   name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   info: [],
-  age: [{ validator: checkAge, trigger: "blur" }],
+  age: [],
+  // { validator: checkAge, trigger: "blur" }
 });
 
 function handleSelectionChange(val) {
@@ -187,7 +219,7 @@ function handleSelectionChange(val) {
 // 每页显示个数
 function handleSizeChange(val) {
   console.log(val);
-  PageData.value = chunk(tableData.value,val)
+  PageData.value = chunk(tableData.value, val);
   // console.log(PageData.value)
 }
 
@@ -337,10 +369,7 @@ const checkInfo = (rule, value, callback) => {
     callback();
   }
 };
-
-/**
- * 表单内容重置
- */
+// 表单内容重置
 const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
@@ -348,36 +377,9 @@ const resetForm = (formEl) => {
 </script>
 
 <style lang="scss" scoped>
-.pagination {
-  padding: 10px 0;
-}
-.Role-top {
-  background: var(--color-body-bg);
-
-  .el-form {
-    max-width: 100% !important;
-    display: flex;
-    width: 100%;
-    padding-top: 16px;
-    .el-input {
-      width: auto;
-    }
-  }
-  .el-form-item {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-right: 32px;
-  }
-}
-
-.role-header {
-  margin-top: 24px;
-  header {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    padding: 0 8px;
-    background: var(--color-body-bg);
+.style-header {
+  :deep(.el-form-item) {
+    margin-bottom: 0px;
   }
 }
 </style>

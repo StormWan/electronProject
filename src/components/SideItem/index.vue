@@ -50,7 +50,7 @@ const props = defineProps({
 const { tree } = toRefs(props);
 
 const { unreadMsg } = useState({
-  unreadMsg: (state) => state.conversation.TotalUnreadMsg,
+  unreadMsg: (state) => state.conversation.totalUnreadMsg,
 });
 
 const fn = (item) => {

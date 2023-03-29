@@ -155,16 +155,14 @@ const {
 
 const NameComponent = (props) => {
   const { item } = props;
-  // 撤回消息 群提示消息 不显示
   const { isRevoked, type, from, nick, conversationType } = item;
+  // 撤回消息 群提示消息 不显示
   const show = isRevoked || type == "TIMGroupTipElem";
   // 系统消息
   const isSystem = from == "@TIM#SYSTEM";
+  const isFound = from == "@TLS#NOT_FOUND";
   // 非单聊消息
-  const isGroup = conversationType !== "C2C";
-  // type 元素的类型
-  // propsOrChildren 数据对象, 这里主要表示(props, attrs, dom props, class 和 style)
-  // children 子节点
+  const isGroup = conversationType !== "C2C" && !isFound;
   return h(
     "div",
     {
@@ -174,6 +172,7 @@ const NameComponent = (props) => {
     [
       isSystem ? h("span", { class: "isSystem" }, "系统") : null,
       isGroup ? h("span", { class: "isGroup" }, nick) : null,
+      isFound ? h("span", { class: "isFound" }, "管理员") : null,
     ]
   );
 };
@@ -572,6 +571,9 @@ $self-msg-color: #c2e8ff;
   overflow-x: hidden;
   padding: 0 16px 30px 16px;
   box-sizing: border-box;
+  .picture {
+    cursor: pointer;
+  }
 }
 .style-select {
   border-radius: 3px;

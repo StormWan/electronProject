@@ -7,15 +7,11 @@ import { ElMessage } from "element-plus";
 import NProgress from "@/utils/progress";
 import store from "@/store";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-import config from "@/config/defaultSettings";
 import { setCookies } from "@/utils/Cookies";
-const { BASE_API } = config;
-
-console.log(BASE_API, "BASE_API");
 const { formats, parse, stringify } = qs;
 
 const service = axios.create({
-  baseURL: BASE_API, // 公共地址
+  baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
   timeout: 6000, // 请求超时时间
   // headers: {
   //   Accept: "application/json, text/plain, */*",

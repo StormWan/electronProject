@@ -3,7 +3,9 @@
     <template v-if="message.conversationType == 'GROUP' || 'C2C'">
       <ReplyElem
         v-if="message.cloudCustomData"
-        :originalMsg="JSON.parse(message.cloudCustomData)"
+        :originalMsg="
+          message.cloudCustomData && JSON.parse(message.cloudCustomData)
+        "
       />
       <template v-for="item in decodeText(message.payload.text)" :key="item">
         <span
@@ -28,11 +30,11 @@
 
 <script setup>
 import { decodeText } from "@/utils/decodeText";
-import { toRefs, h } from "vue";
+import { toRefs, h, defineProps } from "vue";
 import ReplyElem from "./ReplyElem.vue";
 const reg =
   /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
-// eslint-disable-next-line no-undef
+
 const props = defineProps({
   message: {
     type: Object,
@@ -40,7 +42,7 @@ const props = defineProps({
   },
 });
 const { message } = toRefs(props);
-console.log(message);
+console.log(message.value.cloudCustomData);
 // 标签转义
 function html2Escape(str) {
   return str.replace(/[<>&"]/g, function (c) {
@@ -74,24 +76,6 @@ function AnalysisUrl(props) {
       })
     : text;
 }
-
-// const isemote = computed(() => {
-//   const { conversationType, payload } = message;
-//   let isconv = conversationType == "GROUP" || "C2C";
-//   if (payload.text.indexOf("[") != -1 && isconv) {
-//     return true;
-//   }
-//   return false;
-// });
-
-// const lookText = computed(() => {
-
-//   if (isemote.value) {
-//     return decodeText(message.payload.text);
-//   }
-//   return [];
-// });
-// console.log(lookText);
 </script>
 
 <style lang="scss" scoped>

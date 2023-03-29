@@ -15,7 +15,7 @@ import {
 } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 export default defineComponent({
-  name: "Componentname",
+  name: "Checkbox",
   components: {},
   computed: {
     ...mapState({

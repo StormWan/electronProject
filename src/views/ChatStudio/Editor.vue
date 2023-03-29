@@ -82,6 +82,7 @@ import {
 import { GET_MESSAGE_LIST } from "@/store/mutation-types";
 import { SendMessageCd } from "@/api/index";
 import { accountCheck, restSendMsg } from "@/api/rest-api";
+import { chatGpt } from "@/api/index";
 import {
   CreateTextMsg,
   CreateTextAtMsg,
@@ -389,14 +390,10 @@ const sendMessage = async () => {
   // return;
   // 发送消息
   let { code, message } = await sendMsg(TextMsg);
+  chatGpt({ To: toAccount, From: message.from, content: message.payload.text });
   // restSendMsg({ To: toAccount, From: message.from });
   console.log(message, "sendMsg");
   if (code == 0) {
-    // SendMessageCd({
-    //   sender: data.message.from,
-    //   receiver: toAccount,
-    //   message: text,
-    // });
     clearInputInfo();
     commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",

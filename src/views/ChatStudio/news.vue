@@ -165,8 +165,8 @@ onUnmounted(() => {
   position: relative;
   height: 5px;
   width: 100%;
-  cursor: s-resize;
-  // cursor: row-resize;
+  // cursor: s-resize;
+  cursor: row-resize;
   font-size: 12px;
 }
 .back-to-the-bottom {

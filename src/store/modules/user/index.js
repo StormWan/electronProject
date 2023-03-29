@@ -44,6 +44,8 @@ const user = {
       Object.assign(state, {
         currentUserProfile: {},
         isSDKReady: false,
+        userID: "",
+        userSig: "",
       });
     },
     showMessage(state, options) {
@@ -68,7 +70,6 @@ const user = {
       if (code == 0) {
         commit("showMessage", { message: "IM初始化成功!" });
         commit("getUserInfo", { userID, userSig });
-        // commit("toggleIsLogin", true);
         console.log({ userID, userSig }, "getUserInfo");
       } else {
         console.log("err");
@@ -78,23 +79,20 @@ const user = {
     async TIM_LOG_OUT({ commit }) {
       const result = await TIM_logout();
       console.log(result, "TIM_LOG_OUT");
-      // commit("toggleIsLogin", false);
       commit("reset");
     },
     // 获取个人资料
     async GET_MY_PROFILE({ commit }) {
-      let result = await getMyProfile();
+      const result = await getMyProfile();
       commit("updateCurrentUserProfile", result);
     },
     // 重新登陆
     LOG_IN_AGAIN({ state, rootState, dispatch }) {
-      let userID = rootState.data?.user?.username;
-      let userSig = rootState.data?.user?.userSig;
-      let isSDKReady = state?.isSDKReady;
+      const { username: userID, userSig } = rootState.data.user || {};
+      console.log({ userID, userSig }, "LOG_IN_AGAIN");
       setTimeout(() => {
         const token = getCookies(ACCESS_TOKEN);
         if (!token) {
-          dispatch("TIM_LOG_OUT");
           dispatch("LOG_OUT");
           return;
         }

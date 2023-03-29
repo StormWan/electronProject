@@ -6,7 +6,7 @@
     <div class="flex">
       <div
         class="message-info-add"
-        v-show="Conver.type == 'GROUP'"
+        v-show="Conver.type == 'GROUP' && false"
         title="添加成员"
       >
         <svg-icon iconClass="tianjia" class="icon-hover" />

@@ -20,7 +20,7 @@ const getBaseTime = (list) => {
 const conversation = {
   // namespaced: true, //命名空间
   state: {
-    TotalUnreadMsg: 0, // 未读消息总数
+    totalUnreadMsg: 0, // 未读消息总数
     showMsgBox: false, //是否显示输入框
     showCheckbox: false, //是否显示多选框
     isShowModal: false, // @好友弹框
@@ -315,9 +315,9 @@ const conversation = {
     },
     // 获取未读消息总数
     async GET_TOTAL_UNREAD_MSG({ state, rootState }) {
-      const isSDKReady = rootState.user.isSDKReady;
+      const { isSDKReady } = rootState.user || {};
       if (!isSDKReady) return;
-      state.TotalUnreadMsg = await getUnreadMsg();
+      state.totalUnreadMsg = await getUnreadMsg();
     },
   },
   getters: {
