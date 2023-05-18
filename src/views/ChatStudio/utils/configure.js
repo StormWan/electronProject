@@ -13,14 +13,6 @@ export const toolbarConfig = {
   /* 隐藏哪些菜单 */
   excludeKeys: [],
 };
-// 显示 modal 弹框
-function showModal() {
-  store.commit("SET_MENTION_MODAL", true);
-}
-// 隐藏 modal
-function hideModal() {
-  store.commit("SET_MENTION_MODAL", false);
-}
 // 编辑器配置
 export const editorConfig = {
   placeholder: "", // 请输入内容...
@@ -32,8 +24,25 @@ export const editorConfig = {
       hideModal, // 必须
     },
   },
+  hoverbarKeys: {
+    link: {
+      // 重写 link 元素的 hoverbar
+      menuKeys: ["editLink", "unLink", "viewLink"],
+    },
+    image: {
+      // 清空 image 元素的 hoverbar
+      // menuKeys: [],
+    },
+  },
 };
-
+// 显示 modal 弹框
+function showModal() {
+  store.commit("SET_MENTION_MODAL", true);
+}
+// 隐藏 modal
+function hideModal() {
+  store.commit("SET_MENTION_MODAL", false);
+}
 // 自定义表情
 // editorConfig.MENU_CONF['emotion'] = {
 //   emotions: `😀 😃 😄 🌞 😁 😆 🤖 😅 😂 🤣 😊 😇 🙂 🙃 😉`.split(' ') // 数组
@@ -42,5 +51,3 @@ export const editorConfig = {
 // editorConfig.MENU_CONF['lineHeight'] = {
 //   lineHeightList: ['1', '1.5', '2', '2.5']
 // }
-
-// console.log(editorConfig.MENU_CONF['emotion'])

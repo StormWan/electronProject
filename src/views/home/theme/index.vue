@@ -1,21 +1,17 @@
 <template>
-  <div
-    :class="['app-wrapper', sidebar ? '' : 'style-wrapper']"
-    :style="fnStyle(isActive)"
-  >
-    <!-- v-resize -->
+  <div :class="['app-wrapper', sidebar ? '' : 'style-wrapper']" :style="fnStyle(isActive)" v-resize>
     <Header />
     <main class="app-main">
       <div class="continer-theme">
-        <!-- :include="['editor']" -->
-        <router-view v-slot="{ Component }" :key="$route.fullPath">
-          <transition name="fade-transform" mode="out-in">
-            <keep-alive v-if="$route.meta.keep" max="3">
-              <component v-if="Component" :is="Component" />
+        <!-- :include="['editor']" route :key="route.fullPath"-->
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade-slide" :appear="true" mode="out-in">
+            <keep-alive v-if="route.meta.keep" max="3">
+              <component v-if="Component" :is="Component" :key="route.path" />
               <component v-else :is="CompMap[page.type] || error" />
             </keep-alive>
             <template v-else>
-              <component v-if="Component" :is="Component" />
+              <component v-if="Component" :is="Component" :key="route.path" />
               <component v-else :is="CompMap[page.type] || error" />
             </template>
           </transition>
@@ -26,28 +22,28 @@
 </template>
 
 <script setup>
-import {
-  computed,
-  onMounted,
-  watch,
-  reactive,
-  defineAsyncComponent,
-} from "vue";
+import { computed, onMounted, watch, reactive, defineAsyncComponent } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 import Header from "./Header.vue";
+import emitter from "@/utils/mitt-bus";
+
 import error from "@/views/notfound/index.vue";
 import ChatStudio from "@/views/ChatStudio/index.vue";
 import welcome from "@/views/welcome/index.vue";
 import personal from "@/views/Personal/index.vue";
 import about from "@/views/about/index.vue";
-import elementResizeDetectorMaker from "element-resize-detector";
-import emitter from "@/utils/mitt-bus";
 
 const route = useRoute();
 const router = useRouter();
 const { state, dispatch, commit } = useStore();
+
+const { isActive, sidebar } = useState({
+  isActive: (state) => state.settings.isCollapse,
+  sidebar: (state) => state.settings.sidebar,
+});
+
 const CompMap = {
   home: welcome, //首页
   personal: personal, //个人中心
@@ -58,32 +54,17 @@ const page = reactive({
   type: "",
 });
 
-const { isActive, sidebar } = useState({
-  isActive: (state) => state.settings.isCollapse,
-  sidebar: (state) => state.settings.sidebar,
-});
-const erd = elementResizeDetectorMaker({
-  strategy: "scroll",
-});
+watch(
+  () => route.name,
+  (val) => {
+    page.type = val;
+  },
+  {
+    immediate: true, //立即执行
+    // deep:true // 深度监听
+  }
+);
 
-const VResize = {
-  mounted(el, binding, vnode) {
-    erd.listenTo(el, (elem) => {
-      const width = elem.offsetWidth;
-      const height = elem.offsetHeight;
-      if (binding?.instance) {
-        emitter.emit("resize", { detail: { width, height } });
-      } else {
-        vnode.el.dispatchEvent(
-          new CustomEvent("resize", { detail: { width, height } })
-        );
-      }
-    });
-  },
-  unmounted(el) {
-    erd.uninstall(el);
-  },
-};
 emitter.on("resize", ({ detail }) => {
   const { width } = detail;
   /** width app-wrapper类容器宽度
@@ -104,17 +85,6 @@ emitter.on("resize", ({ detail }) => {
     // });
   }
 });
-
-watch(
-  () => route.name,
-  (val) => {
-    page.type = val;
-  },
-  {
-    immediate: true, //立即执行
-    // deep:true // 深度监听
-  }
-);
 
 const fnStyle = (off) => {
   return `margin-left:${off ? "64px" : "200px"}`;

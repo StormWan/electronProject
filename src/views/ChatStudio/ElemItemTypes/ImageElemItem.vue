@@ -1,12 +1,7 @@
 <template>
   <div class="image_preview" @click="geiPic(url)">
     <!-- :preview-src-list="srcList" -->
-    <el-image
-      :src="url"
-      :preview-src-list="srcList"
-      :initial-index="4"
-      fit="cover"
-    />
+    <el-image :src="url" :preview-src-list="srcList" :initial-index="4" fit="cover" />
   </div>
 </template>
 

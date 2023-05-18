@@ -67,7 +67,7 @@ export default defineComponent({
       visible.value = true;
     };
     // 关闭
-    const handleClose = done => {
+    const handleClose = (done) => {
       done();
     };
     onMounted(() => {});

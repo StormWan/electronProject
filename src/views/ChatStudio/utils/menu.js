@@ -20,6 +20,18 @@ const MENU_LIST = [
     text: "撤回",
   },
   {
+    id: "saveAs",
+    text: "另存为",
+  },
+  // {
+  //   id: "reply",
+  //   text: "回复",
+  // },
+  // {
+  //   id: "forward",
+  //   text: "转发",
+  // },
+  {
     id: "multiSelect",
     text: "多选",
   },
@@ -29,37 +41,12 @@ const MENU_LIST = [
   },
 ];
 
-const RIGHT_CLICK_MENU_LIST = ref([
-  {
-    id: "copy",
-    text: "复制",
-  },
-  {
-    id: "revoke",
-    text: "撤回",
-  },
-  {
-    id: "multiSelect",
-    text: "多选",
-  },
-  {
-    id: "delete",
-    text: "删除",
-  },
-]);
+const RIGHT_CLICK_MENU_LIST = ref([]);
 
 const state = reactive({
-  circleUrl:
-    "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
-  squareUrl:
-    "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+  circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+  squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
 });
 const { circleUrl, squareUrl } = toRefs(state);
 
-export {
-  squareUrl,
-  circleUrl,
-  RIGHT_CLICK_CHAT_LIST,
-  MENU_LIST,
-  RIGHT_CLICK_MENU_LIST,
-};
+export { squareUrl, circleUrl, RIGHT_CLICK_CHAT_LIST, MENU_LIST, RIGHT_CLICK_MENU_LIST };

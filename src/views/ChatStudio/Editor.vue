@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="Editor-style"
-    id="svgDown"
-    v-if="showMsgBox"
-    v-show="!showCheckbox"
-  >
+  <div class="Editor-style" id="svgDown" v-if="showMsgBox" v-show="!showCheckbox">
     <!-- <Toolbar
       class="toolbar"
       :editor="editorRef"
@@ -12,11 +7,7 @@
       :mode="mode"
     /> -->
     <!-- 自定义工具栏 -->
-    <RichToolbar
-      @setEmoj="setEmoj"
-      @setPicture="parsepicture"
-      @setParsefile="parsefile"
-    />
+    <RichToolbar @setToolbar="setToolbar" />
     <Editor
       class="editor-content"
       v-model="valueHtml"
@@ -37,11 +28,7 @@
       @hideMentionModal="hideMentionModal"
       @insertMention="insertMention"
     />
-    <el-tooltip
-      effect="dark"
-      content="按Enter发送消息,Ctrl+Enter换行"
-      placement="left-start"
-    >
+    <el-tooltip effect="dark" content="按Enter发送消息,Ctrl+Enter换行" placement="left-start">
       <el-button class="btn-send" @click="handleEnter()"> 发送 </el-button>
     </el-tooltip>
   </div>
@@ -52,7 +39,6 @@ import "./utils/custom-menu";
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import RichToolbar from "./components/RichToolbar.vue";
-import MultiChoiceBox from "./components/MultiChoiceBox.vue";
 import { toolbarConfig, editorConfig } from "./utils/configure";
 import {
   onBeforeUnmount,
@@ -67,22 +53,18 @@ import {
   nextTick,
 } from "vue";
 import { getImageType } from "@/utils/message-input-utils";
-import { getMsgElemItem } from "./utils/utils";
+import { getMsgElemItem, sendChatMessage } from "./utils/utils";
 import { empty } from "@/utils";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
-// import { generateUUID } from "@/utils/index";
 import MentionModal from "./components/MentionModal.vue";
 import { bytesToSize } from "@/utils/common";
-import {
-  fileImgToBase64Url,
-  dataURLtoFile,
-  urlToBase64,
-} from "@/utils/message-input-utils";
+import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/message-input-utils";
 import { GET_MESSAGE_LIST } from "@/store/mutation-types";
 import { SendMessageCd } from "@/api/index";
 import { accountCheck, restSendMsg } from "@/api/rest-api";
 import { chatGpt } from "@/api/index";
+import { debounce } from "lodash";
 import {
   CreateTextMsg,
   CreateTextAtMsg,
@@ -90,12 +72,11 @@ import {
   CreateImgtMsg,
   sendMsg,
 } from "@/api/im-sdk-api";
+
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
 const messages = ref(null); //编辑器内容 对象格式
 const mode = "simple"; // 'default' 或 'simple'
-// eslint-disable-next-line no-undef
-// const emit = defineEmits(["sendMsgCallback"]);
 
 const { state, getters, dispatch, commit } = useStore();
 const { isOwner } = useGetters(["isOwner"]);
@@ -104,7 +85,6 @@ const {
   historyMessageList,
   showMsgBox,
   showCheckbox,
-  userInfo,
   userProfile,
   isShowModal,
   currentMemberList,
@@ -112,7 +92,6 @@ const {
   currentMemberList: (state) => state.groupinfo.currentMemberList,
   currentConversation: (state) => state.conversation.currentConversation,
   historyMessageList: (state) => state.conversation.historyMessageList,
-  userInfo: (state) => state.data.user,
   userProfile: (state) => state.user.currentUserProfile,
   showCheckbox: (state) => state.conversation.showCheckbox,
   showMsgBox: (state) => state.conversation.showMsgBox,
@@ -120,11 +99,12 @@ const {
 });
 
 const handleCreated = (editor) => {
-  editorRef.value = editor; // 记录 editor 实例，重要！
+  editorRef.value = editor;
 
-  // console.log(editor, "实例");
-  // console.log(editor.getAllMenuKeys());// 查看所有工具栏key
-  // console.log(editor.getConfig());
+  console.log(editor.getConfig());
+  // editor.enable(); //
+  // editor.disable(); // 只读
+  // editor.hidePanelOrModal();
 };
 const insertMention = (id, name) => {
   const editor = editorRef.value;
@@ -142,9 +122,32 @@ const insertMention = (id, name) => {
 const hideMentionModal = () => {
   commit("SET_MENTION_MODAL", false);
 };
+const setToolbar = (item) => {
+  const { data, key } = item;
+  switch (key) {
+    case "setEmoj":
+      setEmoj(data.url, data.item);
+      break;
+    case "setPicture":
+      setPicture(data.files);
+      break;
+    case "setParsefile":
+      setParsefile(data.files);
+      break;
+  }
+};
+// 更新草稿
+const updateDraft = (data) => {
+  console.log(data);
+  console.log(editorRef.value);
+};
+const fnUpdateDraft = debounce((data) => {
+  updateDraft(data);
+}, 300);
 const onChange = (editor) => {
   const content = editor.children;
   messages.value = content;
+  fnUpdateDraft(content);
   // console.log(messages.value, "编辑器内容");
 };
 
@@ -170,7 +173,6 @@ const customAlert = (s, t) => {
 };
 // 粘贴事件
 const customPaste = (editor, event, callback) => {
-  // console.log(editor,"编辑器实例");
   console.log("ClipboardEvent 粘贴事件对象", event);
   // const html = event.clipboardData.getData("text/html"); // 获取粘贴的 html
   const text = event.clipboardData.getData("text/plain"); // 获取粘贴的纯文本
@@ -244,9 +246,22 @@ const parsefile = async (file) => {
 const parsetext = (item) => {
   console.log(item);
 };
-const setEmoj = (data, item) => {
+const setEmoj = (url, item) => {
   const node = { text: item };
   editorRef.value.insertNode(node);
+  editorRef.value.focus(true);
+  // editorRef.value.showProgressBar(100); // 进度条
+
+  // const ImageElement = {
+  //   type: "image",
+  //   class: "img",
+  //   src: url,
+  //   alt: "",
+  //   href: "",
+  //   style: { width: "25px" },
+  //   children: [{ text: "" }],
+  // };
+  // editorRef.value.insertNode(ImageElement);
 };
 const setPicture = (data) => {
   parsepicture(data);
@@ -275,22 +290,11 @@ const handleEnter = () => {
   const editor = editorRef.value;
   const isEmpty = editor.isEmpty(); // 判断当前编辑器内容是否为空
   const { text, aitStr, files, image } = sendMsgBefore();
-  // 获取包含数据属性的元素
-  // const attachmentElem = document.querySelector(
-  //   'span[data-w-e-type="attachment"]'
-  // );
-  // 获取数据属性的值
-  // const link = attachmentElem?.getAttribute("data-link");
 
-  if ((!isEmpty && !empty(text)) || image) {
+  if ((!isEmpty && !empty(text)) || image || aitStr || files) {
     sendMessage();
   } else {
-    if (aitStr || files) {
-      sendMessage();
-    } else {
-      console.log("请输入内容");
-      clearInputInfo();
-    }
+    clearInputInfo();
   }
 };
 // 清空输入框
@@ -309,8 +313,8 @@ const sendMsgBefore = () => {
   let str = valueHtml.value;
   let content = messages.value[0].children;
   const editor = editorRef.value;
-  const text = editorRef.value.getText(); // 纯文本内容
-  const HtmlText = editorRef.value.getHtml(); // 非格式化的 html
+  const text = editor.getText(); // 纯文本内容
+  const HtmlText = editor.getHtml(); // 非格式化的 html
   const image = editor.getElemsByType("image"); // 所有图片
 
   if (str.includes("mention")) {
@@ -341,53 +345,25 @@ const sendMsgBefore = () => {
 };
 // 发送消息
 const sendMessage = async () => {
-  let flag = true;
   let TextMsg = null;
-  const { type, toAccount } = currentConversation.value;
+  const { type, toAccount, conversationID } = currentConversation.value;
   const { text, aitStr, image, aitlist, files } = sendMsgBefore();
-  // return
-  if (files) {
-    const { fileName, src } = files;
-    let file = dataURLtoFile(src, fileName);
-    console.log(file);
-    TextMsg = await CreateFiletMsg({
-      convId: toAccount,
-      convType: type,
-      files: file,
-    });
-    flag = false;
-  }
-  // 图片消息
-  if (image) {
-    console.log(image);
-    // let file = await urlToBase64(image[0].src);
-    let file = dataURLtoFile(image[0].src);
-    console.log(file);
-    TextMsg = await CreateImgtMsg({
-      convId: toAccount,
-      convType: type,
-      image: file,
-    });
-    flag = false;
-  }
-  if (aitStr) {
-    // @消息
-    TextMsg = await CreateTextAtMsg({
-      convId: toAccount,
-      convType: type,
-      textMsg: aitStr,
-      atUserList: aitlist,
-    });
-  } else if (flag) {
-    // 文本消息
-    TextMsg = await CreateTextMsg({
-      convId: toAccount,
-      convType: type,
-      textMsg: text,
-    });
-  }
+  const data = { textMsg: text, aitStr, image, aitlist, files };
+  // console.log(data);
+  TextMsg = await sendChatMessage(toAccount, type, data);
   console.log(TextMsg);
   // return;
+  commit("SET_HISTORYMESSAGE", {
+    type: "UPDATE_MESSAGES",
+    payload: {
+      convId: conversationID,
+      message: TextMsg,
+    },
+  });
+  nextTick(() => {
+    commit("updataScroll");
+    clearInputInfo();
+  });
   // 发送消息
   let { code, message } = await sendMsg(TextMsg);
   chatGpt({ To: toAccount, From: message.from, content: message.payload.text });
@@ -398,7 +374,7 @@ const sendMessage = async () => {
     commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",
       payload: {
-        convId: "",
+        convId: conversationID,
         message: message,
       },
     });
@@ -417,7 +393,9 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 .Editor-style {
+  word-break: break-all;
   height: 206px;
   .toolbar {
     // 表情包
@@ -458,6 +436,9 @@ onBeforeUnmount(() => {
     }
     :deep(.w-e-text-placeholder) {
       top: 2px;
+    }
+    :deep(.w-e-scroll) {
+      @include scrollBar;
     }
   }
 }

@@ -4,6 +4,7 @@ import elementZhLocale from "element-plus/lib/locale/lang/zh-cn";
 export default {
   ...elementZhLocale,
   common: {
+    forward: "转发",
     createGroupChat: "创建群聊",
     language: "语言",
     setup: "设置",

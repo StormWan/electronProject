@@ -5,12 +5,7 @@
     :class="[showMsgBox ? '' : 'style-MsgBox']"
     id="svgTop"
   >
-    <el-scrollbar
-      class="scrollbar-content"
-      ref="scrollbarRef"
-      @scroll="scrollbar"
-      always
-    >
+    <el-scrollbar class="scrollbar-content" ref="scrollbarRef" @scroll="scrollbar" always>
       <div class="message-view" ref="messageViewRef">
         <div
           v-for="(item, index) in currentMessageList"
@@ -30,13 +25,11 @@
               'is-other': !ISown(item),
               'style-choice': showCheckbox,
             }"
-            @click="handleChecked($event, item)"
+            @click="handleChecked($event, item, 'outside')"
+            :id="`choice${item.ID}`"
           >
-            <Checkbox :item="item" @click.stop="handleCilck($event, item)" />
-            <div
-              class="picture"
-              v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'"
-            >
+            <Checkbox :item="item" @click.stop="handleChecked($event, item, 'initial')" />
+            <div class="picture" v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'">
               <el-avatar
                 :size="36"
                 shape="square"
@@ -48,33 +41,49 @@
             <div
               :class="msgOne(item)"
               v-contextmenu:contextmenu
-              @contextmenu.prevent="ContextMenuEvent($event, item)"
+              @contextmenu.prevent="handleContextMenuEvent($event, item)"
             >
               <name-component :item="item" />
               <div :class="Megtype(item.type)" :id="item.ID">
-                <component
-                  :key="item.ID"
-                  :is="loadMsgComponents(item.type, item)"
-                  :message="item"
-                >
+                <component :key="item.ID" :is="loadMsgComponents(item.type, item)" :message="item">
                 </component>
               </div>
             </div>
+            <!-- 消息发送加载状态 -->
+            <Stateful :item="item" :status="item.status" :isown="ISown(item)" />
           </div>
         </div>
       </div>
     </el-scrollbar>
-    <MyPopover />
+    <!-- <MyPopover /> -->
     <contextmenu ref="contextmenu">
       <contextmenu-item
         v-for="item in RIGHT_CLICK_MENU_LIST"
         :key="item.id"
-        @click="ClickMenuItem(item)"
+        @click="handlRightClick(item)"
         v-show="isRight"
       >
         {{ item.text }}
       </contextmenu-item>
     </contextmenu>
+    <el-dialog
+      v-model="dialogVisible"
+      :title="$t('common.forward')"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <div>
+        <el-input v-model="input" placeholder="请输入联系人id或者群主id" clearable />
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">{{ $t("el.messagebox.cancel") }}</el-button>
+          <el-button type="primary" @click="createGroupBtn">
+            {{ $t("el.messagebox.confirm") }}
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </section>
 </template>
 
@@ -93,15 +102,10 @@ import {
   toRefs,
   defineAsyncComponent,
 } from "vue";
-import {
-  squareUrl,
-  circleUrl,
-  MENU_LIST,
-  RIGHT_CLICK_MENU_LIST,
-} from "./utils/menu";
+import { squareUrl, circleUrl, MENU_LIST, RIGHT_CLICK_MENU_LIST } from "./utils/menu";
 import { useStore } from "vuex";
 import { ElMessageBox } from "element-plus";
-import { fncopy, dragControllerDiv } from "./utils/utils";
+import { handleCopyMsg, dragControllerDiv } from "./utils/utils";
 
 import { timeFormat } from "@/utils/timeFormat";
 import { debounce, delay } from "@/utils/debounce";
@@ -110,12 +114,13 @@ import { useEventListener } from "@/utils/hooks/index";
 import { useState } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import Checkbox from "./components/Checkbox.vue";
+import Stateful from "./components/Stateful.vue";
 import LoadMore from "./components/LoadMore.vue";
 import MyPopover from "@/views/components/MyPopover/index.vue";
 import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { deleteMsgList, revokeMsg, getMsgList } from "@/api/im-sdk-api";
 import emitter from "@/utils/mitt-bus";
-import { useWatermark } from "@/utils/hooks/useWatermark";
+import { download } from "@/utils/message-input-utils";
 
 import TextElemItem from "./ElemItemTypes/TextElemItem.vue";
 import TipsElemItem from "./ElemItemTypes/TipsElemItem.vue";
@@ -125,17 +130,17 @@ import CustomElemItem from "./ElemItemTypes/CustomElemItem.vue";
 import groupTipElement from "./ElemItemTypes/groupTipElement.vue";
 import GroupSystemNoticeElem from "./ElemItemTypes/GroupSystemNoticeElem.vue";
 
+const input = ref("");
+const dialogVisible = ref(false);
 const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
-// const cardData = ref(null);
-const watermarkText = ref("pure-admin");
 const { state, dispatch, commit } = useStore();
-const { setWatermark, clear } = useWatermark();
 const {
   noMore,
-  userInfo,
+  // userInfo,
+  currentUserProfile,
   showMsgBox,
   forwardData,
   showCheckbox,
@@ -143,16 +148,25 @@ const {
   currentMessageList,
   currentConversation,
 } = useState({
-  userInfo: (state) => state.data.user,
   noMore: (state) => state.conversation.noMore,
   showMsgBox: (state) => state.conversation.showMsgBox,
   forwardData: (state) => state.conversation.forwardData,
   showCheckbox: (state) => state.conversation.showCheckbox,
   needScrollDown: (state) => state.conversation.needScrollDown,
+  currentUserProfile: (state) => state.user.currentUserProfile,
   currentMessageList: (state) => state.conversation.currentMessageList,
   currentConversation: (state) => state.conversation.currentConversation,
 });
-
+const opendialog = () => {
+  dialogVisible.value = true;
+};
+const createGroupBtn = () => {
+  dialogVisible.value = false;
+  input.value = "";
+};
+const handleClose = (done) => {
+  done();
+};
 const NameComponent = (props) => {
   const { item } = props;
   const { isRevoked, type, from, nick, conversationType } = item;
@@ -163,6 +177,8 @@ const NameComponent = (props) => {
   const isFound = from == "@TLS#NOT_FOUND";
   // 非单聊消息
   const isGroup = conversationType !== "C2C" && !isFound;
+  const isSingle = conversationType == "C2C";
+  if (isSingle) return null;
   return h(
     "div",
     {
@@ -193,18 +209,15 @@ const updateLoadMore = (newValue) => {
   });
 };
 // 多选框
-const handleCilck = (e, item) => {
-  // 处理触发两次bug
-  if (e.target.tagName == "INPUT") return;
-  const el = document.getElementById(`${item.ID}`);
-  el.parentNode.classList.toggle("style-select");
-};
-
-const handleChecked = (e, item) => {
+const handleChecked = (e, item, type = "initial") => {
   if (!showCheckbox.value) return;
   if (item.type == "TIMGroupTipElem") return;
   if (item.isRevoked) return;
-  const _el = document.getElementById(`${item.ID}`);
+  if (e.target.tagName !== "INPUT" && type == "initial") {
+    const el = document.getElementById(`choice${item.ID}`);
+    el.parentNode.classList.toggle("style-select");
+  }
+  const _el = document.getElementById(`choice${item.ID}`);
   const el = _el.getElementsByTagName("input")[0];
   _el.parentNode.classList.toggle("style-select");
   if (el.checked) {
@@ -226,18 +239,17 @@ const isTime = (item) => {
   return item?.isTimeDivider;
 };
 const ISown = (item) => {
-  return item.from == userInfo.value.username;
+  return item.from == currentUserProfile.value.userID;
 };
 
 const onclickavatar = (e, item) => {
   const isSelf = ISown(item);
   if (isSelf) return;
-  // cardData.value = item;
-  commit("setPopoverStatus", {
-    status: true,
-    seat: e,
-    cardData: item,
-  });
+  // commit("setPopoverStatus", {
+  //   status: true,
+  //   seat: e,
+  //   cardData: item,
+  // });
 };
 
 const loadMoreFn = () => {
@@ -268,14 +280,20 @@ const updateScrollbar = () => {
 };
 
 const validatelastMessage = (msglist) => {
-  let msg = null;
-  for (let i = msglist.length - 1; i > -1; i--) {
-    if (msglist[i].ID) {
-      msg = msglist[i];
-      break;
-    }
-  }
-  return msg;
+  // let msg = null;
+  // for (let i = msglist.length - 1; i > -1; i--) {
+  //   if (msglist[i].ID) {
+  //     msg = msglist[i];
+  //     break;
+  //   }
+  // }
+  // return msg;
+  return (
+    msglist
+      .slice()
+      .reverse()
+      .find((msg) => msg.ID) || null
+  );
 };
 
 const getMoreMsg = async () => {
@@ -284,8 +302,7 @@ const getMoreMsg = async () => {
     const Conv = currentConversation.value;
     const msglist = currentMessageList.value;
     const { conversationID, toAccount } = Conv;
-    const msg = validatelastMessage(msglist);
-    const { ID } = msg;
+    const { ID } = validatelastMessage(msglist);
     const result = await getMsgList({
       conversationID: conversationID,
       nextReqMessageID: ID,
@@ -410,11 +427,11 @@ const msgOne = (item) => {
     return "message-view__item--index";
   }
 };
-
-const ContextMenuEvent = (event, item) => {
+const handleContextMenuEvent = (event, item) => {
   const { isRevoked, time, type } = item;
   console.log(item, "右键菜单数据");
   const isTip = type == "TIMGroupTipElem";
+  const isFile = type == "TIMFileElem";
   // 撤回消息 提示类型消息
   if (isRevoked || isTip) {
     isRight.value = false;
@@ -432,28 +449,56 @@ const ContextMenuEvent = (event, item) => {
   if (!relinquish) {
     RIGHT_CLICK_MENU_LIST.value = MENU_LIST.filter((t) => t.id !== "revoke");
   }
+  if (!isFile) {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "saveAs");
+  } else {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "copy");
+  }
 };
-
-const ClickMenuItem = (data) => {
-  const Info = MenuItemInfo.value;
+const handlRightClick = (data) => {
+  const info = MenuItemInfo.value;
   const { id, text } = data;
   switch (id) {
     case "copy": //复制
-      fncopy(Info);
+      handleCopyMsg(info);
       break;
     case "revoke": //撤回
-      revokes(Info);
+      handleRevokeMsg(info);
+      break;
+    case "forward": // 转发
+      handleForward(info);
+      break;
+    case "saveAs": //另存为
+      handleSave(info);
+      break;
+    case "reply": // 回复
+      handleReplyMsg(info);
       break;
     case "multiSelect": //多选
-      multiSelect(Info);
+      handleMultiSelectMsg();
       break;
     case "delete": //删除
-      fndelete(Info);
+      handleDeleteMsg(info);
       break;
   }
 };
+// 另存为
+const handleSave = (data) => {
+  const {
+    payload: { fileName, fileUrl },
+  } = data;
+  download(fileUrl, fileName);
+};
+// 转发
+const handleForward = (data) => {
+  opendialog();
+};
+// 回复消息
+const handleReplyMsg = (data) => {
+  commit("setReplyMsg", data);
+};
 // 删除消息
-const fndelete = async (data) => {
+const handleDeleteMsg = async (data) => {
   try {
     const formEl = await ElMessageBox.confirm("确定删除?", "提示", {
       confirmButtonText: "确定",
@@ -476,11 +521,11 @@ const fndelete = async (data) => {
   }
 };
 // 多选
-const multiSelect = (data) => {
+const handleMultiSelectMsg = () => {
   commit("SET_CHEC_BOX", true);
 };
 // 撤回消息
-const revokes = (data) => {
+const handleRevokeMsg = (data) => {
   const { code, message } = revokeMsg(data);
 };
 
@@ -499,17 +544,11 @@ emitter.on("updataScroll", (e) => {
   updateScrollBarHeight();
 });
 
-onMounted(() => {
-  nextTick(() => {
-    setWatermark(watermarkText.value);
-  });
-});
+onMounted(() => {});
 onUnmounted(() => {});
 onUpdated(() => {});
 onBeforeUpdate(() => {});
-onBeforeUnmount(() => {
-  clear();
-});
+onBeforeUnmount(() => {});
 
 // eslint-disable-next-line no-undef
 defineExpose({ updateScrollbar, updateScrollBarHeight });
@@ -540,7 +579,6 @@ $self-msg-color: #c2e8ff;
 .style-MsgBox {
   height: calc(100% - 60px) !important;
 }
-
 .scrollbar-item {
   display: flex;
   align-items: center;
@@ -637,7 +675,7 @@ $self-msg-color: #c2e8ff;
   .message-view__img {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 5px;
+    // margin-bottom: 5px;
     align-items: center;
     :deep(.image_preview) {
       background: $self-msg-color;
@@ -647,12 +685,12 @@ $self-msg-color: #c2e8ff;
   .message-view__file {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 5px;
+    // margin-bottom: 5px;
     align-items: center;
   }
 
   .message-view__text {
-    margin-bottom: 5px;
+    // margin-bottom: 5px;
     display: flex;
     justify-content: flex-end;
     align-items: center;

@@ -6,13 +6,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  toRefs,
-  reactive,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 // import { GroupSystemNotice } from "../utils/utils";
 export default defineComponent({
   name: "GroupSystemNoticeElem",

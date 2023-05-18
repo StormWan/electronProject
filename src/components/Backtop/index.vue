@@ -1,11 +1,6 @@
 <template>
   <transition :name="transitionName">
-    <div
-      v-show="visible"
-      :style="customStyle"
-      class="back-to-ceiling"
-      @click="backToTop"
-    >
+    <div v-show="visible" :style="customStyle" class="back-to-ceiling" @click="backToTop">
       <!-- <svg
         class="icon"
         aria-hidden="true"
@@ -18,13 +13,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  reactive,
-  toRefs,
-} from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, reactive, toRefs } from "vue";
 
 export default defineComponent({
   props: {

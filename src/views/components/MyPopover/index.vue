@@ -28,19 +28,10 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  toRefs,
-  computed,
-  watchEffect,
-  onMounted,
-  onUnmounted,
-} from "vue";
+import { ref, reactive, toRefs, computed, watchEffect, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import { useState } from "@/utils/hooks/useMapper";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
-import config from "@/config/defaultSettings";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
 import { setSelfStatus, getUserStatus } from "@/api/im-sdk-api/index";
 // eslint-disable-next-line no-undef
@@ -83,8 +74,7 @@ const closeModal = () => {
 };
 
 const isRobot = (item) => {
-  const ID = item.from || "";
-  return ID == "R00001";
+  return item.from == "R00001";
 };
 
 const define = () => {

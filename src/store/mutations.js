@@ -13,19 +13,6 @@ const mutations = {
   updateData(state, { key, value }) {
     state.data[key] = value;
   },
-  // 添加动态路由
-  updataRoute() {
-    try {
-      const routing = storage.get(USER_DATA)?.Routingtable;
-      if (!routing) return;
-      tree(routing);
-      routing.forEach((item) => {
-        router.addRoute(item);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  },
   updataScroll() {
     emitter.emit("updataScroll", true);
   },

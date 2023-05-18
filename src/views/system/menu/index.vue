@@ -7,18 +7,11 @@
           <el-card>
             <template #header>
               <div class="style-header">
-                <el-button size="small" plain @click="addMenuBtn">
-                  添加菜单
-                </el-button>
+                <el-button size="small" plain @click="addMenuBtn"> 添加菜单 </el-button>
                 <el-button size="small" plain @click="Putall(isExpand)">
                   {{ isExpand ? "全部展开" : " 全部收起" }}
                 </el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="delMenuBtn"
-                  v-show="showDelBtn"
-                >
+                <el-button size="small" type="danger" @click="delMenuBtn" v-show="showDelBtn">
                   删除
                 </el-button>
               </div>
@@ -76,10 +69,7 @@
             <el-skeleton animated :rows="12" :loading="loading">
               <template #default>
                 <!-- close-text="知道了" -->
-                <el-alert
-                  title="从菜单列表选择一项后,进行编辑"
-                  :closable="false"
-                />
+                <el-alert title="从菜单列表选择一项后,进行编辑" :closable="false" />
                 <div class="style-menu">
                   <el-form
                     ref="ruleLabelRef"
@@ -115,9 +105,7 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="onSubmit">
-                        保存修改
-                      </el-button>
+                      <el-button type="primary" @click="onSubmit"> 保存修改 </el-button>
                       <el-button @click="Reset" v-show="false">重置</el-button>
                     </el-form-item>
                   </el-form>
@@ -137,25 +125,13 @@
           label-width="120px"
           class="demo-ruleForm"
         >
-          <el-form-item
-            :label="ruleFormText.title"
-            prop="title"
-            placeholder="请输入标题"
-          >
+          <el-form-item :label="ruleFormText.title" prop="title" placeholder="请输入标题">
             <el-input v-model="ruleForm.title" autocomplete="off" />
           </el-form-item>
-          <el-form-item
-            :label="ruleFormText.path"
-            prop="path"
-            placeholder="请输入路径"
-          >
+          <el-form-item :label="ruleFormText.path" prop="path" placeholder="请输入路径">
             <el-input v-model="ruleForm.path" />
           </el-form-item>
-          <el-form-item
-            :label="ruleFormText.component"
-            prop="component"
-            placeholder="请输入组件名"
-          >
+          <el-form-item :label="ruleFormText.component" prop="component" placeholder="请输入组件名">
             <el-input v-model="ruleForm.component" />
           </el-form-item>
           <el-form-item :label="ruleFormText.icon" prop="icon">
@@ -182,9 +158,7 @@
           <span class="dialog-footer">
             <el-button @click="resetForm(ruleFormRef)"> 重置 </el-button>
             <el-button @click="dialogFormVisible = false"> 取消 </el-button>
-            <el-button type="primary" @click="determine(ruleFormRef)">
-              确定
-            </el-button>
+            <el-button type="primary" @click="determine(ruleFormRef)"> 确定 </el-button>
           </span>
         </template>
       </el-dialog>
@@ -196,7 +170,6 @@
 import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 import { ElMessageBox } from "element-plus";
 import * as ElIcons from "@element-plus/icons-vue";
 import { updateMenu, AddMenu, getMenu, DeleteMenu } from "@/api/menu";

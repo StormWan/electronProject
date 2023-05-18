@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  createWebHashHistory,
-} from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory, START_LOCATION } from "vue-router";
 import storage from "storejs";
 import NProgress from "@/utils/progress";
 import routes from "./routes";
@@ -14,8 +10,7 @@ import { setPageTitle } from "@/utils/common";
 // hack router push callback
 const originalPush = createRouter.prototype.push;
 createRouter.prototype.push = function push(location, onResolve, onReject) {
-  if (onResolve || onReject)
-    return originalPush.call(this, location, onResolve, onReject);
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject);
   return originalPush.call(this, location).catch((err) => err);
 };
 
@@ -30,6 +25,19 @@ const defaultRoutePath = "/home";
 const router = createRouter({
   history: production ? createWebHashHistory() : createWebHistory(),
   routes,
+  strict: true,
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      if (savedPosition) {
+        return savedPosition;
+      } else {
+        if (from.meta.saveSrollTop) {
+          const top = document.documentElement.scrollTop || document.body.scrollTop;
+          resolve({ left: 0, top });
+        }
+      }
+    });
+  },
 });
 // 默认是  Hash  模式, 手动设置为  History  模式
 // 更新视图但不重新请求页面是前端路由原理的核心之一
@@ -39,6 +47,10 @@ router.beforeEach(async (to, from, next) => {
   // console.log(to, "to")
   // console.log(from,"from")
   if (from.path === to.path) return;
+  // if (from === START_LOCATION) {
+  //   // 初始导航
+  //   console.log(to, from);
+  // }
   setPageTitle(to.meta.title);
   const token = storage.get(ACCESS_TOKEN);
 

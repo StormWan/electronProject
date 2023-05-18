@@ -1,4 +1,3 @@
-let timer = null;
 /**
  * 节流原理：在一定时间内，只能触发一次
  *
@@ -8,16 +7,16 @@ let timer = null;
  * @return null
  */
 export function throttle(fn, wait = 300) {
-  return (function () {
+  let timer = null;
+  return function throttled(...args) {
     const context = this;
-    const args = arguments;
     if (!timer) {
       timer = setTimeout(() => {
         timer = null;
         fn.apply(context, args);
       }, wait);
     }
-  })();
+  };
 }
 
 /**

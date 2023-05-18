@@ -39,7 +39,7 @@ export const dismissGroup = async (params) => {
  * @param {GroupType} type - 群组类型
  * @returns {Promise<{ code: number, group: any }>} - 返回一个 Promise，包含创建结果和群组对象
  */
-export const createGroup = async (params, type = GroupType.GRP_MEETING) => {
+export const createGroup = async (params, type = GroupType.GRP_WORK) => {
   const { groupName } = params;
   const {
     code,
@@ -110,20 +110,27 @@ export const addGroupMember = async (params) => {
     groupID: groupID,
     userIDList: [user], // ['user1', 'user2', 'user3']
   };
-  const {
-    code,
-    data: {
-      group, // 添加后的群组信息
-      existedUserIDList, // 已在群中的群成员
-      failureUserIDList, // 添加失败的群成员
-      overLimitUserIDList, // 超过了“单个用户可加入群组数”限制的用户列表
-      successUserIDList, // 添加成功的群成员
-    },
-  } = tim.addGroupMember(parameter);
-  return {
-    code,
-    group,
-  };
+  try {
+    const {
+      code,
+      data: {
+        group, // 添加后的群组信息
+        existedUserIDList, // 已在群中的群成员
+        failureUserIDList, // 添加失败的群成员
+        overLimitUserIDList, // 超过了“单个用户可加入群组数”限制的用户列表
+        successUserIDList, // 添加成功的群成员
+      },
+    } = tim.addGroupMember(parameter);
+    return {
+      code,
+      group,
+    };
+  } catch (error) {
+    return {
+      code: -1,
+      group: error,
+    };
+  }
 };
 // 删除群成员
 export const deleteGroupMember = async (params) => {
@@ -133,15 +140,18 @@ export const deleteGroupMember = async (params) => {
     userIDList: [user],
     // reason: '你违规了，我要踢你！'
   };
-  const {
-    code,
-    data: { group, userIDList },
-  } = tim.deleteGroupMember(parameter);
-  return {
-    code,
-    group,
-    userIDList,
-  };
+  try {
+    const { code, data } = await tim.deleteGroupMember(parameter);
+    return {
+      code,
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      code: -1,
+    };
+  }
 };
 // 获取群组列表
 export const getGroupList = async () => {

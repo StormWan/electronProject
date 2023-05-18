@@ -4,6 +4,8 @@
 
 <script>
 import { defineComponent, onBeforeUnmount, onMounted, computed, reactive, toRefs } from "vue";
+import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
+import store from "@/store";
 import TIM from "tim-js-sdk";
 export default defineComponent({
   name: "GroupTipElement",
@@ -13,23 +15,23 @@ export default defineComponent({
       default: () => {},
     },
   },
+  computed: {},
   setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({
-      text: "wewe",
-      visible: false,
-      isMoving: false,
-      interval: 0,
-    });
-    const getGroupTipContent = () => {
-      const message = props.message;
+    const { message } = toRefs(props);
+    const { payload } = message.value;
+    const operatorID = payload.operatorID;
+    const memberList = store.state.groupinfo.currentMemberList;
+    const state = reactive({ text: "wewe" });
+    const { nick } = memberList.filter((t) => t.userID == operatorID)?.[0] || {};
+    const getGroupTipContent = (message) => {
       const userName = message.nick || message.payload.userIDList.join(",");
       switch (message.payload.operationType) {
         case TIM.TYPES.GRP_TIP_MBR_JOIN:
-          return `群成员：${userName} 加入群组`;
+          return `${userName} 加入群聊`;
         case TIM.TYPES.GRP_TIP_MBR_QUIT:
-          return `群成员：${userName} 退出群组`;
+          return `群成员：${userName} 退出群聊`;
         case TIM.TYPES.GRP_TIP_MBR_KICKED_OUT:
-          return `群成员：${userName} 被${message.payload.operatorID}踢出群组`;
+          return `${nick || ""} 将 ${userName} 移出群聊`;
         case TIM.TYPES.GRP_TIP_MBR_SET_ADMIN:
           return `群成员：${userName} 成为管理员`;
         case TIM.TYPES.GRP_TIP_MBR_CANCELED_ADMIN:
@@ -65,7 +67,7 @@ export default defineComponent({
     };
   },
   render() {
-    return <div class='group-tip-element-wrapper'>{this.getGroupTipContent()}</div>;
+    return <div class='group-tip-element-wrapper'>{this.getGroupTipContent(this.message)}</div>;
   },
 });
 </script>

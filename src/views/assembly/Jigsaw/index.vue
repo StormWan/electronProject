@@ -12,12 +12,7 @@
         :key="puzzle"
         :class="puzzle == '0' ? 'cell cells' : 'cell'"
       >
-        <img
-          class="picture"
-          v-if="puzzle !== 0"
-          :src="picture(puzzle)"
-          alt=""
-        />
+        <img class="picture" v-if="puzzle !== 0" :src="picture(puzzle)" alt="" />
       </div>
     </transition-group>
   </div>
@@ -45,17 +40,17 @@ const puzzles = ref([1, 2, 3, 4, 5, 6, 7, 8, 0]);
 
 puzzles.value = _.shuffle(puzzles.value);
 
+const fnthrottle = throttle(() => {
+  puzzles.value = _.shuffle(puzzles.value);
+}, 350);
+
 const shuffle = () => {
-  throttle(() => {
-    puzzles.value = _.shuffle(puzzles.value);
-  }, 350);
+  fnthrottle();
 };
 
-const fnclickBlock = (index) => {
-  throttle(() => {
-    clickBlock(index);
-  }, 50);
-};
+const fnclickBlock = throttle((index) => {
+  clickBlock(index);
+}, 50);
 
 // 点击方块
 const clickBlock = (index) => {
@@ -103,10 +98,7 @@ const aotoPlay = () => {
     ],
     delayTime: "500",
   };
-  const allow = autoPuzzles(Setting).canReach(
-    Setting.originalNode,
-    Setting.resultNode
-  );
+  const allow = autoPuzzles(Setting).canReach(Setting.originalNode, Setting.resultNode);
   if (allow) {
     console.log("开始拼图");
     autoPuzzles(Setting).searchPath();

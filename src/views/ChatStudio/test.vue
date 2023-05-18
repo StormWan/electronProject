@@ -8,12 +8,7 @@
     <el-button type="primary" @click="setState(false)">false</el-button>
     <p>useToggle {{ state }}</p>
     <br />
-    <el-button
-      v-for="{ title, onclick } in buttons"
-      :key="title"
-      type="primary"
-      @click="onclick"
-    >
+    <el-button v-for="{ title, onclick } in buttons" :key="title" type="primary" @click="onclick">
       {{ title }}
     </el-button>
     <el-button type="primary" @click="test1">获取群组列表</el-button>
@@ -28,13 +23,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  toRefs,
-  reactive,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 import { getFriendList } from "@/api/im-sdk-api";
 import { getGroupList } from "@/api/im-sdk-api/group";
@@ -44,6 +33,7 @@ import { setCookies, getCookies } from "@/utils/Cookies";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useToggle } from "@/utils/hooks/index";
 import { chatGpt } from "@/api/index";
+import { cloud, getUser } from "@/api/laf-sdk-api";
 import io from "socket.io-client";
 
 export default defineComponent({
@@ -52,6 +42,7 @@ export default defineComponent({
   computed: {
     ...mapState({
       groupList: (state) => state.groupinfo.groupList,
+      timProxy: (state) => state.user.timProxy,
     }),
   },
   props: {},
@@ -85,6 +76,8 @@ export default defineComponent({
         {
           title: "环境变量",
           onclick: () => {
+            this.timProxy.saveSelfToLocalStorage();
+            console.log(this.timProxy);
             console.log(process.env);
           },
         },
@@ -131,6 +124,7 @@ export default defineComponent({
     async callApi() {
       console.log(process.env.VUE_APP_API_URL);
       console.log(process.env.VUE_APP_API_KEY);
+      await getUser();
     },
   },
   setup(props, { attrs, emit, expose, slots }) {

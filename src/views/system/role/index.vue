@@ -6,22 +6,12 @@
           <el-card>
             <template #header>
               <div class="style-header">
-                <el-form
-                  label-width="100px"
-                  :model="formLabelAlign"
-                  class="flex"
-                >
+                <el-form label-width="100px" :model="formLabelAlign" class="flex">
                   <el-form-item label="角色名称">
-                    <el-input
-                      v-model="formLabelAlign.name"
-                      placeholder="请输入角色名称"
-                    />
+                    <el-input v-model="formLabelAlign.name" placeholder="请输入角色名称" />
                   </el-form-item>
                   <el-form-item label="角色标识">
-                    <el-input
-                      v-model="formLabelAlign.region"
-                      placeholder="请输入角色标识"
-                    />
+                    <el-input v-model="formLabelAlign.region" placeholder="请输入角色标识" />
                   </el-form-item>
                   <el-form-item label="状态">
                     <el-input v-model="formLabelAlign.type" />
@@ -32,15 +22,8 @@
             <el-skeleton animated :rows="12" :loading="false">
               <template #default>
                 <div class="mb-5">
-                  <el-button size="small" plain @click="AddRoleBtn">
-                    新增角色
-                  </el-button>
-                  <el-button
-                    v-show="ShowDelBtn"
-                    size="small"
-                    type="danger"
-                    @click="Deletelot"
-                  >
+                  <el-button size="small" plain @click="AddRoleBtn"> 新增角色 </el-button>
+                  <el-button v-show="ShowDelBtn" size="small" type="danger" @click="Deletelot">
                     删除角色
                   </el-button>
                 </div>
@@ -54,36 +37,19 @@
                   @selection-change="handleSelectionChange"
                 >
                   <el-table-column type="selection" />
-                  <el-table-column
-                    prop="roleName"
-                    label="角色名称"
-                    width="200"
-                  />
+                  <el-table-column prop="roleName" label="角色名称" width="200" />
                   <el-table-column prop="info" label="说明" width="200" />
-                  <el-table-column
-                    prop="createTime"
-                    label="创建时间"
-                    width="200"
-                  >
+                  <el-table-column prop="createTime" label="创建时间" width="200">
                     <template #default="scope">
                       {{ formatTime(scope.row.createTime) }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="updateTime"
-                    label="更新时间"
-                    sortable
-                    width="200"
-                  >
+                  <el-table-column prop="updateTime" label="更新时间" sortable width="200">
                     <template #default="scope">
                       {{ formatTime(scope.row.updateTime) }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="isDefaultRole"
-                    label="角色类型"
-                    width="200"
-                  >
+                  <el-table-column prop="isDefaultRole" label="角色类型" width="200">
                     <template #default="scope">
                       <el-tag :type="scope.row.isDefaultRole ? '' : 'success'">
                         {{ scope.row.isDefaultRole ? "内置" : "自定义" }}
@@ -92,18 +58,10 @@
                   </el-table-column>
                   <el-table-column fixed="right" label="操作">
                     <template #default="scope">
-                      <el-button
-                        type="text"
-                        size="small"
-                        @click="DelColumn(scope, tableData)"
-                      >
+                      <el-button type="text" size="small" @click="DelColumn(scope, tableData)">
                         删除
                       </el-button>
-                      <el-button
-                        type="text"
-                        size="small"
-                        @click="ModifyBtn(scope, tableData)"
-                      >
+                      <el-button type="text" size="small" @click="ModifyBtn(scope, tableData)">
                         修改
                       </el-button>
                     </template>
@@ -129,10 +87,7 @@
         </el-col>
       </el-row>
       <!-- 弹框 -->
-      <el-dialog
-        v-model="dialogFormVisible"
-        :title="infoText ? '添加角色' : '编辑角色'"
-      >
+      <el-dialog v-model="dialogFormVisible" :title="infoText ? '添加角色' : '编辑角色'">
         <el-form
           ref="ruleFormRef"
           :model="ruleForm"
@@ -142,11 +97,7 @@
           class="demo-ruleForm"
         >
           <el-form-item label="姓名" prop="name">
-            <el-input
-              v-model="ruleForm.name"
-              autocomplete="off"
-              style="width: 216px"
-            />
+            <el-input v-model="ruleForm.name" autocomplete="off" style="width: 216px" />
           </el-form-item>
           <el-form-item label="说明" prop="info">
             <el-select v-model="ruleForm.info" placeholder="角色类型">
@@ -159,9 +110,7 @@
           <span class="dialog-footer">
             <el-button @click="resetForm(ruleFormRef)"> 重置 </el-button>
             <el-button @click="dialogFormVisible = false"> 取消 </el-button>
-            <el-button type="primary" @click="determine(infoText, ruleFormRef)">
-              确定
-            </el-button>
+            <el-button type="primary" @click="determine(infoText, ruleFormRef)"> 确定 </el-button>
           </span>
         </template>
       </el-dialog>

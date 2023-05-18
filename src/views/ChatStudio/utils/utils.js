@@ -1,5 +1,6 @@
 import useClipboard from "vue-clipboard3";
 import TIM from "tim-js-sdk";
+import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/message-input-utils";
 import {
   CreateTextMsg,
   CreateTextAtMsg,
@@ -48,7 +49,7 @@ export const dragControllerDiv = (node) => {
 };
 
 // 复制
-export const fncopy = async (data) => {
+export const handleCopyMsg = async (data) => {
   const { elements } = data;
   const { content, type } = elements[0];
   // 文本
@@ -58,8 +59,7 @@ export const fncopy = async (data) => {
 };
 
 export const GroupSystemNotice = (message) => {
-  const groupName =
-    message.payload.groupProfile.name || message.payload.groupProfile.groupID;
+  const groupName = message.payload.groupProfile.name || message.payload.groupProfile.groupID;
   switch (message.payload.operationType) {
     case 1:
       return `${message.payload.operatorID} 申请加入群组：${groupName}`;
@@ -128,3 +128,96 @@ export const getMsgElemItem = (type, data, videoInfoList) => {
     }
   }
 };
+
+/**
+ * 将字符串中的特殊字符进行 HTML 转义
+ * @param {string} str - 待转义的字符串
+ * @returns {string} - 转义后的字符串
+ */
+export const html2Escape = (str) => {
+  // 使用对象映射，避免多个 if/else 分支
+  const map = {
+    "<": "&lt;",
+    ">": "&gt;",
+    "&": "&amp;",
+    '"': "&quot;",
+  };
+  return str.replace(/[<>&"]/g, function (c) {
+    return map[c];
+  });
+};
+
+// 这个函数是一个异步函数，接受三个参数：会话ID(convId)、会话类型(convType)和消息选项(options)，返回一个聊天消息对象(Object)。
+// 消息选项(options)是一个对象，其中可以包含以下属性：
+// - textMsg：文本消息内容(string)
+//   - aitlist：艾特用户列表(Array)
+//     - files：文件对象(Object)
+//       - fileName：文件名(string)
+//         - src：文件数据URL(string)
+//           - image：图片对象(Array)
+//             - src：图片数据URL(string)
+
+// 如果消息选项中包含files，则会创建相应的文件消息；如果包含image，则会创建相应的图片消息；如果包含aitlist，则会创建相应的艾特消息；否则就会创建文本消息。
+
+/**
+ * 发送聊天消息
+ * @param {string} convId - 会话ID
+ * @param {string} convType - 会话类型（单聊/群聊）
+ * @param {Object} options - 消息选项
+ * @param {string} [options.textMsg] - 文本消息内容（可选）
+ * @param {string[]} [options.aitlist] - 艾特用户列表（可选）
+ * @param {Object[]} [options.files] - 文件（可选）
+ * @param {string} [options.files.fileName] - 文件名（可选）
+ * @param {string} [options.files.src] - 文件数据URL（可选）
+ * @param {Object[]} [options.image] - 图片（可选）
+ * @param {string} [options.image.src] - 图片数据URL（可选）
+ * @returns {Promise<Object>} - 返回聊天消息对象
+ *
+ *
+ *
+ */
+export async function sendChatMessage(convId, convType, options) {
+  let TextMsg;
+  let flag = true;
+  const { textMsg, aitStr, aitlist, files, image } = options;
+  // 如果包含文件，则创建相应的文件消息
+  if (files) {
+    const { fileName, src } = files;
+    let file = dataURLtoFile(src, fileName);
+    TextMsg = await CreateFiletMsg({
+      convId: convId,
+      convType: convType,
+      files: file,
+    });
+    flag = false;
+  }
+  // 如果包含图片，则创建相应的图片消息
+  if (image) {
+    let file = dataURLtoFile(image[0].src);
+    TextMsg = await CreateImgtMsg({
+      convId: convId,
+      convType: convType,
+      image: file,
+    });
+    flag = false;
+  }
+  // 如果包含艾特，则创建相应的艾特消息
+  if (aitStr) {
+    TextMsg = await CreateTextAtMsg({
+      convId: convId,
+      convType: convType,
+      textMsg: aitStr,
+      atUserList: aitlist,
+    });
+  }
+  // 否则创建文本消息
+  else if (flag) {
+    TextMsg = await CreateTextMsg({
+      convId: convId,
+      convType: convType,
+      textMsg: textMsg,
+    });
+  }
+  TextMsg.status = "unSend";
+  return TextMsg;
+}

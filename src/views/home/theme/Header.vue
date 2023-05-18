@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="select-none"
-    :class="['fixed-header', sidebar ? 'style-fixed' : '']"
-  >
+  <div class="select-none" :class="['fixed-header', sidebar ? 'style-fixed' : '']">
     <!-- :style="fnStyle(isActive)" -->
     <div class="navbar">
       <div
@@ -14,10 +11,7 @@
       </div>
       <!-- 面包屑 :separator-icon="ArrowRight" > icon-->
       <el-breadcrumb>
-        <el-breadcrumb-item
-          :key="value.title"
-          v-for="value in route.matched.map((t) => t.meta)"
-        >
+        <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
           {{ value.title }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -53,12 +47,7 @@
       </div>
     </div>
     <Tags />
-    <el-drawer
-      v-model="drawer"
-      :direction="'ltr'"
-      size="200px"
-      :with-header="false"
-    >
+    <el-drawer v-model="drawer" :direction="'ltr'" size="200px" :with-header="false">
       <SideBar :vislbile="true" />
     </el-drawer>
   </div>
@@ -70,10 +59,10 @@ import { ElMessageBox } from "element-plus";
 import { computed, ref, watch, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-import FontIcon from "@/layout/FontIcon/indx.vue";
-import screenfull from "../components/screenfull.vue";
-import Tags from "../components/Tags.vue";
-import SideBar from "../SideBar/index.vue";
+import SideBar from "@/views/home/SideBar/index.vue";
+import screenfull from "./screenfull.vue";
+import Tags from "./Tags.vue";
+
 const { state, dispatch, commit } = useStore();
 const router = useRouter();
 const route = useRoute();
@@ -109,9 +98,8 @@ watch(
   }
 );
 
-const { isActive, userProfile, tags, sidebar, setswitch, userInfo } = useState({
+const { isActive, userProfile, tags, sidebar, setswitch } = useState({
   userProfile: (state) => state.user.currentUserProfile,
-  userInfo: (state) => state.data.user,
   tags: (state) => state.data.elTag,
   sidebar: (state) => !state.settings.sidebar,
   isActive: (state) => state.settings.isCollapse,
@@ -140,7 +128,6 @@ const Logout = async () => {
     type: "warning",
   })
     .then(() => {
-      dispatch("TIM_LOG_OUT");
       dispatch("LOG_OUT");
     })
     .catch((err) => {

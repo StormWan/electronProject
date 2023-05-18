@@ -1,15 +1,8 @@
 <script>
-import {
-  defineComponent,
-  toRefs,
-  reactive,
-  onMounted,
-  h,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, toRefs, reactive, onMounted, h, onBeforeUnmount } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 export default defineComponent({
-  name: "Componentname",
+  name: "UserAvatar",
   components: {},
   computed: {},
   props: {
@@ -48,21 +41,13 @@ export default defineComponent({
             class: `avatar default ${this.className}`,
             style: { backgroundImage: `url(${this.url})` },
           })
-        : h(
-            "div",
-            { class: `avatar default ${this.className}` },
-            this.displayInfo(this.nickName)
-          ),
+        : h("div", { class: `avatar default ${this.className}` }, this.displayInfo(this.nickName)),
     ];
   },
 });
 </script>
 
 <style lang="scss" scoped>
-// div {
-//   margin-right: 12px;
-//   margin-bottom: 12px;
-// }
 .avatar {
   border-radius: 50%;
   overflow: hidden;
@@ -75,6 +60,7 @@ export default defineComponent({
   color: #ffffff;
   font-weight: 400;
 }
+
 .default {
   width: 40px;
   height: 40px;

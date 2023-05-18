@@ -6,9 +6,7 @@
           <span class="font-medium"> {{ name }} </span>
         </div>
       </template>
-      <span style="font-size: 15px">
-        {{ name }} 是一个基于Vue3、Element-Plus的后台管理模板
-      </span>
+      <span style="font-size: 15px"> {{ name }} 是一个基于Vue3、Element-Plus的后台管理模板 </span>
     </el-card>
     <el-card class="style-card" shadow="hover">
       <template #header>
@@ -20,11 +18,7 @@
         <el-descriptions-item label="版本" label-align="left" align="left">
           <el-tag>{{ version }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item
-          label="最后编译时间"
-          label-align="left"
-          align="left"
-        >
+        <el-descriptions-item label="最后编译时间" label-align="left" align="left">
           <el-tag>{{ lastBuildTime }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="文档地址" label-align="left" align="left">
@@ -34,9 +28,7 @@
         </el-descriptions-item>
         <el-descriptions-item label="QQ交流群" label-align="left" align="left">
           <a href="https://jq.qq.com/?_wv=1027&k=Cd4Ihd2J" target="_blank">
-            <span class="style-color">
-              点击链接加入群聊【PureAdmin交流群】
-            </span>
+            <span class="style-color"> 点击链接加入群聊【PureAdmin交流群】 </span>
           </a>
         </el-descriptions-item>
         <el-descriptions-item label="Github" label-align="left" align="left">
@@ -60,10 +52,7 @@
           v-for="(item, index) in schema"
           :key="index"
         >
-          <a
-            :href="'https://www.npmjs.com/package/' + item.label"
-            target="_blank"
-          >
+          <a :href="'https://www.npmjs.com/package/' + item.label" target="_blank">
             <span class="style-color">
               {{ item.field }}
             </span>
@@ -85,10 +74,7 @@
           v-for="(item, index) in devSchema"
           :key="index"
         >
-          <a
-            :href="'https://www.npmjs.com/package/' + item.label"
-            target="_blank"
-          >
+          <a :href="'https://www.npmjs.com/package/' + item.label" target="_blank">
             <span class="style-color">
               {{ item.field }}
             </span>

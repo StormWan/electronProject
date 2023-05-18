@@ -29,11 +29,11 @@ import { useStore } from "vuex";
 import { ref, toRefs, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-import Logo from "../components/Logo.vue";
+import Logo from "./Logo.vue";
 
 const Refelmenu = ref();
 const route = useRoute();
-
+const router = useRouter();
 const props = defineProps({
   vislbile: {
     type: Boolean,
@@ -44,9 +44,11 @@ const props = defineProps({
     default: false,
   },
 });
+// router.options.routes[0].children
+// cosnt routing =
 const { vislbile, collapse } = toRefs(props);
 
-const { isCollapse, sidebar, routing, logoVal } = useState({
+const { isCollapse, sidebar, logoVal, routing } = useState({
   isCollapse: (state) => state.settings.isCollapse,
   sidebar: (state) => state.settings.sidebar,
   logoVal: (state) => state.settings.logoIcon,

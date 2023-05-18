@@ -39,32 +39,47 @@ export const getMyProfile = async () => {
     console.log(e);
   }
 };
+// 获取群详细资料
 export const getGroupProfile = async (params) => {
-  const { groupID } = params;
-  const { data, code } = await tim.getGroupProfile({
-    groupID: groupID,
-    // groupCustomFieldFilter: ["key1", "key2"],
-  });
-  return data.group;
+  try {
+    const { groupID } = params;
+    const {
+      data: { group },
+      code,
+    } = await tim.getGroupProfile({
+      groupID: groupID,
+    });
+    return {
+      code,
+      data: group,
+    };
+  } catch (error) {
+    return {
+      code: -1,
+      data: error,
+    };
+  }
 };
 //登录
 export const TIM_login = async (params) => {
-  const { userID, userSig } = params;
-  const result = await tim.login({
-    userID,
-    userSig,
-  });
-  return result;
+  try {
+    const { userID, userSig } = params;
+    const { code, data } = await tim.login({
+      userID,
+      userSig,
+    });
+    return { code, data };
+  } catch (error) {
+    return { code: 404, data: null };
+  }
 };
 //退出登录
 export const TIM_logout = async () => {
-  try {
-    const { code, data } = await tim.logout();
-    // tim.destroy();
-    if (code == 0) return data;
-  } catch (e) {
-    console.log(e);
-  }
+  const { code, data } = await tim.logout();
+  return {
+    code,
+    data,
+  };
 };
 // 销毁 SDK 实例
 export const TIM_Destroy = async () => {
@@ -151,7 +166,8 @@ export const CreateFiletMsg = async (params) => {
     payload: {
       file: files,
     },
-    onProgress: function (event) {
+    // 文件上传进度
+    onProgress: (event) => {
       console.log("file uploading:", event);
     },
   });
@@ -173,8 +189,23 @@ export const createMergerMsg = async (params) => {
     // cloudCustomData: 'your cloud custom data'
   });
 };
+// 转发消息
+export const createForwardMsg = async (params) => {
+  const { convId, convType, message } = params;
+  const forwardMsg = await tim.createForwardMessage({
+    to: convId,
+    conversationType: convType,
+    payload: message,
+  });
+  const { code, message: data } = await sendMsg(forwardMsg);
+  return {
+    code,
+    data,
+  };
+};
 // 发送消息
 export const sendMsg = async (params) => {
+  const { messageElementObject, callback } = params || {};
   try {
     const {
       code,
@@ -293,4 +324,17 @@ export const setSelfStatus = (status) => {
 // 查询自己的用户状态
 export const getUserStatus = (id) => {
   const { code, data } = tim.getUserStatus({ userIDList: [id] });
+};
+// 将英文翻译成中文
+export const translateText = (params) => {
+  const { textList } = params;
+  const { code, data } = tim.translateText({
+    sourceTextList: textList,
+    sourceLanguage: "auto",
+    targetLanguage: "zh",
+  });
+  return {
+    code,
+    data,
+  };
 };

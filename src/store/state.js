@@ -1,4 +1,5 @@
 import storage from "storejs";
+import { USER_DATA, SET_UP } from "@/store/mutation-types";
 
 // 默认设置
 const defaultSettings = {
@@ -20,8 +21,8 @@ const defaultData = {
 };
 
 // 获取本地存储中的设置和用户信息，如果没有则使用默认值
-const settings = storage.get("setup") || defaultSettings;
-const data = storage.get("userdata") || defaultData;
+const settings = storage.get(SET_UP) || defaultSettings;
+const data = storage.get(USER_DATA) || defaultData;
 
 export default {
   settings,

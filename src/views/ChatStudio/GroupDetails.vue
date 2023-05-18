@@ -12,7 +12,7 @@
     :show-close="true"
     :with-header="true"
   >
-    <div class="group-details">
+    <div class="group-details" v-if="currentType === TIM.TYPES.CONV_GROUP">
       <!-- info -->
       <div class="group-base-info">
         <UserAvatar :nickName="groupProfile.groupID" />
@@ -21,25 +21,25 @@
             <span class="group-base-info--text__name">
               {{ groupProfile.name }}
             </span>
-            <span class="edit-icon"></span>
+            <FontIcon class="style-editPen" iconName="EditPen" @click="openNamePopup" />
           </div>
           <span class="group-base-info--text__type">
-            {{ groupProfile.type }}
+            {{ GROUP_TYPE_MAP[groupProfile.type] }}
           </span>
         </div>
       </div>
-      <div class="divider"></div>
+      <el-divider />
       <!-- 群公告 -->
       <div class="group-accountecment">
         <div class="group-accountecment--title">
           <span>群公告</span>
-          <span class="edit-icon"></span>
+          <FontIcon class="style-editPen" iconName="EditPen" @click="openNoticePopup" />
         </div>
         <div class="group-accountecment--info">
-          {{ groupProfile.notification }}
+          <AnalysisUrl :text="groupProfile.notification" />
         </div>
       </div>
-      <div class="divider"></div>
+      <el-divider />
       <!-- 群成员 -->
       <div class="group-member">
         <div class="group-member--title">
@@ -64,63 +64,33 @@
             >
               <CircleCloseFilled />
             </el-icon>
-            <UserAvatar
-              className="avatar-item"
-              :url="item.avatar"
-              :nickName="item.nick"
-            />
+            <UserAvatar className="avatar-item" :url="item.avatar" :nickName="item.nick" />
+            <div class="admin" :class="item.role" v-if="item.role !== 'Member'">
+              {{ item.role == "Owner" ? "群主" : "管理员" }}
+            </div>
           </div>
           <span class="group-member--add" @click="groupMemberAdd"> </span>
         </div>
       </div>
-      <div class="divider"></div>
+      <el-divider />
       <!-- 免打扰 -->
       <div class="group-flag-message">
         <div class="group-flag-message--title">
           <span class="group-flag-message--title__text"> 消息免打扰 </span>
-          <el-switch v-model="value" />
+          <el-switch v-model="isNotify" @change="notify" />
         </div>
       </div>
-      <div class="divider"></div>
+      <el-divider />
       <!-- 退出 转让 -->
       <div class="group-operator">
-        <el-button v-if="isOwner" type="danger" @click="dismissGroup">
-          解散群组
-        </el-button>
-        <el-button v-else type="danger" @click="handleQuitGroup">
-          退出群组
-        </el-button>
+        <el-button v-if="isOwner" type="danger" @click="handleDismissGroup"> 解散群组 </el-button>
+        <el-button v-else type="danger" @click="handleQuitGroup"> 退出群组 </el-button>
         <div class="group-operator--divider"></div>
-        <el-button type="primary" plain v-show="isOwner" @click="transferGroup">
+        <el-button type="primary" plain v-show="isOwner" @click="handleTransferGroup">
           转让群组
         </el-button>
+        <!-- <el-button type="primary" plain @click="groupTest"> 测试按钮 </el-button> -->
       </div>
-      <!-- 人员详情 -->
-      <!-- <Drawer
-      title="人员详情"
-      classModal="drawer-group"
-      size="360px"
-      ref="Refdrawerlist"
-    >
-      <template #center>
-        <div
-          class="member-list-drawer--item"
-          v-for="item in currentMemberList"
-          :key="item.userID"
-        >
-          <UserAvatar :url="item.avatar" :nickName="item.nick" />
-          <span class="member-list-drawer--item__name">
-            {{ item.nick }}
-          </span>
-          <span class="owner" v-if="groupProfile.ownerID == item.userID">
-            群主
-          </span>
-          <span class="admin" v-if="userProfile.userID == item.userID && false">
-            自己
-          </span>
-        </div>
-      </template>
-    </Drawer> -->
       <!-- 添加成员弹框 -->
       <el-dialog v-model="dialogVisible" title="添加成员" width="30%" draggable>
         <div>
@@ -129,9 +99,7 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="close"> 取消 </el-button>
-            <el-button type="primary" @click="addGroupMemberBtn">
-              确认
-            </el-button>
+            <el-button type="primary" @click="addGroupMemberBtn"> 确认 </el-button>
           </span>
         </template>
       </el-dialog>
@@ -140,23 +108,27 @@
 </template>
 
 <script setup>
-import { nextTick, ref, computed } from "vue";
-import { ElMessageBox } from "element-plus";
+import { nextTick, ref, computed, defineProps, toRefs } from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
 import { UserFilled } from "@element-plus/icons-vue";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
+import { useToggle } from "@/utils/hooks/index";
 import { useStore } from "vuex";
-import {
-  updateGroupProfile,
-  addGroupMember,
-  deleteGroupMember,
-} from "@/api/im-sdk-api/group";
+import { updateGroupProfile, addGroupMember, deleteGroupMember } from "@/api/im-sdk-api/group";
 import { useI18n } from "vue-i18n";
+import AnalysisUrl from "./components/AnalysisUrl.vue";
+import { showConfirmationBox } from "@/utils/message";
+import TIM from "tim-js-sdk";
 
+const GROUP_TYPE_MAP = {
+  Public: "陌生人社交群(Public)",
+  Private: "好友工作群(Work)",
+  ChatRoom: "临时会议群(Meeting)",
+  AVChatRoom: "直播群(AVChatRoom)",
+};
 const { locale, t } = useI18n();
-const { state, commit, dispatch } = useStore();
+const { commit, dispatch } = useStore();
 const {
-  user,
   userProfile,
   groupDrawer,
   showMsgBox,
@@ -164,7 +136,6 @@ const {
   currentMemberList,
   currentConversation,
 } = useState({
-  user: (state) => state.data.user,
   userProfile: (state) => state.user.currentUserProfile,
   showMsgBox: (state) => state.conversation.showMsgBox,
   groupDrawer: (state) => state.groupinfo.groupDrawer,
@@ -172,53 +143,79 @@ const {
   currentMemberList: (state) => state.groupinfo.currentMemberList,
   currentConversation: (state) => state.conversation.currentConversation,
 });
-const { isOwner, isAdmin, toAccount } = useGetters([
+const { isOwner, isAdmin, toAccount, currentType } = useGetters([
   "isOwner",
   "isAdmin",
   "toAccount",
+  "currentType",
 ]);
 const input = ref("");
-const value = ref(false);
-const Refdrawerlist = ref();
+const isNotify = ref(false);
 const dialogVisible = ref(false);
-const groupMember = ref([]);
-
+const notify = (val) => {
+  // const { type, toAccount, messageRemindType: remindType } = currentConversation.value;
+  // dispatch("SET_MESSAGE_REMIND_TYPE", {
+  //   type,
+  //   toAccount,
+  //   remindType,
+  // });
+};
+const groupTest = async () => {
+  // console.log(groupProfile.value.groupID);
+  // const data = {
+  //   type: "GROUP",
+  //   groupProfile: { groupID: groupProfile.value.groupID },
+  // };
+  // dispatch("getGroupProfile", data);
+  console.log(currentConversation.value);
+};
 const visible = computed({
   get() {
+    // console.log(props.groupProfile);
     return groupDrawer.value;
   },
   set() {
     commit("setGroupStatus", false);
   },
 });
-
-const openDetails = () => {
-  // Refdrawerlist.value.handleOpen();
+const openNamePopup = async () => {
+  const data = { message: "输入群名" };
+  const result = await showConfirmationBox(data, "prompt");
+  if (result == "cancel") return;
+  const { value, action } = result;
+  modifyGroupInfo(value);
 };
+const openNoticePopup = async () => {
+  const data = { message: "输入群公告" };
+  const result = await showConfirmationBox(data, "prompt");
+  if (result == "cancel") return;
+  const { value, action } = result;
+  modifyGroupInfo(value, "notification");
+};
+const openDetails = () => {};
 const handleClose = (done) => {
   done();
 };
-
+const groupMemberAdd = () => {
+  dialogVisible.value = true;
+};
 const close = () => {
   input.value = "";
   dialogVisible.value = false;
 };
-const RemovePeople = (item) => {
-  ElMessageBox.confirm(`确定将 ${item.nick} 移出群聊?`, "提示", {
-    confirmButtonText: `${t("el.datepicker.confirm")}`,
-    cancelButtonText: `${t("el.datepicker.cancel")}`,
-    type: "warning",
-  })
-    .then(() => {
-      deleteGroupMember({
-        groupID: toAccount.value,
-        user: item.userID,
-      });
-      updataGroup();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+const navigate = (item) => {
+  console.log(item);
+  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${item.userID}` });
+  commit("setGroupStatus", false);
+};
+const RemovePeople = async (item) => {
+  const data = { message: `确定将 ${item.nick} 移出群聊?`, iconType: "warning" };
+  const result = await showConfirmationBox(data);
+  if (result == "cancel") return;
+  const params = { groupID: toAccount.value, user: item.userID };
+  const { code } = await deleteGroupMember(params);
+  if (code !== 0) return;
+  updataGroup();
 };
 const addGroupMemberBtn = () => {
   const { groupID } = groupProfile.value;
@@ -231,63 +228,79 @@ const updataGroup = () => {
     dispatch("getGroupMemberList");
   }, 500);
 };
-const onclick = () => {
+// 修改群资料
+const modifyGroupInfo = async (value, modify) => {
   const { groupID } = groupProfile.value;
-  updateGroupProfile({
+  const { code, group } = await updateGroupProfile({
     convId: groupID,
-    modify: "notification",
-    value: "公告12",
+    modify: modify,
+    value: value,
+  });
+  if (code !== 0) return;
+  nextTick(() => {
+    const data = {
+      type: "GROUP",
+      groupProfile: { groupID },
+    };
+    // dispatch("getGroupProfile", data);
   });
 };
-const navigate = (item) => {
-  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${item.userID}` });
+const handleDismissGroup = async () => {
+  const data = { message: "确定解散群聊?", iconType: "warning" };
+  const result = await showConfirmationBox(data);
+  if (result == "cancel") return;
+  const { conversationID } = currentConversation.value;
+  dispatch("DISMISS_GROUP", {
+    convId: conversationID,
+    groupId: toAccount.value,
+  });
+};
+const handleTransferGroup = async () => {
+  const data = { message: "确定转让群聊?", iconType: "warning" };
+  const result = await showConfirmationBox(data);
+  if (result == "cancel") return;
+};
+const handleQuitGroup = async () => {
+  const data = { message: "确定退出群聊?", iconType: "warning" };
+  const result = await showConfirmationBox(data);
+  if (result == "cancel") return;
+  const { conversationID } = currentConversation.value;
+  dispatch("QUIT_GROUP", {
+    convId: conversationID,
+    groupId: toAccount.value,
+  });
   commit("setGroupStatus", false);
-};
-const groupMemberAdd = () => {
-  dialogVisible.value = true;
-};
-const dismissGroup = () => {
-  ElMessageBox.confirm("确定解散群聊?", "提示", {
-    confirmButtonText: `${t("el.datepicker.confirm")}`,
-    cancelButtonText: `${t("el.datepicker.cancel")}`,
-    type: "warning",
-  })
-    .then(() => {
-      const { conversationID } = currentConversation.value;
-      dispatch("DISMISS_GROUP", {
-        convId: conversationID,
-        groupId: toAccount.value,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-const transferGroup = () => {
-  console.log();
-};
-
-const handleQuitGroup = () => {
-  ElMessageBox.confirm("确定退出群聊?", "提示", {
-    confirmButtonText: `${t("el.datepicker.confirm")}`,
-    cancelButtonText: `${t("el.datepicker.cancel")}`,
-    type: "warning",
-  })
-    .then(() => {
-      const { conversationID } = currentConversation.value;
-      dispatch("QUIT_GROUP", {
-        convId: conversationID,
-        groupId: toAccount.value,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      console.log(groupProfile.value);
-    });
 };
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
+
+.admin {
+  width: 40px;
+  height: 14px;
+  text-align: center;
+  line-height: 14px;
+  font-size: 8.64px;
+  position: absolute;
+  top: 30px;
+  border-radius: 2px;
+  background: #fffbe6;
+  color: #4ab017b3;
+  border: 0.64px solid rgb(191, 232, 158);
+}
+.Owner {
+  color: #faad14;
+  border: 0.64px solid rgba(255, 229, 143, 1);
+}
+
+:deep(.el-divider) {
+  margin: 0;
+}
+.style-editPen {
+  vertical-align: bottom;
+  margin-left: 5px;
+}
 .avatar:hover .style-close {
   visibility: visible;
 }
@@ -317,6 +330,7 @@ const handleQuitGroup = () => {
     color: #999999;
     line-height: 16px;
     min-height: 12px;
+    @include ellipsisBasic(5);
   }
 }
 .group-base-info {
@@ -328,10 +342,14 @@ const handleQuitGroup = () => {
     flex-direction: column;
     margin-left: 8px;
     .group-base-info--text__name {
+      display: inline-block;
+      vertical-align: bottom;
+      max-width: 150px;
       font-size: 14px;
       font-weight: 400;
       color: #000000;
       margin-right: 8px;
+      @include text-ellipsis;
     }
     .group-base-info--text__type {
       font-size: 12px;
@@ -392,11 +410,5 @@ const handleQuitGroup = () => {
   .group-operator--divider {
     width: 12px;
   }
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background: #eeeeee;
 }
 </style>

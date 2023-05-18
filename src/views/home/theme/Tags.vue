@@ -5,12 +5,7 @@
         <FontIcon iconName="arrow-left" class="cursor-w" />
       </div>
       <div class="scroll-container">
-        <el-tag
-          :type="CurTitle === '首页' ? '' : 'info'"
-          @click="tagClick('/home')"
-        >
-          首页
-        </el-tag>
+        <el-tag :type="CurTitle === '首页' ? '' : 'info'" @click="tagClick('/home')"> 首页 </el-tag>
         <el-tag
           v-show="tags"
           v-for="tag in tags"
@@ -36,18 +31,10 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item :icon="Back" @click="closing('left')">
-              关闭左侧
-            </el-dropdown-item>
-            <el-dropdown-item :icon="Right" @click="closing('right')">
-              关闭右侧
-            </el-dropdown-item>
-            <el-dropdown-item :icon="Minus" @click="closing('other')">
-              关闭其他
-            </el-dropdown-item>
-            <el-dropdown-item :icon="Close" @click="closing('all')">
-              全部关闭
-            </el-dropdown-item>
+            <el-dropdown-item :icon="Back" @click="closing('left')"> 关闭左侧 </el-dropdown-item>
+            <el-dropdown-item :icon="Right" @click="closing('right')"> 关闭右侧 </el-dropdown-item>
+            <el-dropdown-item :icon="Minus" @click="closing('other')"> 关闭其他 </el-dropdown-item>
+            <el-dropdown-item :icon="Close" @click="closing('all')"> 全部关闭 </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -68,7 +55,6 @@
 <script setup>
 import { Back, Right, Minus, Plus, Close } from "@element-plus/icons-vue";
 import { computed, ref, watch, toRefs } from "vue";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { useRoute, useRouter } from "vue-router";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";

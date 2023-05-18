@@ -1,15 +1,14 @@
-import {
-  CONVERSATIONTYPE,
-  GET_MESSAGE_LIST,
-  HISTORY_MESSAGE_COUNT,
-} from "@/store/mutation-types";
+import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { addTimeDivider } from "@/utils/addTimeDivider";
+import TIM from "tim-js-sdk";
 import {
   getMsgList,
   deleteConversation,
   getConversationProfile,
   setMessageRead,
   getUnreadMsg,
+  TIMpingConv,
+  setMessageRemindType,
 } from "@/api/im-sdk-api";
 import { deepClone } from "@/utils/clone";
 
@@ -38,6 +37,7 @@ const conversation = {
     currentReplyUser: null,
     activetab: "whole",
     outside: "news", // 侧边栏初始状态
+    isNotify: false, // 是否免打扰
   },
   mutations: {
     // 设置历史消息
@@ -46,7 +46,7 @@ const conversation = {
       switch (type) {
         // 添加消息 首次进入会话是调用
         case CONVERSATIONTYPE.ADD_MESSAGE: {
-          console.log("添加消息");
+          console.log(payload, "添加消息");
           const { convId, message } = payload;
           state.historyMessageList.set(convId, message);
           if (state.currentConversation) {
@@ -55,16 +55,13 @@ const conversation = {
             state.currentMessageList = [];
           }
           // 当前会话少于历史条数关闭loading
-          if (state.currentMessageList?.length < HISTORY_MESSAGE_COUNT) {
-            state.noMore = true;
-          } else {
-            state.noMore = false;
-          }
+          const isMore = state.currentMessageList?.length < HISTORY_MESSAGE_COUNT;
+          state.noMore = isMore;
           break;
         }
-        // 添加更多消息
+        // 添加更多消息 拉取历史消息时触发
         case CONVERSATIONTYPE.ADD_MORE_MESSAGE: {
-          console.log("添加更多消息");
+          console.log(payload, "添加更多消息");
           const { convId, messages } = payload;
           let history = state.historyMessageList.get(convId);
           let baseTime = getBaseTime(history);
@@ -76,27 +73,46 @@ const conversation = {
           state.currentMessageList = state.historyMessageList.get(convId);
           break;
         }
-        // 更新消息
+        // 更新消息 收到新消息 或 发送消息后 触发
         case CONVERSATIONTYPE.UPDATE_MESSAGES: {
-          console.log("更新消息");
+          console.log(payload, "更新消息");
           const { convId, message } = payload;
+          let matched = false;
           let newMessageList = [];
-          newMessageList = state.currentMessageList;
-          let baseTime = getBaseTime(newMessageList);
-          let timeDividerResult = addTimeDivider([message], baseTime).reverse();
-          newMessageList.unshift(...timeDividerResult);
-          state.currentMessageList = newMessageList;
-          state.needScrollDown = 0;
+          let oldMessageList = state.historyMessageList.get(convId);
+          if (oldMessageList) {
+            newMessageList = oldMessageList.map((oldMessage) => {
+              if (oldMessage.ID === payload.message.ID) {
+                matched = true;
+                return payload.message;
+              } else {
+                return oldMessage;
+              }
+            });
+          }
+          // newMessageList = state.currentMessageList;
+          // 新消息
+          if (!matched) {
+            let baseTime = getBaseTime(newMessageList);
+            let timeDividerResult = addTimeDivider([message], baseTime).reverse();
+            newMessageList.unshift(...timeDividerResult);
+          }
+          // 更新历史消息
+          state.historyMessageList.set(convId, newMessageList);
+          // 当前会有列表有值
+          if (state.currentConversation) {
+            state.currentMessageList = newMessageList;
+            state.needScrollDown = 0;
+          }
           break;
         }
         // 删除消息
         case CONVERSATIONTYPE.DELETE_MESSAGE: {
+          console.log(payload, "删除消息");
           const { convId, message } = payload;
           const history = state.historyMessageList.get(convId);
           if (!history) return;
-          const newHistory = history.filter(
-            (item) => !item.isTimeDivider && !item.isDeleted
-          );
+          const newHistory = history.filter((item) => !item.isTimeDivider && !item.isDeleted);
           const newHistoryList = addTimeDivider(newHistory.reverse()).reverse();
           state.historyMessageList.set(convId, newHistoryList);
           state.currentMessageList = newHistoryList;
@@ -104,6 +120,7 @@ const conversation = {
         }
         // 撤回消息
         case CONVERSATIONTYPE.RECALL_MESSAGE: {
+          console.log(payload, "撤回消息");
           const { convId, message } = payload;
           let oldConvId = state.currentConversation?.conversationID;
           let history = state.historyMessageList.get(convId);
@@ -115,15 +132,29 @@ const conversation = {
           state.currentMessageList = newHistoryList;
           break;
         }
+        // 回复消息
+        case CONVERSATIONTYPE.SET_CURRENT_REPLY_MSG: {
+          state.currentReplyMsg = payload;
+          break;
+        }
         // 清除历史记录
         case CONVERSATIONTYPE.CLEAR_HISTORY: {
-          state.historyMessageList = new Map();
-          state.currentConversation = null;
-          state.currentMessageList = [];
-          state.showMsgBox = false;
-          state.showCheckbox = false;
-          state.currentReplyUser = null;
-          state.currentReplyMsg = null;
+          Object.assign(state, {
+            historyMessageList: new Map(),
+            currentConversation: null,
+            currentMessageList: [],
+            showMsgBox: false,
+            showCheckbox: false,
+            currentReplyUser: null,
+            currentReplyMsg: null,
+          });
+          // state.historyMessageList = new Map();
+          // state.currentConversation = null;
+          // state.currentMessageList = [];
+          // state.showMsgBox = false;
+          // state.showCheckbox = false;
+          // state.currentReplyUser = null;
+          // state.currentReplyMsg = null;
           break;
         }
         // 加载更多状态
@@ -143,7 +174,7 @@ const conversation = {
         }
         // 更新缓存数据
         case CONVERSATIONTYPE.UPDATE_CACHE: {
-          console.log("更新缓存数据");
+          console.log(payload, "更新缓存数据");
           const { convId, message } = payload;
           let history = state.historyMessageList.get(convId);
           if (!history) return;
@@ -151,6 +182,10 @@ const conversation = {
           let timeDivider = addTimeDivider(message, baseTime).reverse();
           history.unshift(...timeDivider);
           break;
+        }
+        case CONVERSATIONTYPE.UPDATE_MESSAGE_ELEM_PROGRESS: {
+          // let { messageId, } = payload;
+          // state.uploadProgress.set(``, {});
         }
       }
     },
@@ -225,6 +260,9 @@ const conversation = {
           break;
       }
     },
+    SET_IS_NOTIFY(state, flag) {
+      state.isNotify = flag;
+    },
     // 设置多选框状态
     SET_CHEC_BOX(state, flag) {
       state.showCheckbox = flag;
@@ -237,22 +275,23 @@ const conversation = {
     TAGGLE_OUE_SIDE(state, item) {
       state.outside = item;
     },
+    setReplyMsg(state, payload) {
+      state.currentReplyMsg = payload;
+      console.log(state.currentReplyMsg);
+    },
   },
   actions: {
     // 获取消息列表
     async [GET_MESSAGE_LIST]({ commit, dispatch, state, rootState }, action) {
       let isSDKReady = rootState.user.isSDKReady;
       const { conversationID, type, toAccount } = action;
-      let status =
-        !state.currentMessageList || state.currentMessageList?.length == 0;
+      let status = !state.currentMessageList || state.currentMessageList?.length == 0;
       // 当前会话有值
       if (state.currentConversation && isSDKReady && status) {
-        const { isCompleted, messageList, nextReqMessageID } = await getMsgList(
-          {
-            conversationID: conversationID,
-            count: 15,
-          }
-        );
+        const { isCompleted, messageList, nextReqMessageID } = await getMsgList({
+          conversationID: conversationID,
+          count: 15,
+        });
         // 添加时间
         const addTimeDividerResponse = addTimeDivider(messageList).reverse();
         commit("SET_HISTORYMESSAGE", {
@@ -296,7 +335,7 @@ const conversation = {
         payload: conversation,
       });
       // 群详情信息
-      commit("setGroupProfile", conversation);
+      dispatch("getGroupProfile", conversation);
       // 获取会话列表
       dispatch("GET_MESSAGE_LIST", conversation);
     },
@@ -318,6 +357,16 @@ const conversation = {
       const { isSDKReady } = rootState.user || {};
       if (!isSDKReady) return;
       state.totalUnreadMsg = await getUnreadMsg();
+    },
+    // 消息免打扰
+    async SET_MESSAGE_REMIND_TYPE({ state, commit }, action) {
+      const { type, toAccount, remindType } = action;
+      if (type == "@TIM#SYSTEM") return;
+      await setMessageRemindType({
+        userID: toAccount,
+        RemindType: remindType,
+        type,
+      });
     },
   },
   getters: {
@@ -343,6 +392,28 @@ const conversation = {
         default:
           return state.conversationList;
       }
+    },
+    currentType(state) {
+      if (!state.currentConversation || !state.currentConversation.type) {
+        return "";
+      }
+      return state.currentConversation.type;
+    },
+    totalUnreadCount: (state) => {
+      const result = state.conversationList.reduce((count, conversation) => {
+        // 当前会话不计算总未读
+        if (state.currentConversation.conversationID === conversation.conversationID) {
+          return count;
+        }
+        return count + conversation.unreadCount;
+      }, 0);
+      return result;
+    },
+    // 用于当前会话的图片预览
+    imgUrlList: (state) => {
+      return state.currentMessageList
+        .filter((message) => message.type === TIM.TYPES.MSG_IMAGE && !message.isRevoked) // 筛选出没有撤回并且类型是图片类型的消息
+        .map((message) => message.payload.imageInfoArray[0].url);
     },
   },
 };

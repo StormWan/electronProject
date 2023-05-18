@@ -1,7 +1,7 @@
 <template>
   <div class="logo" v-if="show">
     <router-link :title="title" class="sidebar-logo-link" to="/">
-      <FontIcon iconName="Monitor" style="width: 35px; height: 35px" /> 
+      <FontIcon iconName="Monitor" style="width: 35px; height: 35px" />
       <span class="sidebar-title" v-if="!collapse">{{ title }}</span>
     </router-link>
   </div>
@@ -9,7 +9,6 @@
 
 <script setup>
 import { toRefs } from "vue";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 
 const { title } = require("@/config/vue.custom.config");
 const props = defineProps({

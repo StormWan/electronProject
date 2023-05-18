@@ -11,22 +11,12 @@
       trigger="click"
     >
       <template #reference>
-        <span
-          class="emoticon"
-          title="选择表情"
-          ref="buttonRef"
-          v-click-outside="onClickOutside"
-        >
+        <span class="emoticon" title="选择表情" ref="buttonRef" v-click-outside="onClickOutside">
           <svg-icon iconClass="iconxiaolian" class="icon-hover" />
         </span>
       </template>
       <div class="emojis">
-        <div
-          v-for="item in emojiName"
-          class="emoji"
-          :key="item"
-          @click="SelectEmoticon(item)"
-        >
+        <div v-for="item in emojiName" class="emoji" :key="item" @click="SelectEmoticon(item)">
           <img :src="emojiUrl + emojiMap[item]" :title="item" />
         </div>
       </div>
@@ -64,7 +54,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span class="" title="截图" @click="clickCscreenshot">
+    <span class="" title="截图" @click="clickCscreenshot" v-if="false">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 更多 -->
@@ -90,13 +80,7 @@
       @change="sendImage"
       hidden
     />
-    <input
-      type="file"
-      id="filePicker"
-      ref="filePicker"
-      @change="sendFile"
-      hidden
-    />
+    <input type="file" id="filePicker" ref="filePicker" @change="sendFile" hidden />
     <!-- <input
       type="file"
       id="videoPicker"
@@ -111,12 +95,7 @@
 <script setup>
 import html2canvas from "html2canvas";
 import { ref, unref, toRefs, defineEmits } from "vue";
-import {
-  emojiName,
-  emojiUrl,
-  emojiMap,
-  localemojiUrl,
-} from "@/utils/emoji-map";
+import { emojiName, emojiUrl, emojiMap, localemojiUrl } from "@/utils/emoji-map";
 import { ClickOutside as vClickOutside } from "element-plus";
 import { uploadFiles } from "@/api/index";
 
@@ -132,7 +111,13 @@ const onClickOutside = () => {
 };
 const SelectEmoticon = (item) => {
   let url = emojiUrl + emojiMap[item];
-  emit("setEmoj", url, item);
+  emit("setToolbar", {
+    data: {
+      url,
+      item,
+    },
+    key: "setEmoj",
+  });
   unref(popoverRef).hide();
 };
 const SendImageClick = () => {
@@ -144,34 +129,23 @@ const SendFileClick = () => {
   let $el = filePicker.value;
   $el.click();
 };
-const clickCscreenshot = () => {
-  // screenshot
-  // html2canvas(document.body, {
-  //   allowTaint: true,
-  //   // useCORS: true,
-  //   dpi: 150,
-  //   scale: 2,
-  // }).then((canvas) => {
-  //   console.log(canvas);
-  //   // let dataURL = canvas.toDataURL("image/png");
-  //   // console.log(dataURL);
-  //   // document.body.appendChild(canvas);
-  // });
-};
+const clickCscreenshot = () => {};
 
 async function sendImage(e) {
-  // console.log(e.target.files[0]);
-  emit("setPicture", e.target.files[0]);
-  // const res = await uploadFiles({
-  //   files: e.target.files[0],
-  // });
+  emit("setToolbar", {
+    data: {
+      files: e.target.files[0],
+    },
+    key: "setPicture",
+  });
 }
 async function sendFile(e) {
-  // console.log(e.target.files[0]);
-  emit("setParsefile", e.target.files[0]);
-  // const res = await uploadFiles({
-  //   files: e.target.files[0],
-  // });
+  emit("setToolbar", {
+    data: {
+      files: e.target.files[0],
+    },
+    key: "setParsefile",
+  });
 }
 </script>
 <style>

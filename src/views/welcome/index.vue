@@ -65,20 +65,14 @@ const openDepot = () => {
 .style-row {
   margin: 20px !important;
 }
-// .main-content {
-//   margin: 0 !important;
-// }
 .style-text {
   color: var(--color-text);
 }
 .top-content {
   display: flex;
-  // justify-content: space-between;
   align-items: center;
   height: 60px;
   border: none;
-  // background: #fff;
-
   .left-mark {
     display: flex;
     align-items: center;

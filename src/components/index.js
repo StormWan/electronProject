@@ -9,8 +9,8 @@ export function loadAllassembly(app) {
   files.keys().forEach((key) => {
     const name = key.replace(/\/index.vue/, "").slice(2);
     const meter = files(key).default;
-    // console.log(name,meter)
-    let off = whiteList.includes(name);
+    // console.log(name, meter);
+    const off = whiteList.includes(name);
     !off && app.component(name, meter);
   });
 }

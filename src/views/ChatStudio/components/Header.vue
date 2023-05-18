@@ -4,11 +4,7 @@
       <header-view :list="Conver" />
     </div>
     <div class="flex">
-      <div
-        class="message-info-add"
-        v-show="Conver.type == 'GROUP' && false"
-        title="添加成员"
-      >
+      <div class="message-info-add" v-show="Conver.type == 'GROUP' && false" title="添加成员">
         <svg-icon iconClass="tianjia" class="icon-hover" />
       </div>
       <div
@@ -25,18 +21,19 @@
 
 <script setup>
 import { h, ref } from "vue";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { GET_MESSAGE_LIST } from "@/store/mutation-types";
 import { useStore } from "vuex";
 
 const { state, commit, dispatch } = useStore();
-const { Conver, groupDrawer } = useState({
+const { Conver, groupDrawer, groupProfile } = useState({
   groupDrawer: (state) => state.groupinfo.groupDrawer,
+  groupProfile: (state) => state.groupinfo.groupProfile,
   Conver: (state) => state.conversation.currentConversation,
 });
 const openSetup = () => {
   commit("setGroupStatus", true);
+  console.log(groupProfile.value);
 };
 
 const HeaderView = (props) => {
@@ -56,11 +53,7 @@ const HeaderView = (props) => {
       const {
         groupProfile: { name, groupID },
       } = list;
-      fn = h(
-        "span",
-        { onClick: () => openSetup(), class: "style-group" },
-        name || groupID
-      );
+      fn = h("span", { onClick: () => openSetup(), class: "style-group" }, name || groupID);
       break;
     case "@TIM#SYSTEM":
       fn = h("span", { class: "style-system" }, "系统通知");

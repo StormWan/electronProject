@@ -1,18 +1,12 @@
 <template>
-  <div class="message-view__item--text">{{ payload.extension }}</div>
+  <div class="message-view__item--text">{{ tip }}</div>
 </template>
 
 <script>
-import {
-  defineComponent,
-  toRefs,
-  reactive,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 export default defineComponent({
-  name: "CustomElemItem",
+  name: "CustomElemItem", // 自定义消息
   components: {},
   computed: {},
   props: {
@@ -28,11 +22,26 @@ export default defineComponent({
   setup(props, { attrs, emit, expose, slots }) {
     const state = reactive({ text: "wewe" });
     const { message } = toRefs(props);
-    const { payload } = message.value;
-
+    const { payload, nick } = message.value;
+    let tip = "";
+    const {
+      data, // group_create
+      description, // ""
+      extension, // huangyk创建群组
+    } = payload;
+    switch (data) {
+      case "group_create":
+        tip = nick + "创建群组";
+        break;
+      default:
+        tip = "未知消息";
+        break;
+    }
     onMounted(() => {});
     onBeforeUnmount(() => {});
     return {
+      tip,
+      nick,
       payload,
       ...toRefs(state),
     };

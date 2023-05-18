@@ -21,15 +21,7 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  toRefs,
-  computed,
-  watch,
-  nextTick,
-  defineProps,
-} from "vue";
+import { ref, reactive, toRefs, computed, watch, nextTick, defineProps } from "vue";
 import { bytesToSize } from "@/utils/common";
 import { getFileType } from "@/utils/message-input-utils";
 import { renderFileIcon } from "../utils/utils";

@@ -1,7 +1,7 @@
 <template>
-   <!-- 弹框 -->
-    <el-dialog v-model="dialogFormVisible" :title="IofoText">
-      <!-- <el-form
+  <!-- 弹框 -->
+  <el-dialog v-model="dialogFormVisible" :title="IofoText">
+    <!-- <el-form
         ref="ruleFormRef"
         :model="ruleForm"
         status-icon
@@ -50,7 +50,7 @@
         </el-form-item>
       </el-form> -->
 
-      <!-- <el-form
+    <!-- <el-form
         ref="ruleFormRef"
         :model="ruleForm"
         status-icon
@@ -87,28 +87,21 @@
         </el-form-item>
       </el-form> -->
 
-      <slot name="menu"></slot>
-   
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="resetForm(ruleFormRef)" v-if="DisplayBtn"> 
-            重置 
-          </el-button>
-          <el-button @click="dialogFormVisible = false">
-            取消 
-          </el-button>
-          <el-button type="primary" @click="determine(ruleFormRef)">
-            确定
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
+    <slot name="menu"></slot>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="resetForm(ruleFormRef)" v-if="DisplayBtn"> 重置 </el-button>
+        <el-button @click="dialogFormVisible = false"> 取消 </el-button>
+        <el-button type="primary" @click="determine(ruleFormRef)"> 确定 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
 import { ref, reactive, toRefs } from "vue";
 import * as ElIcons from "@element-plus/icons-vue";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 
 const props = defineProps({
   IofoText: {
@@ -125,7 +118,7 @@ const props = defineProps({
   DisplayBtn: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 
 const ruleFormText = {
@@ -164,7 +157,7 @@ const determine = (formEl) => {
   formEl.validate((valid) => {
     if (valid) {
       dialogFormVisible.value = false;
-      Callback.value(ruleForm)
+      Callback.value(ruleForm);
     } else {
       return false;
     }
@@ -184,7 +177,7 @@ defineExpose({ dialogFormVisible });
     box-sizing: border-box;
     font-size: 14px;
   }
-  :deep(.el-input)  {
+  :deep(.el-input) {
     width: 500px;
   }
 }

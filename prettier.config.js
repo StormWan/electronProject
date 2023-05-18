@@ -5,7 +5,7 @@ module.exports = {
   /** Tab 键的空格数 */
   tabWidth: 2,
   /** 每一行的宽度 */
-  printWidth: 80,
+  printWidth: 100,
   proseWrap: "preserve",
   /** 箭头函数的参数无论有几个，都要括号包裹 */
   arrowParens: "always",

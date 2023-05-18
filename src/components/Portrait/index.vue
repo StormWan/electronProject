@@ -18,9 +18,8 @@ const props = defineProps({
 });
 const circleUrl = "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png";
 const { size, shape } = toRefs(props);
-const { userInfo, userProfile } = useState({
-  userProfile: state => state.user.currentUserProfile,
-  userInfo: state => state.data.user,
+const { userProfile } = useState({
+  userProfile: (state) => state.user.currentUserProfile,
 });
 </script>
 

@@ -6,7 +6,7 @@
       <Search />
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="全部" name="whole"></el-tab-pane>
-        <el-tab-pane label="未读" name="unread"></el-tab-pane>
+        <el-tab-pane :label="unread" name="unread"></el-tab-pane>
         <el-tab-pane label="@我" name="mention"></el-tab-pane>
       </el-tabs>
       <div class="scroll-container" :class="{ 'style-net': !networkStatus }">
@@ -21,11 +21,7 @@
       <Header />
       <!-- 聊天窗口 -->
       <Chatwin ref="ChatRef" />
-      <div
-        id="svgResize"
-        @mouseover="dragControllerDiv(ChatRef)"
-        v-if="showMsgBox"
-      >
+      <div id="svgResize" @mouseover="dragControllerDiv(ChatRef)" v-if="showMsgBox">
         <!-- <div class="back-to-the-bottom" @click="toBottom">
           <el-icon class="svg-left">
             <DArrowLeft />
@@ -53,6 +49,7 @@ import {
   onBeforeUnmount,
   onUnmounted,
   watch,
+  watchEffect,
   nextTick,
 } from "vue";
 import { useEventListener } from "@/utils/hooks/index";
@@ -70,6 +67,7 @@ import networklink from "./components/networklink.vue";
 import ConversationList from "./ConversationList.vue";
 import MultiChoiceBox from "./components/MultiChoiceBox.vue";
 
+const unread = ref("未读");
 const ChatRef = ref(null);
 const showGroup = ref(false);
 const activeName = ref("whole");
@@ -79,20 +77,33 @@ const { toAccount } = useGetters(["toAccount"]);
 const {
   networkStatus,
   conver,
-  user,
   outside,
   groupDrawer,
   showMsgBox,
   conversationList,
+  totalUnreadMsg,
 } = useState({
   outside: (state) => state.conversation.outside,
   networkStatus: (state) => state.conversation.networkStatus,
-  user: (state) => state.data.user,
+  totalUnreadMsg: (state) => state.conversation.totalUnreadMsg,
   conver: (state) => state.conversation.currentConversation,
   showMsgBox: (state) => state.conversation.showMsgBox,
   groupDrawer: (state) => state.groupinfo.groupDrawer,
   conversationList: (state) => state.conversation.conversationList,
 });
+
+const fnTotalUnreadMsg = () => {
+  const unreadCount = totalUnreadMsg.value;
+  const isUnread = unreadCount > 0;
+  if (isUnread) {
+    unread.value = `未读(${unreadCount})`;
+  } else {
+    unread.value = "未读";
+  }
+};
+const toBottom = () => {
+  commit("updataScroll");
+};
 const handleClick = ({ props }, event) => {
   const { label, name } = props;
   commit("TOGGLE_LIST", name);
@@ -116,6 +127,9 @@ onMounted(() => {
 });
 onUnmounted(() => {
   // console.log("onUnmounted");
+});
+watchEffect(() => {
+  fnTotalUnreadMsg();
 });
 </script>
 

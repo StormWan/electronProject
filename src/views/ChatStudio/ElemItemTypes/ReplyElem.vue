@@ -1,8 +1,6 @@
 <template>
   <div v-if="originalMsg.messageReply" class="reply-msg-content">
-    <div class="reply-msg-content__sender">
-      {{ originalMsg.messageReply.messageSender }}:
-    </div>
+    <div class="reply-msg-content__sender">{{ originalMsg.messageReply.messageSender }}:</div>
     <div class="reply-msg-content__content">
       {{ originalMsg.messageReply.messageAbstract }}
     </div>
@@ -11,15 +9,7 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  toRefs,
-  computed,
-  watch,
-  nextTick,
-  defineProps,
-} from "vue";
+import { ref, reactive, toRefs, computed, watch, nextTick, defineProps } from "vue";
 const props = defineProps({
   originalMsg: {
     type: Object,

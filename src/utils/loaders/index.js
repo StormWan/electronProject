@@ -35,9 +35,7 @@ class loaderProxy {
    */
   loadScriptConcurrent = async (srcList) => {
     if (!Array.isArray(srcList)) return;
-    const promises = srcList
-      .filter((src) => src)
-      .map((src) => this.loadScript(src));
+    const promises = srcList.filter((src) => src).map((src) => this.loadScript(src));
     await Promise.all(promises);
   };
   loadScriptConcurrentCopy = async (srcList) => {

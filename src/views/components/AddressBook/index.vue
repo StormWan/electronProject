@@ -1,11 +1,6 @@
 <template>
   <div>
-    <el-dialog
-      v-model="drawer"
-      title="地址本"
-      class="address-style"
-      align-center
-    >
+    <el-dialog v-model="drawer" title="地址本" class="address-style" align-center>
       <div class="address-box">
         <div class="header"></div>
         <div class="content"></div>
@@ -26,14 +21,7 @@
 </template>
 
 <script setup>
-import {
-  computed,
-  ref,
-  toRefs,
-  reactive,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { computed, ref, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "vuex";
 import { useState } from "@/utils/hooks/useMapper";
 

@@ -28,7 +28,7 @@ export function debounce(func, wait = 300, immediate = false) {
  */
 
 // 延迟函数
-export const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
+export const delay = (timeout) => new Promise((resolve) => setTimeout(resolve, timeout));
 
 export const debounceCopy = (fn, timeout = 300) => {
   let timmer;

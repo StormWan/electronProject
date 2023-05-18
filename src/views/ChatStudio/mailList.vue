@@ -3,11 +3,7 @@
     <div class="abv" v-if="false">
       <el-tabs v-model="activeName" class="style-tabs" @tab-click="taggleClick">
         <el-tab-pane label="通讯录" name="first">
-          <el-tree
-            :data="group_list"
-            :props="defaultProps"
-            @node-click="handleNodeClick"
-          >
+          <el-tree :data="group_list" :props="defaultProps" @node-click="handleNodeClick">
             <template #default="{ node, data }">
               <div class="custom-node">
                 <span @click="handleClick(node, data)">

@@ -17,10 +17,6 @@ const props = defineProps({
   index: {
     type: Number,
   },
-  // noMore: {
-  //   type: Boolean,
-  //   default: true,
-  // },
 });
 const {
   // noMore,

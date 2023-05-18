@@ -4,55 +4,52 @@ import tim from "@/utils/im-sdk/tim";
 import storage from "storejs";
 import store from "@/store";
 import emitter from "@/utils/mitt-bus";
-
-function kickedOutReason(type) {
-  switch (type) {
-    case TIM.TYPES.KICKED_OUT_MULT_ACCOUNT:
-      return "由于多实例登录";
-    case TIM.TYPES.KICKED_OUT_MULT_DEVICE:
-      return "由于多设备登录";
-    case TIM.TYPES.KICKED_OUT_USERSIG_EXPIRED:
-      return "由于 userSig 过期";
-    default:
-      return "";
-  }
-}
-function checkoutNetState(state) {
-  switch (state) {
-    case TIM.TYPES.NET_STATE_CONNECTED:
-      return { message: "已接入网络", type: "success" };
-    case TIM.TYPES.NET_STATE_CONNECTING:
-      return { message: "当前网络不稳定", type: "warning" };
-    case TIM.TYPES.NET_STATE_DISCONNECTED:
-      store.dispatch("LOG_OUT");
-      store.dispatch("TIM_LOG_OUT");
-      return { message: "当前网络不可用", type: "error" };
-    default:
-      return "";
-  }
-}
+import { throttle } from "@/utils/throttle";
+import { kickedOutReason, checkoutNetState } from "./utils/index";
+import { ElNotification } from "element-plus";
+const fnCheckoutNetState = throttle((state) => {
+  checkoutNetState(state);
+}, 3000);
+// commit("SET_HISTORYMESSAGE", {
+//   type: "MARKE_MESSAGE_AS_READED",
+//   payload: {
+//     convId: conversationID,
+//     message: action,
+//   },
+// });
 
 export default class TIMProxy {
   // 静态方法
   constructor() {
+    this.version = TIM.VERSION; // im版本号
     this.userProfile = {}; // IM用户信息
     this.isSDKReady = false; // TIM SDK 是否 ready
     this.userID = "";
     this.userSig = "";
     this.tim = null; // TIM实例
     this.TIM = null; // TIM命名空间
-    /**
-     * value:属性的值
-     * writable:如果为false 属性的值就不能被重写,只能为只读了
-     * configurable:总开关,一旦为false,就不能再设置他的（value，writable，configurable）
-     * enumerable:是否能在for...in循环中遍历出来或在Object.keys中列举出来。
-     * https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-     */
-    Object.defineProperty(this, "tim", { enumerable: false });
+    this.once = false; // 防止重复初始化
+    this.test = {};
+    Object.defineProperty(this, "test", {
+      configurable: true, // 可配置
+      enumerable: false, // 不可枚举
+      value: 1, // 赋值
+      writable: true, // 可写
+    });
     // 暴露给全局
-    window.TIMProxy = this;
+    window.TIMProxy = new Proxy(this, {
+      set(target, key, val) {
+        console.log(key, val);
+        return Reflect.set(target, key, val);
+      },
+      get(target, key) {
+        const value = Reflect.get(target, key);
+        // console.log(value);
+        return value;
+      },
+    });
   }
-  // 保存IM信息
+  // 缓存IM信息
   saveSelfToLocalStorage() {
     const player = {};
     for (const [key, value] of Object.entries(this)) {
@@ -61,7 +58,7 @@ export default class TIMProxy {
     console.log(player);
     // storage.set("player", player);
   }
-  // 设置IM信息
+  // 更新IM信息
   loadSelfFromLocalStorage() {
     const player = storage.get("player");
     if (!player) return;
@@ -71,7 +68,9 @@ export default class TIMProxy {
   }
   // 初始化
   init() {
+    if (this.once) return;
     console.log("TIMProxy init");
+    this.once = true;
     this.tim = tim;
     this.TIM = TIM;
     // 监听SDK
@@ -97,10 +96,7 @@ export default class TIMProxy {
     // 网络监测
     tim.on(TIM.EVENT.NET_STATE_CHANGE, this.onNetStateChange);
     // 收到好友申请列表更新通知
-    tim.on(
-      TIM.EVENT.FRIEND_APPLICATION_LIST_UPDATED,
-      this.onFriendApplicationListUpdated
-    );
+    tim.on(TIM.EVENT.FRIEND_APPLICATION_LIST_UPDATED, this.onFriendApplicationListUpdated);
     // 收到好友分组列表更新通知
     tim.on(TIM.EVENT.FRIEND_GROUP_LIST_UPDATED, this.onFriendGroupListUpdated);
     // 已订阅用户或好友的状态变更（在线状态或自定义状态）时触发。
@@ -120,9 +116,10 @@ export default class TIMProxy {
       payload: data,
     });
   }
+  // 收到新消息
   onReceiveMessage({ data, name }) {
-    const convId =
-      store.state.conversation?.currentConversation?.conversationID;
+    window.TIMProxy.handleQuitGroupTip(data);
+    const convId = store.state.conversation?.currentConversation?.conversationID;
     const userProfile = store.state.user.currentUserProfile;
     const { atUserList } = data[0];
     console.log(convId, "当前会话ID");
@@ -147,6 +144,7 @@ export default class TIMProxy {
       });
       return;
     }
+    // store.dispatch("CHEC_OUT_CONVERSATION", { convId: data?.[0].conversationID });
     // 更新当前会话消息
     store.commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",
@@ -170,7 +168,7 @@ export default class TIMProxy {
   }
   onUpdateGroupList({ data, name }) {
     console.log(data, "群组列表更新");
-    // commit('updateGroupList', data)
+    // store.commit("updateGroupList", data[0]);
   }
   onKickOut({ data }) {
     const message = kickedOutReason(data.type);
@@ -179,7 +177,6 @@ export default class TIMProxy {
       type: "error",
     });
     store.dispatch("LOG_OUT");
-    store.dispatch("TIM_LOG_OUT");
   }
   onError({ data }) {
     console.log(data);
@@ -191,7 +188,7 @@ export default class TIMProxy {
     }
   }
   onNetStateChange({ data }) {
-    store.commit("showMessage", checkoutNetState(data.state));
+    store.commit("showMessage", fnCheckoutNetState(data.state));
   }
   onFriendApplicationListUpdated(event) {
     console.log(event);
@@ -222,6 +219,14 @@ export default class TIMProxy {
         }
       });
     }
+    // 用户选择是未知的，因此浏览器的行为类似于值是 denied
+    if (window.Notification.permission == "default") {
+      this.handleElNotification(message);
+    }
+    // 用户拒绝显示通知
+    if (window.Notification.permission == "denied") {
+      this.handleElNotification(message);
+    }
   }
   handleNotify(message) {
     const notification = new window.Notification("有人提到了你", {
@@ -229,8 +234,44 @@ export default class TIMProxy {
       body: message.payload.text,
     });
     notification.onclick = () => {
+      // 定位到指定会话
+      store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
       window.focus();
       notification.close();
     };
+  }
+  /**
+   * 收到有群成员退群/被踢出的groupTip时，需要将相关群成员从当前会话的群成员列表中移除
+   * @param {Message[]} messageList
+   */
+  handleQuitGroupTip(messageList) {
+    console.log(messageList, "handleQuitGroupTip");
+    const convId = store.state.conversation?.currentConversation?.conversationID;
+    // return;
+    // 筛选出当前会话的退群/被踢群的 groupTip
+    const groupTips = messageList.filter((message) => {
+      return (
+        convId === message.conversationID &&
+        message.type === TIM.TYPES.MSG_GRP_TIP &&
+        (message.payload.operationType === TIM.TYPES.GRP_TIP_MBR_QUIT ||
+          message.payload.operationType === TIM.TYPES.GRP_TIP_MBR_KICKED_OUT)
+      );
+    });
+    console.log(groupTips);
+    // 清理当前会话的群成员列表
+    if (groupTips.length > 0) {
+      groupTips.forEach((groupTip) => {
+        if (Array.isArray(groupTip.payload.userIDList) || groupTip.payload.userIDList.length > 0) {
+          // store.commit("deleteGroupMemberList", groupTip.payload.userIDList);
+        }
+      });
+    }
+  }
+  handleElNotification(message) {
+    ElNotification({
+      title: "有人提到了你",
+      message: message.payload.text,
+      duration: 3000,
+    });
   }
 }

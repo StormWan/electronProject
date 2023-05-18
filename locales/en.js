@@ -4,6 +4,7 @@ import elementEnLocale from "element-plus/lib/locale/lang/en";
 export default {
   ...elementEnLocale,
   common: {
+    forward: "Forward",
     createGroupChat: "Create Group Chat",
     language: "Language",
     setup: "Setup",

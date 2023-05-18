@@ -7,14 +7,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  toRefs,
-  computed,
-  reactive,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { defineComponent, toRefs, computed, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { changeAppearance } from "@/utils/common";

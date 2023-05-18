@@ -30,6 +30,7 @@ export function decodeText(text) {
           renderDom.push({
             name: "img",
             src: emojiUrl + emoji,
+            localSrc: `${localemojiUrl}${emoji}`, // 本地表情包地址
           });
           remainingText = remainingText.substring(rightBracketIndex + 1);
         } else {
@@ -59,4 +60,4 @@ export function decodeText(text) {
   }
   return renderDom;
 }
-// console.log(decodeText('[睡]123[呲牙]'))
+// console.log(decodeText("[睡]123[呲牙]"));

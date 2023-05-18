@@ -28,9 +28,7 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">{{
-            $t("el.messagebox.cancel")
-          }}</el-button>
+          <el-button @click="dialogVisible = false">{{ $t("el.messagebox.cancel") }}</el-button>
           <el-button type="primary" @click="createGroupBtn">
             {{ $t("el.messagebox.confirm") }}
           </el-button>
@@ -61,10 +59,10 @@ const createGroupBtn = () => {
   });
   input.value = "";
 };
-const handleClose = done => {
+const handleClose = (done) => {
   done();
 };
-watch(appoint, value => {
+watch(appoint, (value) => {
   console.log(value);
 });
 </script>

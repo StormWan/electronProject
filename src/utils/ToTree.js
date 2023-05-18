@@ -1,5 +1,10 @@
 import views from "@/utils/assembly";
 
+/**
+ * 将树形结构数据转换为符合 ElementUI 菜单组件的格式
+ * @param {Object} node - 当前节点对象
+ * @param {Array} Menu - 菜单数据数组
+ */
 export function ToTree(node, Menu) {
   // 根目录存在子组件
   if (node.children && node.children.length > 0) {
@@ -9,7 +14,6 @@ export function ToTree(node, Menu) {
       // 查找子级组件
       let child = Menu.find((item) => item.id === id);
       // 如果子级里面仍然存在子级 在次调用本身
-      // console.log(child)
       if (child.children?.length > 0) {
         ToTree(child, Menu);
       }

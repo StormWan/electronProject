@@ -1,16 +1,10 @@
 import http from "@/utils/http/index";
 import axios from "axios";
 import qs from "qs";
+import { Cloud } from "laf-client-sdk";
 import { restSendMsg } from "@/api/rest-api";
 
-export const createForData = ({
-  name,
-  type,
-  size,
-  fileName,
-  uploadedSize = 0,
-  file,
-}) => {
+export const createForData = ({ name, type, size, fileName, uploadedSize = 0, file }) => {
   const formData = new FormData();
   formData.append("name", name);
   formData.append("type", type);
@@ -62,6 +56,7 @@ export const SendMessageCd = async (params) => {
 export const chatGpt = async (params) => {
   const { From, To, content } = params;
   if (To !== "R00001") return;
+  // console.log(process.env.VUE_APP_API_URL);
   const { data } = await axios({
     url: process.env.VUE_APP_API_URL ?? "",
     method: "post",
@@ -76,5 +71,4 @@ export const chatGpt = async (params) => {
   } else {
     await restSendMsg({ To, From, content: "待开发" });
   }
-  // console.log(data);
 };

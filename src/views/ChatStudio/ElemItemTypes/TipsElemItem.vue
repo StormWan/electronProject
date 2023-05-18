@@ -5,18 +5,8 @@
 </template>
 
 <script>
-import {
-  toRefs,
-  reactive,
-  defineComponent,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
-import {
-  CONVERSATIONTYPE,
-  GET_MESSAGE_LIST,
-  HISTORY_MESSAGE_COUNT,
-} from "@/store/mutation-types";
+import { toRefs, reactive, defineComponent, onMounted, onBeforeUnmount } from "vue";
+import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 export default defineComponent({
   name: "TipElement",

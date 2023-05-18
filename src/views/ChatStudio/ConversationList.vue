@@ -3,13 +3,9 @@
     <!-- <transition-group name="fade-transform">
     </transition-group> -->
     <div class="no-msg" v-if="tabList.length == 0">
-      <img src="@/assets/images/wushuju.png" alt="" />
-      <p>
-        <span>暂无会话。</span>
-      </p>
+      <el-empty description="暂无会话。" :image-size="150" />
     </div>
     <div
-      draggable="true"
       class="message-item"
       v-for="item in tabList"
       :key="item.conversationID"
@@ -24,11 +20,7 @@
       <!-- 置顶图标 -->
       <div class="pinned-tag" v-show="item.isPinned"></div>
       <!-- 关闭按钮 -->
-      <FontIcon
-        iconName="close"
-        class="close-btn"
-        @click.stop="removeConv(item)"
-      />
+      <FontIcon iconName="close" class="close-btn" @click.stop="removeConv(item)" />
       <el-badge is-dot :hidden="isShowCount(item) || !isNotify(item)">
         <img
           v-if="item.type == 'C2C'"
@@ -67,6 +59,7 @@
       <contextmenu-item
         v-for="item in RIGHT_CLICK_CHAT_LIST"
         :key="item.id"
+        v-show="isShowMenu"
         @click="handleClickMenuItem(item)"
       >
         {{ item.text }}
@@ -78,15 +71,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getImageType } from "@/utils/message-input-utils";
-import {
-  squareUrl,
-  RIGHT_CLICK_CHAT_LIST,
-  RIGHT_CLICK_MENU_LIST,
-} from "./utils/menu";
+import { squareUrl, RIGHT_CLICK_CHAT_LIST, RIGHT_CLICK_MENU_LIST } from "./utils/menu";
 import { debounce } from "@/utils/debounce";
 import { getRoles } from "@/api/roles";
 import { generateUUID } from "@/utils/index";
-import FontIcon from "@/layout/FontIcon/indx.vue";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import { timeFormat } from "@/utils/timeFormat";
 import { useStore } from "vuex";
@@ -96,13 +84,13 @@ import { addTimeDivider } from "@/utils/addTimeDivider";
 import { TIMpingConv, setMessageRemindType } from "@/api/im-sdk-api";
 import Label from "./components/Label.vue";
 
+const isShowMenu = ref(false);
 const contextMenuItemInfo = ref([]);
 
 const { state, getters, dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { Selected, UserInfo, messageList, Conver } = useState({
-  UserInfo: (state) => state.data.user,
-  Selected: (state) => state.conversation.currentConversation,
+const { messageList, Conver, currentUserProfile } = useState({
+  currentUserProfile: (state) => state.user.currentUserProfile,
   messageList: (state) => state.conversation.currentMessageList,
   Conver: (state) => state.conversation.currentConversation,
 });
@@ -121,13 +109,20 @@ const chatName = (item) => {
 };
 const fnNews = (data) => {
   const { type, lastMessage } = data;
-  const { messageForShow, fromAccount } = lastMessage;
-  const { username } = UserInfo.value;
+  const { messageForShow, fromAccount, isRevoked } = lastMessage;
+  const { userID } = currentUserProfile.value;
+  const isOther = userID !== fromAccount;
   const isFound = fromAccount == "@TLS#NOT_FOUND";
-  if (isFound) {
+  const isSystem = "@TIM#SYSTEM"; //系统消息
+  // 是否为撤回消息
+  if (isRevoked) {
+    const nick = isOther ? lastMessage.nick : "你";
+    return `${nick}撤回了一条消息`;
+  }
+  if (isFound || isSystem) {
     return messageForShow;
   }
-  if (type == "GROUP" && username !== fromAccount) {
+  if (type == "GROUP" && isOther) {
     return `${lastMessage.nick}: ${messageForShow}`;
   }
   return messageForShow;
@@ -141,7 +136,7 @@ const isShowCount = (item) => {
 };
 
 const fnClass = (item) => {
-  let current = Selected.value;
+  let current = Conver.value;
   let select = item?.conversationID == current?.conversationID;
   if (select) {
     return "is-active";
@@ -150,6 +145,10 @@ const fnClass = (item) => {
 
 // 消息列表 右键菜单
 const handleContextMenuEvent = (e, item) => {
+  const { type } = item;
+  const isStystem = type == "@TIM#SYSTEM";
+  // 系统通知屏蔽右键菜单
+  isShowMenu.value = isStystem ? false : true;
   contextMenuItemInfo.value = item;
   // 会话
   RIGHT_CLICK_CHAT_LIST.map((t) => {
@@ -171,6 +170,7 @@ const dragleaveHandler = (e) => {};
 
 // 会话点击
 const handleConvListClick = (data) => {
+  console.log(data, "会话点击");
   if (Conver.value) {
     const { conversationID: id } = Conver.value;
     const newId = data?.conversationID;
@@ -182,7 +182,7 @@ const handleConvListClick = (data) => {
     payload: data,
   });
   // 群详情信息
-  commit("setGroupProfile", data);
+  dispatch("getGroupProfile", data);
   // 获取会话列表
   dispatch("GET_MESSAGE_LIST", data);
   commit("updataScroll");
@@ -208,11 +208,10 @@ const handleClickMenuItem = (item) => {
 // 消息免打扰
 const disableRecMsg = async (data, off) => {
   const { type, toAccount, messageRemindType: remindType } = data;
-  if (type == "@TIM#SYSTEM") return;
-  await setMessageRemindType({
-    userID: toAccount,
-    RemindType: remindType,
+  dispatch("SET_MESSAGE_REMIND_TYPE", {
     type,
+    toAccount,
+    remindType,
   });
 };
 // 删除会话
@@ -245,14 +244,7 @@ onMounted(() => {});
 }
 .no-msg {
   color: rgba(0, 0, 0, 0.45);
-  text-align: center;
-  font-size: 14px;
   margin-top: 50%;
-  transform: translate(0px, 50%);
-  img {
-    width: 160px;
-    height: 100px;
-  }
 }
 .close-btn {
   font-size: 12px !important;

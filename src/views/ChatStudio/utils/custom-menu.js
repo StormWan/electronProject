@@ -1,9 +1,4 @@
-import {
-  IButtonMenu,
-  IDomEditor,
-  SlateElement,
-  Boot,
-} from "@wangeditor/editor";
+import { IButtonMenu, IDomEditor, SlateElement, Boot } from "@wangeditor/editor";
 import ctrlEnterModule from "@wangeditor/plugin-ctrl-enter";
 import mentionModule, { MentionElement } from "@wangeditor/plugin-mention";
 import { h, VNode } from "snabbdom";

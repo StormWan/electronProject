@@ -18,19 +18,22 @@ export const getuser = async () => {
     { value: "admin", link: "" },
     { value: "zhangal", link: "" },
   ];
-  try {
-    const { result } = await http({
-      url: "/information",
-      method: "get",
-    });
-    return {
-      loadAll: result,
-    };
-  } catch (error) {
-    return {
-      loadAll: data,
-    };
-  }
+  // try {
+  //   // const { result } = await http({
+  //   //   url: "/information",
+  //   //   method: "get",
+  //   // });
+  //   // return {
+  //   //   loadAll: result,
+  //   // };
+  // } catch (error) {
+  //   return {
+  //     loadAll: data,
+  //   };
+  // }
+  return {
+    loadAll: data,
+  };
 };
 
 // 退出登录

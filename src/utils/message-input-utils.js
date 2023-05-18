@@ -115,3 +115,76 @@ export const dataURLtoFile = (dataUrl, fileName = "image.png") => {
   }
   return new File([u8arr], fileName, { type: mime });
 };
+
+/**
+ * 获取文件 URL 的 Blob 对象
+ * @param {string} url 文件 URL
+ * @returns {Promise<Blob>} 文件 Blob 对象的 Promise
+ */
+export function getBlob(url) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response);
+      }
+    };
+    xhr.send();
+  });
+}
+
+/**
+ * 保存 Blob 对象为文件
+ * @param {Blob} blob 要保存的 Blob 对象
+ * @param {string} filename 文件名
+ */
+const isIE = window.navigator.msSaveOrOpenBlob;
+export function saveAs(blob, filename) {
+  if (isIE) {
+    navigator.msSaveBlob(blob, filename);
+  } else {
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    link.onclick = () => {
+      if (!isIE) {
+        window.URL.revokeObjectURL(link.href);
+      }
+    };
+    link.click();
+  }
+}
+/**
+ * 下载
+ * @param  {String} url 目标文件地址
+ * @param  {String} filename 想要保存的文件名称
+ */
+export function download(url, filename) {
+  if (!url || !filename) return;
+  getBlob(url)
+    .then((blob) => {
+      saveAs(blob, filename);
+    })
+    .catch((err) => {
+      console.error(`An error occurred while downloading file '${filename}': ${err}`);
+    });
+}
+/**
+ * 下载指定 url 的文件，并设置文件名
+ * @param  {String} url - 文件地址
+ * @param  {String} filename - 文件名
+ */
+export function downloadCopy(url, filename) {
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+}

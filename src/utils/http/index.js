@@ -8,11 +8,13 @@ import NProgress from "@/utils/progress";
 import store from "@/store";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { setCookies } from "@/utils/Cookies";
+import { errorHandler } from "./tools";
 const { formats, parse, stringify } = qs;
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
-  timeout: 6000, // 请求超时时间
+  baseURL: "https://node-admin.cn/",
+  // baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
+  timeout: 5000, // 请求超时时间
   // headers: {
   //   Accept: "application/json, text/plain, */*",
   //   "Content-Type": "application/json",
@@ -29,74 +31,8 @@ const service = axios.create({
   // },
 });
 
-// 异常拦截处理器
-const errorHandler = (error) => {
-  // console.log(error)
-  if (error.response) {
-    const { data, status } = error.response;
-    switch (status) {
-      case 400:
-        console.log("错误请求");
-        break;
-      case 401:
-        ElMessage("未授权,请重新登录!");
-        store.dispatch("LOG_OUT");
-        store.dispatch("TIM_LOG_OUT");
-        break;
-      case 403:
-        console.log("拒绝访问");
-        break;
-      case 404:
-        console.log("请求错误,未找到该资源");
-        break;
-      case 405:
-        console.log("请求方法未允许");
-        break;
-      case 408:
-        console.log("请求超时");
-        break;
-      case 411:
-        console.log("需要知道长度");
-        break;
-      case 413:
-        console.log("请求的实体太大");
-        break;
-      case 414:
-        console.log("请求的URL太长");
-        break;
-      case 415:
-        console.log("不支持的媒体类型");
-        break;
-      case 500:
-        console.log("服务器端出错");
-        break;
-      case 501:
-        console.log("网络未实现");
-        break;
-      case 502:
-        console.log("网络错误");
-        break;
-      case 503:
-        console.log("服务不可用");
-        break;
-      case 504:
-        console.log("网络超时");
-        break;
-      case 505:
-        console.log("http版本不支持该请求");
-        break;
-      default:
-        console.log(`连接错误${status}`);
-    }
-    // 关闭进度条动画
-    NProgress.done();
-  }
-  return Promise.reject(error);
-};
-
 // 请求拦截器
 service.interceptors.request.use((config) => {
-  // console.log(config)
   // 开启进度条动画
   NProgress.start();
   const token = storage.get(ACCESS_TOKEN);
@@ -111,7 +47,6 @@ service.interceptors.response.use((response) => {
   const { code, msg } = data;
   // 关闭进度条动画
   NProgress.done();
-  // console.log(response, "response");
   if (status === 200) {
     const ToKen = response.headers["x-token"];
     if (ToKen) {

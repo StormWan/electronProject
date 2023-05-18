@@ -35,8 +35,7 @@ export function empty(value) {
     case "undefined":
       return true;
     case "string":
-      if (value.replace(/(^[ \t\n\r]*)|([ \t\n\r]*$)/g, "").length == 0)
-        return true;
+      if (value.replace(/(^[ \t\n\r]*)|([ \t\n\r]*$)/g, "").length == 0) return true;
       break;
     case "boolean":
       if (!value) return true;
