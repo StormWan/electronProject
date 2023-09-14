@@ -65,12 +65,19 @@ export const showConfirmationBox = async (data, Type = "confirm") => {
     cancelText = `${$t("el.datepicker.cancel")}`, //"取消",
     tip = "提示",
     iconType = "", // warning
+    inputValue = "", // input
+    draggable = false,
   } = data;
   try {
     const formEl = await ElMessageBox[Type](message, tip, {
       confirmButtonText: confirmText,
       cancelButtonText: cancelText,
       type: iconType,
+      inputValue,
+      draggable,
+      // beforeClose: (action, instance, done) => {
+      //   done();
+      // },
     });
     return formEl;
   } catch (error) {

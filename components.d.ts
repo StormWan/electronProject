@@ -7,8 +7,6 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    Backtop: typeof import('./src/components/Backtop/index.vue')['default']
-    Drawer: typeof import('./src/components/Drawer/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
@@ -54,10 +52,14 @@ declare module '@vue/runtime-core' {
     ElTree: typeof import('element-plus/es')['ElTree']
     FontIcon: typeof import('./src/components/FontIcon/index.vue')['default']
     Portrait: typeof import('./src/components/Portrait/index.vue')['default']
+    QrCode: typeof import('./src/components/QrCode/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SideItem: typeof import('./src/components/SideItem/index.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon/index.vue')['default']
     UserAvatar: typeof import('./src/components/UserAvatar/index.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

@@ -1,5 +1,6 @@
 // 默认主题
 :root {
+  --hover-color: #f3f3f3;
   --color-body-bg: #ffffff;
   --color-text: #000;
   --color-primary: #335eea;
@@ -11,10 +12,12 @@
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
   --html-overflow-y: overlay;
   --color-icon-hover: #409eff;
+  --color-aside-list-action: #d9ecff;
 }
 
 // 暗黑主题
 [data-theme="dark"] {
+  --hover-color: #323232;
   --color-body-bg: #222222;
   --color-text: #ffffff;
   --color-primary: #335eea;
@@ -24,6 +27,7 @@
   --color-navbar-bg: rgba(34, 34, 34, 0.86);
   --color-primary-bg-for-transparent: rgba(255, 255, 255, 0.12);
   --color-secondary-bg-for-transparent: rgba(255, 255, 255, 0.08);
+  --color-aside-list-action: #3879ba;
 }
 
 // 调用var(--color-body-bg)

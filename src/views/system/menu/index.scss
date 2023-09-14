@@ -1,0 +1,25 @@
+.dropdown {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.style-select {
+  background: #fff;
+  color: rgb(96, 98, 102);
+
+  .el-scrollbar__view {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .el-select-dropdown__item {
+    padding: 0;
+  }
+
+  .el-select-dropdown {
+    width: 400px;
+  }
+}

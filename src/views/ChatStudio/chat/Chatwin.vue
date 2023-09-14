@@ -1,0 +1,681 @@
+<template>
+  <section
+    class="message-info-view-content"
+    v-show="currentConversation"
+    :class="{ 'style-MsgBox': !showMsgBox, 'stlyle-Reply': currentReplyMsg }"
+    id="svgTop"
+  >
+    <el-scrollbar class="scrollbar-content" ref="scrollbarRef" @scroll="scrollbar" always>
+      <div class="message-view" ref="messageViewRef">
+        <div
+          v-for="(item, index) in currentMessageList"
+          :key="item.ID"
+          :class="{ 'reset-select': item.isRevoked }"
+        >
+          <!-- 加载更多 -->
+          <LoadMore :index="index" />
+          <div class="message-view__item--blank"></div>
+          <!-- 时间 -->
+          <div v-if="isTime(item)" class="message-view__item--time-divider">
+            {{ timeFormat(item.time * 1000, true) }}
+          </div>
+          <!-- 消息体 -->
+          <div
+            v-else-if="!isTime(item) && !item.isDeleted"
+            class="message-view__item"
+            :class="[
+              ISown(item) ? 'is-self' : 'is-other',
+              showCheckbox && !item.isRevoked ? 'style-choice' : '',
+            ]"
+            @click="handleSelect($event, item, 'outside')"
+            :id="`choice${item.ID}`"
+          >
+            <!-- 多选框 -->
+            <Checkbox
+              :item="item"
+              :isRevoked="item.isRevoked"
+              @click.stop="handleSelect($event, item, 'initial')"
+            />
+            <div class="picture" v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'">
+              <el-avatar
+                :size="36"
+                shape="square"
+                @click.stop="onclickavatar($event, item)"
+                :src="item.avatar || circleUrl"
+                @error="() => true"
+                v-contextmenu:contextmenu
+                @contextmenu.prevent="handleContextAvatarMenuEvent($event, item)"
+              >
+                <img :src="circleUrl" />
+              </el-avatar>
+            </div>
+            <div
+              :class="msgOne(item)"
+              v-contextmenu:contextmenu
+              @contextmenu.prevent="handleContextMenuEvent($event, item)"
+            >
+              <NameComponent :item="item" />
+              <div :class="Megtype(item.type)" :id="item.ID">
+                <component
+                  :key="item.ID"
+                  :is="loadMsgModule(item)"
+                  :message="item"
+                  :status="item.status"
+                  :self="ISown(item)"
+                >
+                </component>
+              </div>
+            </div>
+            <!-- 消息发送加载状态 -->
+            <Stateful :item="item" :status="item.status" :isown="ISown(item)" />
+          </div>
+        </div>
+      </div>
+    </el-scrollbar>
+    <MyPopover />
+    <contextmenu ref="contextmenu">
+      <contextmenu-item
+        v-for="item in RIGHT_CLICK_MENU_LIST"
+        :key="item.id"
+        @click="handlRightClick(item)"
+        v-show="isRight"
+      >
+        {{ item.text }}
+      </contextmenu-item>
+    </contextmenu>
+  </section>
+</template>
+
+<script setup>
+import {
+  h,
+  ref,
+  watch,
+  nextTick,
+  onMounted,
+  onUpdated,
+  onUnmounted,
+  onBeforeUpdate,
+  computed,
+  onBeforeUnmount,
+  toRefs,
+  defineAsyncComponent,
+} from "vue";
+import {
+  handleCopyMsg,
+  dragControllerDiv,
+  validatelastMessage,
+  Megtype,
+  msgOne,
+} from "../utils/utils";
+import { squareUrl, circleUrl, MENU_LIST, AVATAR_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
+import { useStore } from "vuex";
+import { showConfirmationBox } from "@/utils/message";
+
+import TIM from "@tencentcloud/chat";
+import { timeFormat } from "@/utils/timeFormat";
+import { debounce } from "lodash-es";
+import { useState, useGetters } from "@/utils/hooks/useMapper";
+import { Contextmenu, ContextmenuItem } from "v-contextmenu";
+import Checkbox from "../components/Checkbox.vue";
+import Stateful from "../components/Stateful.vue";
+import LoadMore from "../components/LoadMore.vue";
+import MyPopover from "@/views/components/MyPopover/index.vue";
+import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/mutation-types";
+import { deleteMsgList, revokeMsg, translateText } from "@/api/im-sdk-api";
+import { getMsgList } from "@/api/im-sdk-api/session";
+import emitter from "@/utils/mitt-bus";
+import NameComponent from "../components/NameComponent.vue";
+import { download, downloadCopy } from "@/utils/message-input-utils";
+
+import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
+import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
+import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
+import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
+import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
+import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
+import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
+
+const isRight = ref(true);
+const MenuItemInfo = ref([]);
+const scrollbarRef = ref(null);
+const messageViewRef = ref(null);
+const { state, dispatch, commit } = useStore();
+const { isOwner, isAdmin, toAccount, currentType } = useGetters([
+  "isOwner",
+  "isAdmin",
+  "toAccount",
+  "currentType",
+]);
+const {
+  noMore,
+  showMsgBox,
+  forwardData,
+  showCheckbox,
+  needScrollDown,
+  currentReplyMsg,
+  currentUserProfile,
+  currentMessageList,
+  currentConversation,
+} = useState({
+  noMore: (state) => state.conversation.noMore,
+  showMsgBox: (state) => state.conversation.showMsgBox,
+  forwardData: (state) => state.conversation.forwardData,
+  showCheckbox: (state) => state.conversation.showCheckbox,
+  needScrollDown: (state) => state.conversation.needScrollDown,
+  currentUserProfile: (state) => state.user.currentUserProfile,
+  currentReplyMsg: (state) => state.conversation.currentReplyMsg,
+  currentMessageList: (state) => state.conversation.currentMessageList,
+  currentConversation: (state) => state.conversation.currentConversation,
+});
+const opendialog = () => {};
+
+const updateLoadMore = (newValue) => {
+  nextTick(() => {
+    const ViewRef = messageViewRef.value;
+    const elRef = ViewRef?.children?.[newValue - 1];
+    if (newValue > 0) {
+      elRef?.scrollIntoView({
+        block: "start",
+      });
+    } else {
+      elRef?.scrollIntoViewIfNeeded();
+    }
+  });
+};
+
+const getElementById = (ID) => {
+  return document.getElementById(`choice${ID}`);
+};
+const setSelect = (el) => {
+  el.classList.toggle("style-select");
+};
+const handleSelect = (e, item, type = "initial") => {
+  // tip消息 撤回消息
+  if (!showCheckbox.value || item.type == "TIMGroupTipElem" || item.isRevoked) {
+    return;
+  }
+  const _el = getElementById(item.ID);
+  const el = _el.getElementsByClassName("check-btn")[0];
+  if (!el.checked && forwardData.value.size >= MULTIPLE_CHOICE_MAX) {
+    commit("showMessage", {
+      message: `最多只能选择${MULTIPLE_CHOICE_MAX}条`,
+      type: "error",
+    });
+    return;
+  }
+  setSelect(_el.parentNode);
+  // 点击input框
+  if (type == "initial" && e.target.tagName !== "INPUT") {
+    const el = getElementById(item.ID);
+    setSelect(el.parentNode);
+  }
+  // 首次右键打开多选 默认选中当前
+  if (type == "choice") {
+    el.checked = true;
+    commit("SET_FORWARD_DATA", {
+      type: "set",
+      payload: item,
+    });
+  } else {
+    el.checked = !el.checked;
+    commit("SET_FORWARD_DATA", {
+      type: el.checked ? "set" : "del",
+      payload: item,
+    });
+  }
+};
+
+const isTime = (item) => {
+  return item?.isTimeDivider;
+};
+const ISown = (item) => {
+  return item.from == currentUserProfile.value.userID;
+};
+
+const onclickavatar = (e, item) => {
+  const isSelf = ISown(item);
+  if (isSelf || showCheckbox.value) return;
+  commit("setPopoverStatus", {
+    status: true,
+    seat: e,
+    cardData: item,
+  });
+};
+const scrollBottom = () => {
+  try {
+    const { scrollTop, clientHeight, scrollHeight } = scrollbarRef.value?.wrapRef;
+    const height = scrollTop + clientHeight;
+    const isbot = scrollHeight - height < 1;
+    isbot && console.log("到底部");
+    return isbot;
+  } catch (error) {
+    return false;
+  }
+};
+const loadMoreFn = () => {
+  if (!noMore.value) {
+    const current = currentMessageList.value?.length - 1;
+    // 第一条消息 加载更多 节点
+    const offsetTopScreen = messageViewRef.value?.children?.[current];
+    const top = offsetTopScreen?.getBoundingClientRect().top;
+    const canLoadData = top > 50; //滚动到顶部
+    canLoadData && getMoreMsg();
+  }
+  const isbot = scrollBottom();
+  emitter.emit("onisbot", isbot);
+};
+const debouncedFunc = debounce(loadMoreFn, 250); //防抖处理
+
+const scrollbar = ({ scrollLeft, scrollTop }) => {
+  debouncedFunc();
+};
+
+const updateScrollBarHeight = () => {
+  nextTick(() => {
+    // messageViewRef.value?.firstElementChild?.scrollIntoView();
+    const ViewRef = messageViewRef.value;
+    scrollbarRef.value?.scrollTo(0, ViewRef?.scrollHeight);
+  });
+};
+
+const updateScrollbar = () => {
+  nextTick(() => {
+    scrollbarRef.value.update();
+  });
+};
+
+const getMoreMsg = async () => {
+  try {
+    // 获取指定会话的消息列表
+    const Conv = currentConversation.value;
+    const msglist = currentMessageList.value;
+    const { conversationID, toAccount } = Conv;
+    const { ID } = validatelastMessage(msglist);
+    const result = await getMsgList({
+      conversationID: conversationID,
+      nextReqMessageID: ID,
+    });
+    const { isCompleted, messageList, nextReqMessageID } = result;
+    let noMore = true;
+    let Loadmore = messageList.length < HISTORY_MESSAGE_COUNT;
+    if (messageList.length > 0) noMore = Loadmore;
+    const Response = messageList;
+    const payload = {
+      convId: conversationID,
+      messages: Response,
+    };
+    commit("SET_HISTORYMESSAGE", {
+      type: "ADD_MORE_MESSAGE",
+      payload,
+    });
+    commit("SET_CONVERSATION", {
+      type: "UPDATE_SCROLL_DOWN",
+      payload: msglist.length,
+    });
+    if (isCompleted || messageList.length == 0) {
+      console.log("没有更多消息了！！！");
+      commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_NOMORE",
+        payload: noMore,
+      });
+      return;
+    }
+  } catch (e) {
+    // 解析报错 关闭加载动画
+    commit("SET_HISTORYMESSAGE", {
+      type: "UPDATE_NOMORE",
+      payload: true,
+    });
+  }
+};
+// 动态组件
+const loadMsgModule = (item) => {
+  const { type, isRevoked } = item;
+  const CompMap = {
+    TIMTextElem: TextElemItem, //文本消息
+    TIMImageElem: ImageElemItem, // 图片消息
+    TIMFileElem: FileElemItem, // 文件消息
+    TIMCustomElem: CustomElemItem, // 自定义消息
+    TIMGroupTipElem: groupTipElement, // 群消息提示
+    TIMGroupSystemNoticeElem: GroupSystemNoticeElem, // 系统通知
+  };
+  if (isRevoked) return TipsElemItem;
+  return CompMap[type] || null;
+};
+
+const handleContextAvatarMenuEvent = (event, item) => {
+  const { flow } = item;
+  const type = currentType.value;
+  if (type == "C2C" || flow == "out") {
+    isRight.value = false;
+    return;
+  }
+  isRight.value = true;
+  MenuItemInfo.value = item;
+  RIGHT_CLICK_MENU_LIST.value = AVATAR_LIST;
+};
+const handleContextMenuEvent = (event, item) => {
+  const { isRevoked, time, type } = item;
+  console.log(item, "右键菜单数据");
+  const isTip = type == "TIMGroupTipElem";
+  const isFile = type == "TIMFileElem";
+  const isCheckStatus = showCheckbox.value; // 多选状态
+  // 撤回消息 提示类型消息
+  if (isRevoked || isTip || isCheckStatus) {
+    isRight.value = false;
+    return;
+  }
+  isRight.value = true;
+  const nowtime = parseInt(new Date().getTime() / 1000);
+  MenuItemInfo.value = item;
+  const relinquish = nowtime - time < 120 ? true : false;
+  const self = ISown(item);
+  RIGHT_CLICK_MENU_LIST.value = MENU_LIST;
+  // 对方消息
+  if (!self) {
+    RIGHT_CLICK_MENU_LIST.value = MENU_LIST.filter((t) => t.id !== "revoke");
+  }
+  // 超过撤回时间
+  if (!relinquish) {
+    RIGHT_CLICK_MENU_LIST.value = MENU_LIST.filter((t) => t.id !== "revoke");
+  }
+  // 群主 & 群聊
+  if (isOwner.value && currentType.value === TIM.TYPES.CONV_GROUP) {
+    if (!self) RIGHT_CLICK_MENU_LIST.value = MENU_LIST;
+  }
+  // 非文件消息
+  if (!isFile) {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "saveAs");
+  } else {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "copy");
+  }
+};
+const handlRightClick = (data) => {
+  const info = MenuItemInfo.value;
+  const { id, text } = data;
+  switch (id) {
+    case "send": // 发起会话
+      handleSendMessage(info);
+      break;
+    case "ait": // @对方
+      handleAt(info);
+      break;
+    case "copy": //复制
+      handleCopyMsg(info);
+      break;
+    case "translate": // 翻译
+      handleTranslate(info);
+      break;
+    case "revoke": //撤回
+      handleRevokeMsg(info);
+      break;
+    case "forward": // 转发
+      handleForward(info);
+      break;
+    case "saveAs": //另存为
+      handleSave(info);
+      break;
+    case "reply": // 回复
+      handleReplyMsg(info);
+      break;
+    case "multiSelect": //多选
+      handleMultiSelectMsg(info);
+      break;
+    case "delete": //删除
+      handleDeleteMsg(info);
+      break;
+  }
+};
+const handleAt = (data) => {
+  const { from, nick, conversationType: type } = data;
+  if (type == "C2C") return;
+  emitter.emit("handleAt", { id: from, name: nick });
+};
+const handleSendMessage = (data) => {
+  const { from } = data;
+  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${from}` });
+};
+// 另存为
+const handleSave = (data) => {
+  const {
+    payload: { fileName, fileUrl },
+  } = data;
+  // download(fileUrl, fileName);
+  downloadCopy(fileUrl, fileName);
+};
+
+const handleTranslate = (data) => {
+  const data1 = translateText({ textList: data.payload.text });
+  console.log(data1);
+};
+// 转发
+const handleForward = (data) => {
+  opendialog();
+};
+// 回复消息
+const handleReplyMsg = (data) => {
+  commit("setReplyMsg", data);
+  handleAt(data);
+};
+// 删除消息
+const handleDeleteMsg = async (data) => {
+  try {
+    const message = { message: "确定删除?", iconType: "warning" };
+    const result = await showConfirmationBox(message);
+    if (result == "cancel") return;
+    const { code } = await deleteMsgList([data]);
+    if (code !== 0) return;
+    const { conversationID, toAccount, to } = data;
+    const payload = { convId: conversationID, message: data };
+    commit("SET_HISTORYMESSAGE", {
+      type: "DELETE_MESSAGE",
+      payload,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+// 多选
+const handleMultiSelectMsg = (item) => {
+  commit("SET_CHEC_BOX", true);
+  handleSelect(null, item, "choice");
+};
+// 撤回消息
+const handleRevokeMsg = (data) => {
+  const { code, message } = revokeMsg(data);
+};
+
+watch(
+  needScrollDown,
+  (data) => {
+    updateLoadMore(data);
+  },
+  {
+    deep: true, //深度监听
+    immediate: true,
+  }
+);
+watch(currentReplyMsg, (data) => {
+  updateScrollbar();
+});
+
+emitter.on("updataScroll", (data) => {
+  if (data == "bottom") {
+    scrollBottom() && updateScrollBarHeight();
+  } else {
+    updateScrollBarHeight();
+  }
+});
+
+onMounted(() => {});
+onUnmounted(() => {});
+onUpdated(() => {});
+onBeforeUpdate(() => {});
+onBeforeUnmount(() => {});
+
+// eslint-disable-next-line no-undef
+defineExpose({ updateScrollbar, updateScrollBarHeight });
+</script>
+
+<style lang="scss" scoped>
+@import "@/styles/mixin.scss";
+$other-msg-color: #f0f2f5;
+$self-msg-color: #c2e8ff;
+.scrollbar-content {
+  height: 100%;
+}
+.message_name {
+  margin-bottom: 5px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+}
+.message-view__tips-elem {
+  margin: auto;
+  .message_name {
+    display: none;
+  }
+}
+.message-info-view-content {
+  height: calc(100% - 70px - 206px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+.style-MsgBox {
+  height: calc(100% - 60px) !important;
+}
+.stlyle-Reply {
+  height: calc(100% - 70px - 206px - 60px) !important;
+}
+.scrollbar-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  margin: 10px;
+  text-align: center;
+  border-radius: 4px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+}
+
+.message-view__item--time-divider {
+  position: relative;
+  top: 8px;
+  margin: 20px 0;
+  max-height: 20px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+.message-view {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100%;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  padding: 0 16px 16px 16px;
+  box-sizing: border-box;
+  .picture {
+    cursor: pointer;
+  }
+}
+.style-select {
+  border-radius: 3px;
+  background: hsl(220deg 20% 91%);
+}
+.reset-select {
+  border-radius: 3px;
+  background: #fff;
+}
+.style-choice {
+  padding-left: 35px;
+}
+.message-view__item {
+  display: flex;
+  flex-direction: row;
+  // margin-top: 12px;
+  margin: 8px 0;
+  position: relative;
+}
+.is-other {
+  .picture {
+    margin-left: 0;
+    margin-right: 8px;
+  }
+  .message-view__img {
+    margin-bottom: 5px;
+    width: fit-content;
+    :deep(.image_preview) {
+      background: $other-msg-color;
+    }
+  }
+
+  .message-view__file {
+    margin-bottom: 5px;
+  }
+
+  .message-view__text {
+    width: fit-content;
+    margin-bottom: 5px;
+    :deep(.message-view__item--text) {
+      background: $other-msg-color;
+    }
+  }
+  .message-view__system {
+    :deep(.message-view__item--text) {
+      background: $other-msg-color;
+    }
+  }
+}
+.is-self {
+  flex-direction: row-reverse;
+  display: flex;
+  .picture {
+    margin-right: 0;
+    margin-left: 8px;
+    width: 36px;
+    height: 36px;
+  }
+  .message_name {
+    display: none;
+  }
+  .message-view__img {
+    display: flex;
+    justify-content: flex-end;
+    // margin-bottom: 5px;
+    align-items: center;
+    :deep(.image_preview) {
+      background: $self-msg-color;
+    }
+  }
+
+  .message-view__file {
+    display: flex;
+    justify-content: flex-end;
+    // margin-bottom: 5px;
+    align-items: center;
+  }
+
+  .message-view__text {
+    // margin-bottom: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    :deep(.message-view__item--text) {
+      background: $self-msg-color;
+    }
+  }
+}
+
+.v-contextmenu {
+  width: 154px;
+  .v-contextmenu-item {
+    height: 32px;
+    line-height: 32px;
+    padding: 0px 16px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 12px;
+  }
+}
+</style>

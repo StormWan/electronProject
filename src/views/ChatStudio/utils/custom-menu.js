@@ -1,66 +1,26 @@
-import { IButtonMenu, IDomEditor, SlateElement, Boot } from "@wangeditor/editor";
+import { IButtonMenu, DomEditor, IDomEditor, SlateElement, Boot } from "@wangeditor/editor";
 import ctrlEnterModule from "@wangeditor/plugin-ctrl-enter";
 import mentionModule, { MentionElement } from "@wangeditor/plugin-mention";
 import { h, VNode } from "snabbdom";
 import { getFileType } from "@/utils/message-input-utils";
 import { renderFileIcon } from "./utils";
 
-class YourMenuClass {
-  constructor() {
-    this.title = "表情"; // 自定义菜单标题
-    this.iconSvg = "🌞"; // '<svg>...</svg>'可选
-    this.tag = "select"; // button select
-    this.width = 44;
-  }
-  // 获取菜单执行时的 value ，用不到则返回空 字符串或 false
-  getValue(editor) {
-    return " hello ";
-  }
-
-  // 下拉框的选项
-  getOptions(editor) {
-    const options = [
-      { value: "beijing", text: "北京" },
-      { value: "shanghai", text: "上海" },
-      { value: "shenzhen", text: "深圳" },
-    ];
-    return options;
-  }
-
-  // 菜单是否需要激活（如选中加粗文本，“加粗”菜单会激活），用不到则返回 false
-  isActive(editor) {
-    return false;
-  }
-
-  // 菜单是否需要禁用（如选中 H1 ，“引用”菜单被禁用），用不到则返回 false
-  isDisabled(editor) {
-    return false;
-  }
-
-  // 点击菜单时触发的函数
-  exec(editor, getValue) {
-    if (this.isDisabled(editor)) return;
-    // editor.insertText(value) // value 即 this.value(editor) 的返回值
-  }
-}
-
-const menu1Conf = {
-  key: "menu1", // 定义 menu key ：要保证唯一、不重复（重要）
-  factory() {
-    return new YourMenuClass(); // 把 `YourMenuClass` 替换为你菜单的 class
-  },
-};
+/**
+ * @description 一个函数，接收一个 Slate 编辑器对象，并返回一个修改后的版本，使其能够处理附件节点作为内联或空节点。
+ * @param {Editor} editor - 要修改的 Slate 编辑器对象
+ * @returns {Editor} 具有修改后的 isInline 和 isVoid 函数的新 Slate 编辑器对象
+ */
 function withAttachment(editor) {
   const { isInline, isVoid } = editor;
   const newEditor = editor;
   newEditor.isInline = (elem) => {
-    // const type = DomEditor.getNodeType(elem);
-    // if (type === "attachment") return true; // 针对 type: attachment ，设置为 inline
+    const type = DomEditor.getNodeType(elem);
+    if (type === "attachment") return true; // 针对 type: attachment ，设置为 inline
     return isInline(elem);
   };
   newEditor.isVoid = (elem) => {
-    // const type = DomEditor.getNodeType(elem);
-    // if (type === "attachment") return true; // 针对 type: attachment ，设置为 void
+    const type = DomEditor.getNodeType(elem);
+    if (type === "attachment") return true; // 针对 type: attachment ，设置为 void
     return isVoid(elem);
   };
   return newEditor; // 返回 newEditor ，重要！！！
@@ -139,6 +99,7 @@ function renderAttachment(elem, children, editor) {
         alignItems: "center",
         userSelect: "none",
       },
+      class: ["my-class1", "my-class2"],
       on: {
         click() {
           console.log("clicked", link);
@@ -147,6 +108,7 @@ function renderAttachment(elem, children, editor) {
     },
     [iconVnode, divVnode]
   );
+  console.log(attachVnode);
   return attachVnode;
 }
 
@@ -178,6 +140,7 @@ function attachmentToHtml(elem, childrenHtml) {
  * editor.setHtml(html)
  */
 function parseAttachmentHtml(domElem, children, editor) {
+  console.log(domElem);
   // 从 DOM element 中获取“附件”的信息
   const link = domElem.getAttribute("data-link") || "";
   const fileName = domElem.getAttribute("data-fileName") || "";
@@ -210,6 +173,6 @@ Boot.registerElemToHtml(elemToHtmlConf);
 Boot.registerRenderElem(renderElemConf);
 Boot.registerPlugin(withAttachment);
 
-Boot.registerMenu(menu1Conf);
-Boot.registerModule(mentionModule);
+// 注册插件
+Boot.registerModule(mentionModule); // @提及
 Boot.registerModule(ctrlEnterModule); // ctrl+Enter 换行

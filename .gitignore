@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
+
+yarn.lock
+components.d.ts
+auto-imports.d.ts

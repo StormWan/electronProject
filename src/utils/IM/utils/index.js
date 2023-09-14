@@ -1,4 +1,5 @@
-import TIM from "tim-js-sdk";
+import TIM from "@tencentcloud/chat";
+import { throttle } from "lodash-es";
 
 export function kickedOutReason(type) {
   switch (type) {
@@ -24,3 +25,6 @@ export function checkoutNetState(state) {
       return "";
   }
 }
+export const fnCheckoutNetState = throttle((state) => {
+  checkoutNetState(state);
+}, 3000);

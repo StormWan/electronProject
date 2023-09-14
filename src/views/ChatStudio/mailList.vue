@@ -1,6 +1,7 @@
 <template>
-  <div class="flex width-full style-mail">
-    <div class="abv" v-if="false">
+  <div class="flex w-full style-mail">
+    待开发
+    <!-- <div class="abv">
       <el-tabs v-model="activeName" class="style-tabs" @tab-click="taggleClick">
         <el-tab-pane label="通讯录" name="first">
           <el-tree :data="group_list" :props="defaultProps" @node-click="handleNodeClick">
@@ -16,7 +17,7 @@
         <el-tab-pane label="我的好友" name="second"> 我的好友 </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="right"></div>
+    <div class="right"></div> -->
   </div>
 </template>
 

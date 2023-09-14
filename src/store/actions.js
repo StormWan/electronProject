@@ -1,33 +1,23 @@
-import storage from "storejs";
 import router from "@/router";
-import views from "@/utils/assembly.js";
-import { ToTree, flatToTree } from "@/utils/ToTree";
-import { tree } from "@/utils/ToTree";
-import { USER_DATA, SET_UP } from "@/store/mutation-types";
+import { convertToTree, optimizeTree } from "@/utils/ToTree";
 
 const actions = {
-  // 更新路由
-  updateRoute({ commit, state }, route) {
-    route.map((t) => {
-      if (t.componentName) {
-        t.component = views[t.componentName];
-      }
-    });
-    let root = route.find((t) => (t.path = "/"));
-    ToTree(root, route);
-    // 动态添加路由
+  // 初始化路由表 将扁平化数据结构 转化为 符合 ElementUI 菜单组件的格式
+  updateRoute({ commit }, route) {
+    const root = route.find((t) => (t.path = "/root"));
+    optimizeTree(route);
+    convertToTree(root, route);
     root.children.forEach((item) => {
       router.addRoute(item);
     });
-    commit("updateData", { key: "Routingtable", value: root.children });
+    commit("UPDATE_USER_INFO", { key: "routeTable", value: root.children });
   },
   // 页面刷新重新加载路由
-  reloadRoute({ commit, state }, route) {
+  reloadRoute({ state }, route) {
     try {
-      const routing = state.data.Routingtable;
-      // const routing = storage.get(USER_DATA)?.Routingtable;
+      const routing = state.data.routeTable;
       if (!routing) return;
-      tree(routing);
+      optimizeTree(routing);
       routing.forEach((item) => {
         router.addRoute(item);
       });

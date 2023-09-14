@@ -3,9 +3,7 @@
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-export default defineComponent({
+export default {
   name: "application",
   components: {},
   computed: {},
@@ -14,16 +12,7 @@ export default defineComponent({
     return {};
   },
   methods: {},
-  setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({ text: "wewe" });
-
-    onMounted(() => {});
-    onBeforeUnmount(() => {});
-    return {
-      ...toRefs(state),
-    };
-  },
-});
+};
 </script>
 
 <style lang="scss" scoped></style>

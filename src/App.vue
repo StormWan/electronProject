@@ -5,20 +5,20 @@
 </template>
 
 <script setup>
-import { onMounted, nextTick, ref, onBeforeUnmount, computed, defineComponent } from "vue";
+import { onMounted, nextTick, ref, onBeforeUnmount, computed } from "vue";
 import { useWatermark } from "@/utils/hooks/useWatermark";
 import { useStore, mapState } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { ElConfigProvider } from "element-plus";
 import { useState } from "@/utils/hooks/useMapper";
-import { treeToFlat } from "@/utils/ToTree";
 
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import en from "element-plus/lib/locale/lang/en";
-const watermarkText = ref("pure-admin");
+
+const { setWatermark, clear } = useWatermark();
+const watermarkText = ref("Pure Admin");
 const route = useRoute();
 const router = useRouter();
-const { setWatermark, clear } = useWatermark();
 
 const { dispatch, commit } = useStore();
 const { lang } = useState({

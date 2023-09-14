@@ -2,12 +2,10 @@
   <el-scrollbar>
     <el-card class="top-content">
       <div class="left-mark">
-        <!-- <img :src="avatars" title="直达仓库地址" @click="openDepot" /> -->
         <Portrait :size="45" @click="openDepot" />
         <span class="style-text">{{ greetings }}</span>
       </div>
     </el-card>
-
     <el-row :gutter="16" class="style-row">
       <el-col>
         <el-card>
@@ -41,8 +39,6 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import avatars from "@/assets/images/picture.jpg";
 
 let loading = ref(true);
 const date = new Date();

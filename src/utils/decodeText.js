@@ -1,4 +1,4 @@
-import { emojiMap, emojiUrl, localemojiUrl } from "./emoji-map";
+import { emojiMap, emojiUrl } from "./emoji/emoji-map";
 
 export function decodeText(text) {
   const renderDom = []; // 存储渲染后的 DOM 元素
@@ -30,7 +30,7 @@ export function decodeText(text) {
           renderDom.push({
             name: "img",
             src: emojiUrl + emoji,
-            localSrc: `${localemojiUrl}${emoji}`, // 本地表情包地址
+            localSrc: emoji, // 本地表情包地址
           });
           remainingText = remainingText.substring(rightBracketIndex + 1);
         } else {
@@ -60,4 +60,4 @@ export function decodeText(text) {
   }
   return renderDom;
 }
-// console.log(decodeText("[睡]123[呲牙]"));
+

@@ -33,7 +33,7 @@ export default defineComponent({
     });
 
     const ThemeColorChange = (val) => {
-      commit("updateSettings", {
+      commit("UPDATE_USER_SETUP", {
         key: "appearance",
         value: val,
       });

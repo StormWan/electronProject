@@ -33,8 +33,10 @@ const { iconName, size, color } = toRefs(props);
 
 <style lang="scss" scoped>
 .style-icon {
-  color: var(--color-text);
+  // color: var(--color-text);
+  color: rgb(96, 98, 102);
 }
+
 .el-icon {
   cursor: pointer;
 }

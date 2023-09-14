@@ -2,19 +2,16 @@
 import qs from "qs";
 import axios from "axios";
 import storage from "storejs";
-import router from "@/router";
-import { ElMessage } from "element-plus";
 import NProgress from "@/utils/progress";
-import store from "@/store";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { setCookies } from "@/utils/Cookies";
 import { errorHandler } from "./tools";
 const { formats, parse, stringify } = qs;
 
 const service = axios.create({
-  baseURL: "https://node-admin.cn/",
-  // baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
-  timeout: 5000, // 请求超时时间
+  // baseURL: "https://node-admin.cn/",
+  baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
+  timeout: 50000, // 请求超时时间
   // headers: {
   //   Accept: "application/json, text/plain, */*",
   //   "Content-Type": "application/json",
@@ -30,11 +27,13 @@ const service = axios.create({
   //   console.log(persent);
   // },
 });
-
+const whiteList = ["/imCallback"];
 // 请求拦截器
 service.interceptors.request.use((config) => {
+  const { url } = config;
+  const isBar = whiteList.includes(url);
   // 开启进度条动画
-  NProgress.start();
+  !isBar && NProgress.start();
   const token = storage.get(ACCESS_TOKEN);
   // 携带自定义请求头token到后台
   if (token) config.headers["authorization"] = token;

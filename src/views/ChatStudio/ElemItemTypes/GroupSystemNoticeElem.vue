@@ -1,32 +1,19 @@
 <template>
   <div class="message-view__item--text">
-    <!-- {{ message.from }} -->
-    待开发
+    {{ message.from }}
   </div>
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
-// import { GroupSystemNotice } from "../utils/utils";
-export default defineComponent({
+export default {
   name: "GroupSystemNoticeElem",
-  components: {},
   props: {
     message: {
       type: Object,
       default: null,
     },
   },
-  setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({ text: "wewe" });
-
-    onMounted(() => {});
-    onBeforeUnmount(() => {});
-    return {
-      ...toRefs(state),
-    };
-  },
-});
+};
 </script>
 
 <style lang="scss" scoped>

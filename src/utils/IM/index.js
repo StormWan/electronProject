@@ -1,25 +1,16 @@
 "use strict";
-import TIM from "tim-js-sdk";
+import TIM from "@tencentcloud/chat";
 import tim from "@/utils/im-sdk/tim";
 import storage from "storejs";
 import store from "@/store";
 import emitter from "@/utils/mitt-bus";
-import { throttle } from "@/utils/throttle";
-import { kickedOutReason, checkoutNetState } from "./utils/index";
+import { scrollToDomPostion } from "@/utils/message-input-utils";
+import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
-const fnCheckoutNetState = throttle((state) => {
-  checkoutNetState(state);
-}, 3000);
-// commit("SET_HISTORYMESSAGE", {
-//   type: "MARKE_MESSAGE_AS_READED",
-//   payload: {
-//     convId: conversationID,
-//     message: action,
-//   },
-// });
+import { deepClone } from "@/utils/clone";
+import { h, nextTick } from "vue";
 
 export default class TIMProxy {
-  // 静态方法
   constructor() {
     this.version = TIM.VERSION; // im版本号
     this.userProfile = {}; // IM用户信息
@@ -39,12 +30,10 @@ export default class TIMProxy {
     // 暴露给全局
     window.TIMProxy = new Proxy(this, {
       set(target, key, val) {
-        console.log(key, val);
         return Reflect.set(target, key, val);
       },
       get(target, key) {
         const value = Reflect.get(target, key);
-        // console.log(value);
         return value;
       },
     });
@@ -84,7 +73,7 @@ export default class TIMProxy {
     // 收到会话列表更新通知
     tim.on(TIM.EVENT.CONVERSATION_LIST_UPDATED, this.onUpdateConversationList);
     // 收到推送的单聊、群聊、群提示、群系统通知的新消息
-    tim.on(TIM.EVENT.MESSAGE_RECEIVED, this.onReceiveMessage);
+    tim.on(TIM.EVENT.MESSAGE_RECEIVED, this.onReceiveMessage, this);
     // 收到消息被撤回的通知
     tim.on(TIM.EVENT.MESSAGE_REVOKED, this.onMessageRevoked);
     // 群组列表更新
@@ -101,6 +90,8 @@ export default class TIMProxy {
     tim.on(TIM.EVENT.FRIEND_GROUP_LIST_UPDATED, this.onFriendGroupListUpdated);
     // 已订阅用户或好友的状态变更（在线状态或自定义状态）时触发。
     tim.on(TIM.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdated);
+    // 收到消息被修改的通知
+    tim.on(TIM.EVENT.MESSAGE_MODIFIED, this.onMessageModified);
   }
   onReadyStateUpdate({ name }) {
     const isSDKReady = name === TIM.EVENT.SDK_READY;
@@ -108,30 +99,35 @@ export default class TIMProxy {
     if (!isSDKReady) return;
     store.dispatch("GET_MY_PROFILE");
   }
-  onUpdateConversationList({ data, name }) {
+  onUpdateConversationList({ data }) {
     console.log(data, "会话列表更新");
-    store.dispatch("GET_TOTAL_UNREAD_MSG");
+    const convId = store.state.conversation?.currentConversation?.conversationID;
+    const conv = data.filter((t) => t.conversationID == convId);
+    // 更新会话列表
     store.commit("SET_CONVERSATION", {
       type: "REPLACE_CONV_LIST",
       payload: data,
     });
+    // 更新窗口数据
+    if (conv) {
+      store.commit("SET_CONVERSATION", {
+        type: "UPDATE_CURRENT_SESSION",
+        payload: deepClone(conv[0]),
+      });
+    }
+    // 未读消息
+    store.dispatch("GET_TOTAL_UNREAD_MSG");
+  }
+  // 判断浏览器窗口是否在前台可见状态
+  isWindowFocused() {
+    return window.document.hasFocus();
   }
   // 收到新消息
   onReceiveMessage({ data, name }) {
-    window.TIMProxy.handleQuitGroupTip(data);
-    const convId = store.state.conversation?.currentConversation?.conversationID;
-    const userProfile = store.state.user.currentUserProfile;
-    const { atUserList } = data[0];
-    console.log(convId, "当前会话ID");
     console.log(data, "收到新消息");
-    if (atUserList.length > 0) {
-      let userId = userProfile?.userID;
-      let off = atUserList.includes(userId);
-      let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
-      if (off || all) {
-        window.TIMProxy.notifyMe(data[0]);
-      }
-    }
+    this.handleQuitGroupTip(data);
+    this.handleNotificationTip(data);
+    const convId = store.state.conversation?.currentConversation?.conversationID;
     if (!convId) return;
     // 收到新消息 且 不为当前选中会话 更新对应ID消息
     if (data?.[0].conversationID !== convId) {
@@ -144,7 +140,7 @@ export default class TIMProxy {
       });
       return;
     }
-    // store.dispatch("CHEC_OUT_CONVERSATION", { convId: data?.[0].conversationID });
+    this.ReportedMessageRead(data);
     // 更新当前会话消息
     store.commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",
@@ -154,7 +150,7 @@ export default class TIMProxy {
       },
     });
     // 更新滚动条位置到底部
-    store.commit("updataScroll");
+    store.commit("updataScroll", "bottom");
   }
   onMessageRevoked({ data, name }) {
     console.log(data, "撤回消息");
@@ -187,6 +183,7 @@ export default class TIMProxy {
       });
     }
   }
+  onMessageModified({ data }) {}
   onNetStateChange({ data }) {
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
@@ -229,49 +226,90 @@ export default class TIMProxy {
     }
   }
   handleNotify(message) {
-    const notification = new window.Notification("有人提到了你", {
-      icon: "https://web.sdk.qcloud.com/im/assets/images/logo.png",
-      body: message.payload.text,
+    console.log(message);
+    const { ID, payload, avatar } = message;
+    const tip = "有人提到了你";
+    const icon = avatar || "https://web.sdk.qcloud.com/im/assets/images/logo.png";
+    const notification = new window.Notification(tip, {
+      icon: icon,
+      body: payload.text,
     });
     notification.onclick = () => {
-      // 定位到指定会话
+      // 切换会话列表
       store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
+      // 定位到指定会话
+      scrollToDomPostion(ID);
       window.focus();
       notification.close();
     };
   }
   /**
-   * 收到有群成员退群/被踢出的groupTip时，需要将相关群成员从当前会话的群成员列表中移除
+   * 收到有群成员/退群/被踢出/入群/的groupTip时,更新群成员列表
    * @param {Message[]} messageList
    */
   handleQuitGroupTip(messageList) {
     console.log(messageList, "handleQuitGroupTip");
     const convId = store.state.conversation?.currentConversation?.conversationID;
-    // return;
-    // 筛选出当前会话的退群/被踢群的 groupTip
+    // MSG_GRP_TIP '"TIMGroupTipElem"' 群提示消息
+    // 筛选出当前会话的/退群/被踢群/入群/的 groupTip
+    const list = [
+      TIM.TYPES.GRP_TIP_MBR_JOIN, // 1 有成员加群
+      TIM.TYPES.GRP_TIP_MBR_QUIT, // 2 有群成员退群
+      TIM.TYPES.GRP_TIP_MBR_KICKED_OUT, // 3 有群成员被踢出群
+    ];
     const groupTips = messageList.filter((message) => {
       return (
         convId === message.conversationID &&
         message.type === TIM.TYPES.MSG_GRP_TIP &&
-        (message.payload.operationType === TIM.TYPES.GRP_TIP_MBR_QUIT ||
-          message.payload.operationType === TIM.TYPES.GRP_TIP_MBR_KICKED_OUT)
+        list.includes(message.payload.operationType)
       );
     });
-    console.log(groupTips);
-    // 清理当前会话的群成员列表
+    // 更新当前会话的群成员列表
     if (groupTips.length > 0) {
       groupTips.forEach((groupTip) => {
         if (Array.isArray(groupTip.payload.userIDList) || groupTip.payload.userIDList.length > 0) {
-          // store.commit("deleteGroupMemberList", groupTip.payload.userIDList);
+          // store.dispatch("getGroupMemberList");
         }
       });
     }
   }
-  handleElNotification(message) {
-    ElNotification({
-      title: "有人提到了你",
-      message: message.payload.text,
-      duration: 3000,
+  // 上报消息已读
+  ReportedMessageRead(data) {
+    const isFocused = this.isWindowFocused();
+    if (!isFocused) return;
+    store.commit("SET_HISTORYMESSAGE", {
+      type: "MARKE_MESSAGE_AS_READED",
+      payload: {
+        convId: data?.[0].conversationID,
+        message: data,
+      },
     });
+  }
+  handleElNotification(message) {
+    const { ID, nick, payload, conversationID } = message;
+    const Notification = ElNotification({
+      title: `${nick}提到了你`,
+      message: payload.text,
+      duration: 6000,
+      // type: "info",
+      onClick: () => {
+        store.dispatch("CHEC_OUT_CONVERSATION", { convId: conversationID });
+        scrollToDomPostion(ID);
+        Notification.close();
+      },
+    });
+  }
+  // 群详情 @好友 系统通知tis
+  handleNotificationTip(data) {
+    const userProfile = store.state.user.currentUserProfile;
+    const { atUserList } = data[0];
+    if (atUserList.length > 0) {
+      let userId = userProfile?.userID;
+      let off = atUserList.includes(userId);
+      let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
+      if (off || all) {
+        this.notifyMe(data[0]);
+      }
+    }
   }
 }

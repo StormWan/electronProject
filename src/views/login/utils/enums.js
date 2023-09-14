@@ -1,13 +1,16 @@
 const operates = [
-  {
-    title: "手机登录",
-  },
-  {
-    title: "二维码登录",
-  },
-  {
-    title: "注册",
-  },
+  // {
+  //   title: "手机登录",
+  //   currentPage: 1
+  // },
+  // {
+  //   title: "二维码登录",
+  //   currentPage: 2,
+  // },
+  // {
+  //   title: "注册",
+  //   currentPage: 3,
+  // },
 ];
 
 const thirdParty = [
@@ -16,16 +19,8 @@ const thirdParty = [
     icon: "wechat",
   },
   {
-    title: "支付宝",
-    icon: "alipay",
-  },
-  {
     title: "QQ",
     icon: "qq",
-  },
-  {
-    title: "微博",
-    icon: "weibo",
   },
 ];
 

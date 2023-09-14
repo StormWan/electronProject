@@ -6,7 +6,7 @@
     :with-header="true"
     :show-close="true"
   >
-    <ul class="setting width-full">
+    <ul class="setting w-full">
       <li>
         <span>{{ t("common.closeSidebar") }}</span>
         <el-switch
@@ -64,7 +64,6 @@ import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { changeAppearance } from "@/utils/common";
 import { CircleCloseFilled } from "@element-plus/icons-vue";
-import { useDark, useToggle } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 
 const { locale, t } = useI18n();
@@ -107,14 +106,14 @@ const { sidebar, logoVal, appearance, lang, setswitch } = useState({
 });
 
 const LogoChange = (val) => {
-  commit("updateSettings", {
+  commit("UPDATE_USER_SETUP", {
     key: "logoIcon",
     value: !val,
   });
 };
 
 const greyChange = (val) => {
-  commit("updateSettings", {
+  commit("UPDATE_USER_SETUP", {
     key: "sidebar",
     value: !val,
   });
@@ -125,7 +124,7 @@ const drawer = computed({
     return setswitch.value;
   },
   set(val) {
-    commit("updateSettings", {
+    commit("UPDATE_USER_SETUP", {
       key: "setswitch",
       value: false,
     });
@@ -142,7 +141,7 @@ const themecolor = computed({
 });
 
 const ThemeColorChange = (val) => {
-  commit("updateSettings", {
+  commit("UPDATE_USER_SETUP", {
     key: "appearance",
     value: val,
   });
@@ -159,7 +158,7 @@ const language = computed({
 });
 
 const languageChange = (val) => {
-  commit("updateSettings", {
+  commit("UPDATE_USER_SETUP", {
     key: "lang",
     value: val,
   });

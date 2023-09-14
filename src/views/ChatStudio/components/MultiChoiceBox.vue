@@ -1,60 +1,213 @@
 <template>
   <div class="checkbox-style" id="svgDown" v-if="showCheckbox">
-    <!-- 合并转发 -->
-    <div class="btn" @click="mergeForward">
-      <svg-icon iconClass="mergeForward" />
-    </div>
-    <!-- 逐条转发 -->
-    <div class="btn" @click="aQuickForward">
-      <svg-icon iconClass="aQuickForward" />
-    </div>
-    <!-- 关闭 -->
-    <div class="btn" @click="shutdown">
-      <svg-icon iconClass="close" />
+    <el-icon class="close" @click="onClose"><CircleCloseFilled /></el-icon>
+    <div v-for="item in buttonList" :key="item.icon">
+      <div class="icon" :class="disabled ? 'disabled' : ''" @click="onClock(item)">
+        <svg-icon :class="item.class" :iconClass="item.icon" />
+      </div>
+      <span class="text select-none">
+        {{ item.value }}
+      </span>
     </div>
   </div>
+  <MagforwardingPopup @confirm="confirm" ref="wardingRef" />
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-export default defineComponent({
+import { mapState, mapMutations } from "vuex";
+import { createForwardMsg, sendMsg } from "@/api/im-sdk-api/message";
+import { showConfirmationBox } from "@/utils/message";
+import { deleteMsgList } from "@/api/im-sdk-api";
+import MagforwardingPopup from "./MagforwardingPopup.vue";
+const buttonList = [
+  {
+    type: "MergeForward",
+    value: "合并转发",
+    icon: "mergeForward",
+    class: "noDrop", // noDrop
+  },
+  {
+    type: "ForwardItemByItem",
+    value: "逐条转发",
+    icon: "aQuickForward",
+    class: "",
+  },
+  {
+    type: "removalMsg",
+    value: "删除消息",
+    icon: "delete",
+    class: "",
+  },
+];
+
+export default {
   name: "MultiChoiceBox",
+  data() {
+    return {
+      buttonList,
+      multipleValue: null,
+    };
+  },
+  components: {
+    MagforwardingPopup,
+  },
   computed: {
     ...mapState({
       showMsgBox: (state) => state.conversation.showMsgBox,
       forwardData: (state) => state.conversation.forwardData,
       showCheckbox: (state) => state.conversation.showCheckbox,
+      conversationList: (state) => state.conversation.conversationList,
+      currentConversation: (state) => state.conversation.currentConversation,
     }),
+    disabled() {
+      return this.forwardData.size == 0;
+    },
   },
   methods: {
     ...mapMutations(["SET_CHEC_BOX"]),
-    mergeForward() {
-      console.log(this.forwardData);
-    },
-    aQuickForward() {
-      console.log(this.forwardData);
-    },
-    shutdown() {
-      this.SET_CHEC_BOX(false);
-      const el = document.getElementsByClassName("check-btn");
-      for (let i = 0; i < el.length; i++) {
-        el[i].checked = false;
+    onClock(item) {
+      switch (item.type) {
+        case "MergeForward": // 合并转发
+          this.setDialogVisible(item.type);
+          break;
+        case "ForwardItemByItem": // 逐条转发
+          this.setDialogVisible(item.type);
+          break;
+        case "removalMsg":
+          this.deleteMessage(); // 删除消息
+          break;
       }
     },
+    handleConfirm(type) {
+      switch (type) {
+        case "MergeForward": // 合并转发
+          this.mergeForward();
+          break;
+        case "ForwardItemByItem": // 逐条转发
+          this.aQuickForward();
+          break;
+      }
+    },
+    confirm({ value, type }) {
+      this.setMultipleValue(value);
+      this.handleConfirm(type);
+    },
+    onClose() {
+      this.shutdown();
+    },
+    // 多选删除
+    async deleteMessage() {
+      const result = await showConfirmationBox({ message: "确定删除?", iconType: "warning" });
+      if (result == "cancel") return;
+      const forwardData = this.filterate();
+      const { code } = await deleteMsgList([...forwardData]);
+      if (code !== 0) return;
+      const { conversationID, toAccount, to } = this.currentConversation;
+      this.$store.commit("SET_HISTORYMESSAGE", {
+        type: "DELETE_MESSAGE",
+        payload: {
+          convId: conversationID,
+          message: null,
+        },
+      });
+      this.shutdown();
+    },
+    // 合并转发
+    mergeForward() {
+      console.log(this.filterate());
+    },
+    // 逐条转发
+    async aQuickForward() {
+      const forwardData = this.filterate();
+      if (!this.multipleValue) return;
+      const { toAccount, type } = this.multipleValue;
+      forwardData.map(async (t) => {
+        await this.sendSingleMessage({
+          convId: toAccount,
+          message: t,
+          type,
+        });
+      });
+      this.shutdown();
+    },
+    async sendSingleMessage({ convId, type, message }) {
+      const forwardMsg = await createForwardMsg({
+        convId: convId,
+        convType: type,
+        message: message,
+      });
+      const { code, message: data } = await sendMsg(forwardMsg);
+      if (code == 0) {
+        const { conversationID } = data || "";
+        this.$store.commit("SET_HISTORYMESSAGE", {
+          type: "UPDATE_CACHE",
+          payload: {
+            convId: conversationID,
+            message: [data],
+          },
+        });
+      }
+    },
+    filterate() {
+      let myObj = Object.fromEntries(this.forwardData);
+      const obj = Object.values(myObj).map((item) => item);
+      return obj;
+    },
+    shutdown() {
+      // 清空多选数据
+      this.$store.commit("SET_FORWARD_DATA", {
+        type: "clear",
+        payload: null,
+      });
+      // 关闭多选框
+      this.SET_CHEC_BOX(false);
+      this.closedState();
+      this.setMultipleValue();
+    },
+    closedState() {
+      const checkBoxElements = Array.from(document.querySelectorAll(".check-btn"));
+      const messageElement = document.querySelector(".message-view");
+      const childElements = Array.from(messageElement.children);
+      checkBoxElements.forEach((element) => {
+        element.checked = false;
+      });
+      childElements.forEach((element) => {
+        element.classList.remove("style-select");
+      });
+    },
+    setDialogVisible(type = "") {
+      this.$refs.wardingRef.openPopup(type);
+    },
+    setMultipleValue(value = null) {
+      this.multipleValue = value;
+    },
   },
-  setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({ text: "wewe" });
-
-    onMounted(() => {});
-    onBeforeUnmount(() => {});
-    return {
-      ...toRefs(state),
-    };
-  },
-});
+};
 </script>
-
+<style lang="scss">
+.tabulation-style {
+  max-height: 200px;
+  overflow: auto;
+  .tabulationHover {
+    background: hsl(220, 20%, 91%);
+  }
+  img {
+    height: 60%;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+  & > div {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 5px;
+  }
+  :hover {
+    background: hsl(220, 20%, 91%);
+  }
+}
+</style>
 <style lang="scss" scoped>
 .checkbox-style {
   position: relative;
@@ -64,14 +217,42 @@ export default defineComponent({
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+
+  .close {
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 22px;
+    color: rgb(140, 140, 140);
+  }
+  & > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
-.btn {
-  width: 35px;
-  height: 35px;
+.icon {
+  width: 56px;
+  height: 56px;
   background: #e5e6eb;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  .svg-icon {
+    font-size: 22px;
+  }
+}
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.noDrop {
+  cursor: no-drop;
+}
+.text {
+  margin-top: 8px;
 }
 </style>

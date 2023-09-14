@@ -1,5 +1,5 @@
 <template>
-  <div class="file-Box flex" :style="{ background: backgroundStyle }">
+  <div class="file-Box flex" :id="payload.uuid" :style="{ background: backgroundStyle }">
     <div class="file-data flex">
       <img :src="renderFileIcon(FileType)" alt="" />
       <div class="fileBoxContentEM">
@@ -10,8 +10,8 @@
           <span class="file-size">
             {{ bytesToSize(payload.fileSize) }}
           </span>
-          <span class="file-status">测试</span>
-          <span class="file-icon">
+          <!-- <span class="file-status">测试</span> -->
+          <span class="file-icon" v-show="isShow('success')">
             <img src="@/assets/message/勾.png" alt="" />
           </span>
         </div>
@@ -21,29 +21,49 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick, defineProps } from "vue";
+import { ref, reactive, toRefs, computed, watch, nextTick, onMounted } from "vue";
 import { bytesToSize } from "@/utils/common";
 import { getFileType } from "@/utils/message-input-utils";
+import emitter from "@/utils/mitt-bus";
 import { renderFileIcon } from "../utils/utils";
 const props = defineProps({
   message: {
     type: Object,
     default: null,
   },
+  status: {
+    type: String,
+    default: "success",
+  },
 });
-const { message } = toRefs(props);
-// console.log(message);
+const { message, status } = toRefs(props);
 const { payload } = message.value;
 
 const backgroundStyle = ref("");
 const FileType = getFileType(payload?.fileName);
 
+const isShow = (value) => {
+  return status.value == value;
+};
+
 const backstyle = (status = 1, percentage = 0) => {
+  if (percentage == 100) return "";
   return status === 1
     ? `linear-gradient(to right, rgba(24, 144, 255, 0.09) ${percentage}%, white 0%, white 100%)`
     : "";
 };
 backgroundStyle.value = backstyle();
+
+const uploading = ({ uuid, num }) => {
+  const dom = document.getElementById(`${uuid}`);
+  dom.style.background = backstyle(1, num);
+};
+
+emitter.on("fileUploading", (data) => {
+  uploading(data);
+});
+
+// onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>

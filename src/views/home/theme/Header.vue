@@ -1,6 +1,5 @@
 <template>
   <div class="select-none" :class="['fixed-header', sidebar ? 'style-fixed' : '']">
-    <!-- :style="fnStyle(isActive)" -->
     <div class="navbar">
       <div
         :class="classes.container"
@@ -9,7 +8,6 @@
       >
         <FontIcon class="icon-hover" :iconName="isActive ? 'Expand' : 'Fold'" />
       </div>
-      <!-- 面包屑 :separator-icon="ArrowRight" > icon-->
       <el-breadcrumb>
         <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
           {{ value.title }}
@@ -60,6 +58,7 @@ import { computed, ref, watch, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 import SideBar from "@/views/home/SideBar/index.vue";
+import { showConfirmationBox } from "@/utils/message";
 import screenfull from "./screenfull.vue";
 import Tags from "./Tags.vue";
 
@@ -69,35 +68,6 @@ const route = useRoute();
 const value = ref("");
 const drawer = ref(false);
 
-watch(
-  () => router.currentRoute.value.path,
-  () => {
-    const Tag = router.currentRoute.value.meta?.title;
-    if (!tags.value) {
-      tags.value.push({
-        title: Tag,
-        path: router.currentRoute.value.path,
-      });
-    }
-    const index = tags.value?.findIndex((t) => {
-      return t?.title === Tag;
-    });
-    if (Tag === "首页") return;
-    if (router.currentRoute.value.path === "/login") return;
-
-    if (index < 0) {
-      tags.value.push({
-        title: Tag,
-        path: router.currentRoute.value.path,
-      });
-      commit("updateData", {
-        key: "elTag",
-        value: tags.value,
-      });
-    }
-  }
-);
-
 const { isActive, userProfile, tags, sidebar, setswitch } = useState({
   userProfile: (state) => state.user.currentUserProfile,
   tags: (state) => state.data.elTag,
@@ -106,49 +76,64 @@ const { isActive, userProfile, tags, sidebar, setswitch } = useState({
   setswitch: (state) => state.settings.setswitch,
 });
 
-const fnStyle = (off) => {
-  return `width:calc(100% - ${off ? "65px" : "201px"})`;
-};
-
 const topersonal = () => {
   router.push({ name: "personal" });
 };
 
 const opensetup = (val) => {
-  commit("updateSettings", {
+  commit("UPDATE_USER_SETUP", {
     key: "setswitch",
     value: true,
   });
 };
 // 退出登录
 const Logout = async () => {
-  ElMessageBox.confirm("确定退出登录?", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(() => {
-      dispatch("LOG_OUT");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const message = { message: "确定退出登录?", iconType: "warning" };
+  const result = await showConfirmationBox(message);
+  if (result == "cancel") return;
+  dispatch("LOG_OUT");
 };
 // 侧边栏 展开 折叠
 const toggleClick = (val) => {
   if (sidebar.value) {
     drawer.value = true;
-    commit("updateSettings", {
+    commit("UPDATE_USER_SETUP", {
       key: "isCollapse",
       value: false,
     });
   } else {
-    commit("updateSettings", {
+    commit("UPDATE_USER_SETUP", {
       key: "isCollapse",
       value: !val,
     });
   }
 };
+
+const getBreadcrumb = (value) => {
+  const title = route.meta.title;
+  const label = tags.value;
+  let index = -1;
+  if (label) {
+    index = label.findIndex((t) => {
+      return t?.title === title;
+    });
+  }
+  const tag = label ? [...label, { title, path: value }] : [{ title, path: value }];
+  if (index == -1) {
+    commit("UPDATE_USER_INFO", { key: "elTag", value: tag });
+  }
+};
+
+watch(
+  () => route.path,
+  (value) => {
+    getBreadcrumb(value);
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 </script>
 <style module="classes" scoped>
 .container {

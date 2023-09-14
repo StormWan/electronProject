@@ -3,16 +3,14 @@
 </template>
 
 <script setup>
-import { watch, defineComponent } from "vue";
+import { watch, defineExpose } from "vue";
 import { useImageVerify } from "@/utils/hooks/useImageVerify";
 
-// eslint-disable-next-line no-undef
 const emit = defineEmits();
 // defineOptions({
 //   name: "ReImageVerify"
 // });
 
-// eslint-disable-next-line no-undef
 const props = defineProps({
   code: {
     type: [String, Boolean],
@@ -32,6 +30,5 @@ watch(imgCode, (newValue) => {
   emit("update:code", newValue);
 });
 
-// eslint-disable-next-line no-undef
 defineExpose({ getImgCode });
 </script>

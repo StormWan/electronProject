@@ -1,8 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
-import url from "url";
-import path from "path";
-import os from "os";
-
 /**
  * 将二进制数据转换为 base64 URL 格式
  * @param {string | Buffer} data 要转换的数据，可以是一个字符串或一个 Buffer 对象
@@ -32,7 +27,6 @@ export const fileImgToBase64Url = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64Value = reader.result;
-      // reader.result 表示文件的数据 URL
       resolve(base64Value);
     };
     reader.readAsDataURL(file);
@@ -56,7 +50,6 @@ export const urlToBase64 = (url) => {
       const result = canvas.toDataURL("image/png");
       resolve(result);
     };
-    // 使用 setAttribute 方法设置 crossOrigin 属性为 "Anonymous"，以便跨域加载图片。
     image.setAttribute("crossOrigin", "Anonymous");
     image.src = url;
     image.onerror = () => {
@@ -87,14 +80,10 @@ export const getImageType = (str) => {
  */
 export const getFileType = (filename) => {
   if (!filename) return "";
-  // 获取文件名的最后一个部分
   const lastPart = filename.split("/").pop();
-  // 如果文件名只有一个点号，则返回空字符串
   if (lastPart === ".") return "";
-  // 如果文件名包含多个点号，则返回最后一个点号之后的部分作为扩展名
   const parts = lastPart.split(".");
   if (parts.length > 1) return parts.pop();
-  // 文件名中只有一个部分，没有扩展名
   return "";
 };
 
@@ -188,3 +177,98 @@ export function downloadCopy(url, filename) {
       document.body.removeChild(link);
     });
 }
+
+/**
+ * 将查询字符串转换为对象
+ * @param {string} String - 查询字符串，例如 "?name=John&age=30"
+ * @return {object} - 转换后的对象，例如 { name: "John", age: "30" }
+ */
+export function queryStringToObject(String) {
+  let params = {};
+  let queryString = String.match(/\?(.*)/)[1];
+  queryString = queryString.substring(1);
+  queryString.split("&").forEach(function (param) {
+    var keyValue = param.split("=");
+    params[keyValue[0]] = decodeURIComponent(keyValue[1] || "");
+  });
+  return params;
+}
+const TypeMap = {
+  TIMImageElem: "[图片]",
+  TIMFileElem: "[文件]",
+};
+
+export const fnReplyContent = (msg) => {
+  const type = msg?.type;
+  const reply = TypeMap[type] || "";
+  if (reply) {
+    return reply;
+  } else {
+    return msg?.payload?.text;
+  }
+};
+
+export function getReplyMsgContent(reply) {
+  if (!reply) return "";
+  const replyMsgContent = JSON.stringify({
+    messageReply: {
+      messageID: reply.ID,
+      messageAbstract: fnReplyContent(reply),
+      messageSender: reply.nick,
+      messageType: 0,
+      version: "1",
+    },
+  });
+  return replyMsgContent;
+}
+
+/**
+ * 匹配不包含 <img src= 的字符串
+ * @param {string[]} arr - 包含字符串和图片链接的数组
+ * @returns {string} - 返回第一个匹配到的不含图片链接的字符串，如果都含有图片链接则返回 undefined
+ * ['<img src="image.png">', "some string", '<img src="image3.png">']
+ * "some string"
+ */
+export function findNonImageString(arr) {
+  const regex = /^((?!<img src=).)*$/;
+  const result = arr.find((element) => regex.test(element));
+  return result;
+}
+
+/**
+ * 将包含表情图像的 HTML 字符串转换为对应的表情符号文本
+ * @param {string} html - 待转换的 HTML 字符串
+ * @param {Array} emojiMap - 表情符号和对应的图像数据数组
+ * @returns {string} - 转换后的结果
+ * <p>12<img src="*" alt="[我最美]" />333</p>
+ * 12[我最美]333
+ */
+export function convertEmoji(html, emojiMap) {
+  if (!html || !emojiMap || !Array.isArray(emojiMap)) return "";
+  const filteredData = emojiMap.filter((item) => item.class === "EmoticonPack");
+  if (filteredData.length == 0) return false;
+  const convertedData = filteredData.map((item) => ({
+    [item.src]: item.alt,
+  }));
+  const emojiMapExtended = {
+    ...Object.assign(...convertedData),
+  };
+  const regex = /<img src="([^"]+)"[^>]+>/g;
+  const result = html.replace(regex, (match, src) => {
+    const emojiText = emojiMapExtended[src] || "";
+    return emojiText;
+  });
+  const rege = /<[^>]+>/g;
+  const text = result.replace(rege, "");
+  return text;
+}
+
+export const scrollToDomPostion = (msgid) => {
+  const dom = document.getElementById(`${msgid}`);
+  if (!dom) return;
+  dom.scrollIntoView({ behavior: "smooth", block: "center" });
+  dom.classList.add("shrink-style");
+  setTimeout(() => {
+    dom.classList.remove("shrink-style");
+  }, 2000);
+};

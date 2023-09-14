@@ -11,67 +11,80 @@
       trigger="click"
     >
       <template #reference>
-        <span class="emoticon" title="选择表情" ref="buttonRef" v-click-outside="onClickOutside">
+        <span data-title="表情" class="emoticon" ref="buttonRef" v-click-outside="onClickOutside">
           <svg-icon iconClass="iconxiaolian" class="icon-hover" />
         </span>
       </template>
-      <div class="emojis">
-        <div v-for="item in emojiName" class="emoji" :key="item" @click="SelectEmoticon(item)">
-          <img :src="emojiUrl + emojiMap[item]" :title="item" />
+      <div>
+        <div class="emojis">
+          <el-scrollbar wrap-class="custom-scrollbar-wrap">
+            <div class="emoji_QQ" v-show="table == 'QQ'">
+              <!-- 二维数组 -->
+              <div class="scroll-snap" v-for="emoji in EmotionPackGroup" :key="emoji">
+                <span
+                  v-for="item in emoji"
+                  class="emoji scroll-content"
+                  :key="item"
+                  @click="SelectEmoticon(item)"
+                >
+                  <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
+                </span>
+              </div>
+              <!-- <span
+                v-for="item in emojiQq.emojiName"
+                class="emoji"
+                :key="item"
+                @click="SelectEmoticon(item)"
+              >
+                <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
+              </span> -->
+            </div>
+            <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
+              <span
+                v-for="item in emojiDouyin.emojiName"
+                class="emoji scroll-content"
+                :key="item"
+                @click="SelectEmoticon(item)"
+              >
+                <img :src="require('@/assets/emoji/' + emojiDouyin.emojiMap[item])" :title="item" />
+              </span>
+            </div>
+          </el-scrollbar>
         </div>
-      </div>
-    </el-popover>
-    <!-- 最近表情 -->
-    <el-popover
-      v-if="false"
-      ref="popoverRef"
-      :show-after="200"
-      :hide-after="300"
-      :show-arrow="false"
-      :teleported="false"
-      :virtual-ref="buttonRef"
-      placement="top-start"
-      trigger="hover"
-      virtual-triggering
-    >
-      <div class="lately-emoji">
-        <div
-          v-for="item in emojiName.slice(0, 16)"
-          class="emoji"
-          :key="item"
-          @click="SelectEmoticon(item)"
-        >
-          <img :src="emojiUrl + emojiMap[item]" :title="item" />
+        <div class="tool">
+          <div v-for="item in toolDate" :key="item.icon" @click="table = item.type">
+            <svg-icon
+              :iconClass="item.icon"
+              :class="item.type == table ? 'isHover' : ''"
+              class="icon-hover"
+            />
+          </div>
         </div>
       </div>
     </el-popover>
     <!-- 图片 -->
-    <span class="" title="图片" @click="SendImageClick">
+    <span data-title="图片" @click="SendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span class="" title="文件" @click="SendFileClick">
+    <span data-title="文件" @click="SendFileClick">
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span class="" title="截图" @click="clickCscreenshot" v-if="false">
+    <span data-title="截图" @click="clickCscreenshot" v-if="false">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
-    <!-- 更多 -->
-    <el-popover
-      v-if="false"
-      placement="top-start"
-      popper-class="style-tup"
-      :width="100"
-      trigger="hover"
+    <!-- 滚动到底部 -->
+    <span
+      data-title="滚动到底部"
+      class="chat_chat-input-action"
+      @click="onTobBottom"
+      v-show="tobottom"
     >
-      <template #reference>
-        <span class="">
-          <svg-icon iconClass="icondiandiandian" class="icon-hover" />
-        </span>
-      </template>
-      <div>更多</div>
-    </el-popover>
+      <el-icon class="svg-left icon-hover">
+        <DArrowLeft />
+      </el-icon>
+    </span>
     <input
       type="file"
       id="imagePicker"
@@ -93,32 +106,54 @@
 </template>
 
 <script setup>
-import html2canvas from "html2canvas";
-import { ref, unref, toRefs, defineEmits } from "vue";
-import { emojiName, emojiUrl, emojiMap, localemojiUrl } from "@/utils/emoji-map";
+import emitter from "@/utils/mitt-bus";
+import { ref, unref, defineEmits, onMounted } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
-import { uploadFiles } from "@/api/index";
+import { chunk } from "lodash-es";
+import { useStore } from "vuex";
+const emojiQq = require("@/utils/emoji/emoji-map-qq");
+const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
+const tobottom = ref();
 const buttonRef = ref();
 const popoverRef = ref();
 const imagePicker = ref();
 const filePicker = ref();
-const visible = ref(false);
+const table = ref("QQ");
+const EmotionPackGroup = ref([]);
+const { state, dispatch, commit } = useStore();
 const emit = defineEmits(["setEmoj", "setPicture", "setParsefile"]);
-
+const toolDate = [
+  {
+    title: "默认表情",
+    icon: "iconxiaolian",
+    type: "QQ",
+  },
+  {
+    title: "我的收藏",
+    icon: "collect",
+    type: "Tiktok",
+  },
+];
+const initEmotion = () => {
+  EmotionPackGroup.value = chunk(emojiQq.emojiName, 12 * 6);
+};
 const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.();
 };
 const SelectEmoticon = (item) => {
-  let url = emojiUrl + emojiMap[item];
+  let url = "";
+  if (table.value == "QQ") {
+    url = emojiQq.emojiUrl + emojiQq.emojiMap[item];
+  } else {
+    url = emojiDouyin.emojiUrl + emojiDouyin.emojiMap[item];
+  }
   emit("setToolbar", {
-    data: {
-      url,
-      item,
-    },
+    data: { url, item },
     key: "setEmoj",
   });
   unref(popoverRef).hide();
+  table.value = "QQ";
 };
 const SendImageClick = () => {
   let $el = imagePicker.value;
@@ -147,14 +182,84 @@ async function sendFile(e) {
     key: "setParsefile",
   });
 }
+const onTobBottom = () => {
+  commit("updataScroll");
+};
+emitter.on("onisbot", (state) => {
+  tobottom.value = !state;
+});
+onMounted(() => {
+  initEmotion();
+});
 </script>
 <style>
 .style-emo {
   z-index: 9999 !important;
   width: auto !important;
+  padding: 0 !important;
+}
+.custom-scrollbar-wrap {
+  scroll-snap-type: y mandatory;
+}
+.scroll-snap {
+  scroll-snap-align: start;
+  height: 180px;
 }
 </style>
 <style lang="scss" scoped>
+.isHover {
+  color: var(--color-icon-hover) !important;
+}
+
+.emojis {
+  width: 400px;
+  height: 180px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  .emoji_QQ,
+  .emoji_Tiktok {
+    padding: 0 10px 0 15px;
+  }
+
+  .emoji {
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+.tool {
+  height: 50px;
+  display: flex;
+  padding: 0 10px;
+  background: rgb(243, 243, 244);
+  div {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.chat_chat-input-action {
+  cursor: pointer;
+  animation: chat_slide-in 0.3s ease;
+}
+
+@keyframes chat_slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .toolbar {
   height: 40px;
   padding: 0 5px;
@@ -170,28 +275,21 @@ async function sendFile(e) {
     text-align: center;
     color: #808080;
   }
-}
-.emojis,
-.lately-emoji {
-  width: 400px;
-  height: 202px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  overflow-y: scroll;
-  .emoji {
-    img {
-      width: 30px;
-      height: 30px;
-    }
+  & > span:hover:after {
+    font-size: 13px;
+    display: inline-block;
+    content: attr(data-title);
+    text-align: center;
+    color: rgba(0, 0, 0, 0.75);
+    position: absolute;
+    left: 17px;
+    top: 28px;
+    border-radius: 3px;
+    // border: 1px solid #e9e9e9;
+    background-color: #eaeaea;
+    white-space: nowrap;
+    padding: 2px 5px;
+    z-index: 9999;
   }
-}
-.lately-emoji {
-  width: 125px;
-  height: 140px;
-}
-::-webkit-scrollbar {
-  display: none;
 }
 </style>

@@ -5,41 +5,28 @@
 </template>
 
 <script>
-import { defineComponent, computed, reactive } from "vue";
-export default defineComponent({
-  // <svg-icon iconClass="loginBg" class="wave" />
+/* <svg-icon iconClass="loginBg" class="wave" /> */
+export default {
+  name: "SvgIcon",
   props: {
     iconClass: {
       type: String,
-      default: () => null,
-      // validator: (val) => {
-      //   return [
-      //     "link",
-      //     "text",
-      //     "default",
-      //   ].includes(val);
-      // },
+      default: "",
     },
     className: {
       type: String,
-      default: () => null,
+      default: "",
     },
   },
-  setup(props) {
-    const svgClass = computed(() => {
-      return props.className;
-    });
-
-    const iconName = computed(() => {
-      return `#icon-${props.iconClass}`;
-    });
-
-    return {
-      svgClass,
-      iconName,
-    };
+  computed: {
+    svgClass() {
+      return this.className;
+    },
+    iconName() {
+      return `#icon-${this.iconClass}`;
+    },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>

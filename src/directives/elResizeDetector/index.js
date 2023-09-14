@@ -1,6 +1,6 @@
 import elementResizeDetectorMaker from "element-resize-detector";
 import emitter from "@/utils/mitt-bus";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 
 const erd = elementResizeDetectorMaker({
   strategy: "scroll",

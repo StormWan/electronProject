@@ -1,21 +1,14 @@
-import storage from "storejs";
-import { useRouter, useRoute } from "vue-router";
-import { nextTick } from "vue";
 import router from "@/router";
 import { getMyProfile, TIM_logout, TIM_login } from "@/api/im-sdk-api";
 import { ElMessage } from "element-plus";
 import TIMProxy from "@/utils/IM";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { getCookies } from "@/utils/Cookies";
-import TLSSigAPIv2 from "tls-sig-api-v2";
-import { login, logout } from "@/api/user";
-import { getMenu } from "@/api/menu";
+import { login, register, logout } from "@/api/node-admin-api/user";
+import { getMenu } from "@/api/node-admin-api/menu";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 const timProxy = new TIMProxy();
-const tim_sdk_appid = process.env.VUE_APP_SDK_APPID;
-const tim_sdk_key = process.env.VUE_APP_IM_SDK_KEY;
-const api = new TLSSigAPIv2.Api(tim_sdk_appid, tim_sdk_key);
 
 const user = {
   state: {
@@ -25,10 +18,14 @@ const user = {
     userSig: "", // 密钥
     message: null,
     showload: false, // 登录按钮加载状态
+    currentPage: 0,
     timProxy,
   },
   getters: {},
   mutations: {
+    SET_CURRENTPAGE(state, num) {
+      state.currentPage = num;
+    },
     toggleIsSDKReady(state, isSDKReady) {
       state.isSDKReady = isSDKReady;
     },
@@ -66,35 +63,37 @@ const user = {
   actions: {
     // 登录
     async LOG_IN({ state, commit, dispatch }, data) {
-      const { username, password } = data;
-      const { code, msg, result } = await login({ username, password });
+      const { code, msg, result } = await login(data);
       console.log({ code, msg, result }, "登录信息");
       if (code == 200) {
         window.TIMProxy.init();
         dispatch("GET_MENU");
         dispatch("TIM_LOG_IN", {
-          userID: username,
+          userID: result.username,
           userSig: result.userSig,
         });
-        commit("updateData", { key: "user", value: result });
+        commit("UPDATE_USER_INFO", { key: "user", value: result });
+        commit("ACCOUNT_INFORMATION", data);
         setTimeout(() => {
-          router.push("/home");
+          router.push("/chatstudio");
         }, 1000);
+        // router.push("/chatstudio");
       } else {
         verification(code, msg);
       }
     },
+    // 注册
+    async REGISTER({ state }, data) {
+      const result = await register(data);
+    },
     // 登录im
     async TIM_LOG_IN({ commit, dispatch }, user) {
-      const { userID, userSig } = user;
-      const { code, data } = await TIM_login({ userID, userSig });
+      const { code, data } = await TIM_login(user);
       console.log({ code, data }, "TIM_LOG_IN");
       if (code == 0) {
         commit("showMessage", { message: "登录成功!" });
-        commit("getUserInfo", { userID, userSig });
-        console.log({ userID, userSig }, "getUserInfo");
-      } else {
-        console.log("err");
+        commit("getUserInfo", user);
+        console.log(user, "getUserInfo");
       }
     },
     // 退出登录

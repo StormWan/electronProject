@@ -9,7 +9,7 @@
  */
 export function debounce(func, wait = 300, immediate = false) {
   let timer;
-  return function debounced(...args) {
+  return function (...args) {
     const context = this;
     const later = function () {
       timer = null;

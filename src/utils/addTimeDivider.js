@@ -1,3 +1,4 @@
+import { typeOf } from "@/utils";
 const duration = 5 * 60;
 
 const isInFiveTime = (curTime, baseTime) => {
@@ -5,6 +6,7 @@ const isInFiveTime = (curTime, baseTime) => {
 };
 
 export const addTimeDivider = (list, baseTime = 0) => {
+  if (typeOf(list) !== "array") return;
   return list.reduce((acc, cur) => {
     const curTime = cur.clientTime;
     if (isInFiveTime(curTime, baseTime)) {

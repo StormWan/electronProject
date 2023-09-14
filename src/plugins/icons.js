@@ -1,5 +1,5 @@
 import * as ElIcons from "@element-plus/icons-vue";
-// console.log(ElementPlusIconsVue)
+
 export function useElIcons(app) {
   // 本地引入
   for (const name in ElIcons) {

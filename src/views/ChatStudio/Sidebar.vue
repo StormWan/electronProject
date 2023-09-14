@@ -3,22 +3,20 @@
     <div class="touxiang">
       <Portrait :size="40" shape="square" @click="openUploadAvatarDialog" />
     </div>
-    <ul>
-      <li class="aside-item" v-for="item in outsideList" :key="item.icon">
-        <div
-          v-show="visibile(item)"
-          @click="toggle(item)"
-          class="aside-list"
-          :class="{ current: outside == item.icon }"
-        >
-          <el-badge :value="unreadMsg" :hidden="item.icon !== 'news' || unreadMsg == 0">
-            <svg-icon v-if="item.icon !== 'test'" :iconClass="item.icon" class="style-svg" />
-            <el-icon v-else><SwitchFilled /></el-icon>
-          </el-badge>
-          <div class="icon-title">{{ item.title }}</div>
-        </div>
-      </li>
-    </ul>
+    <div class="aside-item" v-for="item in outsideList" :key="item.only">
+      <div
+        v-show="visibile(item)"
+        @click="toggle(item)"
+        class="aside-list"
+        :class="{ current: outside == item.only }"
+      >
+        <el-badge :value="unreadMsg" :hidden="item.only !== 'message' || unreadMsg == 0">
+          <FontIcon v-if="item?.type == 'el-icon'" :iconName="item.icon" class="style-svg" />
+          <svg-icon v-else :iconClass="item.icon" class="style-svg" />
+        </el-badge>
+        <div class="icon-title">{{ item.title }}</div>
+      </div>
+    </div>
     <!-- 上传头像弹框 -->
     <UploadAvatarDialog />
     <!-- 侧边栏拖拽排序弹框 -->
@@ -27,51 +25,31 @@
 </template>
 
 <script setup>
-import {
-  h,
-  ref,
-  onActivated,
-  onDeactivated,
-  onMounted,
-  onBeforeUnmount,
-  watch,
-  nextTick,
-  reactive,
-  toRefs,
-} from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
+import { useState } from "@/utils/hooks/useMapper";
 import UploadAvatarDialog from "@/views/ChatStudio/components/UploadAvatarDialog.vue";
 import SidebarEditDialog from "@/views/components/MoreSidebar/SidebarEditDialog.vue";
 import emitter from "@/utils/mitt-bus";
-const { production } = require("@/config/vue.custom.config");
 
 const { state, dispatch, commit } = useStore();
-const dialogVisible = ref(false);
-const sidebarEdit = ref(false);
-const active = ref("news");
-const activeIndex = ref(0);
-
 const { outside, unreadMsg, outsideList } = useState({
   outsideList: (state) => state.sidebar.outsideList,
   unreadMsg: (state) => state.conversation.totalUnreadMsg,
   outside: (state) => state.conversation.outside,
 });
+
 function visibile(item) {
-  if (item.icon == "test" && item.show) {
-    return false;
-  } else {
-    return true;
-  }
+  return item?.show == "hide" ? false : true;
 }
 function openUploadAvatarDialog() {
   emitter.emit("uploadAvatarDialog", true);
 }
 function toggle(item) {
-  if (item.icon == "icondiandiandian") {
+  if (item?.mode == "other") {
     emitter.emit("SidebarEditDialog", true);
   } else {
-    commit("TAGGLE_OUE_SIDE", item.icon);
+    commit("TAGGLE_OUE_SIDE", item.only);
   }
 }
 </script>
@@ -93,16 +71,16 @@ function toggle(item) {
     border-radius: 4px;
     cursor: pointer;
     &:hover {
-      background-color: #f2f2f2;
+      background-color: var(--hover-color);
     }
   }
   .style-svg {
-    color: #303133;
+    color: var(--color-text);
     font-size: 1.25rem;
   }
 
   .current {
-    background: #d9ecff !important;
+    background: var(--color-aside-list-action) !important;
   }
   .icon-title {
     color: var(--color-text);

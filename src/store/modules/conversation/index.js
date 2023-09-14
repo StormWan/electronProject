@@ -1,16 +1,16 @@
 import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { addTimeDivider } from "@/utils/addTimeDivider";
-import TIM from "tim-js-sdk";
+import { imCallback } from "@/api/node-admin-api/other";
+import TIM from "@tencentcloud/chat";
+import { nextTick } from "vue";
 import {
-  getMsgList,
   deleteConversation,
   getConversationProfile,
   setMessageRead,
-  getUnreadMsg,
-  TIMpingConv,
   setMessageRemindType,
 } from "@/api/im-sdk-api";
-import { deepClone } from "@/utils/clone";
+import { sendMsg } from "@/api/im-sdk-api/message";
+import { getMsgList, getUnreadMsg } from "@/api/im-sdk-api/session";
 
 const getBaseTime = (list) => {
   return list?.length > 0 ? list.find((t) => t.isTimeDivider).time : 0;
@@ -19,6 +19,7 @@ const getBaseTime = (list) => {
 const conversation = {
   // namespaced: true, //命名空间
   state: {
+    sessionDraftMap: new Map(), //会话草稿
     totalUnreadMsg: 0, // 未读消息总数
     showMsgBox: false, //是否显示输入框
     showCheckbox: false, //是否显示多选框
@@ -26,17 +27,17 @@ const conversation = {
     noMore: false, // 加载更多  false ? 显示loading : 没有更多
     networkStatus: true, // 网络状态
     needScrollDown: -1, // 是否向下滚动 true ? 0 : -1
-    forwardData: new Map(),
+    forwardData: new Map(), // 多选数据
     uploadProgress: new Map(), //上传进度
     downloadProgress: new Map(), //下载进度
     historyMessageList: new Map(), //历史消息
     currentMessageList: [], //当前消息列表(窗口聊天消息)
     currentConversation: null, //跳转窗口的属性
-    conversationList: [], //会话列表数据
-    currentReplyMsg: null,
+    conversationList: [], // 会话列表数据
+    currentReplyMsg: null, // 回复数据
     currentReplyUser: null,
-    activetab: "whole",
-    outside: "news", // 侧边栏初始状态
+    activetab: "whole", // 全部 未读 提及我
+    outside: "message", // 侧边栏初始状态
     isNotify: false, // 是否免打扰
   },
   mutations: {
@@ -56,6 +57,7 @@ const conversation = {
           }
           // 当前会话少于历史条数关闭loading
           const isMore = state.currentMessageList?.length < HISTORY_MESSAGE_COUNT;
+          // HISTORY_MESSAGE_COUNT;
           state.noMore = isMore;
           break;
         }
@@ -77,20 +79,37 @@ const conversation = {
         case CONVERSATIONTYPE.UPDATE_MESSAGES: {
           console.log(payload, "更新消息");
           const { convId, message } = payload;
-          let matched = false;
-          let newMessageList = [];
           let oldMessageList = state.historyMessageList.get(convId);
-          if (oldMessageList) {
-            newMessageList = oldMessageList.map((oldMessage) => {
-              if (oldMessage.ID === payload.message.ID) {
-                matched = true;
-                return payload.message;
-              } else {
-                return oldMessage;
-              }
-            });
-          }
-          // newMessageList = state.currentMessageList;
+          let matched = false;
+          // let newMessageList = [];
+          // if (oldMessageList) {
+          //   newMessageList = oldMessageList.map((oldMessage) => {
+          //     if (oldMessage.ID === payload.message.ID) {
+          //       matched = true;
+          //       return payload.message;
+          //     } else {
+          //       return oldMessage;
+          //     }
+          //   });
+          // }
+          // 新消息
+          // if (!matched) {
+          //   let baseTime = getBaseTime(newMessageList);
+          //   let timeDividerResult = addTimeDivider([message], baseTime).reverse();
+          //   newMessageList.unshift(...timeDividerResult);
+          // }
+          // 使用reduce()方法来代替map()
+          // 并在reduce过程中判断是否匹配到了消息。
+          // 避免在检查完所有旧消息之后仍需要再次遍历新消息数组来判断是否添加新消息的情况
+          const newMessageList = oldMessageList.reduce((acc, item) => {
+            if (item.ID === payload.message.ID) {
+              matched = true;
+              acc.push(payload.message);
+            } else {
+              acc.push(item);
+            }
+            return acc;
+          }, []);
           // 新消息
           if (!matched) {
             let baseTime = getBaseTime(newMessageList);
@@ -101,7 +120,9 @@ const conversation = {
           state.historyMessageList.set(convId, newMessageList);
           // 当前会有列表有值
           if (state.currentConversation) {
-            state.currentMessageList = newMessageList;
+            if (state.currentConversation.conversationID === convId) {
+              state.currentMessageList = newMessageList;
+            }
             state.needScrollDown = 0;
           }
           break;
@@ -140,21 +161,16 @@ const conversation = {
         // 清除历史记录
         case CONVERSATIONTYPE.CLEAR_HISTORY: {
           Object.assign(state, {
+            sessionDraftMap: new Map(),
             historyMessageList: new Map(),
             currentConversation: null,
             currentMessageList: [],
+            activetab: "whole",
             showMsgBox: false,
             showCheckbox: false,
             currentReplyUser: null,
             currentReplyMsg: null,
           });
-          // state.historyMessageList = new Map();
-          // state.currentConversation = null;
-          // state.currentMessageList = [];
-          // state.showMsgBox = false;
-          // state.showCheckbox = false;
-          // state.currentReplyUser = null;
-          // state.currentReplyMsg = null;
           break;
         }
         // 加载更多状态
@@ -222,7 +238,12 @@ const conversation = {
           }
           break;
         }
-        // 获取会话列表数据
+        // 更新当前窗口数据
+        case CONVERSATIONTYPE.UPDATE_CURRENT_SESSION: {
+          state.currentConversation = payload;
+          break;
+        }
+        // 更新会话列表
         case CONVERSATIONTYPE.REPLACE_CONV_LIST: {
           state.conversationList = payload;
           break;
@@ -241,7 +262,10 @@ const conversation = {
     // 设置提及弹框显示隐藏
     SET_MENTION_MODAL(state, action) {
       const { type } = state.currentConversation;
-      if (type !== "GROUP") return;
+      if (type !== "GROUP") {
+        state.isShowModal = false;
+        return;
+      }
       state.isShowModal = action;
     },
     //  切换列表 全部 未读 提及我
@@ -250,13 +274,16 @@ const conversation = {
     },
     SET_FORWARD_DATA(state, action) {
       const { type, payload } = action;
-      const { ID } = payload;
+      const { ID } = payload || {};
       switch (type) {
         case "set":
           state.forwardData.set(ID, payload);
           break;
         case "del":
           state.forwardData.delete(ID);
+          break;
+        case "clear":
+          state.forwardData.clear();
           break;
       }
     },
@@ -275,9 +302,20 @@ const conversation = {
     TAGGLE_OUE_SIDE(state, item) {
       state.outside = item;
     },
+    // 回复消息
     setReplyMsg(state, payload) {
       state.currentReplyMsg = payload;
-      console.log(state.currentReplyMsg);
+    },
+    // 设置会话草稿
+    SET_SESSION_DRAFT(state, action) {
+      const { ID, payload } = action;
+      const length = payload?.[0]?.children.length == 1;
+      const text = payload?.[0]?.children[0].text == "";
+      if (length && text) {
+        state.sessionDraftMap.delete(ID);
+      } else {
+        state.sessionDraftMap.set(ID, payload);
+      }
     },
   },
   actions: {
@@ -368,6 +406,47 @@ const conversation = {
         type,
       });
     },
+    // 会话消息发送
+    async SESSION_MESSAGE_SENDING({ state, commit, dispatch }, action) {
+      const { payload } = action;
+      const { convId } = payload;
+      commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_MESSAGES",
+        payload: {
+          convId: convId,
+          message: payload.message,
+        },
+      });
+      nextTick(() => {
+        commit("updataScroll");
+      });
+      // 发送消息
+      const { code, message } = await sendMsg(payload.message);
+      if (code == 0) {
+        dispatch("SENDMSG_SUCCESS_CALLBACK", { convId, message });
+      } else {
+        console.log("发送失败", code, message);
+      }
+    },
+    // 消息发送成功回调
+    async SENDMSG_SUCCESS_CALLBACK({ state, commit, rootState }, action) {
+      console.log(action, "sendMsg消息发送成功");
+      const { convId, message } = action;
+      commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_MESSAGES",
+        payload: {
+          convId: convId,
+          message: message,
+        },
+      });
+      commit("updataScroll");
+      imCallback({
+        Text: message.payload.text,
+        From: message.from,
+        To: message.to,
+        type: message.type,
+      });
+    },
   },
   getters: {
     toAccount: (state) => {
@@ -388,7 +467,9 @@ const conversation = {
         case "unread":
           return state.conversationList.filter((t) => t.unreadCount > 0);
         case "mention":
-          return state.conversationList.filter((t) => t?.text);
+          return state.conversationList.filter((t) => t.groupAtInfoList.length > 0);
+        case "groupChat":
+          return state.conversationList.filter((t) => t.type == "GROUP");
         default:
           return state.conversationList;
       }
@@ -411,9 +492,16 @@ const conversation = {
     },
     // 用于当前会话的图片预览
     imgUrlList: (state) => {
-      return state.currentMessageList
-        .filter((message) => message.type === TIM.TYPES.MSG_IMAGE && !message.isRevoked) // 筛选出没有撤回并且类型是图片类型的消息
-        .map((message) => message.payload.imageInfoArray[0].url);
+      const filteredMessages = state.currentMessageList.filter(
+        (item) => item.type === TIM.TYPES.MSG_IMAGE && !item.isRevoked && !item.isDeleted
+      );
+      // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight
+      const reversedUrls = filteredMessages.reduceRight((urls, message) => {
+        const url = message.payload.imageInfoArray[0].url;
+        urls.push(url);
+        return urls;
+      }, []);
+      return reversedUrls;
     },
   },
 };

@@ -8,6 +8,8 @@
         :prefix-icon="Search"
         class="text-input"
         clearable
+        @focus="onFocus"
+        @blur="onBlur"
       >
       </el-input>
       <div class="header-search-add">
@@ -16,7 +18,8 @@
         </el-icon>
       </div>
     </div>
-
+    <!-- 搜索结果 -->
+    <SearchBox ref="searchBoxRef" />
     <el-dialog
       v-model="dialogVisible"
       :title="$t('common.createGroupChat')"
@@ -43,8 +46,10 @@ import { ref, watch } from "vue";
 import { Search, Plus } from "@element-plus/icons-vue";
 import { useDebouncedRef } from "@/utils";
 import { useStore } from "vuex";
+import SearchBox from "./SearchBox.vue";
 const appoint = ref("");
 const input = ref("");
+const searchBoxRef = ref();
 // const appoint = useDebouncedRef("");
 const dialogVisible = ref(false);
 const { state, commit, dispatch } = useStore();
@@ -62,6 +67,10 @@ const createGroupBtn = () => {
 const handleClose = (done) => {
   done();
 };
+const onBlur = () => {};
+const onFocus = () => {
+  // searchBoxRef.value.setModal(true);
+};
 watch(appoint, (value) => {
   console.log(value);
 });
@@ -69,9 +78,10 @@ watch(appoint, (value) => {
 
 <style lang="scss" scoped>
 .header-bar {
-  background: #fff;
+  background: var(--color-body-bg);
   height: 60px;
   padding: 14px;
+  position: relative;
   .header-search {
     :deep(.el-input) {
       width: 210px;

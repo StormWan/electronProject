@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import { useI18n } from "vue-i18n";
 import saveToLocalStorage from "./plugins/localStorage"; // 自定义插件
 import { changeAppearance } from "@/utils/common";
 import mutations from "./mutations";

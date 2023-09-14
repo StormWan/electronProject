@@ -6,6 +6,7 @@ import store from "@/store";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 const { title, production } = require("@/config/vue.custom.config");
 import { setPageTitle } from "@/utils/common";
+import { getCookies } from "@/utils/Cookies";
 
 // hack router push callback
 const originalPush = createRouter.prototype.push;
@@ -18,6 +19,7 @@ createRouter.prototype.push = function push(location, onResolve, onReject) {
 const whiteList = ["login", "home"];
 const loginRoutePath = "/login";
 const defaultRoutePath = "/home";
+console.log(routes);
 
 // console.log(process.env, "环境变量");
 // createWebHashHistory() hash模式
@@ -44,17 +46,12 @@ const router = createRouter({
 
 let isF = false;
 router.beforeEach(async (to, from, next) => {
-  // console.log(to, "to")
-  // console.log(from,"from")
   if (from.path === to.path) return;
-  // if (from === START_LOCATION) {
-  //   // 初始导航
-  //   console.log(to, from);
-  // }
   setPageTitle(to.meta.title);
   const token = storage.get(ACCESS_TOKEN);
+  const tokenCopy = getCookies(ACCESS_TOKEN);
 
-  if (token) {
+  if (token && tokenCopy) {
     // start progress bar
     NProgress.start();
     if (isF) {

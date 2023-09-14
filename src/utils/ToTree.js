@@ -5,7 +5,7 @@ import views from "@/utils/assembly";
  * @param {Object} node - 当前节点对象
  * @param {Array} Menu - 菜单数据数组
  */
-export function ToTree(node, Menu) {
+export function convertToTree(node, Menu) {
   // 根目录存在子组件
   if (node.children && node.children.length > 0) {
     // parent.label = parent.meta.title
@@ -15,21 +15,24 @@ export function ToTree(node, Menu) {
       let child = Menu.find((item) => item.id === id);
       // 如果子级里面仍然存在子级 在次调用本身
       if (child.children?.length > 0) {
-        ToTree(child, Menu);
+        convertToTree(child, Menu);
       }
       child.label = child.meta.title;
       node.children[i] = child;
     }
   }
 }
-
-export function tree(arr) {
+/**
+ * 对树状结构的数组进行处理，并根据 componentName 设置相应的组件。
+ * @param {Array} arr - 菜单数据数组
+ */
+export function optimizeTree(arr) {
   arr.forEach((item) => {
     if (item.componentName) {
       item.component = views[item.componentName];
     }
-    if (item?.children?.length > 0) {
-      tree(item.children);
+    if (item.children?.length > 0) {
+      optimizeTree(item.children);
     }
   });
 }

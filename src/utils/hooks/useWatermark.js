@@ -1,11 +1,22 @@
 import { ref, unref, shallowRef, onBeforeUnmount, getCurrentInstance } from "vue";
-import { throttle } from "lodash";
-import { useResizeListener } from "@/utils/hooks";
-const { addResizeListener, removeResizeListener } = useResizeListener();
+import { throttle } from "lodash-es";
 
+/**
+ * 创建水印
+ * @param {Ref} appendEl - 水印要附加到的元素，默认为 document.body
+ * @returns {Object} - 包含设置水印和清除水印的方法
+ */
 export function useWatermark(appendEl = ref(document.body)) {
   let watermarkText = "";
-  // 绘制文字背景图
+  const id = Symbol.toString();
+  const watermarkEl = shallowRef();
+
+  /**
+    * 创建水印背景图的 base64 数据
+    * @param {string} str - 水印文字
+    * @param {Object} attr - 绘制属性
+    * @returns {string} - base64 数据
+    */
   function createBase64(str, attr) {
     const can = document.createElement("canvas");
     const width = 200;
@@ -24,9 +35,12 @@ export function useWatermark(appendEl = ref(document.body)) {
     return can.toDataURL("image/png");
   }
 
-  const id = Symbol.toString();
-  const watermarkEl = shallowRef();
-  // 绘制水印层
+  /**
+   * 创建水印层
+   * @param {string} str - 水印文字
+   * @param {Object} attr - 绘制属性
+   * @returns {symbol} - 水印层的 ID
+   */
   const createWatermark = (str, attr) => {
     if (unref(watermarkEl)) {
       updateWatermark({ str, attr });
@@ -49,7 +63,10 @@ export function useWatermark(appendEl = ref(document.body)) {
     return id;
   };
 
-  // 页面随窗口调整更新水印
+  /**
+  * 更新水印
+  * @param {Object} options - 更新选项
+  */
   function updateWatermark(options) {
     const el = unref(watermarkEl);
     if (!el) return;
@@ -64,10 +81,14 @@ export function useWatermark(appendEl = ref(document.body)) {
     }
   }
 
-  // 对外提供的设置水印方法
+  /**
+   * 设置水印
+   * @param {string} str - 水印文字
+   * @param {Object} attr - 绘制属性
+   */
   function setWatermark(str, attr) {
     createWatermark(str, attr);
-    addResizeListener(document.documentElement, func);
+    window.addEventListener("resize", func);
     const instance = getCurrentInstance();
     if (instance) {
       onBeforeUnmount(() => {
@@ -75,20 +96,22 @@ export function useWatermark(appendEl = ref(document.body)) {
       });
     }
   }
+
   const func = throttle(function () {
     const el = unref(appendEl);
     if (!el) return;
     const { clientHeight: height, clientWidth: width } = el;
     updateWatermark({ str: watermarkText, height, width });
   }, 400);
-  // 清除水印
+
+  /* 清除水印 */
   const clear = () => {
     const domId = unref(watermarkEl);
     watermarkEl.value = undefined;
     const el = unref(appendEl);
     if (!el) return;
     domId && el.removeChild(domId);
-    removeResizeListener(el, func);
+    window.removeEventListener("resize", func);
   };
 
   return { setWatermark, clear };

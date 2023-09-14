@@ -1,55 +1,42 @@
 <template>
-  <div class="list-container">
+  <div class="h-full w-full flex">
     <!-- 侧边栏 -->
     <Sidebar />
-    <!-- 消息 -->
-    <news v-show="outside == 'news'" />
-    <!-- 通讯录 -->
-    <mailList v-show="outside == 'mail_list'" />
-    <!-- 应用 -->
-    <application v-show="outside == 'application'" />
-    <!-- 测试 -->
-    <test v-show="outside == 'test'" />
+    <!-- chat -->
+    <Message v-show="showChat(outside)" />
+    <!-- iframe -->
+    <frameView v-if="frame.includes(outside)" :type="outside" />
+    <component v-else-if="Component[outside]" :is="Component[outside]" />
   </div>
 </template>
 
 <script setup>
-import {
-  ref,
-  onActivated,
-  onDeactivated,
-  onBeforeMount,
-  onMounted,
-  onBeforeUnmount,
-  onUnmounted,
-  watch,
-  nextTick,
-} from "vue";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { useStore } from "vuex";
+import { useState } from "@/utils/hooks/useMapper";
 
 import Sidebar from "./Sidebar.vue";
 import application from "./application.vue";
 import mailList from "./mailList.vue";
-import news from "./news.vue";
+import Message from "./message.vue";
 import test from "./test.vue";
-
-const { state, dispatch, commit } = useStore();
-
-const { networkStatus, conver, outside, groupDrawer, showMsgBox, conversationList } = useState({
+import frameView from "./frameView.vue";
+const showChat = (value) => {
+  return outsideList.value[0].only.includes(value);
+};
+const frame = [
+  "document",
+  "chatgpt",
+  // "github",
+  // "gitee"
+];
+const Component = {
+  apply: application, // 应用
+  address_book: mailList, //通讯录
+  test: test, // 测试
+};
+const { outside, outsideList } = useState({
+  outsideList: (state) => state.sidebar.outsideList,
   outside: (state) => state.conversation.outside,
-  networkStatus: (state) => state.conversation.networkStatus,
-  conver: (state) => state.conversation.currentConversation,
-  showMsgBox: (state) => state.conversation.showMsgBox,
-  groupDrawer: (state) => state.groupinfo.groupDrawer,
-  conversationList: (state) => state.conversation.conversationList,
 });
 </script>
 
-<style lang="scss" scoped>
-.list-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-}
-</style>
+<style lang="scss" scoped></style>

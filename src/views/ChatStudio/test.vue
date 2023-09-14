@@ -6,13 +6,14 @@
     <br />
     <el-button type="primary" @click="setState(true)">true</el-button>
     <el-button type="primary" @click="setState(false)">false</el-button>
-    <p>useToggle {{ state }}</p>
+    <p>useBoolean {{ state }}</p>
     <br />
     <el-button v-for="{ title, onclick } in buttons" :key="title" type="primary" @click="onclick">
       {{ title }}
     </el-button>
     <el-button type="primary" @click="test1">获取群组列表</el-button>
     <el-button type="primary" @click="test2"> 查询帐号 </el-button>
+    <el-button type="primary" @click="test3"> 拉取运营数据 </el-button>
 
     <div v-for="item in groupList" :key="item.groupID">
       <p @click="handleGroupClick(item.groupID)">
@@ -27,14 +28,11 @@ import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "v
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 import { getFriendList } from "@/api/im-sdk-api";
 import { getGroupList } from "@/api/im-sdk-api/group";
-import { accountCheck, restSendMsg } from "@/api/rest-api";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { setCookies, getCookies } from "@/utils/Cookies";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
-import { useToggle } from "@/utils/hooks/index";
-import { chatGpt } from "@/api/index";
+import { useBoolean } from "@/utils/hooks/index";
 import { cloud, getUser } from "@/api/laf-sdk-api";
-import io from "socket.io-client";
 
 export default defineComponent({
   name: "Test",
@@ -92,16 +90,22 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapMutations(["TAGGLE_OUE_SIDE", "setAddbookStatus", "updateSettings"]),
+    ...mapMutations(["TAGGLE_OUE_SIDE", "setAddbookStatus", "UPDATE_USER_SETUP"]),
     ...mapActions(["getGroupList", "CHEC_OUT_CONVERSATION"]),
     openAddress() {
       this.setAddbookStatus(true);
     },
     openSetup() {
-      this.updateSettings({ key: "setswitch", value: true });
+      this.UPDATE_USER_SETUP({ key: "setswitch", value: true });
     },
     test1() {
       this.getGroupList();
+    },
+    async test3() {
+      const data = await this.$api.restApi({
+        funName: "getappInfo",
+      });
+      console.log(data);
     },
     setCookies() {
       setCookies("key", "123", 10);
@@ -109,28 +113,19 @@ export default defineComponent({
     getCookies() {
       console.log(getCookies(ACCESS_TOKEN));
     },
-    sendMsg() {
-      restSendMsg();
-    },
-    async test2() {
-      const res = await accountCheck({ userid: "admin" });
-      console.log(res);
-    },
+    sendMsg() {},
+    async test2() {},
     handleGroupClick(groupID) {
-      this.TAGGLE_OUE_SIDE("news");
+      this.TAGGLE_OUE_SIDE("message");
       this.CHEC_OUT_CONVERSATION({ convId: `GROUP${groupID}` });
     },
     fileupload() {},
-    async callApi() {
-      console.log(process.env.VUE_APP_API_URL);
-      console.log(process.env.VUE_APP_API_KEY);
-      await getUser();
-    },
+    async callApi() {},
   },
   setup(props, { attrs, emit, expose, slots }) {
     const data = reactive({ text: "" });
     const { theme, setTheme } = useDataThemeChange();
-    const [state, setState] = useToggle();
+    const [state, setState] = useBoolean();
 
     onMounted(() => {});
     onBeforeUnmount(() => {});
@@ -139,7 +134,6 @@ export default defineComponent({
       setState,
       theme,
       setTheme,
-      accountCheck,
       ...toRefs(data),
     };
   },

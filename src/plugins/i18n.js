@@ -14,9 +14,6 @@ const localesConfigs = {
   },
 };
 const lang = storage.get(SET_UP)?.lang || "zh-CN";
-const yuyan = lang == "zh-CN" ? "中文" : "英文";
-// console.log(yuyan, "语言");
-// console.log(localesConfigs, "语言包");
 
 export const i18n = createI18n({
   legacy: false,

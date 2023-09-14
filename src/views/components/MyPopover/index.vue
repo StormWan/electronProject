@@ -15,14 +15,15 @@
     <div class="title">
       <img :src="cardData.avatar || squareUrl" alt="头像" />
       <span>{{ cardData.nick }}</span>
+      <Label :data="cardData?.from" />
     </div>
     <div class="content">
       <div class="characters">
-        <span> 测试 </span>
+        <span> 待开发 </span>
       </div>
     </div>
     <div class="footer">
-      <el-button @click="define" type="primary"> 查看详情 </el-button>
+      <el-button @click="define" type="primary"> {{ $t("chat.sendMessage") }} </el-button>
     </div>
   </div>
 </template>
@@ -30,35 +31,21 @@
 <script setup>
 import { ref, reactive, toRefs, computed, watchEffect, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
+import Label from "@/views/ChatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
 import { setSelfStatus, getUserStatus } from "@/api/im-sdk-api/index";
-// eslint-disable-next-line no-undef
-const props = defineProps({
-  // cardData: {
-  //   type: Object,
-  //   require: true,
-  //   default: () => {},
-  // },
-  // seat: {
-  //   type: PointerEvent,
-  //   require: true,
-  //   default: () => {},
-  // },
-});
+import { getUserProfile } from "@/api/im-sdk-api/profile";
+
 const popoverRef = ref();
 const left = ref("");
 const top = ref("");
+const userProfile = ref(null);
 const state = reactive({
-  sculpture: require("@/assets/images/ChatGPT.png"),
   back: require("@/assets/images/gptBack.png"),
 });
-// const {
-//   // seat,
-//   cardData,
-// } = toRefs(props);
-const { sculpture, back } = toRefs(state);
+const { back } = toRefs(state);
 
 const { dispatch, commit } = useStore();
 const { popover, seat, cardData } = useState({
@@ -68,6 +55,7 @@ const { popover, seat, cardData } = useState({
 });
 
 const closeModal = () => {
+  userProfile.value = null;
   commit("setPopoverStatus", {
     status: false,
   });
@@ -78,6 +66,7 @@ const isRobot = (item) => {
 };
 
 const define = () => {
+  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${cardData.value.from}` });
   closeModal();
 };
 
@@ -98,10 +87,25 @@ const setPosition = (popover) => {
     console.log(error);
   }
 };
+const setUserProfile = () => {
+  const userID = cardData.value?.from;
+  getUserProfile(userID)
+    .then(({ data }) => {
+      userProfile.value = data?.[0];
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  console.log(userProfile);
+};
+const openCard = () => {
+  setPosition(seat.value);
+  // setUserProfile();
+};
 
 const drawer = computed({
   get() {
-    setPosition(seat.value);
+    openCard();
     return popover.value;
   },
   set(val) {

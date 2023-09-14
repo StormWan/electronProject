@@ -1,18 +1,13 @@
 <template>
-  <div @click="addItem()" class="message-view_withdraw">
+  <div @click="onClick()" class="message-view_withdraw">
     {{ getChangeType() }}
   </div>
 </template>
 
 <script>
-import { toRefs, reactive, defineComponent, onMounted, onBeforeUnmount } from "vue";
-import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-export default defineComponent({
-  name: "TipElement",
-  components: {},
-  directives: {},
-  emits: [],
+import { mapGetters, mapState } from "vuex";
+export default {
+  name: "TipsElemItem",
   props: {
     message: {
       type: Object,
@@ -25,31 +20,12 @@ export default defineComponent({
     }),
     ...mapGetters(["toAccount", "isOwner", "tabList"]),
   },
-  data() {
-    return {
-      text: "test",
-      extra: [],
-    };
-  },
   methods: {
-    ...mapMutations(["SET_NETWORK_STATUS"]),
-    ...mapActions([GET_MESSAGE_LIST]),
-    // this[GET_MESSAGE_LIST]();
-    // this.SET_NETWORK_STATUS();
-    addItem() {
+    onClick() {
       console.log(this.tabList);
     },
-    removeItem() {},
-  },
-  setup(props, { attrs, emit, expose, slots }) {
-    const { message } = toRefs(props);
-    const state = reactive({
-      visible: false,
-      isMoving: false,
-      interval: 0,
-    });
-    const getChangeType = () => {
-      const { conversationType, flow, from, nick } = message.value;
+    getChangeType(message = this.message) {
+      const { conversationType, flow, from, nick } = message;
       const isMine = flow == "out";
       if (conversationType === "C2C" && !isMine) {
         return "对方撤回了一条消息";
@@ -58,23 +34,16 @@ export default defineComponent({
         return `${nick}撤回了一条消息`;
       }
       return "你撤回了一条消息";
-    };
-    onMounted(() => {});
-
-    onBeforeUnmount(() => {});
-    return {
-      getChangeType,
-      ...toRefs(state),
-    };
+    },
   },
   // render() {
   //   return (
-  //     <div class="message-view_withdraw" onClick={this.addItem()}>
+  //     <div class="message-view_withdraw" onClick={this.onClick()}>
   //       {this.getChangeType()}
   //     </div>
   //   );
   // },
-});
+};
 </script>
 
 <style lang="scss" scoped>

@@ -30,25 +30,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizelegibility;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "微软雅黑", Arial, sans-serif;
 }
 
 // 通用ul li
 ul {
   margin: 0;
   padding: 0;
-
   li {
     list-style-type: none;
   }
 }
+.frame-iframe {
+  border: 0;
+  box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
 
-.height-full {
+.h-full {
   height: 100%;
 }
 
-.width-full {
+.w-full {
   width: 100%;
 }
 

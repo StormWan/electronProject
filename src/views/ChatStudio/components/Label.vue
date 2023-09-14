@@ -1,49 +1,55 @@
 <template>
-  <span :class="['label', getLabel(data).className]" v-show="getLabel(data).show">
-    {{ getLabel(data).label }}
+  <span :class="['label', labelClass()]">
+    <span class="all" v-show="isallStaff(item)">全员</span>
+    <svg-icon iconClass="robot" v-show="/^R\d{5}$/.test(userID)" />
   </span>
 </template>
 
 <script setup>
-import { defineProps, toRefs } from "vue";
+import { deepClone } from "@/utils/clone";
+import { ref, toRefs, onMounted } from "vue";
+import { isallStaff } from "../utils/utils";
 
+// eslint-disable-next-line no-undef
 const props = defineProps({
-  data: {
+  userID: {
     type: String,
     default: "",
   },
+  item: {
+    type: Object,
+    default: () => {},
+  },
 });
-const { data } = toRefs(props);
 
-const reg = /^R\d{5}$/;
-
-const getLabel = (data) => {
-  let show = false;
-  let label = "";
-  let className = "";
-  // 大写R开头 后五位是数字
-  if (reg.test(data)) {
-    show = true;
-    label = "机器人";
-    className = "robot";
-  }
-  return { show, label, className };
+const { userID, item } = toRefs(props);
+const labelClass = (data) => {
+  return "";
 };
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 .label {
-  padding: 0px 2.5px;
-  margin: 1px 0 0 4px;
   text-align: center;
   border-radius: 2px;
   font-size: 10px;
   font-weight: 400;
-}
-// .all {}
-
-.robot {
-  color: rgb(84, 180, 239);
-  border: 0.64px solid #c6e2ff;
+  svg {
+    stroke: unset;
+  }
+  .all {
+    // @include ellipsisBasic(1);
+    white-space: nowrap;
+    background: #e6f7ff;
+    border: 1px solid rgb(145, 213, 255);
+    color: #1890ff;
+    border-radius: 2px;
+    font-size: 10px;
+    padding: 0 4px;
+    display: inline-block;
+    line-height: initial;
+    height: 16px;
+  }
 }
 </style>

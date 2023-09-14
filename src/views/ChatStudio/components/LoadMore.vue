@@ -10,18 +10,16 @@
 </template>
 
 <script setup>
-import { toRefs, defineProps } from "vue";
+import { toRefs } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
 
+// eslint-disable-next-line no-undef
 const props = defineProps({
   index: {
     type: Number,
   },
 });
-const {
-  // noMore,
-  index,
-} = toRefs(props);
+const { index } = toRefs(props);
 
 const { noMore, currentMessageList } = useState({
   noMore: (state) => state.conversation.noMore,
@@ -34,7 +32,7 @@ const { noMore, currentMessageList } = useState({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
+  // height: 30px;
   width: 100%;
   overflow: hidden;
 }

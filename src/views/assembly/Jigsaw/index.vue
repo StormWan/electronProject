@@ -3,14 +3,14 @@
   <div class="box">
     <div class="button">
       <el-button @click="shuffle" class="replay">重置</el-button>
-      <el-button @click="aotoPlay" class="autoplay">自动</el-button>
+      <el-button @click="autoPlay" class="autoplay">自动</el-button>
     </div>
     <transition-group name="cell" tag="div" class="container">
       <div
-        @click.prevent="fnclickBlock(index)"
+        @click.prevent="clickBlock(index)"
         v-for="(puzzle, index) in puzzles"
         :key="puzzle"
-        :class="puzzle == '0' ? 'cell cells' : 'cell'"
+        :class="getPuzzleClass(puzzle)"
       >
         <img class="picture" v-if="puzzle !== 0" :src="picture(puzzle)" alt="" />
       </div>
@@ -19,9 +19,8 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, computed } from "vue";
-import _ from "lodash";
-import { throttle } from "@/utils/throttle";
+import { ref } from "vue";
+import { throttle, chunk, flatten } from "lodash-es";
 
 function picture(i) {
   const num = {
@@ -38,21 +37,27 @@ function picture(i) {
 }
 const puzzles = ref([1, 2, 3, 4, 5, 6, 7, 8, 0]);
 
-puzzles.value = _.shuffle(puzzles.value);
+const getPuzzleClass = (puzzle) => {
+  return puzzle == "0" ? "cell cells" : "cell";
+};
+// 洗牌
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+};
 
-const fnthrottle = throttle(() => {
-  puzzles.value = _.shuffle(puzzles.value);
+shuffleArray(puzzles.value);
+
+const throttleShuffle = throttle(() => {
+  shuffleArray(puzzles.value);
 }, 350);
 
 const shuffle = () => {
-  fnthrottle();
+  throttleShuffle();
 };
 
-const fnclickBlock = throttle((index) => {
-  clickBlock(index);
-}, 50);
-
-// 点击方块
 const clickBlock = (index) => {
   let curIndex = puzzles.value[index];
   let leftIndex = puzzles.value[index - 1];
@@ -69,15 +74,15 @@ const clickBlock = (index) => {
   } else if (bottomIndex == 0) {
     setbute(index + 3, curIndex, index);
   }
-  pass();
+  checkPass();
 };
 
 const setbute = (key, val, i) => {
   puzzles.value[key] = val;
   puzzles.value[i] = 0;
 };
-// 是否通过
-const pass = () => {
+
+const checkPass = () => {
   if (puzzles.value[8] === 0) {
     const newPuzzles = puzzles.value.slice(0, 8);
     const isPass = newPuzzles.every((e, i) => e === i + 1);
@@ -87,7 +92,7 @@ const pass = () => {
   }
 };
 
-const aotoPlay = () => {
+const autoPlay = () => {
   let Setting = {
     originalNode: _.chunk(puzzles.value, 3),
     // => [[1, 3, 2],[5, 8, 0],[7, 6, 4]],
@@ -105,7 +110,7 @@ const aotoPlay = () => {
   } else {
     shuffle();
     setTimeout(() => {
-      aotoPlay();
+      autoPlay();
     }, 1000);
   }
 };
@@ -210,7 +215,7 @@ const autoPuzzles = (Setting) => {
     readerDom(node) {
       let nodeArr = node.toString().split(",");
       puzzles.value = nodeArr;
-      pass();
+      checkPass();
     },
     // 获取子节点
     getChildNodes(currentNode) {
@@ -302,7 +307,6 @@ const autoPuzzles = (Setting) => {
   width: 300px;
   height: 300px;
   margin-top: 10px;
-  // border: 1px solid #ccc;
   background: #896530;
   position: relative;
   overflow: hidden;

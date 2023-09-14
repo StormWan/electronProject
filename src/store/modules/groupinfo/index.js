@@ -1,6 +1,8 @@
-import { getGroupProfile, deleteConversation } from "@/api/im-sdk-api/index";
+import { deleteConversation } from "@/api/im-sdk-api/index";
+import { restApi } from "@/api/node-admin-api/rest";
 import {
   getGroupList,
+  getGroupProfile,
   getGroupMemberList,
   quitGroup,
   createGroup,
@@ -18,6 +20,7 @@ export default {
     isShowAddBook: false, // 地址本状态
     popover: false, // 卡片
     seat: null,
+    cardData: null,
     groupDrawer: false, // 群聊开关
     groupList: [], //群组列表
     groupProfile: null, // 群聊数据
@@ -48,9 +51,6 @@ export default {
   },
   mutations: {
     // 更新群详情
-    updateGroupInfo(state, payload) {
-      state.groupProfile = payload;
-    },
     setGroupProfile(state, payload) {
       state.groupProfile = payload;
     },
@@ -97,8 +97,14 @@ export default {
     // 解散群组
     async DISMISS_GROUP({ state, dispatch, commit }, payload) {
       const { groupId, convId } = payload;
-      const { code, groupID } = await dismissGroup(groupId);
-      if (code !== 0) return;
+      // const { code, groupID } = await dismissGroup(groupId);
+      // if (code !== 0) return;
+      // dispatch("DELETE_SESSION", { convId });
+      const { ErrorCode } = await restApi({
+        params: groupId,
+        funName: "destroyGroup",
+      });
+      if (ErrorCode !== 0) return;
       dispatch("DELETE_SESSION", { convId });
     },
     // 获取群详细资料

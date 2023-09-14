@@ -5,14 +5,13 @@
         <FontIcon iconName="arrow-left" class="cursor-w" />
       </div>
       <div class="scroll-container">
-        <el-tag :type="CurTitle === '首页' ? '' : 'info'" @click="tagClick('/home')"> 首页 </el-tag>
         <el-tag
           v-show="tags"
           v-for="tag in tags"
           :key="tag.title"
           closable
-          :type="CurTitle === tag.title ? '' : 'info'"
-          @click.native="tagClick(tag.path)"
+          :type="curTitle === tag.title ? '' : 'info'"
+          @click="onClick(tag.path)"
           @close="handleClose(tag)"
           v-contextmenu:contextmenu
           @contextmenu.prevent="ContextMenuEvent($event, tag)"
@@ -23,21 +22,6 @@
       <div class="arrow-right">
         <FontIcon iconName="arrow-right" class="cursor-w" />
       </div>
-    </div>
-    <div v-if="false" class="dropdown">
-      <el-dropdown>
-        <span class="el-dropdown-link">
-          <FontIcon iconName="arrow-down" />
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item :icon="Back" @click="closing('left')"> 关闭左侧 </el-dropdown-item>
-            <el-dropdown-item :icon="Right" @click="closing('right')"> 关闭右侧 </el-dropdown-item>
-            <el-dropdown-item :icon="Minus" @click="closing('other')"> 关闭其他 </el-dropdown-item>
-            <el-dropdown-item :icon="Close" @click="closing('all')"> 全部关闭 </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
     </div>
     <!-- 右键菜单 -->
     <contextmenu ref="contextmenu">
@@ -62,7 +46,7 @@ import { useStore } from "vuex";
 const { state, dispatch, commit } = useStore();
 
 const router = useRouter();
-const CurTitle = computed(() => {
+const curTitle = computed(() => {
   return router.currentRoute.value.meta?.title;
 });
 
@@ -71,42 +55,68 @@ const { tags } = useState({
 });
 
 const RIGHT_CLICK_TAGS_LIST = [
-  {
-    id: "left",
-    text: "关闭左侧",
-  },
-  {
-    id: "right",
-    text: "关闭右侧",
-  },
-  {
-    id: "other",
-    text: "关闭其他",
-  },
-  {
-    id: "all",
-    text: "关闭全部",
-  },
+  // {
+  //   id: "left",
+  //   text: "关闭左侧",
+  // },
+  // {
+  //   id: "right",
+  //   text: "关闭右侧",
+  // },
+  // {
+  //   id: "other",
+  //   text: "关闭其他",
+  // },
+  // {
+  //   id: "all",
+  //   text: "关闭全部",
+  // },
 ];
 const ContextMenuEvent = (event, tag) => {
   console.log(tag);
 };
 const ClickMenuItem = (item) => {
-  closing(item.id);
+  // closing(item.id);
 };
 
-const tagClick = (path) => {
+const onClick = (path) => {
   router.push(path);
 };
 
-const handleClose = (tag) => {
-  let data = tags.value.splice(tags.value.indexOf(tag), 1);
-  commit("updateData", { elTag: data });
+function findMenuItemByPath(menu, path) {
+  const currentIndex = menu.findIndex((item) => item.path === path);
+  const leftIndex = currentIndex - 1;
+  const rightIndex = currentIndex + 1;
+  if (leftIndex >= 0) {
+    return menu[leftIndex];
+  } else if (rightIndex < menu.length) {
+    return menu[rightIndex];
+  }
+  return null;
+}
+
+const handleClose = (value) => {
+  const { title, path } = value;
+  const tagsArr = tags.value;
+  const data = findMenuItemByPath(tagsArr, path);
+  const filteredData = tagsArr.filter((item) => {
+    return item.path !== path;
+  });
+  const welcome = [{ title: "首页", path: "/welcome" }];
+  const isEmpty = filteredData.length !== 0;
+  const label = isEmpty ? filteredData : welcome;
+  // 关闭当前标签
+  commit("UPDATE_USER_INFO", {
+    key: "elTag",
+    value: label,
+  });
+  data && onClick(data.path);
+  !isEmpty && onClick(welcome[0].path);
 };
 
 function closing(tag) {
   const find = tags.value.findIndex((t) => {
-    return t?.title === CurTitle.value;
+    return t?.title === curTitle.value;
   });
   switch (tag) {
     case "left":
@@ -118,7 +128,7 @@ function closing(tag) {
     case "other":
       tags.value.splice(0, tags.value.length);
       tags.value.push({
-        title: CurTitle.value,
+        title: curTitle.value,
         path: router.currentRoute.value.path,
       });
       break;
@@ -126,7 +136,7 @@ function closing(tag) {
       tags.value.splice(0, tags.value.length);
       break;
   }
-  commit("updateData", {
+  commit("UPDATE_USER_INFO", {
     key: "elTag",
     value: tags.value,
   });

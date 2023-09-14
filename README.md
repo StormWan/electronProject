@@ -23,39 +23,41 @@
   </p>
 </p>
 
-[![GitHub license](https://img.shields.io/github/license/Hyk260/PureAdmin)](https://github.com/Hyk260/PureAdmin/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/Hyk260/PureAdmin)](https://github.com/Hyk260/PureAdmin/blob/master/LICENSE) [![Stars](https://img.shields.io/github/stars/Hyk260/PureAdmin.svg)](https://github.com/Hyk260/PureAdmin/stargazers) [![Forks](https://img.shields.io/github/forks/Hyk260/PureAdmin.svg)](https://github.com/Hyk260/PureAdmin/network/members)
+
+## 简介
+
+[反馈](https://github.com/Hyk260/PureAdmin/issues) / [QQ 群](https://github.com/Hyk260/PureAdmin/discussions/2) / [打赏开发者](./images/weix.png)
+
+[Pure Admin](https://github.com/Hyk260/PureAdmin) 是一个基于 Vue3、Element-Plus 的清新优雅的中后台模版，内置了 i18n 国际化，动态路由，权限验证，提炼了典型的业务模型，提供了丰富的功能组件 聊天工作室 (腾讯 IM 即时通讯) 用于学习参考。
 
 ### 🎉 特性
 
 - 📦️ 使用 Vue CLI 5 构建
-
 - 📃 RBAC 模型 + JWT 权限控制
 
   - 后端路由动态渲染 `express`
 
 - ☁️ 聊天工作室 `基于IM即时通讯sdk`
 
-  - 群聊@好友功能
+  - 群聊支持@成员功能
   - 消息免打扰 红点提示
-  - 支持消息撤回
-  - 截图功能 (开发中)
-  - 动态水印
+  - 支持浏览器原生 Notification 提示(点击可定位到指定消息)
   - 富文本框高度可自由上下调整
   - 文本链接识别 (点击跳转新窗口打开)
   - 检查当前网络环境 (断网提示)
-  - 聊天消息 多选 单选 转发功能 回复功能(开发中)
-  - 支持 「创建，解散」群 「邀请，移除」好友
-  - 支持「文字」「图片」「动态表情包」「文件」「自定义」等格式消息发送
-  - 消息输入框使用富文本框 `wangEditor 5`开发(后续支持多类型消息混发)。
-  - 接入 ChatGpt 机器人
-  - 切换会话列表时 输入框草稿保存与回填功能(开发中)
+  - 聊天消息支持 `撤回` `转发` `回复` `删除` 功能
+  - 支持 「创建，解散」群 「添加，移除」成员
+  - 支持「文字」「图片」「动态表情包」「文件」「自定义」「链接」等格式消息发送
+  - 消息预加载机制 文件上传进度
+  - 消息输入框使用富文本框 `wangEditor 5`开发(后续支持多类型消息混发)
+  - 导航栏支持动态拖拽排序以及自定义编辑
+  - 接入 ChatGpt 机器人(暂时只支持单聊)(开发中)
+  - 切换会话列表时 输入框草稿保存与回填功能
 
-- 🎮 九宫格拼图游戏(自动拼图)
-
+- 🎮 九宫格拼图游戏(完善中)
 - 🌚 光明/黑暗 模式切换`自动根据系统主题改变`(完善中)
-
 - ⚡️ 自定义 SVG 图标组件`svg-sprite-loader`
-
 - 🔴 国际化`vue-i18n`(开发中)
 
   - vscode 扩展插件 `i18n-ally`自动翻译
@@ -64,14 +66,14 @@
   - vue3.0 vue3.2 快速度生成模板语法配置 `code-snippets`
   - vscode 扩展插件推荐 `extensions`
 - 🔧 Prettier + ESLint 规范 `自动格式化`
-
 - 💡Commitlint 提交规范
-
 - 🛠 更多特性开发中
 
 ### 按需引入 element-plus 组件
 
-全量引入组件库太过臃肿，项目中使用 `unplugin-vue-components` 插件进行按需自动引入组件，可通过[官方文档](https://element-plus.org/zh-CN/guide/quickstart.html#按需导入)了解更多。
+全量引入组件库太过臃肿，项目中使用 `unplugin-vue-components` 插件进行按需自动引入组件，
+
+可通过[官方文档](https://element-plus.org/zh-CN/guide/quickstart.html#按需导入)了解更多。
 
 ### SVG 图标使用
 
@@ -81,9 +83,17 @@
 
 ### ✨ 安装使用
 
-本项目由 [node-admin](https://gitee.com/H260788/node-admin) 提供 API。本地运行 node-admin，或者将 API [部署至 Vercel](https://vercel.com)
+本项目由 [node-admin](https://node-admin.cn) 提供 API。本地运行 node-admin，或者将 API [部署至 Vercel](https://vercel.com)
 
-Clone 这个 project
+（暂时因密钥安全不能公开 需要测试可以联系我）
+
+环境配置
+
+```
+本地环境需要安装 Node.js 14.18+ 和 Git
+```
+
+克隆代码
 
 ```bash
 git clone https://github.com/Hyk260/PureAdmin.git
@@ -93,12 +103,6 @@ git clone https://github.com/Hyk260/PureAdmin.git
 
 ```
 yarn install
-```
-
-运行服务器 需全局安装 `nodemon` 或者 `node app`
-
-```
-yarn app
 ```
 
 启动项目
@@ -127,7 +131,6 @@ yarn build
 │   ├── assets                 // 主题字体图片svg icons等静态资源
 │   ├── components             // 全局公用组件
 │   ├── directives             // 自定义指令
-│   ├── mock                   // mock服务
 │   ├── plugins                // 插件
 │   ├── router                 // 路由
 │   ├── store                  // 全局 store管理
@@ -160,3 +163,11 @@ yarn build
 <img src="./images/about.png">
 
 <img src="./images/chatstudio.png">
+
+<img src="./images/chatgpt.png">
+
+### 浏览器支持
+
+本地开发推荐使用`Chrome 90+` 浏览器
+
+支持现代浏览器, 不支持 IE

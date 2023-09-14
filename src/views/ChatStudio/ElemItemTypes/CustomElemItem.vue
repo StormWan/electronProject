@@ -1,52 +1,38 @@
 <template>
-  <div class="message-view__item--text">{{ tip }}</div>
+  <div class="message-view__item--text">{{ customMessage() }}</div>
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-export default defineComponent({
-  name: "CustomElemItem", // 自定义消息
-  components: {},
-  computed: {},
+export default {
+  name: "CustomElemItem",
   props: {
     message: {
       type: Object,
       default: null,
     },
   },
-  data() {
-    return {};
+  methods: {
+    customMessage(payload = this.message.payload) {
+      let videoPayload = {};
+      try {
+        videoPayload = JSON.parse(payload.data);
+      } catch (e) {
+        videoPayload = {};
+      }
+      if (videoPayload.businessID == "group_create") {
+        return videoPayload.opUser + videoPayload.content;
+      }
+      if (payload.data === "group_create") {
+        return `${payload.extension}`;
+      }
+      if (payload.text) {
+        return payload.text;
+      } else {
+        return "[自定义消息]";
+      }
+    },
   },
-  methods: {},
-  setup(props, { attrs, emit, expose, slots }) {
-    const state = reactive({ text: "wewe" });
-    const { message } = toRefs(props);
-    const { payload, nick } = message.value;
-    let tip = "";
-    const {
-      data, // group_create
-      description, // ""
-      extension, // huangyk创建群组
-    } = payload;
-    switch (data) {
-      case "group_create":
-        tip = nick + "创建群组";
-        break;
-      default:
-        tip = "未知消息";
-        break;
-    }
-    onMounted(() => {});
-    onBeforeUnmount(() => {});
-    return {
-      tip,
-      nick,
-      payload,
-      ...toRefs(state),
-    };
-  },
-});
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,6 @@
 {
   "recommendations": [
+    "aminer.codegeex",
     "ritwickdey.LiveServer",
     "kisstkondoros.vscode-gutter-preview",
     "wix.vscode-import-cost",

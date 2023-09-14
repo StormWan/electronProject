@@ -8,7 +8,7 @@
  */
 export function throttle(fn, wait = 300) {
   let timer = null;
-  return function throttled(...args) {
+  return function (...args) {
     const context = this;
     if (!timer) {
       timer = setTimeout(() => {

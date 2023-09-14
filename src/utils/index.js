@@ -56,7 +56,7 @@ export function empty(value) {
 /**
  * @description: 判断数据类型
  * @param {*}
- * @return {*}
+ * @return {*} array object
  * 示例 typOf({}) === "object";
  */
 export function typeOf(operand) {

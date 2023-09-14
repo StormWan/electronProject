@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, defineProps, toRefs, computed, watch, nextTick } from "vue";
+import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
 // <!-- unSend(未发送)success(发送成功)fail(发送失败) -->
 const props = defineProps({
   item: {
@@ -48,7 +48,6 @@ const isShow = (value) => {
     cursor: pointer;
   }
 }
-
 .isown-style {
   padding-top: 18.79px;
   margin: 0 0 0 8px;
