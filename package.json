@@ -21,7 +21,7 @@
     "prepare": "husky install"
   },
   "appId": "pureadmin",
-  "main": "./src/electron/main.js",
+  "main": "background.js",
   "dependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",

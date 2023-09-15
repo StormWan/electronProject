@@ -155,6 +155,9 @@ module.exports = {
         mac: {
           icon: "src/assets/icons/icon.png",
         },
+        electronDownload: {
+          mirror: 'https://npm.taobao.org/mirrors/electron/',
+        },
         nsis: {
           // 一键安装，如果设为true，nsis设置就无意义请直接删除 nsis 配置
           oneClick: false,
