@@ -20,6 +20,7 @@
     "postuninstall": "electron-builder install-app-deps",
     "prepare": "husky install"
   },
+  "appId": "pureadmin",
   "main": "./src/electron/main.js",
   "dependencies": {
     "@commitlint/cli": "^17.2.0",
