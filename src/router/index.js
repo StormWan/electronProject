@@ -21,11 +21,19 @@ const loginRoutePath = "/login";
 const defaultRoutePath = "/home";
 console.log(routes);
 
+function routerMode() {
+  if (process.env.IS_ELECTRON) {
+    return createWebHistory();
+  } else {
+    return production ? createWebHashHistory() : createWebHistory();
+  }
+}
+
 // console.log(process.env, "环境变量");
 // createWebHashHistory() hash模式
 // createWebHistory() history模式
 const router = createRouter({
-  history: production ? createWebHashHistory() : createWebHistory(),
+  history: routerMode(),
   routes,
   strict: true,
   scrollBehavior(to, from, savedPosition) {

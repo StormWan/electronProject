@@ -72,6 +72,9 @@ app.on("ready", async () => {
   createWindow();
 });
 
+// 允许加载远程资源
+app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {

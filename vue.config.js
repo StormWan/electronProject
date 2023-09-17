@@ -156,7 +156,7 @@ module.exports = {
           icon: "src/assets/icons/icon.png",
         },
         electronDownload: {
-          mirror: 'https://npm.taobao.org/mirrors/electron/',
+          mirror: "https://npm.taobao.org/mirrors/electron/",
         },
         nsis: {
           // 一键安装，如果设为true，nsis设置就无意义请直接删除 nsis 配置
@@ -178,6 +178,23 @@ module.exports = {
           // 安装时头部图标
           installerHeaderIcon: "src/assets/icons/icon.ico",
         },
+      },
+      // 主线程的配置文件
+      chainWebpackMainProcess: (config) => {
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
+      },
+      // 渲染线程的配置文件
+      chainWebpackRendererProcess: (config) => {
+        // 渲染线程的一些其他配置
+        // Chain webpack config for electron renderer process only
+        // The following example will set IS_ELECTRON to true in your app
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
       },
     },
   },
