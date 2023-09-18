@@ -222,7 +222,7 @@ export async function sendChatMessage(options) {
   let TextMsg;
   let flag = true;
   const { convId, convType, textMsg, aitStr, aitlist, files, image, reply } = options;
-  console.log(options)
+  console.log(options);
   // 如果包含文件，则创建相应的文件消息
   if (files) {
     const { fileName, src } = files;
@@ -301,6 +301,28 @@ export const chatName = (item) => {
   }
 };
 // 是否全员群
-export const isallStaff = (item, field = 'all_staff') => {
-  return item?.groupProfile?.groupCustomField?.[0]?.value == field
+export const isallStaff = (item, field = "all_staff") => {
+  return item?.groupProfile?.groupCustomField?.[0]?.value == field;
+};
+/**
+ * 将给定的 HTML 字符串解析为 数组
+ * @param {string} html - 要解析的 HTML 字符串
+ * @returns {Array} - 解析后的 数组
+ */
+export function parseHTMLToArr(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const elements = Array.from(doc.body.children[0].childNodes);
+  const arr = elements.map((element) => {
+    const obj = {};
+    if (element.tagName === "IMG") {
+      obj.elem_type = 1;
+      obj.image_path = element.getAttribute("src");
+    } else {
+      obj.elem_type = 0;
+      obj.text_content = element.textContent.trim();
+    }
+    return obj;
+  });
+  return arr;
 }

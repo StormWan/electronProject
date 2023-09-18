@@ -41,7 +41,7 @@ import RichToolbar from "../components/RichToolbar.vue";
 import { toolbarConfig, editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
 import { onBeforeUnmount, ref, shallowRef, onMounted, computed, watch, nextTick } from "vue";
-import { sendChatMessage, customAlert } from "../utils/utils";
+import { sendChatMessage, customAlert, parseHTMLToArr } from "../utils/utils";
 import { empty } from "@/utils";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
@@ -77,7 +77,7 @@ const {
 
 const handleCreated = (editor) => {
   editorRef.value = editor;
-  console.log(editor.getConfig());
+  // editor.getConfig()
   // editor.enable(); //
   // editor.disable(); // 只读
   // editor.hidePanelOrModal();
@@ -176,12 +176,10 @@ const customPaste = (editor, event, callback) => {
 };
 // 拖拽事件
 const dropHandler = (event) => {
-  console.log(event);
   event.preventDefault();
 };
 // 插入文件
 const parsefile = async (file) => {
-  console.log(file, "文件");
   try {
     const { size, name } = file;
     const fileSize = bytesToSize(size);
@@ -225,7 +223,6 @@ const setParsefile = (data) => {
 };
 // 插入图片
 const parsepicture = async (file) => {
-  console.log(file, "图片");
   const base64Url = await fileImgToBase64Url(file);
   const ImageElement = {
     type: "image",
@@ -286,6 +283,7 @@ const sendMsgBefore = () => {
   const { aitStr, aitlist } = extractAitInfo();
   const { fileName, link } = extractFilesInfo(HtmlText);
   const emoticons = convertEmoji(HtmlText, image);
+  const ElementArray = parseHTMLToArr(HtmlText);
   return {
     convId: toAccount.value,
     convType: currentConversation.value.type,
