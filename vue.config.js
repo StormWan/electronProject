@@ -189,8 +189,6 @@ module.exports = {
       // 渲染线程的配置文件
       chainWebpackRendererProcess: (config) => {
         // 渲染线程的一些其他配置
-        // Chain webpack config for electron renderer process only
-        // The following example will set IS_ELECTRON to true in your app
         config.plugin("define").tap((args) => {
           args[0]["IS_ELECTRON"] = true;
           return args;
