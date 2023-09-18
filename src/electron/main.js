@@ -4,8 +4,8 @@ import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
-// console.log(process);
-// Scheme must be registered before the app is ready
+console.log(process)
+// 注册协议
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
@@ -13,16 +13,15 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // 隐藏菜单栏
   Menu.setApplicationMenu(null);
-  // Create the browser window.
+  // 创建浏览器窗口
   const win = new BrowserWindow({
     width: 1038,
     height: 706,
     minWidth: 1038,
     minHeight: 706,
     webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      // 浏览器的JS可以使用node接口
+      nodeIntegration: true,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
@@ -32,34 +31,31 @@ async function createWindow() {
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    // 如果处于开发模式，则加载开发服务器的url
+    // await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    await loginWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/login')
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
-    // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    // win.loadURL("app://./index.html");
+    loginWin.loadURL(`app://./index.html/#/login`)
   }
 }
 
-// Quit when all windows are closed.
+// 关闭所有窗口后退出
 app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  // 在macOS上，应用程序及其菜单栏通常保持活动状态，直到用户使用Cmd+Q明确退出
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
 app.on("activate", () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
+  // 在macOS上，当 dock图标被单击，并且没有其他窗口打开。
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+//此方法将在Electron完成后调用 初始化，并准备创建浏览器窗口。 某些API只能在此事件发生后使用。
 app.on("ready", async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -75,7 +71,7 @@ app.on("ready", async () => {
 // 允许加载远程资源
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
-// Exit cleanly on request from parent process in development mode.
+// 在开发模式下，应父进程的请求退出。
 if (isDevelopment) {
   if (process.platform === "win32") {
     process.on("message", (data) => {

@@ -23,7 +23,7 @@ console.log(routes);
 
 function routerMode() {
   if (process.env.IS_ELECTRON) {
-    return createWebHistory();
+    return createWebHashHistory();
   } else {
     return production ? createWebHashHistory() : createWebHistory();
   }
