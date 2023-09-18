@@ -4,7 +4,7 @@ import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
-console.log(process)
+console.log(process, 'process环境变量')
 // 注册协议
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
@@ -20,9 +20,13 @@ async function createWindow() {
     minWidth: 1038,
     minHeight: 706,
     webPreferences: {
-      // 浏览器的JS可以使用node接口
+      // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
+      // 否启用 Node.js 的集成
       nodeIntegration: true,
+      // 是否启用渲染进程的上下文隔离
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      // 是否启用渲染进程访问 Electron 的 remote 模块
+      // enableRemoteModule: true,
     },
   });
   electronLocalshortcut.register(win, "CommandOrControl+Shift+i", function () {
@@ -32,13 +36,11 @@ async function createWindow() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // 如果处于开发模式，则加载开发服务器的url
-    // await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-    await loginWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/login')
+    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
-    // win.loadURL("app://./index.html");
-    loginWin.loadURL(`app://./index.html/#/login`)
+    win.loadURL("app://./index.html");
   }
 }
 

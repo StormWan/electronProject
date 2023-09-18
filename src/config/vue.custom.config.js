@@ -40,17 +40,17 @@ const vueDefaultConfig = {
       process.env.VUE_APP_PROXY === "false"
         ? null
         : {
-            "/proxy": {
-              // 目标代理服务器地址.
-              target: "http://localhost:8888",
-              // 是否允许跨域.
-              changeOrigin: true,
-              secure: true,
-              pathRewrite: {
-                "^/proxy": "/",
-              },
+          "/proxy": {
+            // 目标代理服务器地址.
+            target: "http://localhost:8888",
+            // 是否允许跨域.
+            changeOrigin: true,
+            secure: true,
+            pathRewrite: {
+              "^/proxy": "/",
             },
           },
+        },
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/
@@ -67,6 +67,7 @@ const vueDefaultConfig = {
    */
   externals: {
     //vue: "Vue",
+
   },
   // 用于配置如何展示性能提示，以及如何限制资源体积，从而优化网站性能。
   performance: {
@@ -76,6 +77,72 @@ const vueDefaultConfig = {
     maxEntrypointSize: 102400 * 1,
     // 限制单个资源（如js文件、css文件等）的体积不超过100KB。
     maxAssetSize: 102400 * 1,
+  },
+  // electron 配置
+  pluginOptions: {
+    electronBuilder: {
+      // 主进程入口文件
+      mainProcessFile: "src/electron/main.js",
+      // 渲染进程也可以获取原生node包
+      nodeIntegration: true,
+      // 检测主进程文件在更改时将重新编译主进程并重新启动
+      mainProcessWatch: ["src/electron"],
+      // 预加载文件
+      // preload: "",
+      // 打包配置
+      builderOptions: {
+        // 应用名称
+        productName: "PureAdmin",
+        // 安装包名称
+        artifactName: "PureAdmin_${version}.${ext}",
+        copyright: "PureAdmin",
+        win: {
+          target: ["nsis"],
+          icon: "src/assets/icons/icon.png",
+        },
+        mac: {
+          icon: "src/assets/icons/icon.png",
+        },
+        electronDownload: {
+          mirror: "https://npm.taobao.org/mirrors/electron/",
+        },
+        nsis: {
+          // 一键安装，如果设为true，nsis设置就无意义请直接删除 nsis 配置
+          oneClick: false,
+          // true全用户安装 目录为：C:\Program Files (x86)，false安装到当前用户
+          perMachine: true,
+          // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
+          allowElevation: true,
+          // 允许修改安装目录
+          allowToChangeInstallationDirectory: true,
+          // 创建桌面图标
+          createDesktopShortcut: true,
+          // 创建开始菜单图标
+          createStartMenuShortcut: true,
+          // 安装图标
+          installerIcon: "src/assets/icons/icon.ico",
+          // 卸载图标
+          uninstallerIcon: "src/assets/icons/icon.ico",
+          // 安装时头部图标
+          installerHeaderIcon: "src/assets/icons/icon.ico",
+        },
+      },
+      // 主线程的配置文件
+      chainWebpackMainProcess: (config) => {
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
+      },
+      // 渲染线程的配置文件
+      chainWebpackRendererProcess: (config) => {
+        // 渲染线程的一些其他配置
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
+      },
+    },
   },
 };
 

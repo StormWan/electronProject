@@ -35,6 +35,7 @@ function routerMode() {
 const router = createRouter({
   history: routerMode(),
   routes,
+  // base: "./",
   strict: true,
   scrollBehavior(to, from, savedPosition) {
     return new Promise((resolve) => {
