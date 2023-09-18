@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, createWebHashHistory, START_LOCATION } from "vue-router";
-import { ACCESS_TOKEN } from "@/store/mutation-types";
-import { setPageTitle } from "@/utils/common";
-import NProgress from "@/utils/progress";
 import storage from "storejs";
+import NProgress from "@/utils/progress";
 import routes from "./routes";
+import store from "@/store";
+import { ACCESS_TOKEN } from "@/store/mutation-types";
 const { title, production } = require("@/config/vue.custom.config");
+import { setPageTitle } from "@/utils/common";
+import { getCookies } from "@/utils/Cookies";
 
 // hack router push callback
 const originalPush = createRouter.prototype.push;

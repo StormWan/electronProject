@@ -22,7 +22,7 @@ async function createWindow() {
     webPreferences: {
       // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // 否启用 Node.js 的集成
-      nodeIntegration: true,
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // 是否启用渲染进程的上下文隔离
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       // 是否启用渲染进程访问 Electron 的 remote 模块
@@ -39,6 +39,7 @@ async function createWindow() {
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
+    // 生产环境下加载打包后的文件
     createProtocol("app");
     win.loadURL("app://./index.html");
   }
