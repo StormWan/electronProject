@@ -11,7 +11,12 @@
       trigger="click"
     >
       <template #reference>
-        <span data-title="表情" class="emoticon" ref="buttonRef" v-click-outside="onClickOutside">
+        <span
+          data-title="表情"
+          class="emoticon icon"
+          ref="buttonRef"
+          v-click-outside="onClickOutside"
+        >
           <svg-icon iconClass="iconxiaolian" class="icon-hover" />
         </span>
       </template>
@@ -19,25 +24,30 @@
         <div class="emojis">
           <el-scrollbar wrap-class="custom-scrollbar-wrap">
             <div class="emoji_QQ" v-show="table == 'QQ'">
-              <!-- 二维数组 -->
-              <div class="scroll-snap" v-for="emoji in EmotionPackGroup" :key="emoji">
+              <!-- 二维数组 window css 滚动贴合 -->
+              <template v-if="systemOs == 'Windows'">
+                <div class="scroll-snap" v-for="emoji in EmotionPackGroup" :key="emoji">
+                  <span
+                    v-for="item in emoji"
+                    class="emoji scroll-content"
+                    :key="item"
+                    @click="SelectEmoticon(item)"
+                  >
+                    <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
+                  </span>
+                </div>
+              </template>
+              <!-- mac -->
+              <template v-else>
                 <span
-                  v-for="item in emoji"
-                  class="emoji scroll-content"
+                  v-for="item in emojiQq.emojiName"
+                  class="emoji"
                   :key="item"
                   @click="SelectEmoticon(item)"
                 >
                   <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
                 </span>
-              </div>
-              <!-- <span
-                v-for="item in emojiQq.emojiName"
-                class="emoji"
-                :key="item"
-                @click="SelectEmoticon(item)"
-              >
-                <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
-              </span> -->
+              </template>
             </div>
             <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
               <span
@@ -63,21 +73,21 @@
       </div>
     </el-popover>
     <!-- 图片 -->
-    <span data-title="图片" @click="SendImageClick">
+    <span data-title="图片" class="icon" @click="SendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span data-title="文件" @click="SendFileClick">
+    <span data-title="文件" class="icon" @click="SendFileClick">
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span data-title="截图" @click="clickCscreenshot" v-if="false">
+    <span title="截图" class="" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 滚动到底部 -->
     <span
       data-title="滚动到底部"
-      class="chat_chat-input-action"
+      class="chat_chat-input-action icon"
       @click="onTobBottom"
       v-show="tobottom"
     >
@@ -106,15 +116,19 @@
 </template>
 
 <script setup>
+import html2canvas from "html2canvas";
 import emitter from "@/utils/mitt-bus";
 import { ref, unref, defineEmits, onMounted } from "vue";
 import { ClickOutside as vClickOutside } from "element-plus";
+import { dataURLtoFile } from "@/utils/message-input-utils";
 import { chunk } from "lodash-es";
 import { useStore } from "vuex";
+import Bowser from "bowser";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
 const tobottom = ref();
+const systemOs = ref("");
 const buttonRef = ref();
 const popoverRef = ref();
 const imagePicker = ref();
@@ -137,6 +151,10 @@ const toolDate = [
 ];
 const initEmotion = () => {
   EmotionPackGroup.value = chunk(emojiQq.emojiName, 12 * 6);
+};
+const getParser = () => {
+  const browser = Bowser.getParser(window.navigator.userAgent);
+  systemOs.value = browser.getOS().name; // "Windows" ""macOS""
 };
 const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.();
@@ -164,7 +182,26 @@ const SendFileClick = () => {
   let $el = filePicker.value;
   $el.click();
 };
-const clickCscreenshot = () => {};
+// 截图
+const clickCscreenshot = () => {
+  const element = document.body;
+  html2canvas(element, {
+    allowTaint: true,
+    useCORS: true,
+    dpi: 150,
+    scale: 2,
+  }).then((canvas) => {
+    const image = canvas.toDataURL();
+    const File = dataURLtoFile(image);
+    console.log(File);
+    emit("setToolbar", {
+      data: {
+        files: File,
+      },
+      key: "setPicture",
+    });
+  });
+};
 
 async function sendImage(e) {
   emit("setToolbar", {
@@ -189,6 +226,7 @@ emitter.on("onisbot", (state) => {
   tobottom.value = !state;
 });
 onMounted(() => {
+  getParser();
   initEmotion();
 });
 </script>
@@ -275,7 +313,7 @@ onMounted(() => {
     text-align: center;
     color: #808080;
   }
-  & > span:hover:after {
+  & > .icon:hover:after {
     font-size: 13px;
     display: inline-block;
     content: attr(data-title);
