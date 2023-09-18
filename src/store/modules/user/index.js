@@ -3,7 +3,6 @@ import { getMyProfile, TIM_logout, TIM_login } from "@/api/im-sdk-api";
 import { ElMessage } from "element-plus";
 import TIMProxy from "@/utils/IM";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-// import { getCookies } from "@/utils/Cookies";
 import { login, register, logout } from "@/api/node-admin-api/user";
 import { getMenu } from "@/api/node-admin-api/menu";
 import emitter from "@/utils/mitt-bus";
@@ -125,11 +124,6 @@ const user = {
       console.log({ userID, userSig }, "LOG_IN_AGAIN");
       if (!userID || !userSig) dispatch("LOG_OUT");
       setTimeout(() => {
-        // const token = getCookies(ACCESS_TOKEN);
-        // if (!token) {
-        //   dispatch("LOG_OUT");
-        //   return;
-        // }
         window.TIMProxy.init();
         dispatch("TIM_LOG_IN", { userID, userSig });
       }, 500);
