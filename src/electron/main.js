@@ -4,7 +4,7 @@ import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
-console.log(process, 'process环境变量')
+console.log(process, "process环境变量");
 // 注册协议
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },

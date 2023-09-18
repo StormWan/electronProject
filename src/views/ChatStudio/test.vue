@@ -29,7 +29,7 @@ import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 import { getFriendList } from "@/api/im-sdk-api";
 import { getGroupList } from "@/api/im-sdk-api/group";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-import { setCookies, getCookies } from "@/utils/Cookies";
+// import { setCookies, getCookies } from "@/utils/Cookies";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
 import { cloud, getUser } from "@/api/laf-sdk-api";
@@ -108,10 +108,10 @@ export default defineComponent({
       console.log(data);
     },
     setCookies() {
-      setCookies("key", "123", 10);
+      // setCookies("key", "123", 10);
     },
     getCookies() {
-      console.log(getCookies(ACCESS_TOKEN));
+      // console.log(getCookies(ACCESS_TOKEN));
     },
     sendMsg() {},
     async test2() {},

@@ -6,7 +6,7 @@ import store from "@/store";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 const { title, production } = require("@/config/vue.custom.config");
 import { setPageTitle } from "@/utils/common";
-import { getCookies } from "@/utils/Cookies";
+// import { getCookies } from "@/utils/Cookies";
 
 // hack router push callback
 const originalPush = createRouter.prototype.push;
