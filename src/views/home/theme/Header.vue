@@ -1,23 +1,22 @@
 <template>
   <div class="select-none" :class="['fixed-header', sidebar ? 'style-fixed' : '']">
     <div class="navbar">
-      <div
-        :class="classes.container"
-        :title="isActive ? '点击展开' : '点击折叠'"
-        @click="toggleClick(isActive)"
-      >
-        <FontIcon class="icon-hover" :iconName="isActive ? 'Expand' : 'Fold'" />
+      <div class="flex">
+        <div
+          class="container"
+          :title="isActive ? '点击展开' : '点击折叠'"
+          @click="toggleClick(isActive)"
+        >
+          <FontIcon class="icon-hover" :iconName="isActive ? 'Expand' : 'Fold'" />
+        </div>
+        <el-breadcrumb>
+          <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
+            {{ value.title }}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
       </div>
-      <el-breadcrumb>
-        <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
-          {{ value.title }}
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-
       <div class="arrow-setup">
-        <!-- 全屏 -->
         <screenfull />
-        <!-- 个人中心 退出登录 -->
         <div class="user">
           <el-dropdown>
             <span class="el-dropdown-link">
@@ -38,7 +37,6 @@
             </template>
           </el-dropdown>
         </div>
-        <!-- 设置 -->
         <div class="setup" @click="opensetup(setswitch)">
           <FontIcon class="icon-hover" iconName="setting" />
         </div>
@@ -53,7 +51,6 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { ElMessageBox } from "element-plus";
 import { computed, ref, watch, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
@@ -62,10 +59,9 @@ import { showConfirmationBox } from "@/utils/message";
 import screenfull from "./screenfull.vue";
 import Tags from "./Tags.vue";
 
-const { state, dispatch, commit } = useStore();
+const { dispatch, commit } = useStore();
 const router = useRouter();
 const route = useRoute();
-const value = ref("");
 const drawer = ref(false);
 
 const { isActive, userProfile, tags, sidebar, setswitch } = useState({
@@ -97,16 +93,11 @@ const Logout = async () => {
 const toggleClick = (val) => {
   if (sidebar.value) {
     drawer.value = true;
-    commit("UPDATE_USER_SETUP", {
-      key: "isCollapse",
-      value: false,
-    });
-  } else {
-    commit("UPDATE_USER_SETUP", {
-      key: "isCollapse",
-      value: !val,
-    });
   }
+  commit("UPDATE_USER_SETUP", {
+    key: "isCollapse",
+    value: sidebar.value ? false : !val,
+  });
 };
 
 const getBreadcrumb = (value) => {
@@ -135,7 +126,7 @@ watch(
   }
 );
 </script>
-<style module="classes" scoped>
+<!-- <style module="classes" scoped>
 .container {
   padding: 0 15px;
   line-height: 48px;
@@ -147,20 +138,22 @@ watch(
 .icon {
   cursor: pointer;
 }
-</style>
+</style> -->
 <style lang="scss" scoped>
+.container {
+  padding: 0 15px;
+  line-height: 48px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 .style-fixed {
   width: 100% !important;
 }
 .fixed-header {
   z-index: 10;
-  // position: fixed;
   position: relative;
-  // top: 0;
-  // right: 0;
   transition: width 0.1s;
-  // background: #fff;
-  // box-shadow: 0 0 1px #888;
   background: var(--color-body-bg);
 }
 .cursor-w {

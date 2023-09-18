@@ -169,7 +169,6 @@ function closing(tag) {
   justify-content: space-between;
   & > div {
     width: 100%;
-    // width: calc(100% - 40px);
     display: flex;
   }
   .arrow-left {
@@ -179,7 +178,6 @@ function closing(tag) {
 
   .arrow-right {
     box-shadow: -5px 0 5px -6px #ccc;
-    // border-right: 1px solid #ccc;
     cursor: e-resize;
   }
 
@@ -187,7 +185,6 @@ function closing(tag) {
     width: 100%;
     display: flex;
     align-items: center;
-    // min-width: 500px;
     padding: 0 5px;
     overflow: hidden;
     span {
