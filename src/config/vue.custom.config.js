@@ -87,7 +87,7 @@ const vueDefaultConfig = {
       // 检测主进程文件在更改时将重新编译主进程并重新启动
       mainProcessWatch: ["src/electron"],
       // 预加载文件
-      // preload: "",
+      preload: 'src/electron/preload/index.js', // 预加载文件
       // 打包配置
       builderOptions: {
         // 应用名称

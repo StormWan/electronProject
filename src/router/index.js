@@ -47,7 +47,7 @@ const router = createRouter({
 let isF = false;
 router.beforeEach(async (to, from, next) => {
   if (from.path === to.path) return;
-  setPageTitle(to.meta.title);
+  !process.env.IS_ELECTRON && setPageTitle(to.meta.title);
   const token = storage.get(ACCESS_TOKEN);
   if (token) {
     // start progress bar

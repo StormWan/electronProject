@@ -16,8 +16,8 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:build:mac": "vue-cli-service electron:build -p never -m",
     "electron:build:win": "vue-cli-service electron:build -p never -w",
-    "electron:build:dev:mac": "vue-cli-service electron:build --mode development",
-    "electron:build:dev:win": "vue-cli-service electron:build --mode development",
+    "electron:build:dev:mac": "vue-cli-service electron:build --mode development --mac",
+    "electron:build:dev:win": "vue-cli-service electron:build --mode development --win",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "prepare": "husky install"

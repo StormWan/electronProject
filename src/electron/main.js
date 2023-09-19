@@ -3,8 +3,9 @@ import electronLocalshortcut from "electron-localshortcut";
 import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import path from 'path'
 const isDevelopment = process.env.NODE_ENV !== "production";
-console.log(process, "process环境变量");
+console.log(process.env, "process环境变量");
 // 注册协议
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
@@ -20,6 +21,7 @@ async function createWindow() {
     minWidth: 1038,
     minHeight: 706,
     webPreferences: {
+      // preload: path.join(__dirname, './preload/index.js'),
       // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // 否启用 Node.js 的集成
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,

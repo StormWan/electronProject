@@ -21,11 +21,9 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.d.ts
+*.lock
 .vercel
 
 #Electron-builder output
 /dist_electron
-
-yarn.lock
-components.d.ts
-auto-imports.d.ts

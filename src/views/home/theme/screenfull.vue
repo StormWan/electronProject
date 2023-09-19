@@ -1,5 +1,10 @@
 <template>
-  <div class="screen-full" @click="toggle" :title="isFullscreen ? '退出全屏' : '全屏'">
+  <div
+    v-if="isShow()"
+    class="screen-full"
+    @click="toggle"
+    :title="isFullscreen ? '退出全屏' : '全屏'"
+  >
     <FontIcon iconName="FullScreen" class="icon-hover" />
   </div>
 </template>
@@ -7,6 +12,10 @@
 <script setup>
 import { useFullscreen } from "@vueuse/core";
 const { isFullscreen, toggle } = useFullscreen();
+
+const isShow = () => {
+  return !process.env.IS_ELECTRON;
+};
 </script>
 
 <style lang="scss" scoped>
