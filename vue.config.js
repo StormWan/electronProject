@@ -37,7 +37,7 @@ module.exports = {
   // 打包时输出的文件目录
   outputDir: "dist",
   //是否为生产环境构建生成 source map?
-  productionSourceMap: true,
+  productionSourceMap: false,
   // 配置 webpack-dev-server
   // devServer,
   // css相关配置.

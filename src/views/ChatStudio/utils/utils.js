@@ -1,4 +1,4 @@
-import useClipboard from "vue-clipboard3";
+// import useClipboard from "vue-clipboard3";
 import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/message-input-utils";
 import {
   CreateTextMsg,
@@ -8,7 +8,7 @@ import {
   sendMsg,
 } from "@/api/im-sdk-api/message";
 
-const { toClipboard } = useClipboard();
+// const { toClipboard } = useClipboard();
 
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块
@@ -70,7 +70,7 @@ export const handleCopyMsg = async (data) => {
   const { content, type } = elements[0];
   // 文本
   if (type === "TIMTextElem") {
-    await toClipboard(content.text);
+    // await toClipboard(content.text);
   }
 };
 
