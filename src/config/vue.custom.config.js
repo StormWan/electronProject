@@ -40,17 +40,17 @@ const vueDefaultConfig = {
       process.env.VUE_APP_PROXY === "false"
         ? null
         : {
-            "/proxy": {
-              // 目标代理服务器地址.
-              target: "http://localhost:8888",
-              // 是否允许跨域.
-              changeOrigin: true,
-              secure: true,
-              pathRewrite: {
-                "^/proxy": "/",
-              },
+          "/proxy": {
+            // 目标代理服务器地址.
+            target: "http://localhost:8888",
+            // 是否允许跨域.
+            changeOrigin: true,
+            secure: true,
+            pathRewrite: {
+              "^/proxy": "/",
             },
           },
+        },
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/
@@ -97,10 +97,10 @@ const vueDefaultConfig = {
         copyright: "PureAdmin",
         win: {
           target: ["nsis"],
-          icon: "src/assets/icons/icon.png",
+          icon: "images/log.png",
         },
         mac: {
-          icon: "src/assets/icons/icon.png",
+          icon: "images/log.png",
         },
         electronDownload: {
           mirror: "https://npm.taobao.org/mirrors/electron/",
@@ -119,11 +119,11 @@ const vueDefaultConfig = {
           // 创建开始菜单图标
           createStartMenuShortcut: true,
           // 安装图标
-          installerIcon: "src/assets/icons/icon.ico",
+          installerIcon: "images/icon.ico",
           // 卸载图标
-          uninstallerIcon: "src/assets/icons/icon.ico",
+          uninstallerIcon: "images/icon.ico",
           // 安装时头部图标
-          installerHeaderIcon: "src/assets/icons/icon.ico",
+          installerHeaderIcon: "images/icon.ico",
         },
       },
       // 主线程的配置文件
