@@ -40,17 +40,17 @@ const vueDefaultConfig = {
       process.env.VUE_APP_PROXY === "false"
         ? null
         : {
-          "/proxy": {
-            // 目标代理服务器地址.
-            target: "http://localhost:8888",
-            // 是否允许跨域.
-            changeOrigin: true,
-            secure: true,
-            pathRewrite: {
-              "^/proxy": "/",
+            "/proxy": {
+              // 目标代理服务器地址.
+              target: "http://localhost:8888",
+              // 是否允许跨域.
+              changeOrigin: true,
+              secure: true,
+              pathRewrite: {
+                "^/proxy": "/",
+              },
             },
           },
-        },
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/
@@ -87,7 +87,7 @@ const vueDefaultConfig = {
       // 检测主进程文件在更改时将重新编译主进程并重新启动
       mainProcessWatch: ["src/electron"],
       // 预加载文件
-      preload: 'src/electron/preload/index.js', // 预加载文件
+      preload: "src/electron/preload/index.js", // 预加载文件
       // 打包配置
       builderOptions: {
         // 应用名称
@@ -100,7 +100,7 @@ const vueDefaultConfig = {
           icon: "images/log.png",
         },
         mac: {
-          icon: "images/log.png",
+          icon: "images/log-512x512.png",
         },
         electronDownload: {
           mirror: "https://npm.taobao.org/mirrors/electron/",

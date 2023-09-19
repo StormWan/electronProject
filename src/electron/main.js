@@ -5,12 +5,12 @@ import electronLocalshortcut from "electron-localshortcut";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import path from "path";
-const clc = require("cli-color");
-const log = (text) => {
-  console.log(`${clc.blueBright("[background.js]")} ${text}`);
-};
+// const clc = require("cli-color");
+// const log = (text) => {
+//   console.log(`${clc.blueBright("[background.js]")} ${text}`);
+// };
 
-log(`process.env环境变量: ${process.env}`);
+// log(`process.env环境变量: ${process.env}`);
 
 // 注册协议
 protocol.registerSchemesAsPrivileged([
