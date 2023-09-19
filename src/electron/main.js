@@ -1,11 +1,17 @@
 "use strict";
+import { app, Menu, shell, dialog, protocol, BrowserWindow } from "electron";
+import { isMac, isWindows, isCreateTray, isDevelopment } from "@/electron/utils/platform";
 import electronLocalshortcut from "electron-localshortcut";
-import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import path from 'path'
-const isDevelopment = process.env.NODE_ENV !== "production";
-console.log(process.env, "process环境变量");
+import path from "path";
+const clc = require("cli-color");
+const log = (text) => {
+  console.log(`${clc.blueBright("[background.js]")} ${text}`);
+};
+
+log(`process.env环境变量: ${process.env}`);
+
 // 注册协议
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
