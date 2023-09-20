@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <Navbar /> -->
     <div class="flex h-full man">
       <!-- 侧边栏 -->
       <SideBar />
