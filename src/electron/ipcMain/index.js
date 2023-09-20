@@ -1,6 +1,6 @@
 import { ipcMain, app, shell, dialog } from "electron";
 
-import { mainTop, minMainWindow, maxMainWindow } from "./utils/util";
+import { mainTop, minMainWindow, maxMainWindow } from "../utils/util";
 
 const ipcEvent = () => {
   // 置顶主窗口
