@@ -8,6 +8,7 @@ import { scrollToDomPostion } from "@/utils/message-input-utils";
 import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
 import { deepClone } from "@/utils/clone";
+import { ipcRenderer } from 'electron'
 import { h, nextTick } from "vue";
 
 export default class TIMProxy {
@@ -183,7 +184,7 @@ export default class TIMProxy {
       });
     }
   }
-  onMessageModified({ data }) {}
+  onMessageModified({ data }) { }
   onNetStateChange({ data }) {
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
@@ -239,6 +240,7 @@ export default class TIMProxy {
       store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
       // 定位到指定会话
       scrollToDomPostion(ID);
+      ipcRenderer.send('mainTop');
       window.focus();
       notification.close();
     };

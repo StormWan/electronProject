@@ -1,11 +1,12 @@
 import { ipcMain, app, shell, dialog } from "electron";
 
-import { mainTop, minMainWindow, maxMainWindow } from "../utils/util";
+import { mainTop, minMainWindow, maxMainWindow } from "./utils/util";
 
 const ipcEvent = () => {
   // 置顶主窗口
   ipcMain.on("mainTop", (event) => {
     mainTop();
+    console.log("置顶主窗口");
   });
 
   // 主窗口最小化
@@ -24,7 +25,7 @@ const ipcEvent = () => {
   });
 
   //截图
-  ipcMain.on("screenshot", (event, data) => {});
+  ipcMain.on("screenshot", (event, data) => { });
 };
 
 export default ipcEvent;

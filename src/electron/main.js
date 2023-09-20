@@ -1,16 +1,12 @@
 "use strict";
-import { app, Menu, shell, dialog, protocol, BrowserWindow } from "electron";
+import { app, Menu, shell, dialog, protocol, BrowserWindow, session } from "electron";
 import { isMac, isWindows, isCreateTray, isDevelopment } from "@/electron/utils/platform";
 import electronLocalshortcut from "electron-localshortcut";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import { windowMap } from './utils/windows-map';
+import ipcEvent from './ipcMain';
 import path from "path";
-// const clc = require("cli-color");
-// const log = (text) => {
-//   console.log(`${clc.blueBright("[background.js]")} ${text}`);
-// };
-
-// log(`process.env环境变量: ${process.env}`);
 
 // 注册协议
 protocol.registerSchemesAsPrivileged([
@@ -30,7 +26,7 @@ async function createWindow() {
       // preload: path.join(__dirname, './preload/index.js'),
       // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // 否启用 Node.js 的集成
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: true,
       // 是否启用渲染进程的上下文隔离
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       // 是否启用渲染进程访问 Electron 的 remote 模块
@@ -41,7 +37,7 @@ async function createWindow() {
     // 为窗口注册ctrl+Shift+i 唤起控制台
     win.webContents.openDevTools();
   });
-
+  windowMap.set('start', win)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // 如果处于开发模式，则加载开发服务器的url
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -76,9 +72,13 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  ipcEvent();
   createWindow();
+  session.defaultSession.maxConnections = 10;
 });
 
+// 禁用 Chrome 扩展加载
+app.commandLine.appendSwitch('disable-extensions');
 // 允许加载远程资源
 app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
 
