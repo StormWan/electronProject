@@ -230,7 +230,7 @@ export default class TIMProxy {
     console.log(message);
     const { ID, payload, avatar } = message;
     const tip = "有人提到了你";
-    const icon = avatar || "https://web.sdk.qcloud.com/im/assets/images/logo.png";
+    const icon = avatar || "https://ljx-1307934606.cos.ap-beijing.myqcloud.com/log.png";
     const notification = new window.Notification(tip, {
       icon: icon,
       body: payload.text,

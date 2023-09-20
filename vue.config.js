@@ -38,8 +38,10 @@ module.exports = {
   outputDir: "dist",
   //是否为生产环境构建生成 source map?
   productionSourceMap: false,
+  // 加快编译速度 在多核机器下会默认开启
+  parallel: require('os').cpus().length > 1,
   // 配置 webpack-dev-server
-  // devServer,
+  devServer,
   // css相关配置.
   css: {
     // css文件名是否可省略module,默认为false.
