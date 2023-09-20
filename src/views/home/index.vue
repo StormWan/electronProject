@@ -1,13 +1,15 @@
 <template>
-  <div class="flex h-full">
-    <!-- 侧边栏 -->
-    <SideBar />
-    <!-- 主体 -->
-    <Theme />
-    <!-- 设置 -->
-    <Setup />
-    <!-- 地址本 -->
-    <AddressBook />
+  <div>
+    <div class="flex h-full man">
+      <!-- 侧边栏 -->
+      <SideBar />
+      <!-- 主体 -->
+      <Theme />
+      <!-- 设置 -->
+      <Setup />
+      <!-- 地址本 -->
+      <AddressBook />
+    </div>
   </div>
 </template>
 
@@ -18,6 +20,9 @@ import Setup from "@/views/home/setup/index.vue";
 import AddressBook from "@/views/components/AddressBook/index.vue";
 </script>
 <style lang="scss" scoped>
+.man {
+  position: relative;
+}
 .css {
   background-image: radial-gradient(transparent 1px, #fff 1px);
   backdrop-filter: saturate(50%) blur(4px);

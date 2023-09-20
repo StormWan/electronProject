@@ -81,7 +81,7 @@ const handleClose = (key, keyPath) => {
   box-shadow: 0 0 1px #888;
   z-index: 11;
   height: 100%;
-  position: fixed;
+  position: absolute;
   font-size: 0;
   top: 0;
   bottom: 0;
