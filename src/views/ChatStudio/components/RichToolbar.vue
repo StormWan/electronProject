@@ -1,77 +1,9 @@
 <template>
   <div class="toolbar">
     <!-- 表情包 -->
-    <el-popover
-      ref="popoverRef"
-      placement="top-start"
-      popper-class="style-emo"
-      :show-arrow="false"
-      :width="200"
-      :teleported="false"
-      trigger="click"
-    >
-      <template #reference>
-        <span
-          data-title="表情"
-          class="emoticon icon"
-          ref="buttonRef"
-          v-click-outside="onClickOutside"
-        >
-          <svg-icon iconClass="iconxiaolian" class="icon-hover" />
-        </span>
-      </template>
-      <div>
-        <div class="emojis">
-          <el-scrollbar wrap-class="custom-scrollbar-wrap">
-            <div class="emoji_QQ" v-show="table == 'QQ'">
-              <!-- 二维数组 window css 滚动贴合 -->
-              <template v-if="systemOs == 'Windows'">
-                <div class="scroll-snap" v-for="emoji in EmotionPackGroup" :key="emoji">
-                  <span
-                    v-for="item in emoji"
-                    class="emoji scroll-content"
-                    :key="item"
-                    @click="SelectEmoticon(item)"
-                  >
-                    <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
-                  </span>
-                </div>
-              </template>
-              <!-- mac -->
-              <template v-else>
-                <span
-                  v-for="item in emojiQq.emojiName"
-                  class="emoji"
-                  :key="item"
-                  @click="SelectEmoticon(item)"
-                >
-                  <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
-                </span>
-              </template>
-            </div>
-            <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
-              <span
-                v-for="item in emojiDouyin.emojiName"
-                class="emoji scroll-content"
-                :key="item"
-                @click="SelectEmoticon(item)"
-              >
-                <img :src="require('@/assets/emoji/' + emojiDouyin.emojiMap[item])" :title="item" />
-              </span>
-            </div>
-          </el-scrollbar>
-        </div>
-        <div class="tool">
-          <div v-for="item in toolDate" :key="item.icon" @click="table = item.type">
-            <svg-icon
-              :iconClass="item.icon"
-              :class="item.type == table ? 'isHover' : ''"
-              class="icon-hover"
-            />
-          </div>
-        </div>
-      </div>
-    </el-popover>
+    <span data-title="表情" class="emoticon icon" @click="sendEmojiClick">
+      <svg-icon iconClass="iconxiaolian" class="icon-hover" />
+    </span>
     <!-- 图片 -->
     <span data-title="图片" class="icon" @click="SendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
@@ -85,12 +17,7 @@
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 滚动到底部 -->
-    <span
-      data-title="滚动到底部"
-      class="chat_chat-input-action icon"
-      @click="onTobBottom"
-      v-show="tobottom"
-    >
+    <span data-title="滚动到底部" class="chat_vot icon" @click="onTobBottom" v-show="tobottom">
       <el-icon class="svg-left icon-hover">
         <DArrowLeft />
       </el-icon>
@@ -112,56 +39,32 @@
       accept=".mp4"
       hidden
     /> -->
+    <EmotionPackBox @SelectEmoticon="SelectEmoticon" />
   </div>
 </template>
 
 <script setup>
 import html2canvas from "html2canvas";
 import emitter from "@/utils/mitt-bus";
-import { ref, unref, defineEmits, onMounted } from "vue";
-import { ClickOutside as vClickOutside } from "element-plus";
-import { dataURLtoFile } from "@/utils/message-input-utils";
-import { chunk } from "lodash-es";
+import EmotionPackBox from "./EmotionPackBox.vue";
 import { useStore } from "vuex";
-import Bowser from "bowser";
+import { ref, defineEmits } from "vue";
+import { dataURLtoFile } from "@/utils/message-input-utils";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
 const tobottom = ref();
-const systemOs = ref("");
-const buttonRef = ref();
-const popoverRef = ref();
 const imagePicker = ref();
 const filePicker = ref();
-const table = ref("QQ");
-const EmotionPackGroup = ref([]);
-const { state, dispatch, commit } = useStore();
+const { commit } = useStore();
 const emit = defineEmits(["setEmoj", "setPicture", "setParsefile"]);
-const toolDate = [
-  {
-    title: "默认表情",
-    icon: "iconxiaolian",
-    type: "QQ",
-  },
-  {
-    title: "我的收藏",
-    icon: "collect",
-    type: "Tiktok",
-  },
-];
-const initEmotion = () => {
-  EmotionPackGroup.value = chunk(emojiQq.emojiName, 12 * 6);
+
+const sendEmojiClick = () => {
+  emitter.emit("onEmotionPackBox", true);
 };
-const getParser = () => {
-  const browser = Bowser.getParser(window.navigator.userAgent);
-  systemOs.value = browser.getOS().name; // "Windows" ""macOS""
-};
-const onClickOutside = () => {
-  unref(popoverRef).popperRef?.delayHide?.();
-};
-const SelectEmoticon = (item) => {
+const SelectEmoticon = (item, table) => {
   let url = "";
-  if (table.value == "QQ") {
+  if (table == "QQ") {
     url = emojiQq.emojiUrl + emojiQq.emojiMap[item];
   } else {
     url = emojiDouyin.emojiUrl + emojiDouyin.emojiMap[item];
@@ -170,8 +73,6 @@ const SelectEmoticon = (item) => {
     data: { url, item },
     key: "setEmoj",
   });
-  unref(popoverRef).hide();
-  table.value = "QQ";
 };
 const SendImageClick = () => {
   let $el = imagePicker.value;
@@ -225,83 +126,13 @@ const onTobBottom = () => {
 emitter.on("onisbot", (state) => {
   tobottom.value = !state;
 });
-onMounted(() => {
-  getParser();
-  initEmotion();
-});
 </script>
-<style>
-.style-emo {
-  z-index: 9999 !important;
-  width: auto !important;
-  padding: 0 !important;
-}
-.custom-scrollbar-wrap {
-  scroll-snap-type: y mandatory;
-}
-.scroll-snap {
-  scroll-snap-align: start;
-  height: 180px;
-}
-</style>
 <style lang="scss" scoped>
-.isHover {
-  color: var(--color-icon-hover) !important;
-}
-
-.emojis {
-  width: 400px;
-  height: 180px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  .emoji_QQ,
-  .emoji_Tiktok {
-    padding: 0 10px 0 15px;
-  }
-
-  .emoji {
-    img {
-      width: 30px;
-      height: 30px;
-    }
-  }
-}
-.tool {
-  height: 50px;
-  display: flex;
-  padding: 0 10px;
-  background: rgb(243, 243, 244);
-  div {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.chat_chat-input-action {
-  cursor: pointer;
-  animation: chat_slide-in 0.3s ease;
-}
-
-@keyframes chat_slide-in {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 .toolbar {
   height: 40px;
   padding: 0 5px;
   display: flex;
+  position: relative;
   & > span {
     width: 42px;
     align-items: center;
@@ -328,6 +159,22 @@ onMounted(() => {
     white-space: nowrap;
     padding: 2px 5px;
     z-index: 9999;
+  }
+}
+.chat_vot {
+  cursor: pointer;
+  animation: chat_top 0.3s ease;
+}
+
+@keyframes chat_top {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
