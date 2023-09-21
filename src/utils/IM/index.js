@@ -8,8 +8,8 @@ import { scrollToDomPostion } from "@/utils/message-input-utils";
 import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
 import { deepClone } from "@/utils/clone";
-import { ipcRenderer } from 'electron'
 import { h, nextTick } from "vue";
+const { ipcRenderer } = require("electron");
 
 export default class TIMProxy {
   constructor() {

@@ -61,8 +61,10 @@ class Background {
       // frame: false,
       titleBarStyle: 'hiddenInset',
       webPreferences: {
-        // preload: path.join(__dirname, './preload/index.js'),
         // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
+        // preload: path.join(__dirname, './preload/index.js'),
+        // 在外部浏览器中打开链接
+        nativeWindowOpen: true,
         // 否启用 Node.js 的集成
         nodeIntegration: true,
         // 是否启用渲染进程的上下文隔离
@@ -110,6 +112,20 @@ class Background {
       this.createWindow();
       ipcEvent();
       session.defaultSession.maxConnections = 10;
+    });
+
+    app.on('web-contents-created', (e, webContents) => {
+      // 自定义链接的打开行为
+      webContents.setWindowOpenHandler((data) => {
+        shell.openExternal(data.url);
+        return {
+          action: 'deny',
+          overrideBrowserWindowOptions: {
+            show: false,
+            autoHideMenuBar: true,
+          },
+        }
+      })
     });
   }
 }

@@ -18,3 +18,8 @@ export const minMainWindow = () => { };
 
 /* 主窗口最大化 */
 export const maxMainWindow = () => { };
+
+/* 外部浏览器打开 */
+export const openExternal = (url) => {
+  shell.openExternal(url)
+};

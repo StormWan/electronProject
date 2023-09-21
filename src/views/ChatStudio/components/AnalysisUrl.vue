@@ -27,7 +27,10 @@ function AnalysisUrl(props) {
     const link = `<a data-link="${escapedUrl}" href="${escapedUrl}" class="linkUrl" target="_blank">${escapedUrl}</a>`;
     return acc.replace(url, link);
   }, text);
-  return h("span", { innerHTML: htmlStr, onClick: () => {} });
+  return h("span", {
+    innerHTML: htmlStr,
+    onClick: () => {},
+  });
 }
 </script>
 

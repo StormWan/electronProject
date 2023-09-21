@@ -1,6 +1,6 @@
 import { ipcMain, app, shell, dialog } from "electron";
 
-import { mainTop, minMainWindow, maxMainWindow } from "../utils/util";
+import { mainTop, minMainWindow, maxMainWindow, openExternal } from "../utils/util";
 
 const ipcEvent = () => {
   // 置顶主窗口
@@ -23,6 +23,11 @@ const ipcEvent = () => {
   ipcMain.on("destroy", () => {
     app.exit();
   });
+
+  // 外部浏览器打开
+  ipcMain.on('openExternal', (event, option) => {
+    openExternal(option)
+  })
 
   //截图
   ipcMain.on("screenshot", (event, data) => { });
