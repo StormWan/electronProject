@@ -4,10 +4,11 @@ const sidebar = {
     outsideList: [
       {
         only: "message",
-        icon: "news",
+        icon: "ChatDotSquare",
         title: "消息",
         class: "fixed",
         if_fixed: 1,
+        type: "el-icon",
       },
       // {
       //   only: "address_book",
@@ -27,8 +28,9 @@ const sidebar = {
       },
       {
         only: "chatgpt",
-        icon: "openai",
+        icon: "Watermelon",
         title: "ChatGpt",
+        type: "el-icon",
       },
       {
         only: "test",
@@ -39,9 +41,10 @@ const sidebar = {
       },
       {
         only: "more",
-        icon: "icondiandiandian",
+        icon: "MoreFilled",
         title: "更多",
         mode: "other",
+        type: "el-icon",
       },
     ],
     moreList: [

@@ -75,7 +75,7 @@ function toggle(item) {
     }
   }
   .style-svg {
-    color: var(--color-text);
+    color: rgb(96, 98, 102);
     font-size: 1.25rem;
   }
 
