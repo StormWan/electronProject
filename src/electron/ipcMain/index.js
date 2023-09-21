@@ -6,7 +6,6 @@ const ipcEvent = () => {
   // 置顶主窗口
   ipcMain.on("mainTop", (event) => {
     mainTop();
-    console.log("置顶主窗口");
   });
 
   // 主窗口最小化
@@ -25,12 +24,17 @@ const ipcEvent = () => {
   });
 
   // 外部浏览器打开
-  ipcMain.on('openExternal', (event, option) => {
-    openExternal(option)
-  })
+  ipcMain.on("openExternal", (event, option) => {
+    openExternal(option);
+  });
+
+  // 托盘闪烁
+  ipcMain.on("TrayFlashIng", (event, option) => {
+    global.mainWin.flashFrame(true);
+  });
 
   //截图
-  ipcMain.on("screenshot", (event, data) => { });
+  ipcMain.on("screenshot", (event, data) => {});
 };
 
 export default ipcEvent;

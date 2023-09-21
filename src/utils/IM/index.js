@@ -128,6 +128,7 @@ export default class TIMProxy {
     console.log(data, "收到新消息");
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
+    this.handleTrayFlashIng(data);
     const convId = store.state.conversation?.currentConversation?.conversationID;
     if (!convId) return;
     // 收到新消息 且 不为当前选中会话 更新对应ID消息
@@ -184,7 +185,7 @@ export default class TIMProxy {
       });
     }
   }
-  onMessageModified({ data }) { }
+  onMessageModified({ data }) {}
   onNetStateChange({ data }) {
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
@@ -240,7 +241,7 @@ export default class TIMProxy {
       store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
       // 定位到指定会话
       scrollToDomPostion(ID);
-      ipcRenderer.send('mainTop');
+      ipcRenderer.send("mainTop");
       window.focus();
       notification.close();
     };
@@ -300,6 +301,15 @@ export default class TIMProxy {
         Notification.close();
       },
     });
+  }
+  // 托盘闪烁
+  handleTrayFlashIng(data) {
+    const List = store.state.conversation?.conversationList;
+    const convId = data?.[0].conversationID;
+    const massage = List.filter((t) => t.conversationID == convId);
+    // 消息免打扰
+    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
+    ipcRenderer.send("TrayFlashIng");
   }
   // 群详情 @好友 系统通知tis
   handleNotificationTip(data) {

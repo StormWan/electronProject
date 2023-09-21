@@ -4,8 +4,7 @@ import { isMac, isWindows, isCreateTray, isDevelopment } from "@/electron/utils/
 import electronLocalshortcut from "electron-localshortcut";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { windowMap } from './utils/windows-map';
-import ipcEvent from './ipcMain/index';
+import ipcEvent from "./ipcMain/index";
 import path from "path";
 
 class Background {
@@ -19,13 +18,13 @@ class Background {
 
     // 注册协议
     protocol.registerSchemesAsPrivileged([
-      { scheme: 'app', privileges: { secure: true, standard: true } },
+      { scheme: "app", privileges: { secure: true, standard: true } },
     ]);
 
     // handle app events
     this.handleAppEvents();
     // 禁用 Chrome 扩展加载
-    app.commandLine.appendSwitch('disable-extensions');
+    app.commandLine.appendSwitch("disable-extensions");
     // 允许加载远程资源
     app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
   }
@@ -39,13 +38,13 @@ class Background {
     }
     // 在开发模式下，应父进程的请求退出。
     if (isWindows) {
-      process.on('message', data => {
-        if (data === 'graceful-exit') {
+      process.on("message", (data) => {
+        if (data === "graceful-exit") {
           app.quit();
         }
       });
     } else {
-      process.on('SIGTERM', () => {
+      process.on("SIGTERM", () => {
         app.quit();
       });
     }
@@ -59,7 +58,7 @@ class Background {
       minWidth: 1038,
       minHeight: 706,
       // frame: false,
-      titleBarStyle: 'hiddenInset',
+      titleBarStyle: "hiddenInset",
       webPreferences: {
         // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
         // preload: path.join(__dirname, './preload/index.js'),
@@ -72,10 +71,10 @@ class Background {
         // 是否启用渲染进程访问 Electron 的 remote 模块
         // enableRemoteModule: true,
       },
-    }
+    };
     // 创建浏览器窗口
     const win = new BrowserWindow(options);
-    windowMap.set('start', win)
+    global.mainWin = win;
     // 用于定义菜单栏的内容和行为，包括菜单项、子菜单、快捷键等。它是在应用程序启动时设置菜单栏的一种方式。
     // win.setMenuBarVisibility(false);
     electronLocalshortcut.register(win, "CommandOrControl+Shift+i", function () {
@@ -108,24 +107,24 @@ class Background {
 
     //此方法将在Electron完成后调用 初始化，并准备创建浏览器窗口。 某些API只能在此事件发生后使用。
     app.on("ready", async () => {
-      this.initDevtools()
+      this.initDevtools();
       this.createWindow();
       ipcEvent();
       session.defaultSession.maxConnections = 10;
     });
 
-    app.on('web-contents-created', (e, webContents) => {
+    app.on("web-contents-created", (e, webContents) => {
       // 自定义链接的打开行为
       webContents.setWindowOpenHandler((data) => {
         shell.openExternal(data.url);
         return {
-          action: 'deny',
+          action: "deny",
           overrideBrowserWindowOptions: {
             show: false,
             autoHideMenuBar: true,
           },
-        }
-      })
+        };
+      });
     });
   }
 }
