@@ -58,7 +58,7 @@ export const getGroupMemberList = async (params) => {
     data: { memberList, offset },
   } = await tim.getGroupMemberList({
     groupID,
-    count: 15,
+    count: 20,
     offset: 0,
   });
   return { code, memberList };
@@ -93,27 +93,11 @@ export const addGroupMember = async (params) => {
     groupID: groupID,
     userIDList: [user], // ['user1', 'user2', 'user3']
   };
-  try {
-    const {
-      code,
-      data: {
-        group, // 添加后的群组信息
-        existedUserIDList, // 已在群中的群成员
-        failureUserIDList, // 添加失败的群成员
-        overLimitUserIDList, // 超过了“单个用户可加入群组数”限制的用户列表
-        successUserIDList, // 添加成功的群成员
-      },
-    } = tim.addGroupMember(parameter);
-    return {
-      code,
-      group,
-    };
-  } catch (error) {
-    return {
-      code: -1,
-      group: error,
-    };
-  }
+  const { code, data } = await tim.addGroupMember(parameter);
+  return {
+    code,
+    data,
+  };
 };
 
 // 删除群成员

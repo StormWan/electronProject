@@ -103,15 +103,15 @@ export const CreateFiletMsg = async (params) => {
 };
 // 创建合并消息
 export const createMergerMsg = async (params) => {
-  const { convId, convType, List, title, abstractList } = params;
-  let mergerMessage = tim.createMergerMessage({
+  const { convId, convType, List, title = '', abstractList } = params;
+  return tim.createMergerMessage({
     to: convId,
     conversationType: convType,
     payload: {
       messageList: List,
-      title: "大湾区前端人才中心的聊天记录",
+      title: title || "聊天记录",
       abstractList: ["allen: 666", "iris: [图片]", "linda: [文件]"],
-      compatibleText: "请升级IMSDK到v2.10.1或更高版本查看此消息",
+      compatibleText: "当前版本不支持",
     },
     // 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到，v2.10.2起支持）
     // cloudCustomData: 'your cloud custom data'

@@ -15,7 +15,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { createForwardMsg, sendMsg } from "@/api/im-sdk-api/message";
+import { createForwardMsg, createMergerMsg, sendMsg } from "@/api/im-sdk-api/message";
 import { showConfirmationBox } from "@/utils/message";
 import { deleteMsgList } from "@/api/im-sdk-api";
 import MagforwardingPopup from "./MagforwardingPopup.vue";
@@ -24,7 +24,7 @@ const buttonList = [
     type: "MergeForward",
     value: "合并转发",
     icon: "mergeForward",
-    class: "noDrop", // noDrop
+    class: "", // noDrop
   },
   {
     type: "ForwardItemByItem",
@@ -113,8 +113,25 @@ export default {
       this.shutdown();
     },
     // 合并转发
-    mergeForward() {
-      console.log(this.filterate());
+    async mergeForward() {
+      if (!this.multipleValue) return;
+      const { toAccount, type } = this.multipleValue;
+      const forwardMsg = await createMergerMsg({
+        convId: toAccount,
+        convType: type,
+        List: this.filterate(),
+      });
+      const { code, message: data } = await sendMsg(forwardMsg);
+      if (code == 0) {
+        const { conversationID } = data || "";
+        this.$store.commit("SET_HISTORYMESSAGE", {
+          type: "UPDATE_CACHE",
+          payload: {
+            convId: conversationID,
+            message: [data],
+          },
+        });
+      }
     },
     // 逐条转发
     async aQuickForward() {

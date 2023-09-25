@@ -59,28 +59,33 @@
             <!-- <span><a @click="openDetails">查看</a></span> -->
           </span>
         </div>
-        <div class="group-member--avatar">
-          <span class="group-member--add" @click="groupMemberAdd"> </span>
-          <div
-            class="avatar"
-            v-for="item in currentMemberList"
-            :key="item.userID"
-            @click="navigate(item)"
-          >
-            <el-icon
-              class="style-close"
-              v-show="isOwner"
-              :class="{ isown: userProfile.userID == item.userID }"
-              @click.stop="removeGroupMemberBtn(item)"
+        <el-scrollbar always>
+          <div class="group-member--avatar">
+            <span class="group-member--add margin" @click="groupMemberAdd">
+              <svg-icon iconClass="add" />
+            </span>
+            <div
+              class="avatar margin"
+              v-for="item in currentMemberList"
+              :key="item.userID"
+              @click="navigate(item)"
             >
-              <CircleCloseFilled />
-            </el-icon>
-            <UserAvatar className="avatar-item" :url="item.avatar" :nickName="item.nick" />
-            <div class="admin" :class="item.role" v-if="item.role !== 'Member'">
-              {{ item.role == "Owner" ? "群主" : "管理员" }}
+              <el-icon
+                class="style-close"
+                v-show="isOwner"
+                :class="{ isown: userProfile.userID == item.userID }"
+                @click.stop="removeGroupMemberBtn(item)"
+              >
+                <CircleCloseFilled />
+              </el-icon>
+              <UserAvatar className="avatar-item" :url="item.avatar" :nickName="item.nick" />
+              <div class="admin" :class="item.role" v-if="item.role !== 'Member'">
+                {{ item.role == "Owner" ? "群主" : "管理员" }}
+              </div>
+              <span class="nick">{{ item.nick }}</span>
             </div>
           </div>
-        </div>
+        </el-scrollbar>
       </div>
       <el-divider />
       <!-- 免打扰 -->
@@ -205,11 +210,15 @@ const removeGroupMemberBtn = async (item) => {
   if (code !== 0) return;
   updataGroup();
 };
-const addGroupMemberBtn = (value) => {
+const addGroupMemberBtn = async (value) => {
   const { groupID } = groupProfile.value;
   const { toAccount } = value;
-  addGroupMember({ groupID, user: toAccount });
-  updataGroup();
+  const { code, data } = await addGroupMember({ groupID, user: toAccount });
+  if (code == 0) {
+    updataGroup();
+  } else {
+    console.log(data);
+  }
 };
 const updataGroup = () => {
   setTimeout(() => {
@@ -363,20 +372,34 @@ const handleQuitGroup = async () => {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    max-height: 180px;
+    margin-top: 10px;
     .avatar {
       position: relative;
-      margin-right: 12px;
-      margin-bottom: 12px;
+      .nick {
+        font-size: 12px;
+        width: 40px;
+        display: inline-block;
+        overflow: hidden;
+        position: absolute;
+        bottom: -18px;
+        white-space: nowrap;
+        text-align: center;
+        text-overflow: ellipsis;
+        color: rgba(0, 0, 0, 0.45);
+      }
       .isown {
         display: none;
       }
     }
     .group-member--add {
-      width: 38px;
-      height: 38px;
-      margin-right: 14px;
-      margin-bottom: 14px;
-      background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMzhweCIgaGVpZ2h0PSIzOHB4IiB2aWV3Qm94PSIwIDAgMzggMzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+5L2N5Zu+5aSH5Lu9IDY8L3RpdGxlPgogICAgPGRlZnM+CiAgICAgICAgPGNpcmNsZSBpZD0icGF0aC0xIiBjeD0iMTgiIGN5PSIxOCIgcj0iMTgiPjwvY2lyY2xlPgogICAgPC9kZWZzPgogICAgPGcgaWQ9Iumhtemdoi0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iMDQt576k6IGKLeaJqeWxleWKn+iDvS3nvqTorr7nva4iIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04MDEuMDAwMDAwLCAtMzIxLjAwMDAwMCkiPgogICAgICAgICAgICA8ZyBpZD0i5L2N5Zu+5aSH5Lu9LTYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDgwMi4wMDAwMDAsIDMyMi4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgICAgICAgICAgPC9tYXNrPgogICAgICAgICAgICAgICAgPHVzZSBpZD0i6JKZ54mIIiBzdHJva2U9IiM5OTk5OTkiIGZpbGwtcnVsZT0ibm9uemVybyIgeGxpbms6aHJlZj0iI3BhdGgtMSI+PC91c2U+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMTksMTEgTDE5LDE2Ljc3NyBMMjUsMTYuNzc3Nzc3OCBMMjUsMTguNzc3Nzc3OCBMMTguOTk5LDE4Ljc3NyBMMTksMjUgTDE3LDI1IEwxNi45OTksMTguNzc3IEwxMSwxOC43Nzc3Nzc4IEwxMSwxNi43Nzc3Nzc4IEwxNywxNi43NzcgTDE3LDExIEwxOSwxMSBaIiBpZD0i5b2i54q257uT5ZCIIiBmaWxsPSIjOTk5OTk5Ij48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
+      .svg-icon {
+        height: 40px;
+        width: 40px;
+      }
+    }
+    .margin {
+      margin: 0 12px 20px 0;
     }
   }
 }

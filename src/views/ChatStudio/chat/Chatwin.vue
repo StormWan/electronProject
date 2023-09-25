@@ -129,6 +129,7 @@ import NameComponent from "../components/NameComponent.vue";
 import { download, downloadCopy } from "@/utils/message-input-utils";
 
 import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
+import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
 import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
 import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
 import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
@@ -334,6 +335,7 @@ const loadMsgModule = (item) => {
   const { type, isRevoked } = item;
   const CompMap = {
     TIMTextElem: TextElemItem, //文本消息
+    TIMRelayElem: RelayElemItem, // 合并转发消息
     TIMImageElem: ImageElemItem, // 图片消息
     TIMFileElem: FileElemItem, // 文件消息
     TIMCustomElem: CustomElemItem, // 自定义消息

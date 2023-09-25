@@ -89,7 +89,7 @@ const getParser = () => {
   systemOs.value = browser.getOS().name; // "Windows" ""macOS""
 };
 const selectEmoticon = (item) => {
-  emit("SelectEmoticon", item, table);
+  emit("SelectEmoticon", item, table.value);
   setState(false);
 };
 const onClickOutside = () => {
