@@ -8,10 +8,10 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
+    "report": "vue-cli-service serve --report",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --fix",
     "build:staging": "vue-cli-service build --mode staging",
-    "dev": "vue-cli-service serve --report",
     "electron:serve": "vue-cli-service electron:serve",
     "electron:build": "vue-cli-service electron:build",
     "electron:build:mac": "vue-cli-service electron:build -p never -m",

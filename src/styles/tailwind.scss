@@ -36,75 +36,13 @@
   }
 }
 
-// todo: flex 布局
-$wraps: nowrap, wrap, wrap-reverse;
-$directions: row, row-reverse, column, column-reverse;
-$alignItems: flex-start, flex-end, center, baseline, stretch;
-$alignSelfs: auto, flex-start, flex-end, center, baseline, stretch;
-$justifyContents: flex-start, flex-end, center, space-between, space-around;
-$alignContents: flex-start, flex-end, center, space-between, space-around,
-  stretch;
-
 .flex {
-  // todo: 容器属性
   display: flex;
   display: -webkit-flex;
-  /* Safari */
-
-  // flex-direction
-  &_d {
-    @each $var in $directions {
-      &-#{$var} {
-        flex-direction: #{$var};
-      }
-    }
-  }
-
-  // flex-wrap
-  &_w {
-    @each $var in $wraps {
-      &-#{$var} {
-        flex-wrap: #{$var};
-      }
-    }
-  }
-
-  // justify-content
-  &_j_c {
-    @each $var in $justifyContents {
-      &-#{$var} {
-        justify-content: #{$var};
-      }
-    }
-  }
-
-  // align-items
-  &_a_i {
-    @each $var in $alignItems {
-      &-#{$var} {
-        align-items: #{$var};
-      }
-    }
-  }
-
-  // align-content
-  &_a_c {
-    @each $var in $alignContents {
-      &-#{$var} {
-        align-content: #{$var};
-      }
-    }
-  }
-
-  // todo: 子元素属性
-  &-item {
-    // flex: flex-grow flex-shrink flex-basis
-    &_f-a {
-      flex: auto;
-    }
-
-    &_f-n {
-      flex: none;
-    }
-  }
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
 }

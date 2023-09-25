@@ -1,5 +1,5 @@
 <template>
-  <div v-if="qrCodeUrl" class="flex flex_j_c-center">
+  <div v-if="qrCodeUrl" class="flex justify-center">
     <img :src="qrCodeUrl" alt="QR Code" />
   </div>
 </template>

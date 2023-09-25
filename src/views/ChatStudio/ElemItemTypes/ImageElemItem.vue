@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 
 const props = defineProps({
@@ -20,13 +20,13 @@ const props = defineProps({
     default: null,
   },
 });
-const { message } = props;
+const { message } = toRefs(props);
 const { imgUrlList } = useGetters(["imgUrlList"]);
 const { showCheckbox } = useState({
   showCheckbox: (state) => state.conversation.showCheckbox,
 });
 
-const url = message.payload.imageInfoArray[0].url;
+const url = message?.value.payload.imageInfoArray[0].url;
 
 const index = imgUrlList.value.findIndex((item) => {
   return item == url;

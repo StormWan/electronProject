@@ -103,7 +103,7 @@ export const CreateFiletMsg = async (params) => {
 };
 // 创建合并消息
 export const createMergerMsg = async (params) => {
-  const { convId, convType, List, title = '', abstractList } = params;
+  const { convId, convType, List, title = "", abstractList } = params;
   return tim.createMergerMessage({
     to: convId,
     conversationType: convType,

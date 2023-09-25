@@ -12,11 +12,11 @@ export function useWatermark(appendEl = ref(document.body)) {
   const watermarkEl = shallowRef();
 
   /**
-    * 创建水印背景图的 base64 数据
-    * @param {string} str - 水印文字
-    * @param {Object} attr - 绘制属性
-    * @returns {string} - base64 数据
-    */
+   * 创建水印背景图的 base64 数据
+   * @param {string} str - 水印文字
+   * @param {Object} attr - 绘制属性
+   * @returns {string} - base64 数据
+   */
   function createBase64(str, attr) {
     const can = document.createElement("canvas");
     const width = 200;
@@ -64,9 +64,9 @@ export function useWatermark(appendEl = ref(document.body)) {
   };
 
   /**
-  * 更新水印
-  * @param {Object} options - 更新选项
-  */
+   * 更新水印
+   * @param {Object} options - 更新选项
+   */
   function updateWatermark(options) {
     const el = unref(watermarkEl);
     if (!el) return;

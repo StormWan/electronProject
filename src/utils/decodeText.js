@@ -60,4 +60,3 @@ export function decodeText(text) {
   }
   return renderDom;
 }
-

@@ -258,7 +258,7 @@ export function convertEmoji(html, emojiMap) {
     const emojiText = emojiMapExtended[src] || "";
     return emojiText;
   });
-  const text = result.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, '');
+  const text = result.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, "");
   return text;
 }
 

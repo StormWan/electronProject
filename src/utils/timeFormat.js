@@ -96,4 +96,3 @@ export function timeFormat(timestamp, mustIncludeTime = false) {
   }
   return ret;
 }
-

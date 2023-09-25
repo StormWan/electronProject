@@ -9,8 +9,7 @@
       <Motion>
         <header class="login-form">
           <div class="tip">
-            <br />
-            <h2>PURE ADMIN</h2>
+            <h2>Pure Admin</h2>
           </div>
         </header>
       </Motion>
@@ -42,7 +41,7 @@ const { currentPage } = useState({
 }
 .login-form {
   h2 {
-    text-transform: uppercase;
+    // text-transform: uppercase;
     margin: 15px 0;
     color: #999;
     font: bold 200% Consolas, Monaco, monospace;

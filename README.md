@@ -6,7 +6,7 @@
      align="center" 
      style="font-weight: 600;font: bold 200% Consolas, Monaco, monospace;color: #999;"
      >
-    PURE ADMIN
+    Pure Admin
   </h2>
   <p align="center">
     使用 vue3 + Element-Plus开发 用于学习参考
@@ -53,7 +53,7 @@
   - 消息输入框使用富文本框 `wangEditor 5`开发(后续支持多类型消息混发)
   - 导航栏支持动态拖拽排序以及自定义编辑
   - 接入 ChatGpt 机器人(暂时只支持单聊)(开发中)
-  - 切换会话列表时 输入框草稿保存与回填功能
+  - 切换会话列表时 输入框草稿保存与回填功能(开发中)
 
 - 🎮 九宫格拼图游戏(完善中)
 - 🌚 光明/黑暗 模式切换`自动根据系统主题改变`(完善中)
@@ -67,6 +67,7 @@
   - vscode 扩展插件推荐 `extensions`
 - 🔧 Prettier + ESLint 规范 `自动格式化`
 - 💡Commitlint 提交规范
+- electron 版本 支持 macOS、Windows
 - 🛠 更多特性开发中
 
 ### 按需引入 element-plus 组件
@@ -115,6 +116,18 @@ yarn serve
 
 ```
 yarn build
+```
+
+生成文件结构、模块大小以及依赖关系等信息
+
+```
+yarn report
+```
+
+自动修复一些代码问题，例如缩进、空格、引号等
+
+```
+yarn lint
 ```
 
 ### 🎨 目录结构

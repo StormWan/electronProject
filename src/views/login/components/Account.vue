@@ -67,7 +67,7 @@
     </el-button>
   </el-form>
   <!-- other hidden -->
-  <div class="mt-20 flex flex_j_c-space-between">
+  <div class="mt-20 flex justify-between">
     <el-button
       v-for="item in operates"
       :key="item.title"
