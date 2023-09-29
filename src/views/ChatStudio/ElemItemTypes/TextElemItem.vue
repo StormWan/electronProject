@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { decodeText } from "@/utils/decodeText";
+import { decodeText } from "@/utils/chat/index";
 import { toRefs, h } from "vue";
 import ReplyElem from "./ReplyElem.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";

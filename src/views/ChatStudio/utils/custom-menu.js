@@ -2,7 +2,7 @@ import { IButtonMenu, DomEditor, IDomEditor, SlateElement, Boot } from "@wangedi
 import ctrlEnterModule from "@wangeditor/plugin-ctrl-enter";
 import mentionModule, { MentionElement } from "@wangeditor/plugin-mention";
 import { h, VNode } from "snabbdom";
-import { getFileType } from "@/utils/message-input-utils";
+import { getFileType } from "@/utils/chat/index";
 import { renderFileIcon } from "./utils";
 
 /**

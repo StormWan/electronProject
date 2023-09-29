@@ -1,5 +1,5 @@
-// import useClipboard from "vue-clipboard3";
-import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/message-input-utils";
+import { useClipboard } from "@vueuse/core";
+import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/chat/index";
 import {
   CreateTextMsg,
   CreateTextAtMsg,
@@ -7,8 +7,6 @@ import {
   CreateImgtMsg,
   sendMsg,
 } from "@/api/im-sdk-api/message";
-
-// const { toClipboard } = useClipboard();
 
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块
@@ -70,7 +68,8 @@ export const handleCopyMsg = async (data) => {
   const { content, type } = elements[0];
   // 文本
   if (type === "TIMTextElem") {
-    // await toClipboard(content.text);
+    const { text, copy, copied, isSupported } = useClipboard({ source: content.text });
+    copy(content.text);
   }
 };
 

@@ -49,7 +49,7 @@ import emitter from "@/utils/mitt-bus";
 import EmotionPackBox from "./EmotionPackBox.vue";
 import { useStore } from "vuex";
 import { ref, defineEmits } from "vue";
-import { dataURLtoFile } from "@/utils/message-input-utils";
+import { dataURLtoFile } from "@/utils/chat/index";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 

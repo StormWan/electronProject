@@ -113,7 +113,6 @@ import { useStore } from "vuex";
 import { showConfirmationBox } from "@/utils/message";
 
 import TIM from "@tencentcloud/chat";
-import { timeFormat } from "@/utils/timeFormat";
 import { debounce } from "lodash-es";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
@@ -126,7 +125,7 @@ import { deleteMsgList, revokeMsg, translateText } from "@/api/im-sdk-api";
 import { getMsgList } from "@/api/im-sdk-api/session";
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
-import { download, downloadCopy } from "@/utils/message-input-utils";
+import { download, downloadCopy, timeFormat } from "@/utils/chat/index";
 
 import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
 import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";

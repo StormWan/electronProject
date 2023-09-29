@@ -13,7 +13,7 @@
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { fnReplyContent } from "@/utils/message-input-utils";
+import { fnReplyContent } from "@/utils/chat/index";
 import { useStore } from "vuex";
 
 const { state, dispatch, commit } = useStore();

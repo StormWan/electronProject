@@ -44,13 +44,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { Search, Plus } from "@element-plus/icons-vue";
-import { useDebouncedRef } from "@/utils";
 import { useStore } from "vuex";
 import SearchBox from "./SearchBox.vue";
 const appoint = ref("");
 const input = ref("");
 const searchBoxRef = ref();
-// const appoint = useDebouncedRef("");
 const dialogVisible = ref(false);
 const { state, commit, dispatch } = useStore();
 

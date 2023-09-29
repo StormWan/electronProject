@@ -262,6 +262,30 @@ export function convertEmoji(html, emojiMap) {
   return text;
 }
 
+/**
+ * 将字节数转换为可读性更强的单位
+ * @param {number} bytes - 需要转换的字节数值
+ * @returns {string} - 转换后的字符串，表示合适的单位和对应的数值
+ */
+export function bytesToSize(bytes) {
+  const marker = 1024; // Change to 1000 if required
+  const decimal = 2; // Change as required
+  const kiloBytes = marker;
+  const megaBytes = marker * marker;
+  const gigaBytes = marker * marker * marker;
+  // const lang = store.state.settings.lang;
+  const lang = "zh";
+  if (bytes < kiloBytes) {
+    return bytes + (lang === "en" ? " Bytes" : "字节");
+  } else if (bytes < megaBytes) {
+    return (bytes / kiloBytes).toFixed(decimal) + " KB";
+  } else if (bytes < gigaBytes) {
+    return (bytes / megaBytes).toFixed(decimal) + " MB";
+  } else {
+    return (bytes / gigaBytes).toFixed(decimal) + " GB";
+  }
+}
+
 export const scrollToDomPostion = (msgid) => {
   const dom = document.getElementById(`${msgid}`);
   if (!dom) return;

@@ -1,4 +1,4 @@
-import { emojiMap, emojiUrl } from "./emoji/emoji-map";
+import { emojiMap, emojiUrl } from "@/utils/emoji/emoji-map";
 
 export function decodeText(text) {
   const renderDom = []; // 存储渲染后的 DOM 元素

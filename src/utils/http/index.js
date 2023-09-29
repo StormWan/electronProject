@@ -4,7 +4,6 @@ import axios from "axios";
 import storage from "storejs";
 import NProgress from "@/utils/progress";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-import { setCookies } from "@/utils/Cookies";
 import { errorHandler } from "./tools";
 const { formats, parse, stringify } = qs;
 
@@ -50,7 +49,6 @@ service.interceptors.response.use((response) => {
     const ToKen = response.headers["x-token"];
     if (ToKen) {
       storage.set(ACCESS_TOKEN, ToKen);
-      setCookies(ACCESS_TOKEN, ToKen);
     }
     return data;
   }

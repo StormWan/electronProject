@@ -22,8 +22,8 @@
 
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick, onMounted } from "vue";
-import { bytesToSize } from "@/utils/common";
-import { getFileType } from "@/utils/message-input-utils";
+import { bytesToSize } from "@/utils/chat/index";
+import { getFileType } from "@/utils/chat/index";
 import emitter from "@/utils/mitt-bus";
 import { renderFileIcon } from "../utils/utils";
 const props = defineProps({

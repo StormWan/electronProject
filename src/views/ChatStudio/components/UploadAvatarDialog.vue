@@ -43,7 +43,7 @@
 </template>
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
-import { deepClone } from "@/utils/clone";
+import { deepClone } from "@/utils/common";
 import emitter from "@/utils/mitt-bus";
 import { useStore } from "vuex";
 import { uploadFiles } from "@/api/node-admin-api/other";

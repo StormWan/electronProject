@@ -76,7 +76,7 @@
 import { h, ref, onMounted } from "vue";
 import { squareUrl, RIGHT_CLICK_CHAT_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
-import { timeFormat } from "@/utils/timeFormat";
+import { timeFormat } from "@/utils/chat/index";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { TIMpingConv } from "@/api/im-sdk-api";

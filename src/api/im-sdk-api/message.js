@@ -1,7 +1,7 @@
 import tim from "@/utils/im-sdk/tim";
 import TIM from "@tencentcloud/chat";
 import emitter from "@/utils/mitt-bus";
-import { getReplyMsgContent } from "@/utils/message-input-utils";
+import { getReplyMsgContent } from "@/utils/chat/index";
 
 const fileUploading = (data, bar = 0) => {
   const uuid = data?.payload?.uuid || "";

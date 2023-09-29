@@ -4,10 +4,10 @@ import tim from "@/utils/im-sdk/tim";
 import storage from "storejs";
 import store from "@/store";
 import emitter from "@/utils/mitt-bus";
-import { scrollToDomPostion } from "@/utils/message-input-utils";
+import { scrollToDomPostion } from "@/utils/chat/index";
 import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
-import { deepClone } from "@/utils/clone";
+import { deepClone } from "@/utils/common";
 import { h, nextTick } from "vue";
 const { ipcRenderer } = require("electron");
 
@@ -129,30 +129,7 @@ export default class TIMProxy {
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
     this.handleTrayFlashIng(data);
-    const convId = store.state.conversation?.currentConversation?.conversationID;
-    if (!convId) return;
-    // 收到新消息 且 不为当前选中会话 更新对应ID消息
-    if (data?.[0].conversationID !== convId) {
-      store.commit("SET_HISTORYMESSAGE", {
-        type: "UPDATE_CACHE",
-        payload: {
-          convId: data?.[0].conversationID,
-          message: data,
-        },
-      });
-      return;
-    }
-    this.ReportedMessageRead(data);
-    // 更新当前会话消息
-    store.commit("SET_HISTORYMESSAGE", {
-      type: "UPDATE_MESSAGES",
-      payload: {
-        convId: convId,
-        message: data[0],
-      },
-    });
-    // 更新滚动条位置到底部
-    store.commit("updataScroll", "bottom");
+    this.handleUpdateMessage(data);
   }
   onMessageRevoked({ data, name }) {
     console.log(data, "撤回消息");
@@ -204,7 +181,7 @@ export default class TIMProxy {
    * https://developer.mozilla.org/zh-CN/docs/Web/API/notification
    * @param {Message} message
    */
-  notifyMe(message) {
+  async notifyMe(message) {
     // 需检测浏览器支持和用户授权
     if (!("Notification" in window)) {
       return;
@@ -213,9 +190,7 @@ export default class TIMProxy {
     } else if (window.Notification.permission !== "denied") {
       window.Notification.requestPermission().then((permission) => {
         // 如果用户同意，就可以向他们发送通知
-        if (permission === "granted") {
-          this.handleNotify(message);
-        }
+        if (permission === "granted") this.handleNotify(message);
       });
     }
     // 用户选择是未知的，因此浏览器的行为类似于值是 denied
@@ -240,8 +215,10 @@ export default class TIMProxy {
       // 切换会话列表
       store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
       // 定位到指定会话
-      scrollToDomPostion(ID);
       ipcRenderer.send("mainTop");
+      setTimeout(() => {
+        scrollToDomPostion(ID);
+      }, 1000);
       window.focus();
       notification.close();
     };
@@ -275,6 +252,33 @@ export default class TIMProxy {
         }
       });
     }
+  }
+  // 消息更新
+  handleUpdateMessage(data) {
+    const convId = store.state.conversation?.currentConversation?.conversationID;
+    if (!convId) return;
+    // 收到新消息 且 不为当前选中会话 更新对应ID消息
+    if (data?.[0].conversationID !== convId) {
+      store.commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_CACHE",
+        payload: {
+          convId: data?.[0].conversationID,
+          message: data,
+        },
+      });
+      return;
+    }
+    this.ReportedMessageRead(data);
+    // 更新当前会话消息
+    store.commit("SET_HISTORYMESSAGE", {
+      type: "UPDATE_MESSAGES",
+      payload: {
+        convId: convId,
+        message: data[0],
+      },
+    });
+    // 更新滚动条位置到底部
+    store.commit("updataScroll", "bottom");
   }
   // 上报消息已读
   ReportedMessageRead(data) {
@@ -311,7 +315,9 @@ export default class TIMProxy {
     if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
     ipcRenderer.send("TrayFlashIng");
   }
-  // 群详情 @好友 系统通知tis
+  /**
+   * 群详情 @好友 系统通知tis
+   */
   handleNotificationTip(data) {
     const userProfile = store.state.user.currentUserProfile;
     const { atUserList } = data[0];

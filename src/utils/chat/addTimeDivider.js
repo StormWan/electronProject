@@ -1,4 +1,4 @@
-import { typeOf } from "@/utils";
+import { typeOf } from "@/utils/common";
 const duration = 5 * 60;
 
 const isInFiveTime = (curTime, baseTime) => {

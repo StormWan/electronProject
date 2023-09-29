@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, getCurrentInstance } from "vue";
 
 /**
  * 创建一个布尔类型的状态变量和对应的更新函数
@@ -40,4 +40,10 @@ export function useMouse() {
     y.value = e.clientY;
   });
   return { x, y };
+}
+
+export function useGlobal() {
+  const app = getCurrentInstance().appContext.app;
+  const globalProperty = app.config.globalProperties.msg;
+  return globalProperty;
 }

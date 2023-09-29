@@ -1,5 +1,5 @@
 import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
-import { addTimeDivider } from "@/utils/addTimeDivider";
+import { addTimeDivider } from "@/utils/chat/index";
 import { imCallback } from "@/api/node-admin-api/other";
 import TIM from "@tencentcloud/chat";
 import { nextTick } from "vue";

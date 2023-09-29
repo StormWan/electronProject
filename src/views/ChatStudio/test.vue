@@ -11,6 +11,7 @@
     <el-button v-for="{ title, onclick } in buttons" :key="title" type="primary" @click="onclick">
       {{ title }}
     </el-button>
+    <el-button type="primary" @click="test">测试</el-button>
     <el-button type="primary" @click="test1">获取群组列表</el-button>
     <el-button type="primary" @click="test2"> 查询帐号 </el-button>
     <el-button type="primary" @click="test3"> 拉取运营数据 </el-button>
@@ -29,10 +30,8 @@ import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
 import { getFriendList } from "@/api/im-sdk-api";
 import { getGroupList } from "@/api/im-sdk-api/group";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-// import { setCookies, getCookies } from "@/utils/Cookies";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
-import { cloud, getUser } from "@/api/laf-sdk-api";
 
 export default defineComponent({
   name: "Test",
@@ -98,6 +97,7 @@ export default defineComponent({
     openSetup() {
       this.UPDATE_USER_SETUP({ key: "setswitch", value: true });
     },
+    test() {},
     test1() {
       this.getGroupList();
     },
@@ -107,12 +107,8 @@ export default defineComponent({
       });
       console.log(data);
     },
-    setCookies() {
-      // setCookies("key", "123", 10);
-    },
-    getCookies() {
-      // console.log(getCookies(ACCESS_TOKEN));
-    },
+    setCookies() {},
+    getCookies() {},
     sendMsg() {},
     async test2() {},
     handleGroupClick(groupID) {

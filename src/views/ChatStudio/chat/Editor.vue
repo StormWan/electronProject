@@ -42,12 +42,12 @@ import { toolbarConfig, editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
 import { onBeforeUnmount, ref, shallowRef, onMounted, computed, watch, nextTick } from "vue";
 import { sendChatMessage, customAlert, parseHTMLToArr } from "../utils/utils";
-import { empty } from "@/utils";
+import { empty } from "@/utils/common";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import MentionModal from "../components/MentionModal.vue";
-import { bytesToSize } from "@/utils/common";
-import { fileImgToBase64Url, convertEmoji } from "@/utils/message-input-utils";
+import { bytesToSize } from "@/utils/chat/index";
+import { fileImgToBase64Url, convertEmoji } from "@/utils/chat/index";
 import { debounce } from "lodash-es";
 
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
