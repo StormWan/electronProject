@@ -58,7 +58,7 @@ class Background {
       minWidth: 1038,
       minHeight: 706,
       // frame: false,
-      titleBarStyle: "hiddenInset",
+      // titleBarStyle: "hiddenInset",
       webPreferences: {
         // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
         // preload: path.join(__dirname, './preload/index.js'),
