@@ -2,6 +2,9 @@
   <el-aside width="68px">
     <div class="touxiang">
       <Portrait :size="40" shape="square" @click="openUploadAvatarDialog" />
+      <div class="mask-out">
+        <span>上传头像</span>
+      </div>
     </div>
     <div class="aside-item" v-for="item in outsideList" :key="item.only">
       <div
@@ -93,5 +96,24 @@ function toggle(item) {
   height: 42px;
   margin: 16px 0 10px 0;
   text-align: center;
+  position: relative;
+  .mask-out {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 14px;
+    bottom: 3px;
+    border-radius: 4px;
+    height: 14px;
+    width: 40px;
+    color: #fff;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.4);
+    span {
+      display: inline-block;
+      transform: scale(0.5);
+      white-space: nowrap;
+    }
+  }
 }
 </style>

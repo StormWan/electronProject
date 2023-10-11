@@ -1,12 +1,12 @@
 <template>
   <el-scrollbar>
-    <el-card shadow="never">
+    <el-card class="style-header" shadow="never">
       <template #header>
         <div>
-          <span> {{ name }} </span>
+          <span class="name"> {{ $config.Title }} </span>
         </div>
       </template>
-      <span style="font-size: 15px"> {{ name }} 是一个基于Vue3、Element-Plus的后台管理模板 </span>
+      <span class="describe"> {{ $config.Title }} 是一个基于Vue3、Element-Plus的后台管理模板 </span>
     </el-card>
     <!-- 项目信息 -->
     <el-card class="style-card" shadow="hover">
@@ -80,12 +80,10 @@
 </template>
 
 <script setup>
-import { getCurrentInstance } from "vue";
 const { repository } = require("../../../package.json");
-const { proxy } = getCurrentInstance();
 const APP_INFO = JSON.parse(window.__APP_INFO__);
 const { pkg, lastBuildTime } = APP_INFO;
-const { dependencies, devDependencies, version, name } = pkg;
+const { dependencies, devDependencies, version } = pkg;
 
 const schema = [];
 const devSchema = [];
@@ -136,5 +134,13 @@ Object.keys(devDependencies).forEach((key) => {
 }
 .style-card {
   margin: 20px !important;
+}
+.style-header {
+  .name {
+    font: bold 100% Consolas, Monaco, monospace;
+  }
+  .describe {
+    font-size: 15px;
+  }
 }
 </style>

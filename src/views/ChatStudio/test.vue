@@ -32,6 +32,7 @@ import { getGroupList } from "@/api/im-sdk-api/group";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
+import pure from "pure-tools";
 
 export default defineComponent({
   name: "Test",
@@ -107,7 +108,9 @@ export default defineComponent({
       });
       console.log(data);
     },
-    setCookies() {},
+    setCookies() {
+      console.log(pure);
+    },
     getCookies() {},
     sendMsg() {},
     async test2() {},

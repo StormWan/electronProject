@@ -40,15 +40,15 @@ const { currentPage } = useState({
   height: 100vh;
 }
 .login-form {
-  h2 {
-    // text-transform: uppercase;
-    margin: 15px 0;
-    color: #999;
-    font: bold 200% Consolas, Monaco, monospace;
-  }
   .tip {
     text-align: center;
     margin-bottom: 50px;
+    h2 {
+      // text-transform: uppercase;
+      margin: 15px 0;
+      color: #999;
+      font: bold 200% Consolas, Monaco, monospace;
+    }
     span {
       font-size: 18px;
       color: #9e9e9e;
@@ -67,5 +67,28 @@ const { currentPage } = useState({
 .login-inner {
   width: 400px;
   margin: auto;
+}
+
+// h2 {
+//   // font: bold 200% Consolas, Monaco, monospace;
+//   // border-right: 0.1em solid;
+//   // width: 16.5em;
+//   width: 22ch;
+//   // margin: 2em 1em;
+//   white-space: nowrap;
+//   overflow: hidden;
+//   animation: typing 3s steps(22, end), cursor-blink 0.3s step-end infinite alternate;
+// }
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes cursor-blink {
+  50% {
+    border-color: transparent;
+  }
 }
 </style>

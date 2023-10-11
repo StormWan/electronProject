@@ -163,20 +163,22 @@ const kindHandlers = {
 
 const customPaste = (editor, event, callback) => {
   console.log("ClipboardEvent 粘贴事件对象", event);
-  const text = event.clipboardData.getData("text/plain"); // 获取粘贴的纯文本
-  const items = event?.clipboardData?.items ?? [];
+  const text = event.clipboardData?.getData("text/plain"); // 获取粘贴的纯文本
+  // https://developer.mozilla.org/zh-CN/docs/Web/API/DragEvent DragEvent 拖拽
+  // https://developer.mozilla.org/zh-CN/docs/Web/API/ClipboardEvent ClipboardEvent 粘贴
+  const items = event?.clipboardData?.items ?? event?.dataTransfer?.items;
   for (const item of items) {
     const { kind } = item;
     const handler = kindHandlers[kind];
     handler && handler(item, editor);
   }
-  editor.insertText(text);
+  text && editor.insertText(text);
   event.preventDefault();
-  callback(false);
+  callback?.(false);
 };
 // 拖拽事件
 const dropHandler = (event) => {
-  event.preventDefault();
+  customPaste(editorRef.value, event);
 };
 // 插入文件
 const parsefile = async (file) => {
