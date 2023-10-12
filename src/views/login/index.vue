@@ -67,18 +67,18 @@ const { currentPage } = useState({
 .login-inner {
   width: 400px;
   margin: auto;
+  transition: width 0.3s ease;
 }
-
-// h2 {
-//   // font: bold 200% Consolas, Monaco, monospace;
-//   // border-right: 0.1em solid;
-//   // width: 16.5em;
-//   width: 22ch;
-//   // margin: 2em 1em;
-//   white-space: nowrap;
-//   overflow: hidden;
-//   animation: typing 3s steps(22, end), cursor-blink 0.3s step-end infinite alternate;
-// }
+@media only screen and (max-width: 568px) {
+  .login-inner {
+    width: 300px;
+  }
+}
+@media only screen and (min-width: 569px) {
+  .login-inner {
+    width: 400px;
+  }
+}
 
 @keyframes typing {
   from {

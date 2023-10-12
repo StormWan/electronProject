@@ -1,16 +1,16 @@
 <template>
   <div class="rain">
     <div class="g-container">
-      <div>
+      <div class="horn">
         <div class="item top"></div>
         <div class="item right"></div>
         <div class="item left"></div>
-        <div class="middle">
+        <!-- <div class="middle">
           <img src="@/assets/images/log.png" alt="" />
           <div class="g-cont">
             <div class="g-circle"></div>
           </div>
-        </div>
+        </div> -->
       </div>
       <p v-for="item in 20" :key="item"></p>
     </div>
@@ -49,7 +49,12 @@ $perColumnNums: 25;
   display: flex;
   overflow: hidden;
 }
-
+.horn {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 9;
+}
 .g-container {
   position: relative;
   width: 100%;
@@ -57,33 +62,33 @@ $perColumnNums: 25;
   justify-content: space-between;
   flex-wrap: nowrap;
   flex-direction: row;
-  font-family: "Inconsolata", monospace, sans-serif;
+  // font-family: "Inconsolata", monospace, sans-serif;
   .item {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 37px;
-    height: 37px;
+    width: 52px;
+    height: 52px;
     background: #000;
     position: absolute;
-    border-radius: 10px;
+    // border-radius: 10px;
     z-index: 2;
     &::after {
       content: "";
       display: inline-block;
-      width: 27px;
-      height: 27px;
+      width: 34px;
+      height: 34px;
       background: #fff;
-      border-radius: 10px;
+      // border-radius: 10px;
     }
     &::before {
       position: absolute;
       content: "";
       display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 22px;
+      height: 22px;
       background: #000;
-      border-radius: 4px;
+      // border-radius: 4px;
     }
   }
   .top {
