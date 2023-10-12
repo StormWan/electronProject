@@ -7,6 +7,8 @@ import { login, register, logout } from "@/api/node-admin-api/user";
 import { getMenu } from "@/api/node-admin-api/menu";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
+import { nextTick } from "vue";
+const { ipcRenderer } = require("electron");
 const timProxy = new TIMProxy();
 
 const user = {
@@ -60,6 +62,11 @@ const user = {
     },
   },
   actions: {
+    setViewSize({ state }, type) {
+      nextTick(() => {
+        ipcRenderer.send("setmainViewSize", type);
+      });
+    },
     // 登录
     async LOG_IN({ state, commit, dispatch }, data) {
       const { code, msg, result } = await login(data);
@@ -75,9 +82,8 @@ const user = {
         commit("ACCOUNT_INFORMATION", data);
         setTimeout(() => {
           router.push("/welcome");
-          // router.push("/chatstudio");
+          dispatch("setViewSize", "main");
         }, 1000);
-        // router.push("/chatstudio");
       } else {
         verification(code, msg);
       }
@@ -92,12 +98,14 @@ const user = {
       console.log({ code, data }, "TIM_LOG_IN");
       if (code == 0) {
         commit("showMessage", { message: "登录成功!" });
+        dispatch("setViewSize", "main");
         commit("getUserInfo", user);
         console.log(user, "getUserInfo");
       } else {
         logout();
         emitter.all.clear();
         router.push("/login");
+        dispatch("setViewSize", "login");
       }
     },
     // 退出登录
@@ -106,6 +114,7 @@ const user = {
       emitter.all.clear();
       logout();
       router.push("/login");
+      dispatch("setViewSize", "login");
     },
     // 退出im
     async TIM_LOG_OUT({ commit, dispatch }) {

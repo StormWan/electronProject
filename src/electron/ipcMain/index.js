@@ -1,6 +1,12 @@
 import { ipcMain, app, shell, dialog } from "electron";
 
-import { mainTop, minMainWindow, maxMainWindow, openExternal } from "../utils/util";
+import {
+  mainTop,
+  minMainWindow,
+  maxMainWindow,
+  openExternal,
+  setmainViewSize,
+} from "../utils/util";
 
 const ipcEvent = () => {
   // 置顶主窗口
@@ -35,6 +41,11 @@ const ipcEvent = () => {
 
   //截图
   ipcMain.on("screenshot", (event, data) => {});
+
+  // 设置主窗口尺寸
+  ipcMain.on("setmainViewSize", (event, data) => {
+    setmainViewSize(data);
+  });
 };
 
 export default ipcEvent;
