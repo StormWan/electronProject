@@ -11,7 +11,7 @@ const vueDefaultConfig = {
   production, // 环境配置
   transpileDependencies: ["vue-echarts", "resize-detector"],
   //webpack 配置的项目名称
-  title: "PURE ADMIN", // 标题
+  title: "Pure Admin", // 标题
   titleSeparator: " - ",
   titleReverse: false,
   devPort: "9999",
@@ -42,17 +42,17 @@ const vueDefaultConfig = {
       process.env.VUE_APP_PROXY === "false"
         ? null
         : {
-          "/proxy": {
-            // 目标代理服务器地址.
-            target: "http://localhost:8888",
-            // 是否允许跨域.
-            changeOrigin: true,
-            secure: true,
-            pathRewrite: {
-              "^/proxy": "/",
+            "/proxy": {
+              // 目标代理服务器地址.
+              target: "http://localhost:8888",
+              // 是否允许跨域.
+              changeOrigin: true,
+              secure: true,
+              pathRewrite: {
+                "^/proxy": "/",
+              },
             },
           },
-        },
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/

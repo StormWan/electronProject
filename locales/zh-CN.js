@@ -44,7 +44,7 @@ export default {
     smsVerifyCode: "短信验证码",
     back: "返回",
     test: "模拟测试",
-    tip: '扫码后点击"确认"，即可完成登录',
+    tip: "通过二维码登录",
     definite: "确定",
     loginSuccess: "登录成功",
     registerSuccess: "注册成功",

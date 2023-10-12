@@ -9,7 +9,7 @@
       <Motion>
         <header class="login-form">
           <div class="tip">
-            <h2>Pure Admin</h2>
+            <h2>{{ $config.Title }}</h2>
           </div>
         </header>
       </Motion>

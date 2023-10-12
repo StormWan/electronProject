@@ -1,16 +1,16 @@
 const operates = [
   // {
   //   title: "手机登录",
-  //   currentPage: 1
+  //   currentPage: 1,
   // },
-  // {
-  //   title: "二维码登录",
-  //   currentPage: 2,
-  // },
-  // {
-  //   title: "注册",
-  //   currentPage: 3,
-  // },
+  {
+    title: "二维码登录",
+    currentPage: 2,
+  },
+  {
+    title: "注册",
+    currentPage: 3,
+  },
 ];
 
 const thirdParty = [

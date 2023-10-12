@@ -1,5 +1,5 @@
 <template>
-  <div v-if="qrCodeUrl" class="flex justify-center">
+  <div v-if="qrCodeUrl" class="qrCode flex justify-center">
     <img :src="qrCodeUrl" alt="QR Code" />
   </div>
 </template>
@@ -10,8 +10,14 @@ import QRCode from "qrcode";
 export default {
   data() {
     return {
-      text: "测试",
+      text: "pureadmin.cn",
       qrCodeUrl: "",
+      opts: {
+        errorCorrectionLevel: "H",
+        width: 185,
+        height: 185,
+        margin: 0,
+      },
     };
   },
   mounted() {
@@ -20,7 +26,7 @@ export default {
   methods: {
     async generateQRCode() {
       try {
-        const canvas = await QRCode.toCanvas(this.text);
+        const canvas = await QRCode.toCanvas(this.text, this.opts);
         this.qrCodeUrl = canvas.toDataURL();
       } catch (error) {
         console.error("生成二维码失败：", error);
@@ -29,3 +35,4 @@ export default {
   },
 };
 </script>
+<style scoped></style>

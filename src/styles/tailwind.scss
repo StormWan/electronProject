@@ -1,5 +1,5 @@
 // 外边框
-@for $i from 1 through 20 {
+@for $i from 0 through 20 {
   .mt-#{$i} {
     margin-top: #{$i}px;
   }
@@ -15,10 +15,14 @@
   .ml-#{$i} {
     margin-left: #{$i}px;
   }
+
+  .m-#{$i} {
+    margin: #{$i}px;
+  }
 }
 
 // 内边框
-@for $i from 1 through 20 {
+@for $i from 0 through 20 {
   .pt-#{$i} {
     padding-top: #{$i}px;
   }
@@ -40,9 +44,11 @@
   display: flex;
   display: -webkit-flex;
 }
+
 .justify-center {
   justify-content: center;
 }
+
 .justify-between {
   justify-content: space-between;
 }

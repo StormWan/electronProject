@@ -44,7 +44,7 @@ export default {
     smsVerifyCode: "SMS VerifyCode",
     back: "Back",
     test: "Mock Test",
-    tip: "After scanning the code, click 'Confirm' to complete the login",
+    tip: "Log in to  by QR Code",
     definite: "Definite",
     loginSuccess: "Login Success",
     registerSuccess: "Regist Success",

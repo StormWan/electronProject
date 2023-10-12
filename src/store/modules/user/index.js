@@ -94,6 +94,10 @@ const user = {
         commit("showMessage", { message: "登录成功!" });
         commit("getUserInfo", user);
         console.log(user, "getUserInfo");
+      } else {
+        logout();
+        emitter.all.clear();
+        router.push("/login");
       }
     },
     // 退出登录
