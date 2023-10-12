@@ -32,7 +32,6 @@ export const setmainViewSize = (type) => {
   const mainView = global.mainWin;
   const { width, height } = data;
   mainView.setMinimumSize(width, height);
-  if (type == "login") mainView.setMaximumSize(width, height);
   mainView.setSize(width, height);
-  mainView.center();
+  // mainView.center();
 };

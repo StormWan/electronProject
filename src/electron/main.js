@@ -61,8 +61,6 @@ class Background {
       height: 550,
       minWidth: 380,
       minHeight: 550,
-      maxWidth: 380,
-      maxHeight: 550,
       // frame: false,
       // titleBarStyle: "hiddenInset",
       webPreferences: {
