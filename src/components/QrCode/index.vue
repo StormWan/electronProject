@@ -10,7 +10,7 @@ import QRCode from "qrcode";
 export default {
   data() {
     return {
-      text: "pureadmin.cn",
+      text: "https://pureadmin.cn",
       qrCodeUrl: "",
       opts: {
         errorCorrectionLevel: "H",

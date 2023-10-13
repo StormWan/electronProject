@@ -86,7 +86,9 @@
 
 本项目由 [node-admin](https://node-admin.cn) 提供 API。本地运行 node-admin，或者将 API [部署至 Vercel](https://vercel.com)
 
-（暂时因密钥安全不能公开 需要测试可以联系我）
+本地启动需将后端地址切换成线上地址 baseURL: "https://node-admin.cn/", 路径 src/utils/http/index
+
+暂时因密钥安全后端源码暂时不公开 测试使用线上地址
 
 环境配置
 

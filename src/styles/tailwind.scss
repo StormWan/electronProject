@@ -44,11 +44,12 @@
   display: flex;
   display: -webkit-flex;
 }
-
 .justify-center {
   justify-content: center;
 }
-
+.items-center {
+  align-items: center;
+}
 .justify-between {
   justify-content: space-between;
 }

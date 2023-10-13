@@ -45,7 +45,7 @@ const date = new Date();
 
 let greetings = computed(() => {
   if (date.getHours() >= 0 && date.getHours() < 12) {
-    return "朝阳初升，薪水翻倍之时🌞！🌞！";
+    return "朝阳初升，薪水翻倍之时🌞！";
   } else if (date.getHours() >= 12 && date.getHours() < 18) {
     return "午后微风，青春永驻之际😃！";
   } else {

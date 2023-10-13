@@ -82,7 +82,6 @@ const user = {
         commit("ACCOUNT_INFORMATION", data);
         setTimeout(() => {
           router.push("/welcome");
-          dispatch("setViewSize", "main");
         }, 1000);
       } else {
         verification(code, msg);
@@ -98,14 +97,12 @@ const user = {
       console.log({ code, data }, "TIM_LOG_IN");
       if (code == 0) {
         commit("showMessage", { message: "登录成功!" });
-        dispatch("setViewSize", "main");
         commit("getUserInfo", user);
         console.log(user, "getUserInfo");
       } else {
         logout();
         emitter.all.clear();
         router.push("/login");
-        dispatch("setViewSize", "login");
       }
     },
     // 退出登录
@@ -114,7 +111,6 @@ const user = {
       emitter.all.clear();
       logout();
       router.push("/login");
-      dispatch("setViewSize", "login");
     },
     // 退出im
     async TIM_LOG_OUT({ commit, dispatch }) {

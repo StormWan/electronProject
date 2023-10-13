@@ -1,23 +1,32 @@
 <template>
   <div class="rain">
     <div class="g-container">
-      <div class="horn">
+      <div class="horn flex justify-center items-center">
         <div class="item top"></div>
         <div class="item right"></div>
         <div class="item left"></div>
-        <!-- <div class="middle">
+        <div class="middle" v-loading="!loading">
           <img src="@/assets/images/log.png" alt="" />
-          <div class="g-cont">
-            <div class="g-circle"></div>
-          </div>
-        </div> -->
+        </div>
       </div>
-      <p v-for="item in 20" :key="item"></p>
+      <template v-if="!loading">
+        <p v-for="item in 20" :key="item"></p>
+      </template>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script>
+export default {
+  name: "Character",
+  props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200&display=swap");
@@ -67,8 +76,8 @@ $perColumnNums: 25;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 52px;
-    height: 52px;
+    width: 45px;
+    height: 45px;
     background: #000;
     position: absolute;
     // border-radius: 10px;
@@ -85,8 +94,8 @@ $perColumnNums: 25;
       position: absolute;
       content: "";
       display: inline-block;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       background: #000;
       // border-radius: 4px;
     }
@@ -104,20 +113,21 @@ $perColumnNums: 25;
     bottom: 0;
   }
   .middle {
-    width: 37px;
-    height: 37px;
-    position: absolute;
-    border-radius: 10px;
-    width: 37px;
-    height: 37px;
-    top: calc(50% - 16px);
-    left: calc(50% - 16px);
+    width: 45px;
+    height: 45px;
+    background: #fff;
+    border-radius: 2px;
     z-index: 2;
     img {
       border-radius: 50%;
-      width: 100%;
+      width: 30px;
+      height: 30px;
+      margin: 7.5px;
       position: absolute;
       z-index: 5;
+    }
+    :deep(.el-loading-mask) {
+      background: #ccc0;
     }
   }
 }
@@ -148,16 +158,13 @@ p {
   $contentNext: randomChars($perColumnNums);
   $delay: random($n);
   $randomAnimationTine: #{$animationTime + random(20) / 10 - 1}s;
-
   p:nth-child(#{$i})::before {
     content: $content;
-    // color: rgb(179, 255, 199);
     color: #000;
     // text-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 5px currentColor, 0 0 10px currentColor;
     animation: typing-#{$i} $randomAnimationTine steps(20, end) #{$delay * 0.1s * -1} infinite;
     z-index: 1;
   }
-
   p:nth-child(#{$i})::after {
     $alpha: random(40) / 100 + 0.6;
     content: "";
@@ -183,7 +190,7 @@ p {
     }
     100% {
       height: 100%;
-      content: $contentNext;
+      // content: $contentNext;
     }
   }
 }
@@ -197,59 +204,6 @@ p {
   }
   100% {
     background-position: 0 0%;
-  }
-}
-</style>
-<style lang="scss" scoped>
-.g-cont {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  border-radius: 50%;
-  box-sizing: border-box;
-  border: 1px solid #444;
-}
-.g-circle {
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  bottom: -4px;
-  right: -4px;
-  border-radius: 50%;
-  background: conic-gradient(#000 0%, transparent 40%, transparent);
-  animation: rotate 3s ease-in-out infinite;
-  transition-origin: 50% 50%;
-
-  &::before {
-    content: "";
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0px);
-    border-radius: 50%;
-    background: #000;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -3px);
-    border-radius: 50%;
-    // background: #fc0;
-    // box-shadow: 0 0 4px 2px #fc0;
-  }
-}
-
-@keyframes rotate {
-  100% {
-    transform: rotate(-360deg);
   }
 }
 </style>
