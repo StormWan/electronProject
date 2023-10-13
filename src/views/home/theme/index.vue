@@ -74,13 +74,10 @@ const fnStyle = (off) => {
   background: var(--color-body-bg);
 }
 .app-main {
-  // padding-top: 86px;
-  // height: 100vh;
-  height: calc(100vh - 86px);
-  // margin-top: 86px;
+  height: calc(100vh - 86px - 42px);
   width: 100%;
   position: relative;
-  overflow-x: hidden;
+  // overflow-x: hidden;
   background: #f0f2f5;
   box-sizing: border-box;
 }

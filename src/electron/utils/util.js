@@ -17,10 +17,20 @@ export const mainTop = () => {
 export const mainWinHide = () => {};
 
 /* 主窗口最小化 */
-export const minMainWindow = () => {};
+export const minMainWindow = () => {
+  const mainView = global.mainWin;
+  mainView.minimize();
+};
 
 /* 主窗口最大化 */
-export const maxMainWindow = () => {};
+export const maxMainWindow = () => {
+  const mainView = global.mainWin;
+  if (mainView.isMaximized()) {
+    mainView.unmaximize();
+  } else {
+    mainView.maximize();
+  }
+};
 
 /* 外部浏览器打开 */
 export const openExternal = (url) => {
@@ -35,3 +45,5 @@ export const setmainViewSize = (type) => {
   mainView.setSize(width, height);
   // mainView.center();
 };
+
+export const quitApp = (type) => {};

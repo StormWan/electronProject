@@ -61,8 +61,8 @@ class Background {
       height: 550,
       minWidth: 380,
       minHeight: 550,
-      // frame: false,
-      // titleBarStyle: "hiddenInset",
+      frame: isWindows ? false : true,
+      titleBarStyle: isWindows ? "hiddenInset" : "default",
       webPreferences: {
         // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
         // preload: path.join(__dirname, './preload/index.js'),
@@ -73,7 +73,7 @@ class Background {
         // 是否启用渲染进程的上下文隔离
         contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
         // 是否启用渲染进程访问 Electron 的 remote 模块
-        // enableRemoteModule: true,
+        enableRemoteModule: true,
       },
     };
     // 创建浏览器窗口

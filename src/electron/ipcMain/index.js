@@ -1,6 +1,7 @@
 import { ipcMain, app, shell, dialog } from "electron";
 
 import {
+  quitApp,
   mainTop,
   minMainWindow,
   maxMainWindow,
@@ -27,6 +28,18 @@ const ipcEvent = () => {
   //关闭所有窗口
   ipcMain.on("destroy", () => {
     app.exit();
+    // 这是一个同步方法，调用后会立即退出应用程序。
+    // 它会终止所有的进程，包括主进程和渲染进程。
+    // 不会触发 before - quit 和 will - quit 事件。
+  });
+
+  // 退出程序
+  ipcMain.on("quitApp", () => {
+    app.quit();
+    // 这是一个异步方法，调用后会在所有的窗口关闭后退出应用程序。
+    // 它会先触发 before - quit 事件，允许你执行一些清理操作。
+    // 如果有任何窗口取消了关闭操作（例如通过 event.preventDefault()），应用程序将不会退出。
+    // 在所有窗口关闭后，会触发 will - quit 事件，然后退出应用程序。
   });
 
   // 外部浏览器打开
