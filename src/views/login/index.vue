@@ -1,5 +1,6 @@
 <template>
   <div class="login flex">
+    <DragBox />
     <div class="login-inner select-none">
       <!-- 背景 -->
       <svg-icon iconClass="loginBg" class="wave" />
@@ -30,6 +31,7 @@ import ThemeSwitch from "../components/ThemeSwitch";
 import Account from "./components/Account.vue";
 import QrCode from "./components/qrCode.vue";
 import Register from "./components/Register.vue";
+import DragBox from "./components/DragBox.vue";
 
 const { currentPage } = useState({
   currentPage: (state) => state.user.currentPage,
