@@ -1,12 +1,13 @@
 <template>
   <span :class="['label', labelClass()]">
     <span class="all" v-show="isallStaff(item)">全员</span>
-    <svg-icon iconClass="robot" v-show="/^R\d{5}$/.test(userID)" />
+    <svg-icon iconClass="robot" v-show="isRobot(userID)" />
   </span>
 </template>
 
 <script setup>
 import { ref, toRefs, onMounted } from "vue";
+import { isRobot } from "@/utils/chat/index";
 import { isallStaff } from "../utils/utils";
 
 // eslint-disable-next-line no-undef

@@ -9,7 +9,7 @@
         <el-tab-pane label="全部" name="whole"></el-tab-pane>
         <el-tab-pane :label="unread" name="unread"></el-tab-pane>
         <el-tab-pane label="@我" name="mention"></el-tab-pane>
-        <el-tab-pane label="群聊" name="groupChat"></el-tab-pane>
+        <!-- <el-tab-pane label="群聊" name="groupChat"></el-tab-pane> -->
       </el-tabs>
       <div class="scroll-container" :class="{ 'style-net': !networkStatus }">
         <!-- 连接已断开 -->

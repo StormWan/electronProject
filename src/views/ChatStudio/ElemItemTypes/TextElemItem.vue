@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { decodeText } from "@/utils/chat/index";
+import { decodeText, isRobot } from "@/utils/chat/index";
 import { toRefs, h } from "vue";
 import ReplyElem from "./ReplyElem.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";
@@ -49,8 +49,6 @@ const props = defineProps({
   },
 });
 const { message, self } = toRefs(props);
-
-const isRobot = message.value.from == "R00001";
 
 const onClick = (data) => {
   console.log(data);

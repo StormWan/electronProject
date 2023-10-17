@@ -295,3 +295,8 @@ export const scrollToDomPostion = (msgid) => {
     dom.classList.remove("shrink-style");
   }, 2000);
 };
+
+// 匹配机器人账号
+export const isRobot = (text) => {
+  return /@RBT#/.test(text);
+};

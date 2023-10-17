@@ -13,7 +13,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span title="截图" class="" @click="clickCscreenshot">
+    <span v-if="!production" title="截图" class="" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 滚动到底部 -->
@@ -52,6 +52,7 @@ import { ref, defineEmits } from "vue";
 import { dataURLtoFile } from "@/utils/chat/index";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
+const { production } = require("@/config/vue.custom.config");
 
 const tobottom = ref();
 const imagePicker = ref();

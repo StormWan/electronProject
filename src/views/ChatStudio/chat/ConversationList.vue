@@ -45,8 +45,9 @@
           </div>
         </div>
         <div class="message-item-right-bottom">
-          <CustomMention v-if="isMention(item) || isdraft(item)" :item="item" />
-          <span v-else>{{ formatNewsMessage(item) }}</span>
+          <!-- <CustomMention v-if="isMention(item) || isdraft(item)" :item="item" />
+          <span v-else>{{ formatNewsMessage(item) }}</span> -->
+          {{ formatNewsMessage(item) }}
         </div>
         <!-- 未读消息红点 -->
         <el-badge

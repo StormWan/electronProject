@@ -1,4 +1,5 @@
 import http from "@/utils/http/index";
+import { isRobot } from "@/utils/chat/index";
 import axios from "axios";
 import qs from "qs";
 
@@ -34,7 +35,7 @@ export const uploadFiles = async (params) => {
 export const imCallback = (params) => {
   console.log(params, "imCallback");
   const { Text, From, To, type } = params;
-  if (To !== "R00001") return;
+  if (!isRobot(To)) return;
   const data = {
     MsgBody: [
       {
@@ -44,6 +45,7 @@ export const imCallback = (params) => {
         },
       },
     ],
+    SyncOtherMachine: 2,
     CallbackCommand: "C2C.CallbackAfterSendMsg",
     From_Account: From,
     To_Account: To,

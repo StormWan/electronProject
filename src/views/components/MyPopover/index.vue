@@ -33,6 +33,7 @@ import { ref, reactive, toRefs, computed, watchEffect, onMounted, onUnmounted } 
 import { useStore } from "vuex";
 import Label from "@/views/ChatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
+import { isRobot } from "@/utils/chat/index";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
 import { setSelfStatus, getUserStatus } from "@/api/im-sdk-api/index";
@@ -59,10 +60,6 @@ const closeModal = () => {
   commit("setPopoverStatus", {
     status: false,
   });
-};
-
-const isRobot = (item) => {
-  return item.from == "R00001";
 };
 
 const define = () => {
