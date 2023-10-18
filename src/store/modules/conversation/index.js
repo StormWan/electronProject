@@ -308,7 +308,9 @@ const conversation = {
       state.currentReplyMsg = payload;
     },
     // 设置会话草稿
+    // setConversationDraft
     SET_SESSION_DRAFT(state, action) {
+      if (!action) return
       const { ID, payload } = action;
       const length = payload?.[0]?.children.length == 1;
       const text = payload?.[0]?.children[0].text == "";

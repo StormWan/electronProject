@@ -1,11 +1,5 @@
 <template>
-  <div class="Editor-style" id="svgDown" v-if="showMsgBox" v-show="!showCheckbox">
-    <!-- <Toolbar
-      class="toolbar"
-      :editor="editorRef"
-      :defaultConfig="toolbarConfig"
-      :mode="mode"
-    /> -->
+  <div class="EditorStyle" id="svgDown" v-if="showMsgBox" v-show="!showCheckbox">
     <!-- 自定义工具栏 -->
     <RichToolbar @setToolbar="setToolbar" />
     <Editor
@@ -36,12 +30,12 @@
 <script setup>
 import "../utils/custom-menu";
 import "@wangeditor/editor/dist/css/style.css";
-import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
-import { toolbarConfig, editorConfig } from "../utils/configure";
+import { editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
-import { onBeforeUnmount, ref, shallowRef, onMounted, computed, watch, nextTick } from "vue";
-import { sendChatMessage, customAlert, parseHTMLToArr } from "../utils/utils";
+import { onBeforeUnmount, ref, shallowRef, onMounted, watch } from "vue";
+import { sendChatMessage, customAlert, parseHTMLToArr, extractFilesInfo } from "../utils/utils";
 import { empty } from "@/utils/common";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
@@ -110,11 +104,11 @@ const setToolbar = (item) => {
   }
 };
 // 插入草稿
-const insertDraft = (newValue) => {
-  if (!newValue) return;
+const insertDraft = (value) => {
+  if (!value) return;
   const editor = editorRef.value;
   editor && editor.focus();
-  const { conversationID: ID } = newValue;
+  const { conversationID: ID } = value;
   const draftMap = sessionDraftMap.value;
   const draft = draftMap.get(ID);
   clearInputInfo();
@@ -122,22 +116,19 @@ const insertDraft = (newValue) => {
     editorRef.value.insertNode(item);
   });
 };
+
 // 更新草稿
-const updateDraft = (data) => {
-  if (!currentConversation) return;
-  const { conversationID } = currentConversation.value;
+const updateDraft = debounce((data) => {
   commit("SET_SESSION_DRAFT", {
-    ID: conversationID,
+    ID: currentConversation?.value?.conversationID,
     payload: data,
   });
-};
-const fnUpdateDraft = debounce((data) => {
-  updateDraft(data);
 }, 300);
+
 const onChange = (editor) => {
   const content = editor.children;
   messages.value = content;
-  // fnUpdateDraft(content);
+  updateDraft(content);
 };
 
 const handleFile = (item) => {
@@ -256,14 +247,6 @@ const clearInputInfo = () => {
   editor && editor.clear();
 };
 
-const extractFilesInfo = (html) => {
-  const matchStr = html.match(/data-link="([^"]*)"/);
-  const matchStrName = html.match(/data-fileName="([^"]*)"/);
-  const fileName = matchStrName?.[1];
-  const link = matchStr?.[1];
-  return { fileName, link };
-};
-
 const extractAitInfo = () => {
   let aitStr = "";
   let aitlist = [];
@@ -311,19 +294,19 @@ const sendMessage = async () => {
 };
 const setEditHtml = (text) => {
   const editor = editorRef.value;
-  editor.setHtml(`<p>${text}</p>`);
+  editor?.setHtml(`<p>${text}</p>`);
 };
 emitter.on("handleAt", ({ id, name }) => {
   insertMention(id, name, false);
 });
 
 emitter.on("handleSetHtml", (text) => {
-  setEditHtml(text);
+  text && setEditHtml(text);
 });
 
-// watch(currentConversation, (newValue) => {
-//   insertDraft(newValue);
-// });
+emitter.on("handleInsertDraft", (value) => {
+  value && insertDraft(value);
+});
 
 onMounted(() => {});
 // 组件销毁时，及时销毁编辑器
@@ -336,40 +319,9 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @import "@/styles/mixin.scss";
-.Editor-style {
+.EditorStyle {
   word-break: break-all;
   height: 206px;
-  .toolbar {
-    // 表情包
-    :deep(.w-e-bar-item) {
-      // 自定义滚动条
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        background: rgba(222, 223, 225);
-      }
-      ::-webkit-scrollbar-track {
-        border-radius: 0;
-      }
-      // 弹框位置
-      .w-e-drop-panel {
-        top: -207px;
-        height: 200px;
-        overflow: overlay;
-        padding: 10px 14px 10px 10px;
-        margin: 0;
-      }
-    }
-    :deep(.w-e-bar-item .w-e-panel-content-emotion li) {
-      width: 30px;
-      height: 30px;
-      font-size: 18px;
-      line-height: 30px;
-      text-align: center;
-    }
-  }
   .editor-content {
     height: calc(100% - 40px) !important;
     overflow-y: hidden;

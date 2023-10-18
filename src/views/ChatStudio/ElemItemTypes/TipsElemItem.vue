@@ -35,7 +35,7 @@ export default {
       console.log(this.revokeMsgMap);
     },
     onEdit(data = this.message) {
-      emitter.emit("handleSetHtml", data.payload.text);
+      emitter.emit("handleSetHtml", data?.payload?.text);
       this.$store.commit("setRevokeMsg", { data, type: "delete" });
     },
     getChangeType(message = this.message) {
@@ -61,6 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 .message-view_withdraw {
+  user-select: none;
   font-size: 12px;
   vertical-align: middle;
   word-wrap: normal;

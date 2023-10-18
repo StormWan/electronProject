@@ -45,9 +45,8 @@
           </div>
         </div>
         <div class="message-item-right-bottom">
-          <!-- <CustomMention v-if="isMention(item) || isdraft(item)" :item="item" />
-          <span v-else>{{ formatNewsMessage(item) }}</span> -->
-          {{ formatNewsMessage(item) }}
+          <CustomMention v-if="isMention(item) || isdraft(item)" :item="item" />
+          <span v-else>{{ formatNewsMessage(item) }}</span>
         </div>
         <!-- 未读消息红点 -->
         <el-badge
@@ -82,6 +81,7 @@ import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { TIMpingConv } from "@/api/im-sdk-api";
 import Label from "../components/Label.vue";
+import emitter from "@/utils/mitt-bus";
 import { chatName, isallStaff } from "../utils/utils";
 
 const isShowMenu = ref(false);
@@ -211,6 +211,7 @@ const handleConvListClick = (data) => {
   dispatch("GET_MESSAGE_LIST", data);
   commit("updataScroll");
   commit("setReplyMsg", null);
+  emitter.emit("handleInsertDraft", data);
 };
 
 const handleClickMenuItem = (item) => {

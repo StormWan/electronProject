@@ -490,12 +490,11 @@ const handleRevokeChange = (msg, type) => {
 const handleRevokeMsg = async (data) => {
   const { code, message } = await revokeMsg(data);
   if (code !== 0) return;
-  console.log(message);
   if (message.flow !== "out") return;
   handleRevokeChange(message, "set");
   setTimeout(() => {
     handleRevokeChange(message, "delete");
-  }, 30000);
+  }, 60000);
 };
 
 watch(

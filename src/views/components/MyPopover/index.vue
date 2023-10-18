@@ -1,6 +1,6 @@
 <template>
   <div
-    class="robot-box"
+    class="robot-box radial"
     v-if="cardData"
     :class="{
       'is-robot': isRobot(cardData),
@@ -153,5 +153,10 @@ const drawer = computed({
       width: 100%;
     }
   }
+}
+.radial {
+  background-image: radial-gradient(transparent 1px, #fff 1px);
+  backdrop-filter: saturate(50%) blur(4px);
+  background-size: 4px 4px;
 }
 </style>

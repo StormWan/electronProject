@@ -46,14 +46,6 @@ export const dragControllerDiv = (node) => {
 };
 
 export const validatelastMessage = (msglist) => {
-  // let msg = null;
-  // for (let i = msglist.length - 1; i > -1; i--) {
-  //   if (msglist[i].ID) {
-  //     msg = msglist[i];
-  //     break;
-  //   }
-  // }
-  // return msg;
   return (
     msglist
       .slice()
@@ -325,3 +317,16 @@ export function parseHTMLToArr(html) {
   });
   return arr;
 }
+
+/**
+ * 从 HTML 中提取文件信息
+ * @param {string} html - 包含文件信息的 HTML 字符串
+ * @returns {Object} - 包含文件名和链接的对象
+ */
+export const extractFilesInfo = (html) => {
+  const matchStr = html.match(/data-link="([^"]*)"/);
+  const matchStrName = html.match(/data-fileName="([^"]*)"/);
+  const fileName = matchStrName?.[1];
+  const link = matchStr?.[1];
+  return { fileName, link };
+};
