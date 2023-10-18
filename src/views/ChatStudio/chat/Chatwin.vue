@@ -482,9 +482,20 @@ const handleMultiSelectMsg = (item) => {
   commit("SET_CHEC_BOX", true);
   handleSelect(null, item, "choice");
 };
+const handleRevokeChange = (msg, type) => {
+  if (msg.type !== "TIMTextElem") return;
+  commit("setRevokeMsg", { data: msg, type: type });
+};
 // 撤回消息
-const handleRevokeMsg = (data) => {
-  const { code, message } = revokeMsg(data);
+const handleRevokeMsg = async (data) => {
+  const { code, message } = await revokeMsg(data);
+  if (code !== 0) return;
+  console.log(message);
+  if (message.flow !== "out") return;
+  handleRevokeChange(message, "set");
+  setTimeout(() => {
+    handleRevokeChange(message, "delete");
+  }, 30000);
 };
 
 watch(

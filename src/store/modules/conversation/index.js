@@ -39,6 +39,7 @@ const conversation = {
     activetab: "whole", // 全部 未读 提及我
     outside: "message", // 侧边栏初始状态
     isNotify: false, // 是否免打扰
+    revokeMsgMap: new Map(), // 撤回消息重新编辑
   },
   mutations: {
     // 设置历史消息
@@ -317,6 +318,15 @@ const conversation = {
         state.sessionDraftMap.set(ID, payload);
       }
     },
+    // 设置撤回消息重新编辑
+    setRevokeMsg(state, action) {
+      const { data, type } = action;
+      if (type == 'set') {
+        state.revokeMsgMap.set(data.ID, data.payload)
+      } else {
+        state.revokeMsgMap.delete(data.ID)
+      }
+    }
   },
   actions: {
     // 获取消息列表

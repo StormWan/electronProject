@@ -309,9 +309,16 @@ const sendMessage = async () => {
     },
   });
 };
-
+const setEditHtml = (text) => {
+  const editor = editorRef.value;
+  editor.setHtml(`<p>${text}</p>`);
+};
 emitter.on("handleAt", ({ id, name }) => {
   insertMention(id, name, false);
+});
+
+emitter.on("handleSetHtml", (text) => {
+  setEditHtml(text);
 });
 
 // watch(currentConversation, (newValue) => {
