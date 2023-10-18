@@ -1,7 +1,7 @@
 <template>
   <div :class="['app-wrapper', sidebar ? '' : 'style-wrapper']" :style="fnStyle(isActive)" v-resize>
     <Header />
-    <main class="app-main">
+    <main class="app-main" :class="fnClass()">
       <div class="continer-theme">
         <router-view v-slot="{ Component, route }">
           <transition name="fade-slide" :appear="true" mode="out-in">
@@ -23,6 +23,7 @@ import { computed, onMounted, watch, reactive, defineAsyncComponent } from "vue"
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
+import { isWindows } from "@/electron/utils/platform";
 import Header from "./Header.vue";
 import emitter from "@/utils/mitt-bus";
 
@@ -58,6 +59,9 @@ emitter.on("resize", ({ detail }) => {
   }
 });
 
+const fnClass = () => {
+  return isWindows ? "windowStyle" : "";
+};
 const fnStyle = (off) => {
   return `margin-left:${off ? "64px" : "200px"}`;
 };
@@ -74,11 +78,14 @@ const fnStyle = (off) => {
   background: var(--color-body-bg);
 }
 .app-main {
-  height: calc(100vh - 86px - 42px);
+  height: calc(100vh - 86px);
   width: 100%;
   position: relative;
   // overflow-x: hidden;
   background: #f0f2f5;
   box-sizing: border-box;
+}
+.windowStyle {
+  height: calc(100vh - 86px - 42px);
 }
 </style>
