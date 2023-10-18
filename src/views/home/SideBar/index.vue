@@ -4,7 +4,7 @@
     :class="['sidebar-container', logoVal ? 'has-logo' : '']"
     v-show="vislbile || sidebar"
   >
-    <Logo class="logo-icon" :show="logoVal" :collapse="isCollapse" />
+    <!-- <Logo class="logo-icon" :show="logoVal" :collapse="isCollapse" /> -->
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         ref="Refelmenu"
@@ -29,7 +29,7 @@ import { useStore } from "vuex";
 import { ref, toRefs, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-import Logo from "./Logo.vue";
+// import Logo from "./Logo.vue";
 
 const Refelmenu = ref();
 const route = useRoute();

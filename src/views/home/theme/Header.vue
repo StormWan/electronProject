@@ -126,19 +126,6 @@ watch(
   }
 );
 </script>
-<!-- <style module="classes" scoped>
-.container {
-  padding: 0 15px;
-  line-height: 48px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.icon {
-  cursor: pointer;
-}
-</style> -->
 <style lang="scss" scoped>
 .container {
   padding: 0 15px;

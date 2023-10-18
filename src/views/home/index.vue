@@ -1,7 +1,7 @@
 <template>
   <div class="manView">
     <Navbar />
-    <div class="flex h-full man">
+    <div class="flex h-full w-full man">
       <!-- 侧边栏 -->
       <SideBar />
       <!-- 主体 -->
@@ -21,6 +21,10 @@ import Setup from "@/views/home/setup/index.vue";
 import AddressBook from "@/views/components/AddressBook/index.vue";
 </script>
 <style lang="scss" scoped>
+.manView {
+  width: 100%;
+  height: 100%;
+}
 .man {
   position: relative;
 }
