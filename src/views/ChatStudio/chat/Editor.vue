@@ -43,6 +43,7 @@ import MentionModal from "../components/MentionModal.vue";
 import { bytesToSize } from "@/utils/chat/index";
 import { fileImgToBase64Url, convertEmoji } from "@/utils/chat/index";
 import { debounce } from "lodash-es";
+const { ipcRenderer } = require("electron");
 
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
@@ -218,7 +219,7 @@ const setParsefile = (data) => {
 };
 // 插入图片
 const parsepicture = async (file) => {
-  const base64Url = await fileImgToBase64Url(file);
+  let base64Url = await fileImgToBase64Url(file);
   const ImageElement = {
     type: "image",
     class: "img",
@@ -309,6 +310,18 @@ function onEmitter() {
   });
   emitter.on("handleInsertDraft", (value) => {
     value && insertDraft(value);
+  });
+  ipcRenderer.on("captureScreenBack", (event, url) => {
+    const ImageElement = {
+      type: "image",
+      class: "img",
+      src: url,
+      alt: "",
+      href: "",
+      style: { width: "125px" },
+      children: [{ text: "" }],
+    };
+    editorRef.value.insertNode(ImageElement);
   });
 }
 

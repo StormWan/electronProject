@@ -7,6 +7,7 @@ import {
   maxMainWindow,
   openExternal,
   setmainViewSize,
+  handleScreenshot,
 } from "../utils/util";
 
 const ipcEvent = () => {
@@ -53,7 +54,9 @@ const ipcEvent = () => {
   });
 
   //截图
-  ipcMain.on("screenshot", (event, data) => {});
+  ipcMain.on("screenshot", (event, data) => {
+    handleScreenshot()
+  });
 
   // 设置主窗口尺寸
   ipcMain.on("setmainViewSize", (event, data) => {

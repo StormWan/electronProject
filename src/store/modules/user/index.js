@@ -8,7 +8,6 @@ import { getMenu } from "@/api/node-admin-api/menu";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 import { nextTick } from "vue";
-const { ipcRenderer } = require("electron");
 const timProxy = new TIMProxy();
 
 const user = {
@@ -62,11 +61,6 @@ const user = {
     },
   },
   actions: {
-    setViewSize({ state }, type) {
-      nextTick(() => {
-        ipcRenderer.send("setmainViewSize", type);
-      });
-    },
     // 登录
     async LOG_IN({ state, commit, dispatch }, data) {
       const { code, msg, result } = await login(data);

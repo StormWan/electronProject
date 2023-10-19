@@ -1,3 +1,4 @@
+import path from "path";
 /*
  * @Description: webpack 打包配置
  */
@@ -42,17 +43,17 @@ const vueDefaultConfig = {
       process.env.VUE_APP_PROXY === "false"
         ? null
         : {
-            "/proxy": {
-              // 目标代理服务器地址.
-              target: "http://localhost:8888",
-              // 是否允许跨域.
-              changeOrigin: true,
-              secure: true,
-              pathRewrite: {
-                "^/proxy": "/",
-              },
+          "/proxy": {
+            // 目标代理服务器地址.
+            target: "http://localhost:8888",
+            // 是否允许跨域.
+            changeOrigin: true,
+            secure: true,
+            pathRewrite: {
+              "^/proxy": "/",
             },
           },
+        },
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/
@@ -172,6 +173,12 @@ const vueDefaultConfig = {
           installerHeaderIcon: "images/icon.ico",
         },
       },
+      extraResources: [
+        {
+          from: path.join(__dirname, './static'),
+          to: './',
+        },
+      ],
       // 主线程的配置文件
       chainWebpackMainProcess: (config) => {
         config.plugin("define").tap((args) => {
