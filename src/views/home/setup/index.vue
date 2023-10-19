@@ -18,7 +18,7 @@
           @change="greyChange"
         />
       </li>
-      <li>
+      <!-- <li>
         <span>{{ t("common.sidebarLogo") }}</span>
         <el-switch
           v-model="logoVal"
@@ -30,7 +30,7 @@
           :active-icon="Check"
           :inactive-icon="Close"
         />
-      </li>
+      </li> -->
       <li>
         <span>{{ t("common.theme") }}</span>
         <el-select v-model="themecolor" placeholder="主题颜色">
@@ -96,21 +96,13 @@ const languages = [
   },
 ];
 
-const { state, dispatch, commit } = useStore();
-const { sidebar, logoVal, appearance, lang, setswitch } = useState({
+const { dispatch, commit } = useStore();
+const { sidebar, appearance, lang, setswitch } = useState({
   sidebar: (state) => !state.settings.sidebar,
-  logoVal: (state) => !state.settings.logoIcon,
   appearance: (state) => state.settings.appearance,
   setswitch: (state) => state.settings.setswitch,
   lang: (state) => state.settings.lang,
 });
-
-const LogoChange = (val) => {
-  commit("UPDATE_USER_SETUP", {
-    key: "logoIcon",
-    value: !val,
-  });
-};
 
 const greyChange = (val) => {
   commit("UPDATE_USER_SETUP", {

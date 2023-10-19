@@ -210,6 +210,8 @@ const setEmoj = (url, item) => {
 };
 const setPicture = (data) => {
   parsepicture(data);
+  const editor = editorRef.value;
+  editor && editor.focus();
 };
 const setParsefile = (data) => {
   parsefile(data);
@@ -269,6 +271,7 @@ const sendMsgBefore = () => {
   const { fileName, link } = extractFilesInfo(HtmlText);
   const emoticons = convertEmoji(HtmlText, image);
   const ElementArray = parseHTMLToArr(HtmlText);
+  console.log(ElementArray);
   return {
     convId: toAccount.value,
     convType: currentConversation.value.type,
@@ -294,21 +297,24 @@ const sendMessage = async () => {
 };
 const setEditHtml = (text) => {
   const editor = editorRef.value;
+  console.log(editor);
   editor?.setHtml(`<p>${text}</p>`);
 };
-emitter.on("handleAt", ({ id, name }) => {
-  insertMention(id, name, false);
-});
+function onEmitter() {
+  emitter.on("handleAt", ({ id, name }) => {
+    insertMention(id, name, false);
+  });
+  emitter.on("handleSetHtml", (text) => {
+    text && setEditHtml(text);
+  });
+  emitter.on("handleInsertDraft", (value) => {
+    value && insertDraft(value);
+  });
+}
 
-emitter.on("handleSetHtml", (text) => {
-  text && setEditHtml(text);
+onMounted(() => {
+  onEmitter();
 });
-
-emitter.on("handleInsertDraft", (value) => {
-  value && insertDraft(value);
-});
-
-onMounted(() => {});
 // 组件销毁时，及时销毁编辑器
 onBeforeUnmount(() => {
   const editor = editorRef.value;

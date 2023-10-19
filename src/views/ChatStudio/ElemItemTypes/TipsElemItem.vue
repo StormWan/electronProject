@@ -1,13 +1,13 @@
 <template>
   <div @click="onClick()" class="message-view_withdraw">
     <span class="withdraw">{{ getChangeType() }} </span>
-    <span @click.stop="onEdit()" v-show="isReEdit" class="edit">重新编辑</span>
+    <span @click.stop="onEdit()" v-if="isReEdit" class="edit">重新编辑</span>
   </div>
 </template>
 
 <script>
 import emitter from "@/utils/mitt-bus";
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "TipsElemItem",
   props: {
@@ -22,7 +22,6 @@ export default {
       currentMessageList: (state) => state.conversation.currentMessageList,
       revokeMsgMap: (state) => state.conversation.revokeMsgMap,
     }),
-    ...mapGetters(["toAccount", "isOwner", "tabList"]),
     isMine() {
       return this.message.flow !== "out";
     },
@@ -61,7 +60,6 @@ export default {
 
 <style lang="scss" scoped>
 .message-view_withdraw {
-  user-select: none;
   font-size: 12px;
   vertical-align: middle;
   word-wrap: normal;
@@ -76,6 +74,7 @@ export default {
     padding: 4px 6px;
   }
   .edit {
+    user-select: none;
     color: #337ecc;
     padding-left: 10px;
     cursor: pointer;

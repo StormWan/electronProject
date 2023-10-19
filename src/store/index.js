@@ -11,7 +11,6 @@ import { USER_DATA, SET_UP } from "@/store/mutation-types";
 const defaultSettings = {
   lang: "zh-CN", // 默认语言
   sidebar: true, // 侧边栏隐藏
-  logoIcon: false, // login图标
   appearance: "light", // 主题颜色
   isCollapse: true, // 侧边栏是否折叠
   setswitch: false, // 设置按钮开关

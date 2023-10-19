@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="select-none"
-    :class="['sidebar-container', logoVal ? 'has-logo' : '']"
-    v-show="vislbile || sidebar"
-  >
-    <!-- <Logo class="logo-icon" :show="logoVal" :collapse="isCollapse" /> -->
+  <div class="select-none" :class="['sidebar-container']" v-show="vislbile || sidebar">
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         ref="Refelmenu"
@@ -29,7 +24,6 @@ import { useStore } from "vuex";
 import { ref, toRefs, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-// import Logo from "./Logo.vue";
 
 const Refelmenu = ref();
 const route = useRoute();
@@ -47,10 +41,9 @@ const props = defineProps({
 });
 const { vislbile, collapse } = toRefs(props);
 
-const { isCollapse, sidebar, logoVal, routeTable } = useState({
+const { isCollapse, sidebar, routeTable } = useState({
   isCollapse: (state) => state.settings.isCollapse,
   sidebar: (state) => state.settings.sidebar,
-  logoVal: (state) => state.settings.logoIcon,
   routeTable: (state) => state.data.routeTable,
 });
 
