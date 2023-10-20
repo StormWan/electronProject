@@ -13,7 +13,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span v-if="!production" title="截图" class="" @click="clickCscreenshot">
+    <span title="截图" class="" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 滚动到底部 -->
@@ -86,26 +86,7 @@ const SendFileClick = () => {
 };
 // 截图
 const clickCscreenshot = () => {
-  commit("ipcRenderer", {
-    key: "screenshot",
-  });
-  // const element = document.body;
-  // html2canvas(element, {
-  //   allowTaint: true,
-  //   useCORS: true,
-  //   dpi: 150,
-  //   scale: 2,
-  // }).then((canvas) => {
-  //   const image = canvas.toDataURL();
-  //   const File = dataURLtoFile(image);
-  //   console.log(File);
-  //   emit("setToolbar", {
-  //     data: {
-  //       files: File,
-  //     },
-  //     key: "setPicture",
-  //   });
-  // });
+  commit("ipcRenderer", { key: "screenshot" });
 };
 
 async function sendImage(e) {

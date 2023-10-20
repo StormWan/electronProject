@@ -52,8 +52,11 @@ export const setmainViewSize = (type) => {
 export const handleScreenshot = () => {
   const mainView = global.mainWin;
   if (isWindows) {
-    const url = app.isPackaged ? '/screenshot/QQSnapShot.exe' : './static/screenshot/screencapture.exe'
-    const filePath = path.join(__dirname, '..', url)
+    // const url = app.isPackaged ? '../QQSnapShot.exe' : '../static/QQSnapShot.exe'
+    // const filePath = path.join(__dirname, url)
+    const url = true ? '/bundled/screenshot/QQSnapShot.exe' : '/public/screenshot/QQSnapShot.exe'
+    const filePath = path.join(app.getAppPath(), url);
+    mainView.webContents.send('captureScreenBack1', filePath)
     const screen_window = execFile(filePath)
     screen_window.on('exit', (err, stdout, stderr) => {
       console.log(err, stdout, stderr, 'err, stdout, stderr')
@@ -61,6 +64,7 @@ export const handleScreenshot = () => {
       const imgs = 'data:image/png;base64,' + pngs.toString('base64')
       mainView.webContents.send('captureScreenBack', imgs)
     })
+    console.log(filePath)
   } else if (isMac) {
 
   }

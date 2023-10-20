@@ -1,4 +1,4 @@
-import path from "path";
+const path = require("path");
 /*
  * @Description: webpack 打包配置
  */
@@ -173,10 +173,12 @@ const vueDefaultConfig = {
           installerHeaderIcon: "images/icon.ico",
         },
       },
+      asar: false, // 是否开启asar打包
+      //打包后拷贝静态文件到指定位置,
       extraResources: [
         {
-          from: path.join(__dirname, './static'),
-          to: './',
+          from: "./static",
+          to: "./"
         },
       ],
       // 主线程的配置文件

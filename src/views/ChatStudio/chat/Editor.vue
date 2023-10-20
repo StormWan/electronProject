@@ -323,6 +323,9 @@ function onEmitter() {
     };
     editorRef.value.insertNode(ImageElement);
   });
+  ipcRenderer.on("captureScreenBack1", (event, url) => {
+    console.log(url);
+  });
 }
 
 onMounted(() => {
