@@ -35,14 +35,6 @@ const button = ref([
 async function onClick(item) {
   console.log(item);
   const { type, name } = item;
-  // const btn = button.value[1];
-  // if (name == "maxMainWindow") {
-  //   if (btn.type == "maximize") {
-  //     btn.type = "restored";
-  //   } else {
-  //     btn.type = "maximize";
-  //   }
-  // }
   if (name == "quitApp") {
     const message = { message: "确定退出程序吗?", iconType: "warning" };
     const result = await showConfirmationBox(message);

@@ -172,15 +172,16 @@ const vueDefaultConfig = {
           // 安装时头部图标
           installerHeaderIcon: "images/icon.ico",
         },
+        asar: false, // 是否开启asar打包
+        //打包后拷贝静态文件到指定位置,
+        extraResources: [
+          {
+            from: "static",
+            to: "./",
+            filter: ["**/*"]
+          },
+        ],
       },
-      asar: false, // 是否开启asar打包
-      //打包后拷贝静态文件到指定位置,
-      extraResources: [
-        {
-          from: "./static",
-          to: "./"
-        },
-      ],
       // 主线程的配置文件
       chainWebpackMainProcess: (config) => {
         config.plugin("define").tap((args) => {

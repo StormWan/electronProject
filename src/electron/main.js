@@ -53,14 +53,14 @@ class Background {
     // 用于控制菜单栏的可见性，即是否显示菜单栏。它可以在应用程序运行时动态地设置菜单栏的显示或隐藏状态。
     Menu.setApplicationMenu(null);
     const options = {
-      // width: 1038,
-      // height: 706,
-      // minWidth: 1038,
-      // minHeight: 706,
-      width: 380,
-      height: 550,
-      minWidth: 380,
-      minHeight: 550,
+      width: 1038,
+      height: 706,
+      minWidth: 1038,
+      minHeight: 706,
+      // width: 380,
+      // height: 550,
+      // minWidth: 380,
+      // minHeight: 550,
       frame: isWindows ? false : true,
       titleBarStyle: isWindows ? "hiddenInset" : "default",
       webPreferences: {

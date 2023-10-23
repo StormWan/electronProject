@@ -51,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
   const token = storage.get(ACCESS_TOKEN);
   if (token) {
     // start progress bar
-    NProgress.start();
+    !process.env.IS_ELECTRON && NProgress.start();
     if (isF) {
       next();
     } else {
@@ -70,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
 // 后置守卫
 router.afterEach(async (to, from, next) => {
   // finish progress bar
-  store.dispatch("setViewSize", to.path == "/login" ? "login" : "main");
+  // store.dispatch("setViewSize", to.path == "/login" ? "login" : "main");
   NProgress.done();
 });
 // 应用场景，进入页面登录判断、管理员权限判断、浏览器判断

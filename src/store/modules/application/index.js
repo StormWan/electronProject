@@ -4,7 +4,7 @@ const application = {
   state: {},
   getters: {},
   mutations: {
-    ipcRenderer(state, { key, value }) {
+    ipcRenderer(state, { key, value = null }) {
       ipcRenderer.send(key, value);
     }
   },

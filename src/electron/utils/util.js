@@ -52,19 +52,19 @@ export const setmainViewSize = (type) => {
 export const handleScreenshot = () => {
   const mainView = global.mainWin;
   if (isWindows) {
-    // const url = app.isPackaged ? '../QQSnapShot.exe' : '../static/QQSnapShot.exe'
-    // const filePath = path.join(__dirname, url)
-    const url = true ? '/bundled/screenshot/QQSnapShot.exe' : '/public/screenshot/QQSnapShot.exe'
-    const filePath = path.join(app.getAppPath(), url);
-    mainView.webContents.send('captureScreenBack1', filePath)
+    const url = app.isPackaged ? '../ScreenCapture.exe' : '../static/ScreenCapture.exe'
+    // const url = app.isPackaged ? '../screenshot/ScreenCapture.exe' : '../static/screenshot/ScreenCapture.exe'
+    const filePath = path.join(__dirname, url);
     const screen_window = execFile(filePath)
-    screen_window.on('exit', (err, stdout, stderr) => {
-      console.log(err, stdout, stderr, 'err, stdout, stderr')
-      const pngs = clipboard.readImage().toPNG()
-      const imgs = 'data:image/png;base64,' + pngs.toString('base64')
-      mainView.webContents.send('captureScreenBack', imgs)
+    screen_window.on('exit', (code, stdout, stderr) => {
+      console.log(code, stdout, stderr, 'code, stdout, stderr')
+      // 粘贴
+      if (code == 7) {
+        const pngs = clipboard.readImage().toPNG()
+        const imgs = 'data:image/png;base64,' + pngs.toString('base64')
+        mainView.webContents.send('captureScreenBack', imgs)
+      }
     })
-    console.log(filePath)
   } else if (isMac) {
 
   }

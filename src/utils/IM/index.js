@@ -9,7 +9,6 @@ import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
 import { deepClone } from "@/utils/common";
 import { h, nextTick } from "vue";
-const { ipcRenderer } = require("electron");
 
 export default class TIMProxy {
   constructor() {
@@ -162,7 +161,7 @@ export default class TIMProxy {
       });
     }
   }
-  onMessageModified({ data }) {}
+  onMessageModified({ data }) { }
   onNetStateChange({ data }) {
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
@@ -215,7 +214,7 @@ export default class TIMProxy {
       // 切换会话列表
       store.dispatch("CHEC_OUT_CONVERSATION", { convId: message.conversationID });
       // 定位到指定会话
-      ipcRenderer.send("mainTop");
+      store.commit('ipcRenderer', { key: 'mainTop' })
       setTimeout(() => {
         scrollToDomPostion(ID);
       }, 1000);
@@ -313,7 +312,7 @@ export default class TIMProxy {
     const massage = List.filter((t) => t.conversationID == convId);
     // 消息免打扰
     if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
-    ipcRenderer.send("TrayFlashIng");
+    store.commit('ipcRenderer', { key: 'TrayFlashIng' })
   }
   /**
    * 群详情 @好友 系统通知tis

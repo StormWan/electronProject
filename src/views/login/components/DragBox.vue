@@ -1,6 +1,8 @@
 <template>
   <div v-if="isWindows" class="dragBox">
-    <svg-icon iconClass="exit" @click="onClick" />
+    <span class="exit" @click="onClick">
+      <svg-icon iconClass="exit" />
+    </span>
   </div>
 </template>
 
@@ -25,15 +27,16 @@ function onClick() {
   height: 42px;
   z-index: 100;
   -webkit-app-region: drag;
+  .exit {
+    :hover {
+      color: var(--color-icon-hover) !important;
+    }
+  }
   .svg-icon {
     -webkit-app-region: no-drag;
     margin-right: 16px;
     .svg-icon {
       color: #303133;
-    }
-
-    :hover {
-      color: var(--color-icon-hover) !important;
     }
   }
 }
