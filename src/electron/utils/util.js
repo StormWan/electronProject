@@ -1,5 +1,5 @@
 import { app, shell, clipboard, BrowserWindow, dialog, Menu, nativeImage } from "electron";
-const { execFile, exec } = require('child_process')
+const { execFile, exec } = require("child_process");
 import { isWindows, isMac } from "@/electron/utils/platform";
 import path from "path";
 
@@ -17,7 +17,7 @@ export const mainTop = () => {
 };
 
 /* 隐藏主窗口 */
-export const mainWinHide = () => { };
+export const mainWinHide = () => {};
 
 /* 主窗口最小化 */
 export const minMainWindow = () => {
@@ -52,23 +52,29 @@ export const setmainViewSize = (type) => {
 export const handleScreenshot = () => {
   const mainView = global.mainWin;
   if (isWindows) {
-    const url = app.isPackaged ? '../ScreenCapture.exe' : '../static/ScreenCapture.exe'
+    const url = app.isPackaged ? "../ScreenCapture.exe" : "../static/ScreenCapture.exe";
     // const url = app.isPackaged ? '../screenshot/ScreenCapture.exe' : '../static/screenshot/ScreenCapture.exe'
     const filePath = path.join(__dirname, url);
-    const screen_window = execFile(filePath)
-    screen_window.on('exit', (code, stdout, stderr) => {
-      console.log(code, stdout, stderr, 'code, stdout, stderr')
+    const screen_window = execFile(filePath);
+    screen_window.on("exit", (code, stdout, stderr) => {
+      console.log(code, stdout, stderr, "code, stdout, stderr");
       // 粘贴
       if (code == 7) {
-        const pngs = clipboard.readImage().toPNG()
-        const imgs = 'data:image/png;base64,' + pngs.toString('base64')
-        mainView.webContents.send('captureScreenBack', imgs)
+        const pngs = clipboard.readImage().toPNG();
+        const imgs = "data:image/png;base64," + pngs.toString("base64");
+        mainView.webContents.send("captureScreenBack", imgs);
       }
-    })
+    });
   } else if (isMac) {
-
+    exec(`screencapture -i  -c`, (error, stdout, stderr) => {
+      if (!error) {
+        //截图完成，在粘贴板中
+        const pngs = clipboard.readImage().toPNG();
+        const imgs = "data:image/png;base64," + pngs.toString("base64");
+        mainView.webContents.send("captureScreenBack", imgs);
+      }
+    });
   }
+};
 
-}
-
-export const quitApp = (type) => { };
+export const quitApp = (type) => {};
