@@ -16,6 +16,7 @@
     />
     <!-- @ mention弹框 -->
     <mention-modal
+      ref="mentionRef"
       v-if="isShowModal"
       :isOwner="isOwner"
       :memberlist="currentMemberList"
@@ -49,6 +50,7 @@ const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
 const messages = ref(null); //编辑器内容 对象格式
 const mode = "simple"; // 'default' 或 'simple'
+const mentionRef = ref();
 
 const { dispatch, commit } = useStore();
 const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
@@ -234,6 +236,10 @@ const parsepicture = async (file) => {
 // 回车
 const handleEnter = (event) => {
   if (event?.ctrlKey) return;
+  if (isShowModal.value) {
+    mentionRef.value.inputKeyupHandler(event);
+    return;
+  }
   const editor = editorRef.value;
   const isEmpty = editor.isEmpty(); // 判断当前编辑器内容是否为空
   const { textMsg, aitStr, files, image } = sendMsgBefore();

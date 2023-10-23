@@ -1,6 +1,7 @@
 <template>
-  <div class="mention-modal" :style="{ top: top, left: left }" @keydown="onKeydown">
-    <input class="mention-input" v-model="searchVal" ref="input" @keyup="inputKeyupHandler" />
+  <div class="mention-modal" :style="{ top: top, left: left }">
+    <!-- @keydown="onKeydown" -->
+    <!-- <input class="mention-input" v-model="searchVal" ref="input" @keyup="inputKeyupHandler" /> -->
     <ul class="mention-list">
       <el-scrollbar>
         <li
@@ -19,6 +20,7 @@
 <script>
 import { mapState } from "vuex";
 import TIM from "@tencentcloud/chat";
+import { useEventListener } from "@vueuse/core";
 export default {
   name: "MentionModal",
   props: {
@@ -85,12 +87,15 @@ export default {
       this.top = `${selectionRect.top + 20}px`;
       this.left = `${selectionRect.left + 5}px`;
       // input blur() focus()
-      this.$refs.input.focus();
+      // this.$refs.input.focus();
     },
     hideMentionModal() {
-      this.$store.commit("SET_MENTION_MODAL", false);
+      this.$nextTick(() => {
+        this.$store.commit("SET_MENTION_MODAL", false);
+      });
     },
     inputKeyupHandler(event) {
+      console.log(event);
       // esc - 隐藏 modal
       if (event.key === "Escape") {
         this.hideMentionModal();
@@ -127,7 +132,7 @@ export default {
           // console.log(this.tabIndex);
           break;
       }
-      console.log(this.tabIndex);
+      console.log(this.tabIndex, event);
     },
     isActive(item) {
       if (!item) return;
@@ -149,6 +154,9 @@ export default {
   },
   mounted() {
     this.initMention();
+    useEventListener(document, "keydown", (e) => {
+      this.onKeydown(e);
+    });
   },
   beforeUnmount() {
     this.hideMentionModal(); // 隐藏 modal
@@ -159,6 +167,7 @@ export default {
 <style lang="scss" scoped>
 .mention-modal {
   position: fixed;
+  width: 110px;
   border: 1px solid #ccc;
   background-color: #fff;
   padding: 5px;
