@@ -140,12 +140,12 @@ yarn lint
 ├── locales                    // 国际化语言包
 ├── node_modules               // 依赖包
 ├── public                     // 静态目录
-├── server                     // 服务器
 ├── src                        // 源代码
 │   ├── api                    // 所有请求
 │   ├── assets                 // 主题字体图片svg icons等静态资源
 │   ├── components             // 全局公用组件
 │   ├── directives             // 自定义指令
+│   ├── electron               // electron配置
 │   ├── plugins                // 插件
 │   ├── router                 // 路由
 │   ├── store                  // 全局 store管理
@@ -154,6 +154,7 @@ yarn lint
 │   ├── views                  // view 页面目录
 │   ├── App.vue                // 入口页面
 │   ├── main.js                // 入口 加载组件 初始化等
+├── static                     // 静态资源
 ├── browserslistrc             // 配置兼容浏览器
 ├── .eslintignore              // eslint 忽略项
 ├── .eslintrc.js               // eslint 配置项
