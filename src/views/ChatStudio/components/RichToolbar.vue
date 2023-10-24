@@ -13,7 +13,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span title="截图" class="" @click="clickCscreenshot">
+    <span data-title="截图" class="icon" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 滚动到底部 -->

@@ -1,8 +1,6 @@
 <template>
   <div class="mention-modal" :style="{ top: top, left: left }">
-    <!-- @keydown="onKeydown" -->
-    <!-- <input class="mention-input" v-model="searchVal" ref="input" @keyup="inputKeyupHandler" /> -->
-    <ul class="mention-list">
+    <ul class="mention-list" ref="listRef">
       <el-scrollbar>
         <li
           v-for="item in searchedList"
@@ -73,9 +71,7 @@ export default {
     },
     initMention() {
       // 仅群主支持@全员
-      if (!this.isOwner) {
-        this.list.shift();
-      }
+      if (!this.isOwner) this.list.shift();
       // 获取光标位置，定位 modal
       const domSelection = document.getSelection();
       const domRange = domSelection.getRangeAt(0);
@@ -83,32 +79,20 @@ export default {
       const selectionRect = domRange.getBoundingClientRect();
       // 获取编辑区域 DOM 节点的位置，以辅助定位
       // const containerRect = editor.getEditableContainer().getBoundingClientRect();
+      const height = this.$refs.listRef?.clientHeight;
       // 定位 modal
-      this.top = `${selectionRect.top + 20}px`;
+      this.top = `${selectionRect.top - height - 15}px`;
       this.left = `${selectionRect.left + 5}px`;
-      // input blur() focus()
-      // this.$refs.input.focus();
     },
     hideMentionModal() {
-      this.$nextTick(() => {
-        this.$store.commit("SET_MENTION_MODAL", false);
-      });
+      this.$store.commit("SET_MENTION_MODAL", false);
     },
     inputKeyupHandler(event) {
-      console.log(event);
-      // esc - 隐藏 modal
-      if (event.key === "Escape") {
-        this.hideMentionModal();
-      }
-      // enter - 插入 mention node
       if (event.key === "Enter") {
-        // 插入第一个
         const firstOne = this.searchedList[this.tabIndex];
-        if (firstOne) {
-          console.log(firstOne);
-          const { userID, nick } = firstOne;
-          this.insertMentionHandler(userID, nick);
-        }
+        if (!firstOne) return;
+        const { userID, nick } = firstOne;
+        this.insertMentionHandler(userID, nick);
       }
     },
     insertMentionHandler(id, name) {
@@ -118,21 +102,18 @@ export default {
     onKeydown(event) {
       switch (event.keyCode) {
         case 38: // 上
-          this.tabIndex >= 0 && this.tabIndex--;
-          this.scrollToSelectedItem();
+          if (this.tabIndex > 0) {
+            this.tabIndex--;
+            this.scrollToSelectedItem();
+          }
           break;
         case 40: //下
-          this.tabIndex < this.searchedList?.length - 1 && this.tabIndex++;
-          this.scrollToSelectedItem();
-          break;
-        case 13: // 回车
-          // console.log(this.tabIndex);
-          break;
-        case 8: //删除
-          // console.log(this.tabIndex);
+          if (this.tabIndex < this.searchedList?.length - 1) {
+            this.tabIndex++;
+            this.scrollToSelectedItem();
+          }
           break;
       }
-      console.log(this.tabIndex, event);
     },
     isActive(item) {
       if (!item) return;
@@ -144,9 +125,8 @@ export default {
     },
     scrollToSelectedItem() {
       const element = document.querySelector(".active");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      if (!element) return;
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
     },
   },
   created() {

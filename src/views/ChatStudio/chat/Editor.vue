@@ -35,7 +35,7 @@ import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
-import { onBeforeUnmount, ref, shallowRef, onMounted, watch } from "vue";
+import { onBeforeUnmount, ref, shallowRef, onMounted, watch, nextTick } from "vue";
 import { sendChatMessage, customAlert, parseHTMLToArr, extractFilesInfo } from "../utils/utils";
 import { empty } from "@/utils/common";
 import { useStore } from "vuex";
@@ -51,6 +51,7 @@ const valueHtml = ref(""); // 内容 HTML
 const messages = ref(null); //编辑器内容 对象格式
 const mode = "simple"; // 'default' 或 'simple'
 const mentionRef = ref();
+const initState = ref(false);
 
 const { dispatch, commit } = useStore();
 const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
@@ -304,10 +305,9 @@ const sendMessage = async () => {
 };
 const setEditHtml = (text) => {
   const editor = editorRef.value;
-  console.log(editor);
   editor?.setHtml(`<p>${text}</p>`);
 };
-function onEmitter() {
+const onEmitter = () => {
   emitter.on("handleAt", ({ id, name }) => {
     insertMention(id, name, false);
   });
@@ -329,8 +329,28 @@ function onEmitter() {
     };
     editorRef.value.insertNode(ImageElement);
   });
-}
+};
 
+const handleEditorKeyDown = async () => {
+  await nextTick();
+  if (initState.value) return;
+  // 解决@好友上键切换光标移动问题
+  const editorElement = document.querySelector(".w-e-text-container");
+  if (!editorElement) return;
+  initState.value = false;
+  editorElement.onkeydown = (e) => {
+    // 键盘上下键
+    if (isShowModal.value) {
+      if ([38, 40].includes(e.keyCode)) {
+        return false;
+      }
+    }
+  };
+};
+
+watch(showMsgBox, () => {
+  handleEditorKeyDown();
+});
 onMounted(() => {
   onEmitter();
 });

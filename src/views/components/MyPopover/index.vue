@@ -3,7 +3,7 @@
     class="robot-box radial"
     v-if="cardData"
     :class="{
-      'is-robot': isRobot(cardData),
+      'is-robot': isRobot(cardData.from),
     }"
     :style="{
       left: left,
@@ -15,7 +15,7 @@
     <div class="title">
       <img :src="cardData.avatar || squareUrl" alt="头像" />
       <span>{{ cardData.nick }}</span>
-      <Label :data="cardData?.from" />
+      <Label :userID="cardData?.from" />
     </div>
     <div class="content">
       <div class="characters">
@@ -155,8 +155,8 @@ const drawer = computed({
   }
 }
 .radial {
-  background-image: radial-gradient(transparent 1px, #fff 1px);
-  backdrop-filter: saturate(50%) blur(4px);
-  background-size: 4px 4px;
+  // background-image: radial-gradient(transparent 1px, #fff 1px);
+  // backdrop-filter: saturate(50%) blur(4px);
+  // background-size: 4px 4px;
 }
 </style>
