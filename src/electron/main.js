@@ -14,7 +14,15 @@ class Background {
   }
   init() {
     // 确保应用程序是单例的。
-    if (!app.requestSingleInstanceLock()) return app.quit();
+    if (isDevelopment) {
+      // 请求单实例锁
+      const gotTheLock = app.requestSingleInstanceLock();
+      if (!gotTheLock) {
+        return app.quit();
+      } else {
+        app.on('second-instance', (event, argv) => { })
+      }
+    }
 
     // 注册协议
     protocol.registerSchemesAsPrivileged([

@@ -43,7 +43,13 @@
       </div>
     </div>
     <Tags />
-    <el-drawer v-model="drawer" :direction="'ltr'" size="200px" :with-header="false">
+    <el-drawer
+      v-model="drawer"
+      :append-to-body="true"
+      :direction="'ltr'"
+      size="200px"
+      :with-header="false"
+    >
       <SideBar :vislbile="true" />
     </el-drawer>
   </div>
