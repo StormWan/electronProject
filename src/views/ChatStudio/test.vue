@@ -100,7 +100,8 @@ export default defineComponent({
     },
     test() {},
     test1() {
-      this.getGroupList();
+      // this.getGroupList();
+      this.$api.stream();
     },
     async test3() {
       const data = await this.$api.restApi({
