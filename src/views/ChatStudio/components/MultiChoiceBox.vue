@@ -15,9 +15,8 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { createForwardMsg, createMergerMsg, sendMsg } from "@/api/im-sdk-api/message";
+import { createForwardMsg, createMergerMsg, sendMsg, deleteMsgList } from "@/api/im-sdk-api/index";
 import { showConfirmationBox } from "@/utils/message";
-import { deleteMsgList } from "@/api/im-sdk-api";
 import MagforwardingPopup from "./MagforwardingPopup.vue";
 const buttonList = [
   {

@@ -19,7 +19,7 @@
     </div>
     <div class="content">
       <div class="characters">
-        <span> 待开发 </span>
+        <span>{{ userProfile?.selfSignature || "待开发" }} </span>
       </div>
     </div>
     <div class="footer">
@@ -36,8 +36,7 @@ import { useState } from "@/utils/hooks/useMapper";
 import { isRobot } from "@/utils/chat/index";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
-import { setSelfStatus, getUserStatus } from "@/api/im-sdk-api/index";
-import { getUserProfile } from "@/api/im-sdk-api/profile";
+import { getUserProfile } from "@/api/im-sdk-api/index";
 
 const popoverRef = ref();
 const left = ref("");
@@ -86,6 +85,7 @@ const setPosition = (popover) => {
 };
 const setUserProfile = () => {
   const userID = cardData.value?.from;
+  if (userProfile.value) return;
   getUserProfile(userID)
     .then(({ data }) => {
       userProfile.value = data?.[0];
@@ -93,11 +93,11 @@ const setUserProfile = () => {
     .catch((err) => {
       console.log(err);
     });
-  console.log(userProfile);
+  console.log(userProfile.value);
 };
 const openCard = () => {
+  setUserProfile();
   setPosition(seat.value);
-  // setUserProfile();
 };
 
 const drawer = computed({

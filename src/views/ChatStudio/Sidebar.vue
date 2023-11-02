@@ -2,9 +2,9 @@
   <el-aside width="68px">
     <div class="touxiang">
       <Portrait :size="40" shape="square" @click="openUploadAvatarDialog" />
-      <div class="mask-out">
+      <!-- <div class="mask-out">
         <span>上传头像</span>
-      </div>
+      </div> -->
     </div>
     <div class="aside-item" v-for="item in outsideList" :key="item.only">
       <div
@@ -46,7 +46,7 @@ function visibile(item) {
   return item?.show == "hide" ? false : true;
 }
 function openUploadAvatarDialog() {
-  emitter.emit("uploadAvatarDialog", true);
+  // emitter.emit("uploadAvatarDialog", true);
 }
 function toggle(item) {
   if (item?.mode == "other") {

@@ -22,7 +22,6 @@ VMdPreview.use(githubTheme, {
 });
 
 import * as directives from "./directives";
-import { api } from "@/api/node-admin-api";
 import { useI18n } from "./plugins/i18n";
 import { useElIcons } from "./plugins/icons";
 import { loadAllassembly } from "./components";
@@ -49,7 +48,7 @@ getServerConfig(app).then(async (config) => {
   app.use(MotionPlugin);
   app.mount("#app");
 });
-app.config.globalProperties.$api = api;
+// app.config.globalProperties.$api = api;
 // app.config.errorHandler = (err, instance, info) => {
 //   console.log(err, instance, info);
 // };

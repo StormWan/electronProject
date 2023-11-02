@@ -127,7 +127,7 @@ import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { ElMessageBox } from "element-plus";
 import * as ElIcons from "@element-plus/icons-vue";
-import { updateMenu, AddMenu, getMenu, DeleteMenu } from "@/api/node-admin-api/menu";
+import { updateMenu, AddMenu, getMenu, DeleteMenu } from "@/api/node-admin-api/index";
 import { Message, errorMessage, warnMessage } from "@/utils/message";
 import DialogMenu from "./DialogMenu.vue";
 

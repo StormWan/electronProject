@@ -1,7 +1,33 @@
 import http from "@/utils/http/index";
 import { isRobot } from "@/utils/chat/index";
 import axios from "axios";
-import qs from "qs";
+
+function fnMsgBody(data) {
+  const { type, Text, To, From } = data
+  return {
+    MsgBody: [
+      {
+        MsgType: type,
+        MsgContent: {
+          Text,
+        },
+      },
+    ],
+    SyncOtherMachine: 2,
+    CallbackCommand: "Bot.OnGroupMessage",
+    From_Account: From,
+    To_Account: To,
+    MsgRandom: 707438945,
+    MsgSeq: 350821200,
+    MsgTime: 1686709194,
+    SupportMessageExtension: 0,
+    MsgKey: '1349190009_53349086_1698387209',
+    OnlineOnlyFlag: 0,
+    SendMsgResult: 0,
+    ErrorInfo: "send msg succeed",
+    UnreadMsgNum: 1,
+  };
+}
 
 function fetchData(url) {
   let answer = "";
@@ -80,35 +106,9 @@ export const uploadFiles = async (params) => {
 export const imCallback = (params) => {
   console.log(params, "imCallback");
   const { Text, From, To, type } = params;
-  if (!isRobot(To)) return;
-  const data = {
-    MsgBody: [
-      {
-        MsgType: type,
-        MsgContent: {
-          Text: Text,
-        },
-      },
-    ],
-    SyncOtherMachine: 2,
-    CallbackCommand: "Bot.OnC2CMessage",
-    From_Account: From,
-    To_Account: To,
-    MsgRandom: 707438945,
-    MsgSeq: 350821200,
-    MsgTime: 1686709194,
-    SupportMessageExtension: 0,
-    MsgKey: "1349190009_53349086_1698387209",
-    OnlineOnlyFlag: 0,
-    SendMsgResult: 0,
-    ErrorInfo: "send msg succeed",
-    UnreadMsgNum: 1,
-  };
-  return http({
-    url: "/imCallback",
-    method: "post",
-    data: data,
-  });
+  // if (!isRobot(To)) return;
+  const data = fnMsgBody({ Text, From, To, type })
+  return http({ url: "/imCallback", method: "post", data });
 };
 
 export const stream = () => {

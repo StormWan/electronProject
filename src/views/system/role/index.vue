@@ -123,7 +123,7 @@
 import { reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import { Delete, Edit, Search, Share, Upload } from "@element-plus/icons-vue";
-import { getRoles, addRoles, deleteRoles, updateRoles } from "@/api/node-admin-api/roles";
+import { getRoles, addRoles, deleteRoles, updateRoles } from "@/api/node-admin-api/index";
 import { successMessage } from "@/utils/message";
 import { warnMessage } from "@/utils/message";
 import { formatTime } from "@/utils/common";

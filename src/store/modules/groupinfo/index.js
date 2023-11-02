@@ -1,5 +1,5 @@
 import { deleteConversation } from "@/api/im-sdk-api/index";
-import { restApi } from "@/api/node-admin-api/rest";
+import { restApi } from "@/api/node-admin-api/index";
 import {
   getGroupList,
   getGroupProfile,
@@ -7,7 +7,7 @@ import {
   quitGroup,
   createGroup,
   dismissGroup,
-} from "@/api/im-sdk-api/group";
+} from "@/api/im-sdk-api/index";
 
 function compareByRole(a, b) {
   const roles = { Owner: 1, Admin: 2, Member: 3 };

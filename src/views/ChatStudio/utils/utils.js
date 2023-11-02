@@ -5,8 +5,7 @@ import {
   CreateTextAtMsg,
   CreateFiletMsg,
   CreateImgtMsg,
-  sendMsg,
-} from "@/api/im-sdk-api/message";
+} from "@/api/im-sdk-api/index";
 
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块

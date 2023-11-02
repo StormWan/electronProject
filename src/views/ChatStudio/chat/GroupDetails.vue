@@ -115,7 +115,7 @@
 import { nextTick, ref, computed, toRefs, watchEffect } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
-import { updateGroupProfile, addGroupMember, deleteGroupMember } from "@/api/im-sdk-api/group";
+import { updateGroupProfile, addGroupMember, deleteGroupMember } from "@/api/im-sdk-api/index";
 import { useI18n } from "vue-i18n";
 import AddMemberPopup from "../components/AddMemberPopup.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";

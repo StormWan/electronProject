@@ -27,8 +27,6 @@
 <script>
 import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-import { getFriendList } from "@/api/im-sdk-api";
-import { getGroupList } from "@/api/im-sdk-api/group";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
@@ -101,13 +99,13 @@ export default defineComponent({
     test() {},
     test1() {
       // this.getGroupList();
-      this.$api.stream();
+      // this.$api.stream();
     },
     async test3() {
-      const data = await this.$api.restApi({
-        funName: "getappInfo",
-      });
-      console.log(data);
+      // const data = await this.$api.restApi({
+      //   funName: "getappInfo",
+      // });
+      // console.log(data);
     },
     setCookies() {
       console.log(pure);

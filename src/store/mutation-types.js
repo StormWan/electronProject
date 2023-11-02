@@ -23,7 +23,7 @@ export const CONVERSATIONTYPE = {
 
 export const GET_MESSAGE_LIST = "GET_MESSAGE_LIST"; //获取消息列表
 export const HISTORY_MESSAGE_COUNT = 20; //历史消息计数
-export const MULTIPLE_CHOICE_MAX = 10; //多选消息最大计数
+export const MULTIPLE_CHOICE_MAX = 20; //多选消息最大计数
 
 // 请求头-内容类型
 export const ContentType = {

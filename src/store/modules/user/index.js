@@ -1,10 +1,9 @@
 import router from "@/router";
-import { getMyProfile, TIM_logout, TIM_login } from "@/api/im-sdk-api";
+import { getMyProfile, TIM_logout, TIM_login } from "@/api/im-sdk-api/index";
 import { ElMessage } from "element-plus";
 import TIMProxy from "@/utils/IM";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
-import { login, register, logout } from "@/api/node-admin-api/user";
-import { getMenu } from "@/api/node-admin-api/menu";
+import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 import { nextTick } from "vue";

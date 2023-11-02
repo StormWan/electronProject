@@ -50,7 +50,7 @@
 import { ref, reactive } from "vue";
 import { useStore } from "vuex";
 import * as ElIcons from "@element-plus/icons-vue";
-import { AddMenu } from "@/api/node-admin-api/menu";
+import { AddMenu } from "@/api/node-admin-api/index";
 import { useBoolean } from "@/utils/hooks/index";
 const { dispatch, commit } = useStore();
 const ruleFormText = {

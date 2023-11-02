@@ -32,16 +32,13 @@ const { noMore, currentMessageList } = useState({
   display: flex;
   justify-content: center;
   align-items: center;
-  // height: 30px;
   width: 100%;
   overflow: hidden;
 }
 .showMore {
   padding-top: 12px;
   text-align: center;
-  color: #00f;
   font-size: 12px;
-  line-height: 20px;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.45);
 }

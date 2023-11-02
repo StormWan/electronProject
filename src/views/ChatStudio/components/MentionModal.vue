@@ -19,6 +19,12 @@
 import { mapState } from "vuex";
 import TIM from "@tencentcloud/chat";
 import { useEventListener } from "@vueuse/core";
+
+const compareUserID = (a, b) => {
+  const aHasRBT = a.userID.includes("@RBT#");
+  const bHasRBT = b.userID.includes("@RBT#");
+  return aHasRBT && !bHasRBT ? -1 : bHasRBT && !aHasRBT ? 1 : 0;
+};
 export default {
   name: "MentionModal",
   props: {
@@ -34,7 +40,9 @@ export default {
       currentMemberList: (state) => state.groupinfo.currentMemberList,
     }),
     filterList() {
-      return this.currentMemberList.filter((t) => t.userID !== this.currentUserProfile.userID);
+      return this.currentMemberList
+        .filter((t) => t.userID !== this.currentUserProfile.userID)
+        .sort(compareUserID);
     },
     // 根据 <input> value 筛选 list
     searchedList() {

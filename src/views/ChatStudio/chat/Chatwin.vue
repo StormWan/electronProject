@@ -80,7 +80,7 @@
         @click="handlRightClick(item)"
         v-show="isRight"
       >
-        {{ item.text }}
+        <p class="item">{{ item.text }}</p>
       </contextmenu-item>
     </contextmenu>
   </section>
@@ -121,8 +121,7 @@ import Stateful from "../components/Stateful.vue";
 import LoadMore from "../components/LoadMore.vue";
 import MyPopover from "@/views/components/MyPopover/index.vue";
 import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/mutation-types";
-import { deleteMsgList, revokeMsg, translateText } from "@/api/im-sdk-api";
-import { getMsgList } from "@/api/im-sdk-api/session";
+import { deleteMsgList, revokeMsg, translateText, getMsgList } from "@/api/im-sdk-api/index";
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
 import { download, downloadCopy, timeFormat } from "@/utils/chat/index";
@@ -680,8 +679,14 @@ $self-msg-color: #c2e8ff;
 }
 
 .v-contextmenu {
-  width: 154px;
+  .v-contextmenu-item--hover {
+    background: #f6f7f8 !important;
+  }
+  .item {
+    margin: 0;
+  }
   .v-contextmenu-item {
+    // width: 300px;
     height: 32px;
     line-height: 32px;
     padding: 0px 16px;

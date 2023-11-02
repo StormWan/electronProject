@@ -1,5 +1,4 @@
 <template>
-  <!-- 主题开关 -->
   <label class="switch">
     <input type="checkbox" v-model="themecolor" :checked="themecolor" />
     <span class="slider"></span>

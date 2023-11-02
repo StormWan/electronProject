@@ -14,10 +14,10 @@ const operates = [
 ];
 
 const thirdParty = [
-  {
-    title: "微信",
-    icon: "wechat",
-  },
+  // {
+  //   title: "微信",
+  //   icon: "wechat",
+  // },
   {
     title: "QQ",
     icon: "qq",
