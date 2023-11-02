@@ -111,7 +111,7 @@ const setToolbar = (item) => {
 const insertDraft = (value) => {
   if (!value) return;
   const editor = editorRef.value;
-  editor && editor.focus();
+  editor && editor.focus(true);
   const { conversationID: ID } = value;
   const draftMap = sessionDraftMap.value;
   const draft = draftMap.get(ID);
@@ -305,7 +305,8 @@ const sendMessage = async () => {
 };
 const setEditHtml = (text) => {
   const editor = editorRef.value;
-  editor?.setHtml(`<p>${text}</p>`);
+  editor.setHtml(`<p>${text}</p>`);
+  editor.focus(true);
 };
 const onEmitter = () => {
   emitter.on("handleAt", ({ id, name }) => {
@@ -330,7 +331,11 @@ const onEmitter = () => {
     editorRef.value.insertNode(ImageElement);
   });
 };
-
+function offEmitter() {
+  emitter.off("handleAt");
+  emitter.off("handleSetHtml");
+  emitter.off("handleInsertDraft");
+}
 const handleEditorKeyDown = async () => {
   await nextTick();
   if (initState.value) return;
@@ -350,6 +355,14 @@ const handleEditorKeyDown = async () => {
 
 watch(showMsgBox, () => {
   handleEditorKeyDown();
+});
+onActivated(() => {
+  handleEditorKeyDown();
+  console.log("Editor == onActivated");
+});
+onDeactivated(() => {
+  offEmitter();
+  console.log("Editor == onDeactivated");
 });
 onMounted(() => {
   onEmitter();
