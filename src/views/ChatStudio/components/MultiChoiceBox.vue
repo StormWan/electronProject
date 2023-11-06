@@ -55,6 +55,7 @@ export default {
       showMsgBox: (state) => state.conversation.showMsgBox,
       forwardData: (state) => state.conversation.forwardData,
       showCheckbox: (state) => state.conversation.showCheckbox,
+      currentUserProfile: (state) => state.user.currentUserProfile,
       conversationList: (state) => state.conversation.conversationList,
       currentConversation: (state) => state.conversation.currentConversation,
     }),
@@ -111,14 +112,37 @@ export default {
       });
       this.shutdown();
     },
+    transformData(data) {
+      return data.map((item) => {
+        if (item.type === "TIMTextElem") {
+          return `${item.nick}: ${item.payload.text}`;
+        } else if (item.type === "TIMImageElem") {
+          return `${item.nick}: [图片]`;
+        } else if (item.type === "TIMFileElem") {
+          return `${item.nick}: [文件]`;
+        } else if (item.type === "TIMRelayElem") {
+          return `${item.nick}: [合并消息]`;
+        } else {
+          return `${item.nick}: [待开发]`;
+        }
+      });
+    },
+    mergeTitle() {
+      const { type, userProfile } = this.currentConversation || {};
+      const self = this.currentUserProfile.nick;
+      return type == "GROUP" ? "群聊" : `${userProfile?.nick}和${self}的聊天记录`;
+    },
     // 合并转发
     async mergeForward() {
       if (!this.multipleValue) return;
-      const { toAccount, type } = this.multipleValue;
+      const { toAccount, type } = this.multipleValue; // 选中转发 人 群 详细信息
+      const forwardData = this.filterate();
       const forwardMsg = await createMergerMsg({
+        title: this.mergeTitle(),
         convId: toAccount,
         convType: type,
-        List: this.filterate(),
+        abstractList: this.transformData(forwardData),
+        List: forwardData,
       });
       const { code, message: data } = await sendMsg(forwardMsg);
       if (code == 0) {
@@ -131,6 +155,7 @@ export default {
           },
         });
       }
+      this.shutdown();
     },
     // 逐条转发
     async aQuickForward() {

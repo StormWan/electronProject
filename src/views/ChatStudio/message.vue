@@ -31,6 +31,8 @@
       <!-- 编辑器 -->
       <Editor />
     </div>
+    <!-- 合并消息弹框 -->
+    <MergeMessagePopup />
     <!-- 群详情 -->
     <GroupDetails
       v-if="currentType === TIM.TYPES.CONV_GROUP"
@@ -69,6 +71,7 @@ import GroupDetails from "./chat/GroupDetails.vue";
 import networklink from "./components/networklink.vue";
 import ConversationList from "./chat/ConversationList.vue";
 import MultiChoiceBox from "./components/MultiChoiceBox.vue";
+import MergeMessagePopup from "./components/MergeMessagePopup.vue";
 
 const unread = ref("未读");
 const ChatRef = ref(null);

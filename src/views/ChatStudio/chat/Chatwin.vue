@@ -360,6 +360,7 @@ const handleContextMenuEvent = (event, item) => {
   console.log(item, "右键菜单数据");
   const isTip = type == "TIMGroupTipElem";
   const isFile = type == "TIMFileElem";
+  const isRelay = type == "TIMRelayElem";
   const isCheckStatus = showCheckbox.value; // 多选状态
   // 撤回消息 提示类型消息
   if (isRevoked || isTip || isCheckStatus) {
@@ -383,6 +384,10 @@ const handleContextMenuEvent = (event, item) => {
   // 群主 & 群聊
   if (isOwner.value && currentType.value === TIM.TYPES.CONV_GROUP) {
     if (!self) RIGHT_CLICK_MENU_LIST.value = MENU_LIST;
+  }
+  // 合并消息
+  if (isRelay) {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "copy");
   }
   // 非文件消息
   if (!isFile) {

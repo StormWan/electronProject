@@ -1,3 +1,4 @@
+import store from "@/store";
 /**
  * 将二进制数据转换为 base64 URL 格式
  * @param {string | Buffer} data 要转换的数据，可以是一个字符串或一个 Buffer 对象
@@ -288,7 +289,10 @@ export function bytesToSize(bytes) {
 
 export const scrollToDomPostion = (msgid) => {
   const dom = document.getElementById(`${msgid}`);
-  if (!dom) return;
+  if (!dom) {
+    store.commit("showMessage", { message: '无法查看上下文', type: "warning" });
+    return;
+  }
   dom.scrollIntoView({ behavior: "smooth", block: "center" });
   dom.classList.add("shrink-style");
   setTimeout(() => {

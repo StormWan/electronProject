@@ -1,17 +1,20 @@
 <template>
   <div class="merge" @click="onClick">
     <div class="preview">
-      <div class="preview_title">{{ message.payload.title }}</div>
-      <div class="preview_item" v-for="item in message.payload.abstractList" :key="item">
+      <div class="preview_title">
+        <span :title="message.payload.title"> {{ message.payload.title }}</span>
+      </div>
+      <div class="preview_item" v-for="item in abstractList" :key="item">
         <div class="preview_text">{{ item }}</div>
       </div>
     </div>
-    <div class="footer">聊天记录</div>
+    <div class="footer" v-show="num">{{ `查看${num}条转发消息` }}</div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
+import emitter from "@/utils/mitt-bus";
 const props = defineProps({
   message: {
     type: Object,
@@ -19,8 +22,17 @@ const props = defineProps({
   },
 });
 const { message } = toRefs(props);
+
+const num = computed(() => {
+  return message.value.payload.messageList.length || null;
+});
+
+const abstractList = computed(() => {
+  return message.value.payload.abstractList?.slice(0, 3) || [];
+});
 function onClick() {
-  console.log(message);
+  console.log(message.value);
+  emitter.emit("openMergePopup", message.value);
 }
 </script>
 
@@ -40,6 +52,13 @@ function onClick() {
       height: 40px;
       padding: 12px 12px 0 12px;
       color: rgba(0, 0, 0, 0.85);
+      span {
+        display: inline-block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .preview_item {
       box-sizing: border-box;
@@ -47,6 +66,12 @@ function onClick() {
       font-size: 14px;
       height: 20px;
       padding: 0 12px;
+      .preview_text {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
     }
   }
   .footer {

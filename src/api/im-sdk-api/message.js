@@ -110,7 +110,7 @@ export const createMergerMsg = async (params) => {
     payload: {
       messageList: List,
       title: title || "聊天记录",
-      abstractList: ["allen: 666", "iris: [图片]", "linda: [文件]"],
+      abstractList: abstractList || ["allen: 666", "iris: [图片]"],
       compatibleText: "当前版本不支持",
     },
     // 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到，v2.10.2起支持）
