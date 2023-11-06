@@ -29,7 +29,7 @@ const frame = [
   // "gitee"
 ];
 const Component = {
-  apply: application, // 应用
+  electron: application, // 应用
   address_book: mailList, //通讯录
   test: test, // 测试
 };

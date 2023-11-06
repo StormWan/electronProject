@@ -40,6 +40,13 @@ const sidebar = {
         type: "el-icon",
       },
       {
+        only: "electron",
+        icon: "Eleme",
+        title: "electron",
+        show: production ? "hide" : "",
+        type: "el-icon",
+      },
+      {
         only: "more",
         icon: "MoreFilled",
         title: "更多",
