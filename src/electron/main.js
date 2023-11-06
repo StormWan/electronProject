@@ -20,7 +20,7 @@ class Background {
       if (!gotTheLock) {
         return app.quit();
       } else {
-        app.on('second-instance', (event, argv) => { })
+        app.on("second-instance", (event, argv) => {});
       }
     }
 
@@ -138,6 +138,13 @@ class Background {
         };
       });
     });
+
+    // 用于开发环境 测试热更新
+    // Object.defineProperty(app, 'isPackaged', {
+    //   get() {
+    //     return true;
+    //   }
+    // });
   }
 }
 

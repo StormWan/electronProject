@@ -1,6 +1,8 @@
 import { app, shell, clipboard, BrowserWindow, dialog, Menu, nativeImage } from "electron";
 const { execFile, exec } = require("child_process");
 import { isWindows, isMac } from "@/electron/utils/platform";
+const os = require("os");
+const { version } = require("../../../package.json");
 import path from "path";
 
 const viewSize = {
@@ -75,6 +77,25 @@ export const handleScreenshot = () => {
       }
     });
   }
+};
+/* dialog */
+export const showMessageBox = () => {
+  const options = {
+    title: "关于",
+    type: "info",
+    message: "Pure Admin",
+    detail: `版本信息：${version}\n当前系统：${os.type()} ${os.arch()} ${os.release()}`,
+    noLink: true,
+    buttons: ["查看github", "确定"],
+  };
+  dialog
+    .showMessageBox(options)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 export const quitApp = (type) => {};

@@ -6,9 +6,13 @@ import {
   minMainWindow,
   maxMainWindow,
   openExternal,
+  showMessageBox,
   setmainViewSize,
   handleScreenshot,
 } from "../utils/util";
+
+import Update from "../utils/checkupdate";
+const allUpdater = new Update();
 
 const ipcEvent = () => {
   // 置顶主窗口
@@ -24,6 +28,11 @@ const ipcEvent = () => {
   // 主窗口最大化
   ipcMain.on("maxMainWindow", () => {
     maxMainWindow();
+  });
+
+  // dialog 系统弹框
+  ipcMain.on("showMessageBox", () => {
+    showMessageBox();
   });
 
   //关闭所有窗口
@@ -55,13 +64,31 @@ const ipcEvent = () => {
 
   //截图
   ipcMain.on("screenshot", (event, data) => {
-    handleScreenshot()
+    handleScreenshot();
   });
 
   // 设置主窗口尺寸
   ipcMain.on("setmainViewSize", (event, data) => {
     setmainViewSize(data);
   });
+
+  // 检查更新
+  ipcMain.on("check-update", () => {
+    allUpdater.checkUpdate();
+  });
+
+  // 下载更新包
+  ipcMain.on("down-update", () => {
+    allUpdater.downUpdate();
+  });
+
+  // 确定更新
+  ipcMain.on("confirm-update", () => {
+    allUpdater.quitInstall();
+  });
+
+  // 热更新
+  // ipcMain.on('hot-update', (event, data) => {})
 };
 
 export default ipcEvent;
