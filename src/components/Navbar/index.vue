@@ -1,10 +1,24 @@
 <template>
   <header class="header" v-if="isWindows">
     <div class="titlebar flex justify-content" :class="{ 'has-custom-titlebar': true }">
-      <div></div>
-      <div class="setting flex">
-        <div class="item" v-for="item in button" :key="item.type" @click="onClick(item)">
-          <svg-icon :iconClass="item.type" />
+      <div class="log">
+        <img class="" src="../../assets/images/log.png" alt="" />
+        <span>{{ $config.Title }}</span>
+      </div>
+      <div class="flex items-center">
+        <el-dropdown>
+          <Portrait class="user-info" :size="28" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="$store.dispatch('LOG_OUT')">退出登录</el-dropdown-item>
+              <!-- <el-dropdown-item></el-dropdown-item> -->
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <div class="setting flex">
+          <div class="item" v-for="item in button" :key="item.type" @click="onClick(item)">
+            <svg-icon :iconClass="item.type" />
+          </div>
         </div>
       </div>
     </div>
@@ -69,6 +83,18 @@ async function onClick(item) {
   padding: 0 16px;
   -webkit-app-region: drag;
 }
+.log {
+  img {
+    width: 15px;
+  }
+  span {
+    vertical-align: baseline;
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 4px;
+    color: rgb(80 83 90);
+  }
+}
 .setting {
   -webkit-app-region: no-drag;
   .item {
@@ -80,5 +106,9 @@ async function onClick(item) {
       color: var(--color-icon-hover) !important;
     }
   }
+}
+.user-info {
+  cursor: pointer;
+  -webkit-app-region: no-drag;
 }
 </style>

@@ -17,7 +17,7 @@
       </div>
       <div class="arrow-setup">
         <screenfull />
-        <div class="user">
+        <div class="user" v-show="!isWindows">
           <el-dropdown>
             <span class="el-dropdown-link">
               <Portrait :size="28" />
@@ -63,6 +63,7 @@ import { useState } from "@/utils/hooks/useMapper";
 import SideBar from "@/views/home/SideBar/index.vue";
 import { showConfirmationBox } from "@/utils/message";
 import screenfull from "./screenfull.vue";
+import { isWindows } from "@/electron/utils/platform";
 import Tags from "./Tags.vue";
 
 const { dispatch, commit } = useStore();
