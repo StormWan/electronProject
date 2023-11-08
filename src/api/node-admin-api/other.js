@@ -14,7 +14,7 @@ function fnMsgBody(data) {
       },
     ],
     SyncOtherMachine: 2,
-    CallbackCommand: "Bot.OnGroupMessage",
+    CallbackCommand: "Bot.OnC2CMessage",
     From_Account: From,
     To_Account: To,
     MsgRandom: 707438945,

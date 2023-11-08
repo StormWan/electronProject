@@ -10,16 +10,6 @@ const sidebar = {
         if_fixed: 1,
         type: "el-icon",
       },
-      // {
-      //   only: "address_book",
-      //   icon: "mail_list",
-      //   title: "通讯录",
-      // },
-      // {
-      //   only: 'apply',
-      //   icon: "application",
-      //   title: "应用",
-      // },
       {
         only: "document",
         icon: "Document",
@@ -35,7 +25,7 @@ const sidebar = {
       {
         only: "test",
         icon: "SwitchFilled",
-        title: "测试",
+        title: "web",
         show: production ? "hide" : "",
         type: "el-icon",
       },
@@ -60,11 +50,12 @@ const sidebar = {
         icon: "github",
         title: "github",
       },
-      // {
-      //   only: 'gitee',
-      //   icon: "Connection",
-      //   title: "gitee",
-      // }
+      {
+        only: 'gitee',
+        icon: "Pear",
+        title: "gitee",
+        type: "el-icon",
+      }
     ],
   },
   getters: {},

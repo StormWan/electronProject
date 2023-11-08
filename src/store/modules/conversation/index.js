@@ -10,7 +10,7 @@ import {
   setMessageRemindType,
   sendMsg,
   getMsgList,
-  getUnreadMsg
+  getUnreadMsg,
 } from "@/api/im-sdk-api/index";
 
 const getBaseTime = (list) => {
@@ -311,7 +311,7 @@ const conversation = {
     // 设置会话草稿
     // setConversationDraft
     SET_SESSION_DRAFT(state, action) {
-      if (!action) return
+      if (!action) return;
       const { ID, payload } = action;
       const length = payload?.[0]?.children.length == 1;
       const text = payload?.[0]?.children[0].text == "";
@@ -324,12 +324,12 @@ const conversation = {
     // 设置撤回消息重新编辑
     setRevokeMsg(state, action) {
       const { data, type } = action;
-      if (type == 'set') {
-        state.revokeMsgMap.set(data.ID, data.payload)
+      if (type == "set") {
+        state.revokeMsgMap.set(data.ID, data.payload);
       } else {
-        state.revokeMsgMap.delete(data.ID)
+        state.revokeMsgMap.delete(data.ID);
       }
-    }
+    },
   },
   actions: {
     // 获取消息列表

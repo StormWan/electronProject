@@ -24,7 +24,7 @@ const props = defineProps({
 const { message } = toRefs(props);
 
 const num = computed(() => {
-  return message.value.payload.messageList.length || null;
+  return message.value.payload.messageList.length || message.value.payload.abstractList.length;
 });
 
 const abstractList = computed(() => {
@@ -46,7 +46,6 @@ function onClick() {
   cursor: pointer;
   .preview {
     max-height: 105px;
-    border-bottom: 1px solid #d5dbdf;
     .preview_title {
       font-size: 16px;
       height: 40px;
@@ -79,6 +78,7 @@ function onClick() {
     line-height: 30px;
     padding-left: 12px;
     color: rgba(0, 0, 0, 0.45);
+    border-top: 1px solid #d5dbdf;
   }
 }
 </style>
