@@ -6,40 +6,29 @@
         <span class="style-text">{{ greetings }}</span>
       </div>
     </el-card>
-    <el-row :gutter="16" class="style-row">
-      <el-col>
-        <el-card>
-          <template #header>
-            <span class="style-text"> GitHub饼图信息 </span>
-          </template>
-          <el-skeleton animated :rows="7" :loading="loading">
-            <template #default>
-              <div></div>
+    <template v-for="(item, index) in header" :key="index">
+      <el-row :gutter="16" class="style-row">
+        <el-col>
+          <el-card>
+            <template #header>
+              <span class="style-text"> {{ item.title }} </span>
             </template>
-          </el-skeleton>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="16" class="style-row">
-      <el-col>
-        <el-card>
-          <template #header>
-            <span class="style-text"> GitHub饼图信息 </span>
-          </template>
-          <el-skeleton animated :rows="7" :loading="loading">
-            <template #default>
-              <div>测试</div>
-            </template>
-          </el-skeleton>
-        </el-card>
-      </el-col>
-    </el-row>
+            <el-skeleton animated :rows="7" :loading="loading">
+              <template #default>
+                <div></div>
+              </template>
+            </el-skeleton>
+          </el-card>
+        </el-col>
+      </el-row>
+    </template>
   </el-scrollbar>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
 
+const header = [{ title: "GitHub饼图信息" }, { title: "Gitee饼图信息" }];
 let loading = ref(true);
 const date = new Date();
 

@@ -223,6 +223,23 @@ export function getReplyMsgContent(reply) {
   return replyMsgContent;
 }
 
+export function getCustomMsgContent() {
+  return JSON.stringify({
+    data: {
+      body: {
+        bodyType: "loadingBody",
+        text: {
+          loadingIcon: "",
+          value: "正在输入中..."
+        }
+      }
+    },
+    display: 0,
+    ID: "loading",
+    listMessage: "正在输入中..."
+  })
+}
+
 /**
  * 匹配不包含 <img src= 的字符串
  * @param {string[]} arr - 包含字符串和图片链接的数组

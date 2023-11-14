@@ -5,16 +5,20 @@
       <svg-icon iconClass="iconxiaolian" class="icon-hover" />
     </span>
     <!-- 图片 -->
-    <span data-title="图片" class="icon" @click="SendImageClick">
+    <span v-show="!isRobot(toAccount)" data-title="图片" class="icon" @click="SendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span data-title="文件" class="icon" @click="SendFileClick">
+    <span v-show="!isRobot(toAccount)" data-title="文件" class="icon" @click="SendFileClick">
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
     <span data-title="截图" class="icon" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
+    </span>
+    <!-- 机器人配置 -->
+    <span v-show="isRobot(toAccount)" data-title="配置" class="icon" @click="openRobotBox">
+      <el-icon class="robot icon-hover"><Setting /></el-icon>
     </span>
     <!-- 滚动到底部 -->
     <span data-title="滚动到底部" class="chat_vot icon" @click="onTobBottom" v-show="tobottom">
@@ -39,6 +43,7 @@
       accept=".mp4"
       hidden
     /> -->
+    <RobotOptions />
     <EmotionPackBox @SelectEmoticon="SelectEmoticon" />
   </div>
 </template>
@@ -47,9 +52,12 @@
 import html2canvas from "html2canvas";
 import emitter from "@/utils/mitt-bus";
 import EmotionPackBox from "./EmotionPackBox.vue";
+import RobotOptions from "./RobotOptions.vue";
 import { useStore } from "vuex";
 import { ref, defineEmits } from "vue";
 import { dataURLtoFile } from "@/utils/chat/index";
+import { isRobot } from "@/utils/chat/index";
+import { useState, useGetters } from "@/utils/hooks/useMapper";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 const { production } = require("@/config/vue.custom.config");
@@ -58,11 +66,16 @@ const tobottom = ref();
 const imagePicker = ref();
 const filePicker = ref();
 const { commit } = useStore();
+
 const emit = defineEmits(["setEmoj", "setPicture", "setParsefile"]);
+const { toAccount } = useGetters(["toAccount"]);
 
 const sendEmojiClick = () => {
   emitter.emit("onEmotionPackBox", true);
 };
+function openRobotBox() {
+  emitter.emit("onRobotBox", true);
+}
 const SelectEmoticon = (item, table) => {
   let url = "";
   if (table == "QQ") {
@@ -128,6 +141,9 @@ emitter.on("onisbot", (state) => {
     position: relative;
     text-align: center;
     color: #808080;
+  }
+  .robot {
+    cursor: pointer;
   }
   & > .icon:hover:after {
     font-size: 13px;

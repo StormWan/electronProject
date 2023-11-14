@@ -192,7 +192,7 @@ export default {
     filterate() {
       let myObj = Object.fromEntries(this.forwardData);
       const obj = Object.values(myObj).map((item) => item);
-      return obj;
+      return obj.sort((a, b) => a.clientTime - b.clientTime);
     },
     shutdown() {
       // 清空多选数据

@@ -1,6 +1,6 @@
 import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 import { addTimeDivider } from "@/utils/chat/index";
-import { imCallback } from "@/api/node-admin-api/index";
+import { imCallback, restApi } from "@/api/node-admin-api/index";
 import TIM from "@tencentcloud/chat";
 import { nextTick } from "vue";
 import {
@@ -12,6 +12,16 @@ import {
   getMsgList,
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
+
+function transformData(data) {
+  const inputData = data.filter((item) => !item.isTimeDivider && !item.isDeleted && !item.isRevoked);
+  return inputData.map(data => {
+    return {
+      role: data.flow === "in" ? "assistant" : "user",
+      content: data.payload.text
+    };
+  }).reverse();
+}
 
 const getBaseTime = (list) => {
   return list?.length > 0 ? list.find((t) => t.isTimeDivider).time : 0;
@@ -430,9 +440,7 @@ const conversation = {
           message: payload.message,
         },
       });
-      // nextTick(() => {
       commit("updataScroll");
-      // });
       // 发送消息
       const { code, message } = await sendMsg(payload.message);
       if (code == 0) {
@@ -453,12 +461,13 @@ const conversation = {
         },
       });
       commit("updataScroll");
-      // imCallback({
-      //   Text: message.payload.text,
-      //   From: message.from,
-      //   To: message.to,
-      //   type: message.type,
-      // });
+      imCallback({
+        messages: transformData(state.currentMessageList),
+        Text: message.payload.text,
+        From: message.from,
+        To: message.to,
+        type: message.type,
+      });
     },
   },
   getters: {

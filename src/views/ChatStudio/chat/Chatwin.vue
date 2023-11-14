@@ -36,7 +36,10 @@
               :isRevoked="item.isRevoked"
               @click.stop="handleSelect($event, item, 'initial')"
             />
-            <div class="picture" v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'">
+            <div
+              class="picture select-none"
+              v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'"
+            >
               <el-avatar
                 :size="36"
                 shape="square"
@@ -72,6 +75,7 @@
         </div>
       </div>
     </el-scrollbar>
+    <!-- 卡片 -->
     <MyPopover />
     <contextmenu ref="contextmenu">
       <contextmenu-item
@@ -167,7 +171,6 @@ const {
   currentMessageList: (state) => state.conversation.currentMessageList,
   currentConversation: (state) => state.conversation.currentConversation,
 });
-const opendialog = () => {};
 
 const updateLoadMore = (newValue) => {
   nextTick(() => {
@@ -235,11 +238,7 @@ const ISown = (item) => {
 const onclickavatar = (e, item) => {
   const isSelf = ISown(item);
   if (isSelf || showCheckbox.value) return;
-  commit("setPopoverStatus", {
-    status: true,
-    seat: e,
-    cardData: item,
-  });
+  emitter.emit("setPopoverStatus", { status: true, seat: e, cardData: item });
 };
 const scrollBottom = () => {
   try {
@@ -270,12 +269,15 @@ const scrollbar = ({ scrollLeft, scrollTop }) => {
   debouncedFunc();
 };
 
-const updateScrollBarHeight = () => {
-  nextTick(() => {
-    // messageViewRef.value?.firstElementChild?.scrollIntoView();
-    const ViewRef = messageViewRef.value;
-    scrollbarRef.value?.scrollTo(0, ViewRef?.scrollHeight);
-  });
+const updateScrollBarHeight = (data) => {
+  if (data == "instantly") {
+    scrollbarRef.value?.scrollTo(0, messageViewRef.value?.scrollHeight);
+  } else {
+    nextTick(() => {
+      // messageViewRef.value?.firstElementChild?.scrollIntoView();
+      scrollbarRef.value?.scrollTo(0, messageViewRef.value?.scrollHeight);
+    });
+  }
 };
 
 const updateScrollbar = () => {
@@ -455,9 +457,7 @@ const handleTranslate = (data) => {
   console.log(data1);
 };
 // 转发
-const handleForward = (data) => {
-  opendialog();
-};
+const handleForward = (data) => {};
 // 回复消息
 const handleReplyMsg = (data) => {
   commit("setReplyMsg", data);
@@ -519,7 +519,7 @@ emitter.on("updataScroll", (data) => {
   if (data == "bottom") {
     scrollBottom() && updateScrollBarHeight();
   } else {
-    updateScrollBarHeight();
+    updateScrollBarHeight(data);
   }
 });
 

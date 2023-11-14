@@ -1,7 +1,7 @@
 import tim from "@/utils/im-sdk/tim";
 import TIM from "@tencentcloud/chat";
 import emitter from "@/utils/mitt-bus";
-import { getReplyMsgContent } from "@/utils/chat/index";
+import { getReplyMsgContent, getCustomMsgContent } from "@/utils/chat/index";
 
 const fileUploading = (data, bar = 0) => {
   const uuid = data?.payload?.uuid || "";
@@ -25,17 +25,14 @@ export const sendMsg = async (params) => {
 };
 // 创建自定义消息
 export const createCustomMsg = async (params) => {
-  const { convId, convType, textMsg } = params;
-  function random(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-  // 2. 创建消息实例，接口返回的实例可以上屏
-  const message = tim.createCustomMessage({
+  const { convId, convType, textMsg, customType } = params;
+  const customData = getCustomMsgContent('loading')
+  return tim.createCustomMessage({
     to: convId,
     conversationType: convType,
     payload: {
-      data: "dice", // 用于标识该消息是骰子类型消息
-      description: String(random(1, 6)), // 获取骰子点数
+      data: customType,
+      description: customData,
       extension: "",
     },
   });
@@ -50,7 +47,6 @@ export const CreateTextMsg = async (params) => {
     payload: {
       text: textMsg,
     },
-    // needReadReceipt: true,
     cloudCustomData: replyMsgContent,
   });
   return message;

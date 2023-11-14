@@ -18,9 +18,6 @@ export default {
   // namespaced: true,
   state: {
     isShowAddBook: false, // 地址本状态
-    popover: false, // 卡片
-    seat: null,
-    cardData: null,
     groupDrawer: false, // 群聊开关
     groupList: [], //群组列表
     groupProfile: null, // 群聊数据
@@ -57,12 +54,6 @@ export default {
     // 打开地址本
     setAddbookStatus(state, status) {
       state.isShowAddBook = status;
-    },
-    setPopoverStatus(state, payload) {
-      const { status, seat, cardData } = payload;
-      state.popover = status;
-      state.seat = seat;
-      state.cardData = cardData;
     },
     setGroupStatus(state, status) {
       state.groupDrawer = status;

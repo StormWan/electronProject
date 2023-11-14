@@ -24,7 +24,7 @@ const props = defineProps({
 const { message } = toRefs(props);
 
 const num = computed(() => {
-  return message.value.payload.messageList.length || message.value.payload.abstractList.length;
+  return message.value.payload.messageList?.length || message.value.payload.abstractList?.length;
 });
 
 const abstractList = computed(() => {

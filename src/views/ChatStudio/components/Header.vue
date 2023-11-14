@@ -34,6 +34,9 @@ const { Conver, groupDrawer, groupProfile } = useState({
 const openSetup = () => {
   commit("setGroupStatus", true);
 };
+const openUser = () => {
+  console.log(Conver.value);
+};
 const HeaderView = (props) => {
   const { list } = props;
   if (!list) return;
@@ -45,7 +48,7 @@ const HeaderView = (props) => {
         userProfile: { userID, nick },
         remark,
       } = list || {};
-      fn = h("span", { class: "style-c2c" }, nick || userID || remark);
+      fn = h("span", { onClick: () => openUser(), class: "style-c2c" }, nick || userID || remark);
       break;
     case "GROUP":
       const {

@@ -1,15 +1,10 @@
 <template>
   <div
     class="robot-box radial"
+    :class="{ 'is-robot': isRobot(cardData?.from) }"
+    :style="{ left: left, top: top }"
     v-if="cardData"
-    :class="{
-      'is-robot': isRobot(cardData.from),
-    }"
-    :style="{
-      left: left,
-      top: top,
-    }"
-    v-show="drawer"
+    v-show="card"
     ref="popoverRef"
   >
     <div class="title">
@@ -19,7 +14,7 @@
     </div>
     <div class="content">
       <div class="characters">
-        <span>{{ userProfile?.selfSignature || "待开发" }} </span>
+        <span>{{ userProfile?.selfSignature || "" }} </span>
       </div>
     </div>
     <div class="footer">
@@ -29,7 +24,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watchEffect, onMounted, onUnmounted } from "vue";
+import {
+  ref,
+  reactive,
+  toRefs,
+  computed,
+  watchEffect,
+  onMounted,
+  onUnmounted,
+  onActivated,
+  onDeactivated,
+} from "vue";
 import { useStore } from "vuex";
 import Label from "@/views/ChatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
@@ -37,44 +42,41 @@ import { isRobot } from "@/utils/chat/index";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
 import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
 import { getUserProfile } from "@/api/im-sdk-api/index";
+import emitter from "@/utils/mitt-bus";
+import { useBoolean } from "@/utils/hooks/index";
+const [card, setCard] = useBoolean();
 
 const popoverRef = ref();
 const left = ref("");
 const top = ref("");
+const cardData = ref(null);
 const userProfile = ref(null);
-const state = reactive({
-  back: require("@/assets/images/gptBack.png"),
-});
-const { back } = toRefs(state);
 
 const { dispatch, commit } = useStore();
-const { popover, seat, cardData } = useState({
-  seat: (state) => state.groupinfo.seat,
-  cardData: (state) => state.groupinfo.cardData,
-  popover: (state) => state.groupinfo.popover,
+
+const { chat } = useState({
+  chat: (state) => state.conversation.currentConversation,
 });
 
 const closeModal = () => {
   userProfile.value = null;
-  commit("setPopoverStatus", {
-    status: false,
-  });
+  setCard(false);
 };
 
 const define = () => {
-  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${cardData.value.from}` });
   closeModal();
+  if (cardData.value?.conversationType == "C2C") return;
+  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${cardData.value.from}` });
 };
 
 onClickOutside(popoverRef, (event) => {
-  if (!popover.value) return;
   closeModal();
 });
 
-const setPosition = (popover) => {
-  if (!popover) return;
+const setPosition = (data) => {
+  if (!data) return;
   try {
-    const { x, y } = popover;
+    const { x, y } = data;
     const l = x + 30;
     const t = y - 80;
     left.value = l + "px";
@@ -83,31 +85,33 @@ const setPosition = (popover) => {
     console.log(error);
   }
 };
-const setUserProfile = () => {
+const setUserProfile = async () => {
+  if (chat.value?.userProfile) {
+    userProfile.value = chat.value.userProfile;
+  }
   const userID = cardData.value?.from;
-  if (userProfile.value) return;
-  getUserProfile(userID)
-    .then(({ data }) => {
-      userProfile.value = data?.[0];
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const { code, data } = await getUserProfile(userID);
+  if (code == 0) {
+    userProfile.value = data?.[0];
+  }
   console.log(userProfile.value);
 };
-const openCard = () => {
+const setCardData = (data) => {
+  cardData.value = data;
+};
+const openCard = (data) => {
+  setPosition(data.seat);
+  setCardData(data.cardData);
   setUserProfile();
-  setPosition(seat.value);
+  setTimeout(() => {
+    setCard(true);
+  }, 100);
 };
 
-const drawer = computed({
-  get() {
-    openCard();
-    return popover.value;
-  },
-  set(val) {
-    closeModal();
-  },
+onMounted(() => {
+  emitter.on("setPopoverStatus", (data) => {
+    openCard(data);
+  });
 });
 </script>
 

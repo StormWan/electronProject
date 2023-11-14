@@ -26,7 +26,7 @@ const service = axios.create({
   //   console.log(persent);
   // },
 });
-const whiteList = ["/imCallback"];
+const whiteList = ["/imCallback", '/rest-api'];
 // 请求拦截器
 service.interceptors.request.use((config) => {
   const { url } = config;
