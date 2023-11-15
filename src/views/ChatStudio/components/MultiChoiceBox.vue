@@ -227,7 +227,7 @@ export default {
 </script>
 <style lang="scss">
 .tabulation-style {
-  max-height: 200px;
+  max-height: 400px;
   overflow: auto;
   .tabulationHover {
     background: hsl(220, 20%, 91%);

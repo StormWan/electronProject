@@ -23,7 +23,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="$t('common.createGroupChat')"
-      width="30%"
+      width="400px"
       :before-close="handleClose"
     >
       <div>

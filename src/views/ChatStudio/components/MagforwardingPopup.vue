@@ -2,7 +2,8 @@
   <el-dialog
     v-model="dialogVisible"
     title="选择要转发的联系人"
-    width="30%"
+    width="600px"
+    align-center
     :before-close="handleClose"
   >
     <div class="tabulation-style">

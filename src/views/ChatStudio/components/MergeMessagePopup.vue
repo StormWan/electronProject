@@ -1,19 +1,36 @@
 <template>
   <el-dialog
     v-model="dialogVisible"
-    :title="mergValue.title"
+    :title="mergValue?.payload?.title"
     width="680px"
+    align-center
     :before-close="handleClose"
   >
     <el-scrollbar always>
       <div class="merg-dialog">
-        <div v-for="item in mergValue.messageList" :key="item.ID">
-          <NameComponent :item="item" />
-          {{ formatTime(item.clientTime * 1000) }}
-          {{ item.messageBody[0].payload }}
-          <!-- <div :class="Megtype(item.type)" :id="item.ID">
-          <component :key="item.ID" :is="loadMsgModule(item)" :message="item"> </component>
-        </div> -->
+        <div class="flex" v-for="item in mergValue.payload.messageList" :key="item.ID">
+          <div class="avatar">
+            <el-avatar
+              :size="36"
+              shape="square"
+              :src="item.avatar || circleUrl"
+              @error="() => true"
+            >
+              <img :src="circleUrl" />
+            </el-avatar>
+          </div>
+          <div class="item">
+            <p class="nick">{{ item.nick }} {{ timeFormat(item.clientTime * 1000, true) }}</p>
+            <div :class="Megtype(item.messageBody[0].type)">
+              <component
+                :key="mergValue.ID"
+                :is="loadMsgModule(item)"
+                :msgType="mergValue.conversationType"
+                :message="item.messageBody[0]"
+              >
+              </component>
+            </div>
+          </div>
         </div>
       </div>
     </el-scrollbar>
@@ -31,16 +48,15 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
+import { ref } from "vue";
 import emitter from "@/utils/mitt-bus";
 import { useBoolean } from "@/utils/hooks/index";
-import { formatTime } from "@/utils/common";
-import NameComponent from "../components/NameComponent.vue";
-import { Megtype, msgOne } from "../utils/utils";
+import { timeFormat } from "@/utils/chat/index";
+import { Megtype } from "../utils/utils";
+import { circleUrl } from "../utils/menu";
 
 import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
 import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
-import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
 import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
 import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
 import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
@@ -49,16 +65,20 @@ const [dialogVisible, setDialogVisible] = useBoolean();
 const mergValue = ref({});
 
 const loadMsgModule = (item) => {
-  const { type, isRevoked } = item;
-  const CompMap = {
-    TIMTextElem: TextElemItem, //文本消息
-    TIMRelayElem: RelayElemItem, // 合并转发消息
-    TIMImageElem: ImageElemItem, // 图片消息
-    TIMFileElem: FileElemItem, // 文件消息
-    TIMCustomElem: CustomElemItem, // 自定义消息
-  };
-  if (isRevoked) return TipsElemItem;
-  return CompMap[type] || null;
+  try {
+    const type = item.messageBody[0].type;
+    const CompMap = {
+      TIMTextElem: TextElemItem, //文本消息
+      TIMRelayElem: RelayElemItem, // 合并转发消息
+      TIMImageElem: ImageElemItem, // 图片消息
+      TIMFileElem: FileElemItem, // 文件消息
+      TIMCustomElem: CustomElemItem, // 自定义消息
+    };
+    return CompMap[type] || null;
+  } catch (error) {
+    console.error("[loadMsg] error", error);
+    return null;
+  }
 };
 
 function handleClose(done) {
@@ -71,8 +91,8 @@ function handleCancel() {
 function handleConfirm() {
   setDialogVisible(false);
 }
-emitter.on("openMergePopup", ({ payload }) => {
-  mergValue.value = payload;
+emitter.on("openMergePopup", (data) => {
+  mergValue.value = data;
   setDialogVisible(true);
 });
 </script>
@@ -80,5 +100,19 @@ emitter.on("openMergePopup", ({ payload }) => {
 <style lang="scss" scoped>
 .merg-dialog {
   height: 400px;
+  & > div {
+    padding: 10px 0 10px 0;
+  }
+  .avatar {
+    padding: 0 12px 0 0;
+  }
+  .item {
+    .nick {
+      display: flex;
+      gap: 0 5px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
 }
 </style>

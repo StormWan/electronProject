@@ -34,13 +34,15 @@ body {
     "微软雅黑", Arial, sans-serif;
 }
 
-// 通用ul li
 ul {
   margin: 0;
   padding: 0;
   li {
     list-style-type: none;
   }
+}
+p {
+  margin: 0;
 }
 .frame-iframe {
   border: 0;

@@ -84,6 +84,7 @@ export const sendMsg = async (params, message) => {
 };
 export const modifyMsg = throttle(async (params, message) => {
   const { From_Account, To_Account, MsgKey } = params;
+  if (!message) return
   restApi({
     params: { From_Account, To_Account, MsgKey, message, },
     funName: "modifyC2cMsg",
