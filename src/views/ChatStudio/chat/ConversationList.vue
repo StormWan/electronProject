@@ -324,11 +324,7 @@ onMounted(() => {});
       width: 100%;
       .message-chat-name {
         font-size: 14px;
-        // display: block;
-        // text-overflow: ellipsis;
-        // word-wrap: break-word;
-        // overflow: hidden;
-        // color: rgba(0, 0, 0, 0.85);
+        color: var(--color-message-chat-name);
         max-height: 18px;
         line-height: 18px;
         max-width: 140px;
@@ -339,12 +335,12 @@ onMounted(() => {});
       .message-time {
         font-family: MicrosoftYaHei;
         font-size: 10px;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--color-time-divider);
       }
     }
     .message-item-right-bottom {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.45);
+      color: var(--color-time-divider);
       overflow: hidden;
       pointer-events: none;
       width: 179px;
@@ -364,5 +360,8 @@ onMounted(() => {});
       }
     }
   }
+}
+.is-active {
+  background: var(--color-message-active) !important;
 }
 </style>

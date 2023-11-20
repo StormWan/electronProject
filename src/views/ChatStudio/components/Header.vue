@@ -71,7 +71,7 @@ const HeaderView = (props) => {
 .message-info-view-header {
   height: 60px;
   background: var(--color-body-bg);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  border-bottom: 1px solid var(--color-border-default);
   padding: 0 16px;
   display: flex;
   align-items: center;

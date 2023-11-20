@@ -70,7 +70,7 @@ export default {
   .withdraw {
     border-radius: 3px;
     background: rgba(0, 0, 0, 0.05);
-    color: rgba(0, 0, 0, 0.45);
+    color: var(--color-time-divider);
     padding: 4px 6px;
   }
   .edit {

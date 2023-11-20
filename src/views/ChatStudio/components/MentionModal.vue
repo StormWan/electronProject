@@ -157,7 +157,7 @@ export default {
   position: fixed;
   width: 110px;
   border: 1px solid #ccc;
-  background-color: #fff;
+  background-color: var(--color-body-bg);
   padding: 5px;
 }
 .mention-input {
@@ -180,6 +180,6 @@ export default {
   text-decoration: underline;
 }
 .active {
-  background: #f0f2f5;
+  background: var(--color-mention-active);
 }
 </style>

@@ -27,10 +27,8 @@
 </template>
 
 <script setup>
-import { computed, toRefs } from "vue";
+import { toRefs } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
-import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
   tree: {
@@ -42,6 +40,7 @@ const props = defineProps({
     default: true,
   },
 });
+
 const { tree } = toRefs(props);
 
 const { unreadMsg } = useState({

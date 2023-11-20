@@ -1,7 +1,7 @@
 <template>
   <div
     class="message-view__item--text"
-    :class="self ? 'is-self' : 'is-other'"
+    :class="self ? 'is-text-self' : 'is-text-other'"
     @click="onClick(message)"
   >
     <template v-if="(message?.conversationType || msgType) == 'GROUP' || 'C2C'">
@@ -52,10 +52,10 @@ const onClick = (data) => {
 </script>
 
 <style lang="scss" scoped>
-.is-self {
+.is-text-self {
   background: var(--self-msg-color);
 }
-.is-other {
+.is-text-other {
   background: var(--other-msg-color);
 }
 .emoji {
@@ -71,6 +71,7 @@ const onClick = (data) => {
   border-radius: 3px;
   word-break: break-all;
   white-space: pre-wrap;
+  color: var(--color-text);
   // :deep(.github-markdown-body) {
   //   width: 100%;
   //   padding: 0;

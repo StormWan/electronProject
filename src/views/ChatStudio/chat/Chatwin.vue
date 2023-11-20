@@ -537,7 +537,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 @import "@/styles/mixin.scss";
 .message_name {
   margin-bottom: 5px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--color-time-divider);
   font-size: 12px;
 }
 .message-view__tips-elem {
@@ -548,7 +548,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 }
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  border-bottom: 1px solid var(--color-border-default);
 }
 .style-MsgBox {
   height: calc(100% - 60px) !important;
@@ -575,7 +575,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   text-align: center;
   font-weight: 400;
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--color-time-divider);
 }
 .message-view {
   display: flex;
@@ -591,11 +591,11 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 }
 .style-select {
   border-radius: 3px;
-  background: hsl(220deg 20% 91%);
+  background: var(--color-multiple-choice);
 }
 .reset-select {
   border-radius: 3px;
-  background: #fff;
+  // background: #fff;
 }
 .style-choice {
   padding-left: 35px;

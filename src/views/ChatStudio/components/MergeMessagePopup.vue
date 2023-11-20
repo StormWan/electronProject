@@ -111,7 +111,7 @@ emitter.on("openMergePopup", (data) => {
       display: flex;
       gap: 0 5px;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.45);
+      color: var(--color-time-divider);
     }
   }
 }

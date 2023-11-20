@@ -122,7 +122,7 @@ input[type="range"]::-ms-thumb:hover {
   .list-item {
     color-scheme: light;
     user-select: none;
-    color: #442c2c;
+    color: var(--color-text-default);
     justify-content: space-between;
     min-height: 40px;
     border-bottom: 1px solid #dedede;
@@ -154,8 +154,9 @@ input[type="range"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: #fff;
+  background-color: var(--color-range);
   color: #303030;
+
   margin: 2px;
 }
 

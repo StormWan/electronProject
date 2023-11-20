@@ -16,12 +16,12 @@ const sidebar = {
         title: "文档",
         type: "el-icon",
       },
-      {
-        only: "chatgpt",
-        icon: "Watermelon",
-        title: "ChatGpt",
-        type: "el-icon",
-      },
+      // {
+      //   only: "chatgpt",
+      //   icon: "Watermelon",
+      //   title: "ChatGpt",
+      //   type: "el-icon",
+      // },
       {
         only: "test",
         icon: "SwitchFilled",

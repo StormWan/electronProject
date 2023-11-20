@@ -1,6 +1,7 @@
 <template>
   <el-scrollbar>
-    <div class="content-wrap select-none">
+    MENU
+    <div v-if="false" class="content-wrap select-none">
       <el-row :gutter="20">
         <!-- 菜单列表 -->
         <el-col :span="10" class="style-el-col">

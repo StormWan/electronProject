@@ -336,7 +336,7 @@ const handleQuitGroup = async () => {
       max-width: 150px;
       font-size: 14px;
       font-weight: 400;
-      color: #000000;
+      color: var(--color-message-chat-name);
       margin-right: 8px;
       @include text-ellipsis;
     }
@@ -352,7 +352,7 @@ const handleQuitGroup = async () => {
   .group-member--title {
     font-size: 14px;
     font-weight: 400;
-    color: #333333;
+    color: var(--color-time-divider);
     margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
@@ -386,7 +386,7 @@ const handleQuitGroup = async () => {
         white-space: nowrap;
         text-align: center;
         text-overflow: ellipsis;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--color-time-divider);
       }
       .isown {
         display: none;

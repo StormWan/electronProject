@@ -18,7 +18,6 @@ const { type } = toRefs(props);
 
 const frameSrc = {
   document: "https://hyk260.github.io/PureAdmin",
-  chatgpt: "https://chatgpt1.nextweb.fun",
   github: "https://github.com/Hyk260",
   gitee: "https://gitee.com",
 };

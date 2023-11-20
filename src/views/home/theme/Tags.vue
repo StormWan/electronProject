@@ -164,7 +164,9 @@ function closing(tag) {
 .tags-view {
   width: 100%;
   height: 38px;
-  box-shadow: 1px 0 1px #888;
+  // box-shadow: 1px 0 1px #888;
+  border-top: 1px solid #88888852;
+  border-bottom: 1px solid #88888852;
   display: flex;
   justify-content: space-between;
   & > div {

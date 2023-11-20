@@ -18,6 +18,7 @@ const { text } = toRefs(props);
 function AnalysisUrl(props) {
   const { text } = props;
   const reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|,|:|;|\+|%|#)+)/g;
+
   const urls = text.match(reg);
   if (!urls) {
     return text;

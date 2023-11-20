@@ -146,8 +146,8 @@ watchEffect(() => {
   width: 280px;
 }
 .message-right {
-  background: #fff;
-  border-left: 1px solid rgba(0, 0, 0, 0.09);
+  background: var(--color-body-bg);
+  border-left: 1px solid var(--color-border-default);
   width: calc(100% - 280px);
   //  - 68px
   height: 100%;
@@ -158,13 +158,6 @@ watchEffect(() => {
 .scroll-container {
   height: calc(100% - 60px - 40px);
   position: relative;
-
-  :deep(.is-active) {
-    background: #f0f2f5;
-  }
-  :deep(.is-actives) {
-    background: rgba(0, 0, 0, 0.03);
-  }
 }
 .style-net {
   height: calc(100% - 60px - 34px - 40px);

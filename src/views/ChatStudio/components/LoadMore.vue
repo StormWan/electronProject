@@ -40,7 +40,7 @@ const { noMore, currentMessageList } = useState({
   text-align: center;
   font-size: 12px;
   cursor: pointer;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--color-time-divider);
 }
 
 .bouncing-loader {

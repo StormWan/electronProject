@@ -1,30 +1,14 @@
 "use strict";
-import qs from "qs";
 import axios from "axios";
 import storage from "storejs";
 import NProgress from "@/utils/progress";
 import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { errorHandler } from "./tools";
-const { formats, parse, stringify } = qs;
 
 const service = axios.create({
   // baseURL: "https://node-admin.cn/",
   baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
   timeout: 50000, // 请求超时时间
-  // headers: {
-  //   Accept: "application/json, text/plain, */*",
-  //   "Content-Type": "application/json",
-  //   "X-Requested-With": "XMLHttpRequest"
-  // },
-  // 数组格式参数序列化
-  // paramsSerializer: (params) => {
-  //   console.log(params,"params")
-  //   return stringify(params, { indices: false })
-  // }
-  // onUploadProgress: (progressEvent) => {
-  //   let persent = ((progressEvent.loaded / progressEvent.total) * 100) | 0; //上传进度百分比
-  //   console.log(persent);
-  // },
 });
 const whiteList = ["/imCallback", '/rest-api'];
 // 请求拦截器
