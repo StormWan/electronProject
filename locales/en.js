@@ -7,6 +7,14 @@ export default {
     buttonPrompt: "Press Enter to send the message, Ctrl+Enter to wrap",
     sending: "Sending",
     sendMessage: "Send message",
+    searchFor: 'search for',
+    emoji: "Emoji",
+    picture: 'Picture',
+    file: 'File',
+    screenshot: 'Screenshot'
+  },
+  group: {
+    GroupDetails: 'Group Details'
   },
   common: {
     forward: "Forward",

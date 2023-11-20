@@ -9,7 +9,7 @@
         size="large"
         :prefix-icon="User"
         v-model="user.username"
-        placeholder="用户账号"
+        :placeholder="$t('login.username')"
         @select="handleSelect"
         class="inline-input w-50"
         :fetch-suggestions="querySearch"
@@ -20,7 +20,7 @@
       <el-input
         v-model="user.password"
         type="password"
-        placeholder="用户密码"
+        :placeholder="$t('login.password')"
         :prefix-icon="Lock"
         size="large"
         show-password
@@ -29,7 +29,12 @@
     </el-form-item>
     <!-- 验证码 -->
     <el-form-item prop="verifyCode">
-      <el-input v-model="user.verifyCode" size="large" placeholder="验证码" clearable>
+      <el-input
+        v-model="user.verifyCode"
+        size="large"
+        :placeholder="$t('login.verifyCode')"
+        clearable
+      >
         <template #prefix>
           <el-icon class="el-input__icon"><Key /></el-icon>
         </template>
@@ -40,8 +45,8 @@
     </el-form-item>
     <!-- keep -->
     <div class="login-options">
-      <el-checkbox v-model="user.keep">记住密码</el-checkbox>
-      <div class="forget">忘记密码?</div>
+      <el-checkbox v-model="user.keep">{{ $t("login.remember") }}</el-checkbox>
+      <div class="forget">{{ $t("login.forget") }}</div>
     </div>
     <!-- 登录 -->
     <el-button type="primary" class="login-btn" @click="LoginBtn(ruleFormRef)" :loading="false">
@@ -63,7 +68,7 @@
           <!-- <FontIcon iconName="Eleme" class="circular" /> -->
         </div>
       </template>
-      登录
+      {{ $t("login.login") }}
     </el-button>
   </el-form>
   <!-- other hidden -->

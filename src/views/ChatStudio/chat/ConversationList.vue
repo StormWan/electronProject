@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar class="scrollbar-list">
     <div class="no-msg" v-if="tabList.length == 0">
-      <el-empty description="暂无会话。" :image-size="150" />
+      <el-empty :description="$t('el.table.emptyText')" :image-size="150" />
     </div>
     <div
       class="message-item"

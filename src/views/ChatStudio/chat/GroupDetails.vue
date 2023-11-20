@@ -2,7 +2,7 @@
   <el-drawer
     ref="drawerRef"
     v-model="visible"
-    title="群详情"
+    :title="$t('group.GroupDetails')"
     size="360px"
     :modal="true"
     modal-class="drawer-group"

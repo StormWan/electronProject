@@ -1,5 +1,6 @@
 // element-plus国际化
 import elementZhLocale from "element-plus/lib/locale/lang/zh-cn";
+console.log(elementZhLocale)
 // zh-CN
 export default {
   ...elementZhLocale,
@@ -7,6 +8,14 @@ export default {
     buttonPrompt: "按Enter发送消息,Ctrl+Enter换行",
     sending: "发送",
     sendMessage: "发送消息",
+    searchFor: '搜索',
+    emoji: "表情",
+    picture: '图片',
+    file: '文件',
+    screenshot: '截图'
+  },
+  group: {
+    GroupDetails: '群详情'
   },
   common: {
     forward: "转发",

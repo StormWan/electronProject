@@ -1,17 +1,21 @@
-const operates = [
-  // {
-  //   title: "手机登录",
-  //   currentPage: 1,
-  // },
-  {
-    title: "二维码登录",
-    currentPage: 2,
-  },
-  {
-    title: "注册",
-    currentPage: 3,
-  },
-];
+import { computed } from "vue";
+import { $t } from "@/plugins/i18n";
+const operates = computed(() => {
+  return [
+    // {
+    //   title:  $t('login.phoneLogin'),
+    //   currentPage: 1,
+    // },
+    {
+      title: $t('login.qRCodeLogin'),
+      currentPage: 2,
+    },
+    {
+      title: $t('login.register'),
+      currentPage: 3,
+    },
+  ];
+});
 
 const thirdParty = [
   // {

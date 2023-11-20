@@ -1,19 +1,34 @@
 <template>
   <div class="toolbar">
     <!-- 表情包 -->
-    <span data-title="表情" class="emoticon icon" @click="sendEmojiClick">
+    <span :data-title="$t('chat.emoji')" class="emoticon icon" @click="sendEmojiClick">
       <svg-icon iconClass="iconxiaolian" class="icon-hover" />
     </span>
     <!-- 图片 -->
-    <span v-show="!isRobot(toAccount)" data-title="图片" class="icon" @click="SendImageClick">
+    <span
+      v-show="!isRobot(toAccount)"
+      :data-title="$t('chat.picture')"
+      class="icon"
+      @click="SendImageClick"
+    >
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span v-show="!isRobot(toAccount)" data-title="文件" class="icon" @click="SendFileClick">
+    <span
+      v-show="!isRobot(toAccount)"
+      :data-title="$t('chat.file')"
+      class="icon"
+      @click="SendFileClick"
+    >
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span data-title="截图" class="icon" @click="clickCscreenshot">
+    <span
+      v-if="!production"
+      :data-title="$t('chat.screenshot')"
+      class="icon"
+      @click="clickCscreenshot"
+    >
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->

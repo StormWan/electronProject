@@ -3,7 +3,7 @@
     <!-- 搜索 -->
     <div class="header-search">
       <el-input
-        placeholder="搜索"
+        :placeholder="$t('chat.searchFor')"
         v-model="appoint"
         :prefix-icon="Search"
         class="text-input"

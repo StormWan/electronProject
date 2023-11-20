@@ -63,7 +63,7 @@ export const showConfirmationBox = async (data, Type = "confirm") => {
     message,
     confirmText = `${$t("el.datepicker.confirm")}`, //"确认",
     cancelText = `${$t("el.datepicker.cancel")}`, //"取消",
-    tip = "提示",
+    tip = `${$t("el.messagebox.title")}`,
     iconType = "", // warning
     inputValue = "", // input
     draggable = false,

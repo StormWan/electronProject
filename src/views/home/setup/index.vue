@@ -88,11 +88,11 @@ const options = computed(() => {
 const languages = [
   {
     value: "zh-CN",
-    label: "中文",
+    label: "简体中文",
   },
   {
     value: "en",
-    label: "英文",
+    label: "English",
   },
 ];
 
