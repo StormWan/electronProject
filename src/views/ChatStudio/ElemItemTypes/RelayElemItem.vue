@@ -13,8 +13,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
+import { toRefs, computed } from "vue";
 import emitter from "@/utils/mitt-bus";
+import { useState } from "@/utils/hooks/useMapper";
+
 const props = defineProps({
   message: {
     type: Object,
@@ -22,6 +24,10 @@ const props = defineProps({
   },
 });
 const { message } = toRefs(props);
+
+const { showCheckbox } = useState({
+  showCheckbox: (state) => state.conversation.showCheckbox,
+});
 
 const num = computed(() => {
   return message.value.payload.messageList?.length || message.value.payload.abstractList?.length;
@@ -32,6 +38,7 @@ const abstractList = computed(() => {
 });
 function onClick() {
   console.log(message.value);
+  if (showCheckbox.value) return;
   emitter.emit("openMergePopup", message.value);
 }
 </script>

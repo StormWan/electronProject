@@ -84,9 +84,9 @@ export const sendMsg = async (params, message) => {
 };
 export const modifyMsg = throttle(async (params, message) => {
   const { From_Account, To_Account, MsgKey } = params;
-  if (!message) return
+  if (!message) return;
   restApi({
-    params: { From_Account, To_Account, MsgKey, message, },
+    params: { From_Account, To_Account, MsgKey, message },
     funName: "modifyC2cMsg",
   })
     .then((res) => {
@@ -95,12 +95,12 @@ export const modifyMsg = throttle(async (params, message) => {
     .catch((err) => {
       console.log(err);
     });
-}, 50)
+}, 50);
 
 export const sendMessages = async (params) => {
   let MsgKey = "";
-  const res = await sendMsg(params)
-  MsgKey = res.MsgKey
+  const res = await sendMsg(params);
+  MsgKey = res.MsgKey;
   await api.chat({
     messages: params.messages,
     config: { model: useAccessStore().model, stream: true },

@@ -13,8 +13,8 @@
           v-model="sidebar"
           inline-prompt
           inactive-color="#a6a6a6"
-          active-text="开"
-          inactive-text="关"
+          :active-icon="Check"
+          :inactive-icon="Close"
           @change="greyChange"
         />
       </li>

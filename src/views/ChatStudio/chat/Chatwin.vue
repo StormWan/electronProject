@@ -461,7 +461,7 @@ const handleForward = (data) => {};
 // 回复消息
 const handleReplyMsg = (data) => {
   commit("setReplyMsg", data);
-  handleAt(data);
+  !ISown(data) && handleAt(data);
 };
 // 删除消息
 const handleDeleteMsg = async (data) => {
@@ -556,17 +556,9 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 .stlyle-Reply {
   height: calc(100% - 70px - 206px - 60px) !important;
 }
-// .scrollbar-item {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   height: 50px;
-//   margin: 10px;
-//   text-align: center;
-//   border-radius: 4px;
-//   background: var(--el-color-primary-light-9);
-//   color: var(--el-color-primary);
-// }
+.message-view__item--index {
+  max-width: 90%;
+}
 .message-view__item--time-divider {
   position: relative;
   top: 8px;

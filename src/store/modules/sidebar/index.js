@@ -51,11 +51,11 @@ const sidebar = {
         title: "github",
       },
       {
-        only: 'gitee',
+        only: "gitee",
         icon: "Pear",
         title: "gitee",
         type: "el-icon",
-      }
+      },
     ],
   },
   getters: {},

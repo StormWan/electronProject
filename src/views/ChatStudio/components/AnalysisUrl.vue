@@ -1,9 +1,11 @@
 <template>
   <AnalysisUrl :text="text" />
+  <!-- <AnalysisUrlCopy :text="text" /> -->
 </template>
 
 <script setup>
 import { html2Escape } from "../utils/utils";
+import Autolinker from "autolinker";
 import { ref, toRefs, computed, watch, h } from "vue";
 
 // eslint-disable-next-line no-undef
@@ -17,12 +19,15 @@ const { text } = toRefs(props);
 
 function AnalysisUrl(props) {
   const { text } = props;
-  const reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|,|:|;|\+|%|#)+)/g;
+  const linkStr = Autolinker.link(text, { className: "linkUrl" });
+  return h("span", { innerHTML: linkStr, onClick: () => {} });
+}
 
+function AnalysisUrlCopy(props) {
+  const { text } = props;
+  const reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|,|:|;|\+|%|#)+)/g;
   const urls = text.match(reg);
-  if (!urls) {
-    return text;
-  }
+  if (!urls) return text;
   const htmlStr = urls.reduce((acc, url) => {
     const escapedUrl = html2Escape(url);
     const link = `<a data-link="${escapedUrl}" href="${escapedUrl}" class="linkUrl" target="_blank">${escapedUrl}</a>`;

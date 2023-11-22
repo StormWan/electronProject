@@ -7,11 +7,11 @@ const operates = computed(() => {
     //   currentPage: 1,
     // },
     {
-      title: $t('login.qRCodeLogin'),
+      title: $t("login.qRCodeLogin"),
       currentPage: 2,
     },
     {
-      title: $t('login.register'),
+      title: $t("login.register"),
       currentPage: 3,
     },
   ];

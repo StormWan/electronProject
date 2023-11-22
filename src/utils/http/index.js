@@ -10,7 +10,7 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
   timeout: 50000, // 请求超时时间
 });
-const whiteList = ["/imCallback", '/rest-api'];
+const whiteList = ["/imCallback", "/rest-api"];
 // 请求拦截器
 service.interceptors.request.use((config) => {
   const { url } = config;

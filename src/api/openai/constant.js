@@ -23,7 +23,7 @@ export const modelConfig = {
   openaiUrl: process.env.VUE_APP_BASE_URL,
   historyMessageCount: 4,
   compressMessageLengthThreshold: 1000,
-}
+};
 
 export function useAccessStore() {
   return storage.get(StoreKey.Access) || modelConfig;
@@ -179,4 +179,4 @@ export const modelValue = {
     min: 1,
     max: 24,
   },
-}
+};

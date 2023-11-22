@@ -14,13 +14,17 @@ import {
 } from "@/api/im-sdk-api/index";
 
 function transformData(data) {
-  const inputData = data.filter((item) => !item.isTimeDivider && !item.isDeleted && !item.isRevoked);
-  return inputData.map(data => {
-    return {
-      role: data.flow === "in" ? "assistant" : "user",
-      content: data.payload.text
-    };
-  }).reverse();
+  const inputData = data.filter(
+    (item) => !item.isTimeDivider && !item.isDeleted && !item.isRevoked
+  );
+  return inputData
+    .map((data) => {
+      return {
+        role: data.flow === "in" ? "assistant" : "user",
+        content: data.payload.text,
+      };
+    })
+    .reverse();
 }
 
 const getBaseTime = (list) => {

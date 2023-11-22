@@ -65,7 +65,7 @@ const onClick = (data) => {
 .message-view__item--text {
   width: fit-content;
   padding: 10px 14px;
-  max-width: 360px;
+  // max-width: 360px;
   padding: 10px 14px;
   box-sizing: border-box;
   border-radius: 3px;

@@ -1,6 +1,6 @@
 {
   "name": "pure-admin",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "author": {
     "name": "Hyk260",
@@ -37,6 +37,7 @@
     "@wangeditor/editor-for-vue": "^5.1.11",
     "@wangeditor/plugin-ctrl-enter": "^1.1.2",
     "@wangeditor/plugin-mention": "^1.0.0",
+    "autolinker": "^4.0.0",
     "axios": "^0.26.1",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "bowser": "^2.11.0",

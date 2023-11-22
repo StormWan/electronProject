@@ -181,22 +181,23 @@ export function downloadCopy(url, filename) {
 
 /**
  * 将查询字符串转换为对象
- * @param {string} String - 查询字符串，例如 "?name=John&age=30"
+ * @param {string} String - 查询字符串，例如 "https://pureadmin.cn?name=John&age=30"
  * @return {object} - 转换后的对象，例如 { name: "John", age: "30" }
  */
-export function queryStringToObject(String) {
-  let params = {};
-  let queryString = String.match(/\?(.*)/)[1];
-  queryString = queryString.substring(1);
-  queryString.split("&").forEach(function (param) {
-    var keyValue = param.split("=");
-    params[keyValue[0]] = decodeURIComponent(keyValue[1] || "");
-  });
-  return params;
+function queryStringToObject(queryString) {
+  const str = queryString.split("?")[1];
+  const params = new URLSearchParams(str);
+  const obj = {};
+  for (const [key, value] of params) {
+    obj[key] = value;
+  }
+  return obj;
 }
+
 const TypeMap = {
   TIMImageElem: "[图片]",
   TIMFileElem: "[文件]",
+  TIMRelayElem: "[合并消息]"
 };
 
 export const fnReplyContent = (msg) => {
