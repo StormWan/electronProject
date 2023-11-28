@@ -20,9 +20,8 @@
 </template>
 
 <script setup>
-import { h, ref, watchEffect } from "vue";
+import { h } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
-import { GET_MESSAGE_LIST } from "@/store/mutation-types";
 import { useStore } from "vuex";
 
 const { state, commit, dispatch } = useStore();

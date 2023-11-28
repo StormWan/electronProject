@@ -1,10 +1,10 @@
 import { useClipboard } from "@vueuse/core";
 import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/chat/index";
 import {
-  CreateTextMsg,
-  CreateTextAtMsg,
-  CreateFiletMsg,
-  CreateImgtMsg,
+  createTextMsg,
+  createTextAtMsg,
+  createFiletMsg,
+  createImgtMsg,
 } from "@/api/im-sdk-api/index";
 
 export const dragControllerDiv = (node) => {
@@ -217,7 +217,7 @@ export async function sendChatMessage(options) {
   if (files) {
     const { fileName, src } = files;
     let file = dataURLtoFile(src, fileName);
-    TextMsg = await CreateFiletMsg({
+    TextMsg = await createFiletMsg({
       convId: convId,
       convType: convType,
       files: file,
@@ -227,7 +227,7 @@ export async function sendChatMessage(options) {
   // 如果包含图片，则创建相应的图片消息
   if (image) {
     let file = dataURLtoFile(image[0].src);
-    TextMsg = await CreateImgtMsg({
+    TextMsg = await createImgtMsg({
       convId: convId,
       convType: convType,
       image: file,
@@ -236,7 +236,7 @@ export async function sendChatMessage(options) {
   }
   // 如果包含艾特，则创建相应的艾特消息
   if (aitStr) {
-    TextMsg = await CreateTextAtMsg({
+    TextMsg = await createTextAtMsg({
       convId: convId,
       convType: convType,
       textMsg: aitStr,
@@ -246,7 +246,7 @@ export async function sendChatMessage(options) {
   }
   // 否则创建文本消息
   else if (flag) {
-    TextMsg = await CreateTextMsg({
+    TextMsg = await createTextMsg({
       convId: convId,
       convType: convType,
       textMsg: textMsg,

@@ -61,9 +61,8 @@ const conversation = {
     SET_HISTORYMESSAGE(state, action) {
       const { type, payload } = action;
       switch (type) {
-        // 添加消息 首次进入会话是调用
         case CONVERSATIONTYPE.ADD_MESSAGE: {
-          console.log(payload, "添加消息");
+          console.log("[chat] 添加消息 ADD_MESSAGE:", payload);
           const { convId, message } = payload;
           state.historyMessageList.set(convId, message);
           if (state.currentConversation) {
@@ -73,13 +72,11 @@ const conversation = {
           }
           // 当前会话少于历史条数关闭loading
           const isMore = state.currentMessageList?.length < HISTORY_MESSAGE_COUNT;
-          // HISTORY_MESSAGE_COUNT;
           state.noMore = isMore;
           break;
         }
-        // 添加更多消息 拉取历史消息时触发
         case CONVERSATIONTYPE.ADD_MORE_MESSAGE: {
-          console.log(payload, "添加更多消息");
+          console.log("[chat] 加载更多 ADD_MORE_MESSAGE:", payload);
           const { convId, messages } = payload;
           let history = state.historyMessageList.get(convId);
           let baseTime = getBaseTime(history);
@@ -91,9 +88,8 @@ const conversation = {
           state.currentMessageList = state.historyMessageList.get(convId);
           break;
         }
-        // 更新消息 收到新消息 或 发送消息后 触发
         case CONVERSATIONTYPE.UPDATE_MESSAGES: {
-          console.log(payload, "更新消息");
+          console.log("[chat] 更新消息 UPDATE_MESSAGES:", payload);
           const { convId, message } = payload;
           let oldMessageList = state.historyMessageList.get(convId);
           let matched = false;
@@ -143,9 +139,8 @@ const conversation = {
           }
           break;
         }
-        // 删除消息
         case CONVERSATIONTYPE.DELETE_MESSAGE: {
-          console.log(payload, "删除消息");
+          console.log("[chat] 删除消息 DELETE_MESSAGE:", payload);
           const { convId, message } = payload;
           const history = state.historyMessageList.get(convId);
           if (!history) return;
@@ -155,9 +150,8 @@ const conversation = {
           state.currentMessageList = newHistoryList;
           break;
         }
-        // 撤回消息
         case CONVERSATIONTYPE.RECALL_MESSAGE: {
-          console.log(payload, "撤回消息");
+          console.log("[chat] 撤回消息 RECALL_MESSAGE:", payload);
           const { convId, message } = payload;
           let oldConvId = state.currentConversation?.conversationID;
           let history = state.historyMessageList.get(convId);
@@ -169,12 +163,11 @@ const conversation = {
           state.currentMessageList = newHistoryList;
           break;
         }
-        // 回复消息
         case CONVERSATIONTYPE.SET_CURRENT_REPLY_MSG: {
+          console.log("[chat] 回复消息 SET_CURRENT_REPLY_MSG:", payload);
           state.currentReplyMsg = payload;
           break;
         }
-        // 清除历史记录
         case CONVERSATIONTYPE.CLEAR_HISTORY: {
           Object.assign(state, {
             sessionDraftMap: new Map(),
@@ -187,26 +180,23 @@ const conversation = {
             currentReplyUser: null,
             currentReplyMsg: null,
           });
+          console.log("[chat] 清除历史记录 CLEAR_HISTORY:", state);
           break;
         }
-        // 加载更多状态
         case CONVERSATIONTYPE.UPDATE_NOMORE: {
+          console.log("[chat] 加载更多消息状态 UPDATE_NOMORE:", payload);
           state.noMore = payload;
           break;
         }
-        // 将消息标记为已读
         case CONVERSATIONTYPE.MARKE_MESSAGE_AS_READED: {
-          const {
-            convId,
-            message: { unreadCount },
-          } = payload;
-          if (unreadCount == "0") return;
+          const { convId, message: { unreadCount } } = payload;
+          if (unreadCount === 0) return;
+          console.log("[chat] 消息已读 MARKE_MESSAGE_AS_READED:", payload);
           setMessageRead(convId);
           break;
         }
-        // 更新缓存数据
         case CONVERSATIONTYPE.UPDATE_CACHE: {
-          console.log(payload, "更新缓存数据");
+          console.log("[chat] 更新缓存 UPDATE_CACHE:", payload);
           const { convId, message } = payload;
           let history = state.historyMessageList.get(convId);
           if (!history) return;
@@ -214,10 +204,6 @@ const conversation = {
           let timeDivider = addTimeDivider(message, baseTime).reverse();
           history.unshift(...timeDivider);
           break;
-        }
-        case CONVERSATIONTYPE.UPDATE_MESSAGE_ELEM_PROGRESS: {
-          // let { messageId, } = payload;
-          // state.uploadProgress.set(``, {});
         }
       }
     },
@@ -254,7 +240,7 @@ const conversation = {
           }
           break;
         }
-        // 更新当前窗口数据
+        // 更新当前会话
         case CONVERSATIONTYPE.UPDATE_CURRENT_SESSION: {
           state.currentConversation = payload;
           break;
@@ -323,7 +309,6 @@ const conversation = {
       state.currentReplyMsg = payload;
     },
     // 设置会话草稿
-    // setConversationDraft
     SET_SESSION_DRAFT(state, action) {
       if (!action) return;
       const { ID, payload } = action;
@@ -348,7 +333,7 @@ const conversation = {
   actions: {
     // 获取消息列表
     async [GET_MESSAGE_LIST]({ commit, dispatch, state, rootState }, action) {
-      let isSDKReady = rootState.user.isSDKReady;
+      const isSDKReady = window.TIMProxy.chat.isReady();
       const { conversationID, type, toAccount } = action;
       let status = !state.currentMessageList || state.currentMessageList?.length == 0;
       // 当前会话有值
@@ -418,8 +403,8 @@ const conversation = {
       commit("SET_SHOW_MSG_BOX", false);
     },
     // 获取未读消息总数
-    async GET_TOTAL_UNREAD_MSG({ state, rootState }) {
-      const { isSDKReady } = rootState.user || {};
+    async GET_TOTAL_UNREAD_MSG({ state }) {
+      const isSDKReady = window.TIMProxy.chat.isReady();
       if (!isSDKReady) return;
       state.totalUnreadMsg = await getUnreadMsg();
     },
@@ -454,7 +439,7 @@ const conversation = {
       }
     },
     // 消息发送成功回调
-    async SENDMSG_SUCCESS_CALLBACK({ state, commit, rootState }, action) {
+    async SENDMSG_SUCCESS_CALLBACK({ state, commit }, action) {
       console.log(action, "sendMsg消息发送成功");
       const { convId, message } = action;
       commit("SET_HISTORYMESSAGE", {

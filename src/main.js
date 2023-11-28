@@ -49,6 +49,6 @@ getServerConfig(app).then(async (config) => {
   app.mount("#app");
 });
 // app.config.globalProperties.$api = api;
-// app.config.errorHandler = (err, instance, info) => {
-//   console.log(err, instance, info);
-// };
+app.config.errorHandler = (err, instance, info) => {
+  console.log(err, instance, info);
+};

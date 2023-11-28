@@ -188,9 +188,9 @@ const parsefile = async (file) => {
       link: base64Url,
       children: [{ text: "" }], // void 元素必须有一个 children ，其中只有一个空字符串，重要！！！
     };
-    // editorRef.value.restoreSelection(); // 恢复选区
+    editorRef.value.restoreSelection(); // 恢复选区
     editorRef.value.insertNode(FileElement);
-    // editorRef.value.move(1); // 移动光标
+    editorRef.value.move(1); // 移动光标
   } catch (error) {
     console.log(error);
   }
@@ -208,6 +208,8 @@ const setEmoj = (url, item) => {
     style: { width: "26px" },
     children: [{ text: "" }],
   };
+
+  editorRef.value.restoreSelection();
   editorRef.value.insertNode(ImageElement);
   editorRef.value.focus(true);
   // editorRef.value.showProgressBar(100); // 进度条

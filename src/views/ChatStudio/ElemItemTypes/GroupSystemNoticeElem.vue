@@ -1,10 +1,11 @@
 <template>
   <div class="message-view__item--text">
-    {{ message.from }}
+    {{ GroupSystemNotice(message) }}
   </div>
 </template>
 
 <script>
+import { GroupSystemNotice } from "../utils/utils";
 export default {
   name: "GroupSystemNoticeElem",
   props: {
@@ -12,6 +13,11 @@ export default {
       type: Object,
       default: null,
     },
+  },
+  data() {
+    return {
+      GroupSystemNotice,
+    };
   },
 };
 </script>
@@ -24,5 +30,6 @@ export default {
   padding: 10px 14px;
   box-sizing: border-box;
   border-radius: 3px;
+  background: var(--other-msg-color);
 }
 </style>

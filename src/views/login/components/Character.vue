@@ -157,7 +157,7 @@ p {
   $content: randomChars($perColumnNums);
   $contentNext: randomChars($perColumnNums);
   $delay: random($n);
-  $randomAnimationTine: #{$animationTime + random(20) / 10 - 1}s;
+  $randomAnimationTine: #{$animationTime + calc(random(20) / 10 - 1)}s;
   p:nth-child(#{$i})::before {
     content: $content;
     color: #000;
@@ -166,7 +166,7 @@ p {
     z-index: 1;
   }
   p:nth-child(#{$i})::after {
-    $alpha: random(40) / 100 + 0.6;
+    $alpha: calc(random(40) / 100 + 0.6);
     content: "";
     // background: linear-gradient(
     //   rgba(0, 0, 0, $alpha),

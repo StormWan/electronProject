@@ -1,4 +1,3 @@
-import { deleteConversation } from "@/api/im-sdk-api/index";
 import { restApi } from "@/api/node-admin-api/index";
 import {
   getGroupList,
@@ -15,7 +14,6 @@ function compareByRole(a, b) {
 }
 
 export default {
-  // namespaced: true,
   state: {
     isShowAddBook: false, // 地址本状态
     groupDrawer: false, // 群聊开关
@@ -60,6 +58,7 @@ export default {
     },
   },
   actions: {
+    // 获取群成员列表
     async getGroupMemberList({ state, commit, getters }, payload) {
       const groupID = getters.toAccount;
       const { memberList, code } = await getGroupMemberList({ groupID });

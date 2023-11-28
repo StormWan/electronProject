@@ -11,7 +11,7 @@
         :originalMsg="message.cloudCustomData && JSON.parse(message.cloudCustomData)"
       />
       <template v-for="item in decodeText(message.payload.text)" :key="item">
-        <span v-if="item.name === 'text'" class="text-erase">
+        <span v-if="item.name === 'text'">
           <analysis-url :text="item.text" />
         </span>
         <img
@@ -66,51 +66,10 @@ const onClick = (data) => {
   width: fit-content;
   padding: 10px 14px;
   // max-width: 360px;
-  padding: 10px 14px;
   box-sizing: border-box;
   border-radius: 3px;
   word-break: break-all;
   white-space: pre-wrap;
   color: var(--color-text);
-  // :deep(.github-markdown-body) {
-  //   width: 100%;
-  //   padding: 0;
-  //   p {
-  //     margin: 0 !important;
-  //   }
-  //   .v-md-hljs-html {
-  //     margin: 0;
-  //   }
-  // }
 }
-// .text-erase {
-//   width: 100%;
-//   position: relative;
-//   // display: inline-block;
-//   p {
-//     margin: 0;
-//   }
-//   .eraser {
-//     position: absolute;
-//     left: 0;
-//     top: 0;
-//     .text {
-//       --p: 5%;
-//       background: linear-gradient(to right, #0000 var(--p), #f0f2f5 calc(var(--p) + 100px));
-//       color: transparent;
-//       animation: erase 5s forwards;
-//     }
-//   }
-// }
-// @property --p {
-//   syntax: "<percentage>";
-//   initial-value: 5%;
-//   inherits: false;
-// }
-
-// @keyframes erase {
-//   to {
-//     --p: 100%;
-//   }
-// }
 </style>

@@ -3,8 +3,18 @@
     <el-icon class="close" @click="onClose"><CircleCloseFilled /></el-icon>
     <div class="reply-box-content">
       <div class="nick">{{ currentReplyMsg?.nick }} :</div>
-      <div class="text">
-        {{ fnReplyContent(currentReplyMsg) }}
+      <div class="text" v-if="currentReplyMsg">
+        <template v-for="item in decodeText(fnReplyContent(currentReplyMsg))" :key="item">
+          <span v-if="item.name === 'text'">
+            {{ item.text }}
+          </span>
+          <img
+            v-else-if="item.name === 'img'"
+            class="emoji"
+            :src="require('@/assets/emoji/' + item.localSrc)"
+            alt="表情包"
+          />
+        </template>
       </div>
     </div>
   </div>
@@ -13,7 +23,7 @@
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { fnReplyContent } from "@/utils/chat/index";
+import { fnReplyContent, decodeText } from "@/utils/chat/index";
 import { useStore } from "vuex";
 
 const { state, dispatch, commit } = useStore();
@@ -50,6 +60,9 @@ const onClose = () => {
     cursor: pointer;
     right: 20px;
     top: 20px;
+  }
+  .emoji {
+    width: 24px;
   }
 }
 </style>

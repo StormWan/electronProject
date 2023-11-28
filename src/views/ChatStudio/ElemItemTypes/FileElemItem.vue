@@ -10,7 +10,6 @@
           <span class="file-size">
             {{ bytesToSize(payload.fileSize) }}
           </span>
-          <!-- <span class="file-status">测试</span> -->
           <span class="file-icon" v-show="isShow('success')">
             <img src="@/assets/message/勾.png" alt="" />
           </span>
@@ -21,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick, onMounted } from "vue";
+import { ref, toRefs } from "vue";
 import { bytesToSize } from "@/utils/chat/index";
 import { getFileType } from "@/utils/chat/index";
 import emitter from "@/utils/mitt-bus";
@@ -60,10 +59,9 @@ const uploading = ({ uuid, num }) => {
 };
 
 emitter.on("fileUploading", (data) => {
+  console.log("[file] uploading:", data);
   uploading(data);
 });
-
-// onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
@@ -98,12 +96,6 @@ emitter.on("fileUploading", (data) => {
         .file-icon {
           margin-left: 5px;
         }
-        // .file-size {
-        // }
-        // .file-status {
-        // }
-        // .file-icon {
-        // }
       }
     }
   }

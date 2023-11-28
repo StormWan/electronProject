@@ -11,7 +11,7 @@
     </el-divider>
   </Motion>
   <Motion :delay="150">
-    <el-button class="w-full mt-4" @click="commit('SET_CURRENTPAGE', 0)">
+    <el-button class="w-full mt-4" @click="commit('setCurrentPage', 0)">
       {{ $t("login.back") }}
     </el-button>
   </Motion>

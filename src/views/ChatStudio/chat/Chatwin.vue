@@ -100,19 +100,10 @@ import {
   onUpdated,
   onUnmounted,
   onBeforeUpdate,
-  computed,
   onBeforeUnmount,
-  toRefs,
-  defineAsyncComponent,
 } from "vue";
-import {
-  handleCopyMsg,
-  dragControllerDiv,
-  validatelastMessage,
-  Megtype,
-  msgOne,
-} from "../utils/utils";
-import { squareUrl, circleUrl, MENU_LIST, AVATAR_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
+import { handleCopyMsg, validatelastMessage, Megtype, msgOne } from "../utils/utils";
+import { circleUrl, MENU_LIST, AVATAR_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
 import { useStore } from "vuex";
 import { showConfirmationBox } from "@/utils/message";
 
@@ -252,14 +243,14 @@ const scrollBottom = () => {
   }
 };
 const loadMoreFn = () => {
-  if (!noMore.value) {
-    const current = currentMessageList.value?.length - 1;
-    // 第一条消息 加载更多 节点
-    const offsetTopScreen = messageViewRef.value?.children?.[current];
-    const top = offsetTopScreen?.getBoundingClientRect().top;
-    const canLoadData = top > 50; //滚动到顶部
-    canLoadData && getMoreMsg();
-  }
+  // if (!noMore.value) {
+  const current = currentMessageList.value?.length - 1;
+  // 第一条消息 加载更多 节点
+  const offsetTopScreen = messageViewRef.value?.children?.[current];
+  const top = offsetTopScreen?.getBoundingClientRect().top;
+  const canLoadData = top > 50; //滚动到顶部
+  canLoadData && getMoreMsg();
+  // }
   const isbot = scrollBottom();
   emitter.emit("onisbot", isbot);
 };
@@ -301,6 +292,14 @@ const getMoreMsg = async () => {
     let noMore = true;
     let Loadmore = messageList.length < HISTORY_MESSAGE_COUNT;
     if (messageList.length > 0) noMore = Loadmore;
+    if (isCompleted || messageList.length == 0) {
+      console.log("[chat] 没有更多消息了 getMoreMsg:");
+      commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_NOMORE",
+        payload: noMore,
+      });
+      return;
+    }
     const Response = messageList;
     const payload = {
       convId: conversationID,
@@ -314,14 +313,6 @@ const getMoreMsg = async () => {
       type: "UPDATE_SCROLL_DOWN",
       payload: msglist.length,
     });
-    if (isCompleted || messageList.length == 0) {
-      console.log("没有更多消息了！！！");
-      commit("SET_HISTORYMESSAGE", {
-        type: "UPDATE_NOMORE",
-        payload: noMore,
-      });
-      return;
-    }
   } catch (e) {
     // 解析报错 关闭加载动画
     commit("SET_HISTORYMESSAGE", {
@@ -534,17 +525,12 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 </script>
 
 <style lang="scss" scoped>
+@import url("../ElemItemTypes/elemType.scss");
 @import "@/styles/mixin.scss";
 .message_name {
   margin-bottom: 5px;
   color: var(--color-time-divider);
   font-size: 12px;
-}
-.message-view__tips-elem {
-  margin: auto;
-  .message_name {
-    display: none;
-  }
 }
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
@@ -555,9 +541,6 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 }
 .stlyle-Reply {
   height: calc(100% - 70px - 206px - 60px) !important;
-}
-.message-view__item--index {
-  max-width: 90%;
 }
 .message-view__item--time-divider {
   position: relative;
@@ -607,9 +590,6 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   .message-view__img {
     margin-bottom: 5px;
     width: fit-content;
-    :deep(.image_preview) {
-      background: var(--other-msg-color);
-    }
   }
 
   .message-view__file {
@@ -619,14 +599,6 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   .message-view__text {
     width: fit-content;
     margin-bottom: 5px;
-    :deep(.message-view__item--text) {
-      background: var(--other-msg-color);
-    }
-  }
-  .message-view__system {
-    :deep(.message-view__item--text) {
-      background: var(--other-msg-color);
-    }
   }
 }
 .is-self {
@@ -644,28 +616,19 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   .message-view__img {
     display: flex;
     justify-content: flex-end;
-    // margin-bottom: 5px;
     align-items: center;
-    :deep(.image_preview) {
-      background: var(--self-msg-color);
-    }
   }
 
   .message-view__file {
     display: flex;
     justify-content: flex-end;
-    // margin-bottom: 5px;
     align-items: center;
   }
 
   .message-view__text {
-    // margin-bottom: 5px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    :deep(.message-view__item--text) {
-      background: var(--self-msg-color);
-    }
   }
 }
 

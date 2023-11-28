@@ -3,22 +3,25 @@ import TIM from "@tencentcloud/chat";
 import tim from "@/utils/im-sdk/tim";
 import storage from "storejs";
 import store from "@/store";
-import emitter from "@/utils/mitt-bus";
+import { useWindowFocus } from "@vueuse/core";
 import { scrollToDomPostion } from "@/utils/chat/index";
 import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
-import { deepClone } from "@/utils/common";
-import { h, nextTick } from "vue";
+import { cloneDeep } from "lodash-es";
+
+const isFocused = useWindowFocus(); // 判断浏览器窗口是否在前台可见状态
+
+function getConversationID() {
+  return store.state.conversation?.currentConversation?.conversationID;
+}
 
 export default class TIMProxy {
   constructor() {
-    this.version = TIM.VERSION; // im版本号
     this.userProfile = {}; // IM用户信息
-    this.isSDKReady = false; // TIM SDK 是否 ready
     this.userID = "";
     this.userSig = "";
-    this.tim = null; // TIM实例
-    this.TIM = null; // TIM命名空间
+    this.chat = null; // im实例
+    this.TIM = null; // 命名空间
     this.once = false; // 防止重复初始化
     this.test = {};
     Object.defineProperty(this, "test", {
@@ -44,8 +47,7 @@ export default class TIMProxy {
     for (const [key, value] of Object.entries(this)) {
       player[key] = value;
     }
-    console.log(player);
-    // storage.set("player", player);
+    storage.set("player", player);
   }
   // 更新IM信息
   loadSelfFromLocalStorage() {
@@ -58,18 +60,17 @@ export default class TIMProxy {
   // 初始化
   init() {
     if (this.once) return;
-    console.log("TIMProxy init");
     this.once = true;
-    this.tim = tim;
+    this.chat = tim;
     this.TIM = TIM;
-    // 监听SDK
-    this.initListener();
+    this.initListener(); // 监听SDK
+    console.log("[chat] TIMProxy init");
   }
   initListener() {
     // 登录成功后会触发 SDK_READY 事件，该事件触发后，可正常使用 SDK 接口
-    tim.on(TIM.EVENT.SDK_READY, this.onReadyStateUpdate);
+    tim.on(TIM.EVENT.SDK_READY, this.onReadyStateUpdate, this);
     // 收到 SDK 进入 not ready 状态通知，此时 SDK 无法正常工作
-    tim.on(TIM.EVENT.SDK_NOT_READY, this.onReadyStateUpdate);
+    tim.on(TIM.EVENT.SDK_NOT_READY, this.onReadyStateUpdate, this);
     // 收到会话列表更新通知
     tim.on(TIM.EVENT.CONVERSATION_LIST_UPDATED, this.onUpdateConversationList);
     // 收到推送的单聊、群聊、群提示、群系统通知的新消息
@@ -85,23 +86,27 @@ export default class TIMProxy {
     // 网络监测
     tim.on(TIM.EVENT.NET_STATE_CHANGE, this.onNetStateChange);
     // 收到好友申请列表更新通知
-    tim.on(TIM.EVENT.FRIEND_APPLICATION_LIST_UPDATED, this.onFriendApplicationListUpdated);
+    // tim.on(TIM.EVENT.FRIEND_APPLICATION_LIST_UPDATED, this.onFriendApplicationListUpdated);
     // 收到好友分组列表更新通知
-    tim.on(TIM.EVENT.FRIEND_GROUP_LIST_UPDATED, this.onFriendGroupListUpdated);
+    // tim.on(TIM.EVENT.FRIEND_GROUP_LIST_UPDATED, this.onFriendGroupListUpdated);
     // 已订阅用户或好友的状态变更（在线状态或自定义状态）时触发。
-    tim.on(TIM.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdated);
+    // tim.on(TIM.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdated);
     // 收到消息被修改的通知
     tim.on(TIM.EVENT.MESSAGE_MODIFIED, this.onMessageModified, this);
   }
   onReadyStateUpdate({ name }) {
+    console.log("[chat] onReadyStateUpdate:", name);
     const isSDKReady = name === TIM.EVENT.SDK_READY;
-    store.commit("toggleIsSDKReady", isSDKReady);
     if (!isSDKReady) return;
-    store.dispatch("GET_MY_PROFILE");
+    this.chat.getMyProfile().then(({ code, data }) => {
+      this.userProfile = data;
+      this.userID = this.chat.getLoginUser()
+      store.commit("setCurrentUserProfile", data);
+    });
   }
   onUpdateConversationList({ data }) {
-    console.log(data, "会话列表更新");
-    const convId = store.state.conversation?.currentConversation?.conversationID;
+    console.log("[chat] 会话列表更新 onUpdateConversationList:", data);
+    const convId = getConversationID();
     const conv = data.filter((t) => t.conversationID == convId);
     // 更新会话列表
     store.commit("SET_CONVERSATION", {
@@ -112,26 +117,21 @@ export default class TIMProxy {
     if (conv) {
       store.commit("SET_CONVERSATION", {
         type: "UPDATE_CURRENT_SESSION",
-        payload: deepClone(conv[0]),
+        payload: cloneDeep(conv[0]),
       });
     }
     // 未读消息
     store.dispatch("GET_TOTAL_UNREAD_MSG");
   }
-  // 判断浏览器窗口是否在前台可见状态
-  isWindowFocused() {
-    return window.document.hasFocus();
-  }
-  // 收到新消息
-  onReceiveMessage({ data, name }) {
-    console.log(data, "收到新消息");
+  onReceiveMessage({ data }) {
+    console.log("[chat] 收到新消息 onReceiveMessage:", data);
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
     this.handleTrayFlashIng(data);
     this.handleUpdateMessage(data);
   }
-  onMessageRevoked({ data, name }) {
-    console.log(data, "撤回消息");
+  onMessageRevoked({ data }) {
+    console.log("[chat] 撤回消息 onMessageRevoked:", data);
     store.commit("SET_HISTORYMESSAGE", {
       type: "RECALL_MESSAGE",
       payload: {
@@ -140,11 +140,12 @@ export default class TIMProxy {
       },
     });
   }
-  onUpdateGroupList({ data, name }) {
-    console.log(data, "群组列表更新");
+  onUpdateGroupList({ data }) {
+    console.log("[chat] 群组列表更新 onUpdateGroupList:", data);
     // store.commit("updateGroupList", data[0]);
   }
   onKickOut({ data }) {
+    console.log("[chat] onKickOut:", data);
     const message = kickedOutReason(data.type);
     store.commit("showMessage", {
       message: `${message}被踢出，请重新登录。`,
@@ -153,7 +154,7 @@ export default class TIMProxy {
     store.dispatch("LOG_OUT");
   }
   onError({ data }) {
-    console.log(data);
+    console.log("[chat] onError:", data);
     if (data.message !== "Network Error") {
       store.commit("showMessage", {
         message: data.message,
@@ -162,20 +163,20 @@ export default class TIMProxy {
     }
   }
   onMessageModified({ data }) {
-    console.log(data, "消息编辑");
+    console.log("[chat] 历史消息更新 onMessageModified:", data);
     this.handleUpdateMessage(data, false);
   }
   onNetStateChange({ data }) {
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
-  onFriendApplicationListUpdated(event) {
-    console.log(event);
+  onFriendApplicationListUpdated({ data }) {
+    console.log("[chat] 好友申请列表 onFriendApplicationListUpdated:", data);
   }
-  onFriendGroupListUpdated(event) {
-    console.log(event);
+  onFriendGroupListUpdated({ data }) {
+    console.log(data);
   }
-  onUserStatusUpdated(event) {
-    console.log(event);
+  onUserStatusUpdated({ data }) {
+    console.log(data);
   }
   /**
    * 使用 window.Notification 进行全局的系统通知
@@ -205,7 +206,7 @@ export default class TIMProxy {
     }
   }
   handleNotify(message) {
-    console.log(message);
+    console.log("[chat] handleNotify", message);
     const { ID, payload, avatar } = message;
     const tip = "有人提到了你";
     const icon = avatar || "https://ljx-1307934606.cos.ap-beijing.myqcloud.com/log.png";
@@ -230,8 +231,8 @@ export default class TIMProxy {
    * @param {Message[]} messageList
    */
   handleQuitGroupTip(messageList) {
-    console.log(messageList, "handleQuitGroupTip");
-    const convId = store.state.conversation?.currentConversation?.conversationID;
+    console.log("[chat] handleQuitGroupTip", messageList);
+    const convId = getConversationID();
     // MSG_GRP_TIP '"TIMGroupTipElem"' 群提示消息
     // 筛选出当前会话的/退群/被踢群/入群/的 groupTip
     const list = [
@@ -257,7 +258,7 @@ export default class TIMProxy {
   }
   // 消息更新
   handleUpdateMessage(data, read = true) {
-    const convId = store.state.conversation?.currentConversation?.conversationID;
+    const convId = getConversationID();
     if (!convId) return;
     // 收到新消息 且 不为当前选中会话 更新对应ID消息
     if (data?.[0].conversationID !== convId) {
@@ -270,13 +271,13 @@ export default class TIMProxy {
       });
       return;
     }
-    read && this.ReportedMessageRead(data);
+    read && this.ReportedMessageRead(data); // 消息已读
     // 更新当前会话消息
     store.commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",
       payload: {
         convId: convId,
-        message: deepClone(data[0]),
+        message: cloneDeep(data[0]),
       },
     });
     // 更新滚动条位置到底部
@@ -284,7 +285,6 @@ export default class TIMProxy {
   }
   // 上报消息已读
   ReportedMessageRead(data) {
-    const isFocused = this.isWindowFocused();
     if (!isFocused) return;
     store.commit("SET_HISTORYMESSAGE", {
       type: "MARKE_MESSAGE_AS_READED",
@@ -318,14 +318,13 @@ export default class TIMProxy {
     store.commit("ipcRenderer", { key: "TrayFlashIng" });
   }
   /**
-   * 群详情 @好友 系统通知tis
+   * 群详情 @好友 @全体成员 系统通知tis
    */
   handleNotificationTip(data) {
-    const userProfile = store.state.user.currentUserProfile;
+    const { userID } = this.userProfile || {};
     const { atUserList } = data[0];
     if (atUserList.length > 0) {
-      let userId = userProfile?.userID;
-      let off = atUserList.includes(userId);
+      let off = atUserList.includes(userID);
       let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
       if (off || all) {
         this.notifyMe(data[0]);

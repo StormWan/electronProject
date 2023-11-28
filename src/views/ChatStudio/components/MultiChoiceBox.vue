@@ -122,6 +122,8 @@ export default {
           return `${item.nick}: [文件]`;
         } else if (item.type === "TIMRelayElem") {
           return `${item.nick}: [合并消息]`;
+        } else if (item.type === "TIMCustomElem") {
+          return `${item.nick}: [自定义消息]`;
         } else {
           return `${item.nick}: [待开发]`;
         }

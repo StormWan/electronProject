@@ -112,7 +112,7 @@ import { useStore } from "vuex";
 import { Lock, User, Key, Iphone } from "@element-plus/icons-vue";
 const { state, dispatch, commit } = useStore();
 const onBack = () => {
-  commit("SET_CURRENTPAGE", 0);
+  commit("setCurrentPage", 0);
 };
 
 const checked = ref(false);

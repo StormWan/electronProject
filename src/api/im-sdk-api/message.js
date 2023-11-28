@@ -5,20 +5,13 @@ import { getReplyMsgContent, getCustomMsgContent } from "@/utils/chat/index";
 
 const fileUploading = (data, bar = 0) => {
   const uuid = data?.payload?.uuid || "";
-  console.log("file uploading:", uuid, bar?.toFixed(0));
   emitter.emit("fileUploading", { uuid, num: bar?.toFixed(0) });
 };
 // 发送消息
 export const sendMsg = async (params) => {
   try {
-    const {
-      code,
-      data: { message },
-    } = await tim.sendMessage(params);
-    return {
-      code,
-      message,
-    };
+    const { code, data: { message } } = await tim.sendMessage(params);
+    return { code, message }
   } catch (error) {
     console.log(error);
   }
@@ -38,64 +31,51 @@ export const createCustomMsg = async (params) => {
   });
 };
 // 创建文本消息
-export const CreateTextMsg = async (params) => {
+export const createTextMsg = async (params) => {
   const { convId, convType, textMsg, reply } = params;
   const replyMsgContent = getReplyMsgContent(reply);
-  let message = await tim.createTextMessage({
-    to: convId, // 接受放ID
-    conversationType: convType, // 会话类型 TIM.TYPES.CONV_C2C
-    payload: {
-      text: textMsg,
-    },
+  return await tim.createTextMessage({
+    to: convId,
+    conversationType: convType,
+    payload: { text: textMsg },
     cloudCustomData: replyMsgContent,
   });
-  return message;
 };
-// 创建@ 提醒功能的文本消息
-export const CreateTextAtMsg = async (params) => {
+// 创建 @提醒功能的文本消息
+export const createTextAtMsg = async (params) => {
   const { convId, convType, textMsg, atUserList, reply } = params;
   const replyMsgContent = getReplyMsgContent(reply);
-  let message = await tim.createTextAtMessage({
+  return await tim.createTextAtMessage({
     to: convId,
-    conversationType: convType || TIM.TYPES.CONV_GROUP,
-    payload: {
-      text: textMsg, // '@denny @lucy @所有人 今晚聚餐，收到的请回复',
-      atUserList: atUserList, // ['denny', 'lucy', TIM.TYPES.MSG_AT_ALL] // 'denny' 'lucy' 都是 userID，而非昵称
-    },
+    conversationType: convType,
+    payload: { text: textMsg, atUserList: atUserList },
     cloudCustomData: replyMsgContent,
   });
-  return message;
 };
 // 创建图片消息
-export const CreateImgtMsg = (params) => {
+export const createImgtMsg = (params) => {
   const { convId, convType, image } = params;
   const message = tim.createImageMessage({
     to: convId,
     conversationType: convType,
-    payload: {
-      file: image,
-    },
-    onProgress: function (event) {
+    payload: { file: image },
+    onProgress: (event) => {
       console.log("file uploading:", event);
     },
   });
   return message;
 };
 // 创建文件消息
-export const CreateFiletMsg = async (params) => {
+export const createFiletMsg = async (params) => {
   const { convId, convType, files } = params;
-  const message = tim.createFileMessage({
+  return tim.createFileMessage({
     to: convId,
     conversationType: convType,
-    payload: {
-      file: files,
-    },
-    // 文件上传进度
+    payload: { file: files },
     onProgress: (event) => {
       fileUploading(message, event * 100);
     },
   });
-  return message;
 };
 // 创建合并消息
 export const createMergerMsg = async (params) => {
@@ -109,17 +89,26 @@ export const createMergerMsg = async (params) => {
       abstractList: abstractList || ["allen: 666", "iris: [图片]"],
       compatibleText: "当前版本不支持",
     },
-    // 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到，v2.10.2起支持）
-    // cloudCustomData: 'your cloud custom data'
   });
 };
 // 创建转发消息
 export const createForwardMsg = async (params) => {
   const { convId, convType, message } = params;
-  const forwardMsg = await tim.createForwardMessage({
+  return await tim.createForwardMessage({
     to: convId,
     conversationType: convType,
     payload: message,
   });
-  return forwardMsg;
 };
+// 下载合并消息
+export const downloadMergerMessage = async (message) => {
+  if (message.type === TIM.TYPES.MSG_MERGER && message.payload.downloadKey !== '') {
+    try {
+      const data = await tim.downloadMergerMessage(message);
+      console.log(data);
+    } catch (imError) {
+      console.warn('downloadMergerMessage error:', imError);
+    }
+  }
+};
+

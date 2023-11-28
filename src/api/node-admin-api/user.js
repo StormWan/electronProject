@@ -23,7 +23,6 @@ export const register = (data) => {
 // 账号列表
 export const getuser = async () => {
   const data = [
-    { value: "linjx", link: "" },
     { value: "admin", link: "" },
     { value: "zhangal", link: "" },
   ];
@@ -34,8 +33,8 @@ export const getuser = async () => {
 
 // 退出登录
 export const logout = () => {
-  // storage.clear();
-  storage.remove(SET_UP);
-  storage.remove(USER_DATA);
-  storage.remove(ACCESS_TOKEN);
+  storage.clear();
+  // storage.remove(SET_UP);
+  // storage.remove(USER_DATA);
+  // storage.remove(ACCESS_TOKEN);
 };

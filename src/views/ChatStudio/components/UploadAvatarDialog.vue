@@ -84,7 +84,7 @@ async function uploadAvatar() {
 async function modifyMyProfile(file_url) {
   const { code, data } = await updateMyProfile({ avatar: file_url });
   if (code === 0) {
-    commit("updateCurrentUserProfile", deepClone(data));
+    // commit("updateCurrentUserProfile", deepClone(data));
   } else {
     console.log("修改失败");
   }

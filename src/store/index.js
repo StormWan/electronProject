@@ -73,6 +73,9 @@ const store = createStore({
     ACCOUNT_INFORMATION(state, data) {
       storage.set("ACCOUNT", data?.keep ? data : null);
     },
+    EMITTER_EMIT(state, { key, value }) {
+      emitter.emit(key, value);
+    },
     updataScroll(state, value) {
       emitter.emit("updataScroll", value);
     },
@@ -110,7 +113,6 @@ const store = createStore({
       state.data.elTag = [];
     },
   },
-  getters: {},
   // 自定义属性
   plugins,
 });

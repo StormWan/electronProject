@@ -18,6 +18,7 @@
 <script>
 import { mapState } from "vuex";
 import TIM from "@tencentcloud/chat";
+import { onClickOutside } from "@vueuse/core";
 import { useEventListener } from "@vueuse/core";
 
 const compareUserID = (a, b) => {
@@ -91,6 +92,9 @@ export default {
       // 定位 modal
       this.top = `${selectionRect.top - height - 15}px`;
       this.left = `${selectionRect.left + 5}px`;
+      onClickOutside(this.$refs.listRef, (event) => {
+        this.hideMentionModal();
+      });
     },
     hideMentionModal() {
       this.$store.commit("SET_MENTION_MODAL", false);

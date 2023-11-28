@@ -1,5 +1,5 @@
 <template>
-  <div class="image_preview" @click="geiPic(url)">
+  <div class="image_preview" :class="self ? 'is-text-self' : 'is-text-other'" @click="geiPic(url)">
     <el-image
       :src="url"
       :preview-src-list="showCheckbox ? null : srcList"
@@ -19,8 +19,12 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  self: {
+    type: Boolean,
+    default: false,
+  },
 });
-const { message } = toRefs(props);
+const { message, self } = toRefs(props);
 const { imgUrlList } = useGetters(["imgUrlList"]);
 const { showCheckbox } = useState({
   showCheckbox: (state) => state.conversation.showCheckbox,
@@ -39,6 +43,12 @@ const geiPic = async (url) => {
 </script>
 
 <style lang="scss" scoped>
+.is-text-self {
+  background: var(--self-msg-color);
+}
+.is-text-other {
+  background: var(--other-msg-color);
+}
 .image_preview {
   width: fit-content;
   max-width: 140px;

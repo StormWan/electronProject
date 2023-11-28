@@ -150,7 +150,7 @@ const onClick = async () => {
 };
 
 const onHandle = (index) => {
-  commit("SET_CURRENTPAGE", index);
+  commit("setCurrentPage", index);
 };
 
 const onkeypress = ({ code }) => {

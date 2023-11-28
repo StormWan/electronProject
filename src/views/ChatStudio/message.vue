@@ -1,5 +1,5 @@
 <template>
-  <div class="style-news">
+  <div class="flex w-full">
     <!-- 聊天列表 -->
     <div class="message-left">
       <!-- 搜索框 -->
@@ -20,6 +20,9 @@
     </div>
     <!-- 聊天框 -->
     <div class="message-right" id="svgBox">
+      <div class="empty" v-if="!conver">
+        <el-empty :description="$t('el.table.emptyText')" :image-size="150" />
+      </div>
       <Header />
       <!-- 聊天窗口 -->
       <Chatwin ref="ChatRef" />
@@ -129,10 +132,6 @@ watchEffect(() => {
 </script>
 
 <style lang="scss" scoped>
-.style-news {
-  width: 100%;
-  display: flex;
-}
 .demo-tabs {
   :deep(.el-tabs__header) {
     margin: 0;
@@ -149,7 +148,6 @@ watchEffect(() => {
   background: var(--color-body-bg);
   border-left: 1px solid var(--color-border-default);
   width: calc(100% - 280px);
-  //  - 68px
   height: 100%;
   position: relative;
   overflow: hidden;
@@ -185,5 +183,11 @@ watchEffect(() => {
   align-items: center;
   color: #fff;
   cursor: pointer;
+}
+.empty {
+  height: 100%;
+  :deep(.el-empty) {
+    height: 100%;
+  }
 }
 </style>

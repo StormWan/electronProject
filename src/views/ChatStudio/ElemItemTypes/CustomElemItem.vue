@@ -1,5 +1,11 @@
 <template>
-  <div class="message-view__item--text">{{ customMessage() }}</div>
+  <div
+    class="message-view__item--text"
+    :class="self ? 'is-text-self' : 'is-text-other'"
+    @click="onClick"
+  >
+    {{ customMessage() }}
+  </div>
 </template>
 
 <script>
@@ -9,6 +15,10 @@ export default {
     message: {
       type: Object,
       default: null,
+    },
+    self: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
@@ -31,11 +41,20 @@ export default {
         return "[自定义消息]";
       }
     },
+    onClick() {
+      console.log(this.message);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.is-text-self {
+  background: var(--self-msg-color);
+}
+.is-text-other {
+  background: var(--other-msg-color);
+}
 .message-view__item--text {
   width: fit-content;
   padding: 10px 14px;

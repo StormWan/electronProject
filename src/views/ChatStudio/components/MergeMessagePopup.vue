@@ -6,9 +6,14 @@
     align-center
     :before-close="handleClose"
   >
-    <el-scrollbar always>
+    <el-scrollbar>
       <div class="merg-dialog">
-        <div class="flex" v-for="item in mergValue.payload.messageList" :key="item.ID">
+        <div
+          class="flex"
+          :class="ISown(item) ? 'is-self' : 'is-other'"
+          v-for="item in mergValue.payload.messageList"
+          :key="item.ID"
+        >
           <div class="avatar">
             <el-avatar
               :size="36"
@@ -19,14 +24,18 @@
               <img :src="circleUrl" />
             </el-avatar>
           </div>
-          <div class="item">
-            <p class="nick">{{ item.nick }} {{ timeFormat(item.clientTime * 1000, true) }}</p>
+          <div class="item" :class="msgOne(item.messageBody[0].type)">
+            <p class="nick">
+              <span>{{ item.nick }}</span>
+              <span>{{ timeFormat(item.clientTime * 1000, true) }}</span>
+            </p>
             <div :class="Megtype(item.messageBody[0].type)">
               <component
                 :key="mergValue.ID"
                 :is="loadMsgModule(item)"
                 :msgType="mergValue.conversationType"
                 :message="item.messageBody[0]"
+                :self="ISown(item)"
               >
               </component>
             </div>
@@ -34,16 +43,6 @@
         </div>
       </div>
     </el-scrollbar>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleCancel()">
-          {{ $t("el.datepicker.cancel") }}
-        </el-button>
-        <el-button type="primary" @click="handleConfirm()">
-          {{ $t("el.datepicker.confirm") }}
-        </el-button>
-      </span>
-    </template>
   </el-dialog>
 </template>
 
@@ -52,8 +51,9 @@ import { ref } from "vue";
 import emitter from "@/utils/mitt-bus";
 import { useBoolean } from "@/utils/hooks/index";
 import { timeFormat } from "@/utils/chat/index";
-import { Megtype } from "../utils/utils";
+import { Megtype, msgOne } from "../utils/utils";
 import { circleUrl } from "../utils/menu";
+import { downloadMergerMessage } from "@/api/im-sdk-api/index";
 
 import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
 import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
@@ -63,6 +63,10 @@ import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
 
 const [dialogVisible, setDialogVisible] = useBoolean();
 const mergValue = ref({});
+
+const ISown = (item) => {
+  return item.from == window.TIMProxy.userProfile.userID;
+};
 
 const loadMsgModule = (item) => {
   try {
@@ -85,13 +89,9 @@ function handleClose(done) {
   setDialogVisible(false);
   done();
 }
-function handleCancel() {
-  setDialogVisible(false);
-}
-function handleConfirm() {
-  setDialogVisible(false);
-}
 emitter.on("openMergePopup", (data) => {
+  console.log(data);
+  downloadMergerMessage(data);
   mergValue.value = data;
   setDialogVisible(true);
 });
@@ -99,7 +99,7 @@ emitter.on("openMergePopup", (data) => {
 
 <style lang="scss" scoped>
 .merg-dialog {
-  height: 400px;
+  height: 550px;
   & > div {
     padding: 10px 0 10px 0;
   }
@@ -113,6 +113,22 @@ emitter.on("openMergePopup", (data) => {
       font-size: 12px;
       color: var(--color-time-divider);
     }
+  }
+}
+
+.is-self {
+  flex-direction: row-reverse;
+  display: flex;
+  .nick {
+    flex-direction: row-reverse !important;
+  }
+  .avatar {
+    padding: 0 0 0 12px;
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
   }
 }
 </style>

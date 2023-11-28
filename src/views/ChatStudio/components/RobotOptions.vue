@@ -127,7 +127,6 @@ input[type="range"]::-ms-thumb:hover {
     min-height: 40px;
     border-bottom: 1px solid #dedede;
     padding: 10px 20px;
-    // animation: ui-lib_slide-in__1VMXW 0.6s ease;
     display: flex;
     align-items: center;
     .title {
@@ -156,7 +155,6 @@ input[type="range"] {
   appearance: none;
   background-color: var(--color-range);
   color: #303030;
-
   margin: 2px;
 }
 

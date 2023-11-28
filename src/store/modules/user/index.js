@@ -1,50 +1,31 @@
 import router from "@/router";
-import { getMyProfile, TIM_logout, TIM_login } from "@/api/im-sdk-api/index";
 import { ElMessage } from "element-plus";
 import TIMProxy from "@/utils/IM";
-import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 import { nextTick } from "vue";
 const timProxy = new TIMProxy();
-
 const user = {
   state: {
-    currentUserProfile: {}, // IM用户信息
-    isSDKReady: false, // TIM SDK 是否 ready
-    userID: "", // 用户名
-    userSig: "", // 密钥
+    timProxy,
     message: null,
     showload: false, // 登录按钮加载状态
     currentPage: 0,
-    timProxy,
+    currentUserProfile: {}, // IM用户信息
   },
-  getters: {},
   mutations: {
-    SET_CURRENTPAGE(state, num) {
+    setCurrentPage(state, num) {
       state.currentPage = num;
     },
-    toggleIsSDKReady(state, isSDKReady) {
-      state.isSDKReady = isSDKReady;
-    },
-    updateCurrentUserProfile(state, userProfile) {
-      state.currentUserProfile = userProfile;
-      window.TIMProxy.userProfile = userProfile;
-    },
-    getUserInfo(state, payload) {
-      const { userID, userSig } = payload;
-      state.userID = userID;
-      state.userSig = userSig;
-      window.TIMProxy.userID = userID;
-      window.TIMProxy.userSig = userSig;
+    setCurrentUserProfile(state, profile) {
+      state.currentUserProfile = profile;
     },
     reset(state) {
       Object.assign(state, {
+        showload: false,
+        currentPage: 0,
         currentUserProfile: {},
-        isSDKReady: false,
-        userID: "",
-        userSig: "",
       });
     },
     showMessage(state, options) {
@@ -60,6 +41,10 @@ const user = {
     },
   },
   actions: {
+    // 注册
+    async REGISTER({ state }, data) {
+      const result = await register(data);
+    },
     // 登录
     async LOG_IN({ state, commit, dispatch }, data) {
       const { code, msg, result } = await login(data);
@@ -80,45 +65,32 @@ const user = {
         verification(code, msg);
       }
     },
-    // 注册
-    async REGISTER({ state }, data) {
-      const result = await register(data);
-    },
-    // 登录im
-    async TIM_LOG_IN({ commit, dispatch }, user) {
-      const { code, data } = await TIM_login(user);
-      console.log({ code, data }, "TIM_LOG_IN");
-      if (code == 0) {
-        commit("showMessage", { message: "登录成功!" });
-        commit("getUserInfo", user);
-        console.log(user, "getUserInfo");
-      } else {
-        logout();
-        emitter.all.clear();
-        router.push("/login");
-      }
-    },
     // 退出登录
     async LOG_OUT({ state, commit, dispatch }) {
-      dispatch("TIM_LOG_OUT");
-      emitter.all.clear();
       logout();
+      emitter.all.clear();
+      dispatch("TIM_LOG_OUT");
       router.push("/login");
+    },
+    // 登录im
+    async TIM_LOG_IN({ state, commit, dispatch }, user) {
+      const { code, data } = await timProxy.chat.login(user);
+      if (code == 0) {
+        console.log("[chat] im登录成功 login", data);
+      } else {
+        dispatch("LOG_OUT");
+      }
     },
     // 退出im
     async TIM_LOG_OUT({ commit, dispatch }) {
-      const result = await TIM_logout();
-      console.log(result, "TIM_LOG_OUT");
-      // 清除消息记录
-      commit("SET_HISTORYMESSAGE", { type: "CLEAR_HISTORY" });
-      commit("reset");
-      // 清除 eltag 标签
-      dispatch("CLEAR_EL_TAG");
-    },
-    // 获取个人资料
-    async GET_MY_PROFILE({ commit }) {
-      const result = await getMyProfile();
-      commit("updateCurrentUserProfile", result);
+      const { code, data } = await timProxy.chat.logout();
+      if (code == 0) {
+        console.log("[chat] im退出登录 logout", data);
+        commit("reset");
+        // 清除消息记录
+        commit("SET_HISTORYMESSAGE", { type: "CLEAR_HISTORY" });
+        dispatch("CLEAR_EL_TAG"); // 清除 eltag 标签
+      }
     },
     // 重新登陆
     LOG_IN_AGAIN({ state, rootState, dispatch }) {
