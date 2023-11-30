@@ -10,8 +10,11 @@ const fileUploading = (data, bar = 0) => {
 // 发送消息
 export const sendMsg = async (params) => {
   try {
-    const { code, data: { message } } = await tim.sendMessage(params);
-    return { code, message }
+    const {
+      code,
+      data: { message },
+    } = await tim.sendMessage(params);
+    return { code, message };
   } catch (error) {
     console.log(error);
   }
@@ -19,7 +22,7 @@ export const sendMsg = async (params) => {
 // 创建自定义消息
 export const createCustomMsg = async (params) => {
   const { convId, convType, textMsg, customType } = params;
-  const customData = getCustomMsgContent('loading')
+  const customData = getCustomMsgContent("loading");
   return tim.createCustomMessage({
     to: convId,
     conversationType: convType,
@@ -102,13 +105,12 @@ export const createForwardMsg = async (params) => {
 };
 // 下载合并消息
 export const downloadMergerMessage = async (message) => {
-  if (message.type === TIM.TYPES.MSG_MERGER && message.payload.downloadKey !== '') {
+  if (message.type === TIM.TYPES.MSG_MERGER && message.payload.downloadKey !== "") {
     try {
       const data = await tim.downloadMergerMessage(message);
       console.log(data);
     } catch (imError) {
-      console.warn('downloadMergerMessage error:', imError);
+      console.warn("downloadMergerMessage error:", imError);
     }
   }
 };
-

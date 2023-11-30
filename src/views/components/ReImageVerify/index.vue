@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { watch, defineExpose } from "vue";
+import { watch } from "vue";
 import { useImageVerify } from "@/utils/hooks/useImageVerify";
 
 const emit = defineEmits();
@@ -29,6 +29,6 @@ watch(
 watch(imgCode, (newValue) => {
   emit("update:code", newValue);
 });
-
+// eslint-disable-next-line no-undef
 defineExpose({ getImgCode });
 </script>

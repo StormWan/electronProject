@@ -89,7 +89,7 @@
       </div>
       <el-divider />
       <!-- 免打扰 -->
-      <div class="group-flag-message" v-if="false">
+      <div class="group-flag-message">
         <div class="group-flag-message--title">
           <span class="group-flag-message--title__text"> 消息免打扰 </span>
           <el-switch v-model="isNotify" @change="notify" />
@@ -140,6 +140,8 @@ const GROUP_TYPE_MAP = {
   ChatRoom: "临时会议群(Meeting)",
   AVChatRoom: "直播群(AVChatRoom)",
 };
+const isNotify = ref(false);
+const AddMemberRef = ref();
 const { locale, t } = useI18n();
 const { state, commit, dispatch } = useStore();
 const { userProfile, groupDrawer, currentMemberList, currentConversation } = useState({
@@ -155,16 +157,17 @@ const { isOwner, isAdmin, toAccount, currentType } = useGetters([
   "currentType",
 ]);
 
-watchEffect(() => {});
-const isNotify = ref(false);
-const AddMemberRef = ref();
+watchEffect(() => {
+  isNotify.value = currentConversation.value.messageRemindType === "AcceptNotNotify" ? true : false;
+});
+
 const notify = (val) => {
-  // const { type, toAccount, messageRemindType: remindType } = currentConversation.value;
-  // dispatch("SET_MESSAGE_REMIND_TYPE", {
-  //   type,
-  //   toAccount,
-  //   remindType,
-  // });
+  const { type, toAccount, messageRemindType: remindType } = currentConversation.value;
+  dispatch("SET_MESSAGE_REMIND_TYPE", {
+    type,
+    toAccount,
+    remindType,
+  });
 };
 const visible = computed({
   get() {
@@ -405,6 +408,11 @@ const handleQuitGroup = async () => {
 }
 .group-flag-message {
   padding: 12px 0;
+  .group-flag-message--title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 .group-operator {
   padding-top: 20px;

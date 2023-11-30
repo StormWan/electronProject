@@ -48,7 +48,9 @@ getServerConfig(app).then(async (config) => {
   app.use(MotionPlugin);
   app.mount("#app");
 });
-// app.config.globalProperties.$api = api;
+
 app.config.errorHandler = (err, instance, info) => {
-  console.log(err, instance, info);
+  console.error(`[Error Handler] Error: ${err}`);
+  console.error(`[Error Handler] Vue Instance: `, instance);
+  console.error(`[Error Handler] Additional Info: `, info);
 };

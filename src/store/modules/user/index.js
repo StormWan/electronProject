@@ -2,6 +2,7 @@ import router from "@/router";
 import { ElMessage } from "element-plus";
 import TIMProxy from "@/utils/IM";
 import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
+import chat from "@/utils/im-sdk/tim";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 import { nextTick } from "vue";
@@ -74,7 +75,7 @@ const user = {
     },
     // 登录im
     async TIM_LOG_IN({ state, commit, dispatch }, user) {
-      const { code, data } = await timProxy.chat.login(user);
+      const { code, data } = await chat.login(user);
       if (code == 0) {
         console.log("[chat] im登录成功 login", data);
       } else {
@@ -83,7 +84,7 @@ const user = {
     },
     // 退出im
     async TIM_LOG_OUT({ commit, dispatch }) {
-      const { code, data } = await timProxy.chat.logout();
+      const { code, data } = await chat.logout();
       if (code == 0) {
         console.log("[chat] im退出登录 logout", data);
         commit("reset");

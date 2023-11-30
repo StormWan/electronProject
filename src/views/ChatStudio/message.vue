@@ -168,6 +168,7 @@ watchEffect(() => {
   // cursor: s-resize;
   cursor: row-resize;
   font-size: 12px;
+  background: var(--color-toolbar);
 }
 .back-to-the-bottom {
   position: absolute;

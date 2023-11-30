@@ -14,11 +14,11 @@ module.exports = {
   ],
   // ESLint 的解析器选项
   parserOptions: {
-    parser: "babel-eslint",
+    parser: "@babel/eslint-parser",
   },
   // 自定义规则
   rules: {
-    'no-undef': 'off', // 禁用未声明的变量
+    "no-undef": "off", // 禁用未声明的变量
     "no-unused-vars": "off", // 禁止未使用过的变量
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",

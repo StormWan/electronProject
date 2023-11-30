@@ -7,7 +7,6 @@ const {
   externals,
   devServer,
   production,
-  publicPath,
   optimization,
   performance,
   pluginOptions,
@@ -61,15 +60,15 @@ module.exports = {
       // ]);
     }
     // svg-sprite-loader 配置
-    const svgRule = config.module.rule("svg"); // 找到svg-loader
-    svgRule.uses.clear(); // 清除已有的loader, 如果不这样做会添加在此loader之后
-    svgRule.exclude.add(/node_modules/); // 正则匹配排除node_modules目录
-    svgRule
+    config.module.rules.delete("svg");
+    config.module
+      .rule("svg-sprite-loader")
       .test(/\.svg$/)
+      .include.add(path.join(__dirname, "./src/assets/icons"))
+      .end()
       .use("svg-sprite-loader")
       .loader("svg-sprite-loader")
       .options({ symbolId: "icon-[name]" });
-
     // 根路径
     config.resolve.alias.set("@", resolve("src"));
 

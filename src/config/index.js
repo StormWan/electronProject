@@ -3,10 +3,19 @@ import axios from "axios";
 let config = {};
 const VUE_APP_PUBLIC_PATH = process.env.VUE_APP_PUBLIC_PATH;
 
+/**
+ * 设置配置项
+ * @param {Object} cfg - 需要设置的配置对象
+ */
 const setConfig = (cfg) => {
-  config = Object.assign(config, cfg);
+  config = { ...config, ...cfg };
 };
 
+/**
+ * 获取配置项或整个配置对象
+ * @param {string} key - 可选，如果提供，获取指定键的配置项
+ * @returns {Object} - 返回配置对象或指定键的配置项
+ */
 const getConfig = (key) => {
   if (typeof key === "string") {
     const arr = key.split(".");
@@ -25,27 +34,27 @@ const getConfig = (key) => {
   return config;
 };
 
-/** 获取项目动态全局配置 */
+/**
+ * 获取项目动态全局配置
+ * @param {Object} app - Vue app 对象
+ * @returns {Promise<Object>} - 返回包含项目配置的 Promise 对象
+ */
 export const getServerConfig = async (app) => {
   app.config.globalProperties.$config = getConfig();
-  return axios({
-    method: "get",
-    url: `${VUE_APP_PUBLIC_PATH}serverConfig.json`,
-  })
-    .then(({ data: config }) => {
-      let $config = app.config.globalProperties.$config;
-      // 自动注入项目配置
-      if (app && $config && typeof config === "object") {
-        $config = Object.assign($config, config);
-        app.config.globalProperties.$config = $config;
-        // 设置全局配置
-        setConfig($config);
-      }
-      return $config;
-    })
-    .catch(() => {
-      throw "请在public文件夹下添加serverConfig.json配置文件";
-    });
+  try {
+    const { data: configData } = await axios.get(`${VUE_APP_PUBLIC_PATH}serverConfig.json`);
+    let $config = app.config.globalProperties.$config;
+    // 自动注入项目配置
+    if (app && $config && typeof configData === "object") {
+      $config = { ...$config, ...configData };
+      app.config.globalProperties.$config = $config;
+      // 设置全局配置
+      setConfig($config);
+    }
+    return $config;
+  } catch (error) {
+    throw "请在public文件夹下添加serverConfig.json配置文件";
+  }
 };
 
 export { getConfig, setConfig };

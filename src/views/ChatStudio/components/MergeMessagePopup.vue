@@ -128,7 +128,7 @@ emitter.on("openMergePopup", (data) => {
   .item {
     display: flex;
     flex-direction: column;
-    align-items: end;
+    align-items: flex-end;
   }
 }
 </style>

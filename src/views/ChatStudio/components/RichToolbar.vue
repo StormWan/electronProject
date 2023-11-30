@@ -69,7 +69,7 @@ import emitter from "@/utils/mitt-bus";
 import EmotionPackBox from "./EmotionPackBox.vue";
 import RobotOptions from "./RobotOptions.vue";
 import { useStore } from "vuex";
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { dataURLtoFile } from "@/utils/chat/index";
 import { isRobot } from "@/utils/chat/index";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
@@ -82,7 +82,7 @@ const imagePicker = ref();
 const filePicker = ref();
 const { commit } = useStore();
 
-const emit = defineEmits(["setEmoj", "setPicture", "setParsefile"]);
+const emit = defineEmits(["setToolbar"]);
 const { toAccount } = useGetters(["toAccount"]);
 
 const sendEmojiClick = () => {
@@ -146,6 +146,7 @@ emitter.on("onisbot", (state) => {
   padding: 0 5px;
   display: flex;
   position: relative;
+  background: var(--color-toolbar);
   & > span {
     width: 42px;
     align-items: center;

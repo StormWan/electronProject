@@ -118,23 +118,6 @@ export const renderFileIcon = (fileType = "") => {
   return require(`@/assets/message/${type}.png`);
 };
 
-export const getMsgElemItem = (type, data, videoInfoList) => {
-  switch (type) {
-    case "text": {
-      return "";
-    }
-    case "block-video": {
-      return "";
-    }
-    case "block-file": {
-      return "";
-    }
-    case "block-image": {
-      return "";
-    }
-  }
-};
-
 // 动态class
 export const Megtype = (elem_type) => {
   let resp = "";

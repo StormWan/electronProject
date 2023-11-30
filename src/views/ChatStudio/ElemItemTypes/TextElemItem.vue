@@ -59,8 +59,8 @@ const onClick = (data) => {
   background: var(--other-msg-color);
 }
 .emoji {
-  width: 24px;
-  vertical-align: bottom;
+  width: 23px;
+  vertical-align: sub;
 }
 .message-view__item--text {
   width: fit-content;

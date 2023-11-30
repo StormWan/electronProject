@@ -7,18 +7,16 @@
 <script setup>
 import { onMounted, nextTick, ref, onBeforeUnmount, computed } from "vue";
 import { useWatermark } from "@/utils/hooks/useWatermark";
-import { useStore, mapState } from "vuex";
-import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import { ElConfigProvider } from "element-plus";
 import { useState } from "@/utils/hooks/useMapper";
 
-import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import en from "element-plus/lib/locale/lang/en";
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import en from "element-plus/dist/locale/en.mjs";
 
 const { setWatermark, clear } = useWatermark();
-const watermarkText = ref("Pure Admin");
 const route = useRoute();
-const router = useRouter();
 
 const { dispatch, commit } = useStore();
 const { lang } = useState({
@@ -35,7 +33,7 @@ onMounted(async () => {
     dispatch("LOG_IN_AGAIN");
   }, 200);
   nextTick(() => {
-    setWatermark(watermarkText.value);
+    setWatermark("Pure Admin");
   });
 });
 onBeforeUnmount(() => {

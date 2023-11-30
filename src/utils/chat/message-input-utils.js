@@ -197,7 +197,7 @@ function queryStringToObject(queryString) {
 const TypeMap = {
   TIMImageElem: "[图片]",
   TIMFileElem: "[文件]",
-  TIMRelayElem: "[合并消息]"
+  TIMRelayElem: "[合并消息]",
 };
 
 export const fnReplyContent = (msg) => {
@@ -231,14 +231,14 @@ export function getCustomMsgContent() {
         bodyType: "loadingBody",
         text: {
           loadingIcon: "",
-          value: "正在输入中..."
-        }
-      }
+          value: "正在输入中...",
+        },
+      },
     },
     display: 0,
     ID: "loading",
-    listMessage: "正在输入中..."
-  })
+    listMessage: "正在输入中...",
+  });
 }
 
 /**
@@ -305,10 +305,14 @@ export function bytesToSize(bytes) {
   }
 }
 
+/**
+ * 滚动到指定消息ID对应的DOM位置，并添加动画效果
+ * @param {string} msgid - 消息的唯一标识符，用于查找对应的DOM元素
+ */
 export const scrollToDomPostion = (msgid) => {
   const dom = document.getElementById(`${msgid}`);
   if (!dom) {
-    store.commit("showMessage", { message: '无法查看上下文', type: "warning" });
+    store.commit("showMessage", { message: "无法查看上下文", type: "warning" });
     return;
   }
   dom.scrollIntoView({ behavior: "smooth", block: "center" });

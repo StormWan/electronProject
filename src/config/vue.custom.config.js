@@ -3,12 +3,19 @@ const path = require("path");
  * @Description: webpack 打包配置
  */
 const production = process.env.NODE_ENV === "production";
-
+const proxy = {
+  "/proxy": {
+    // 目标代理服务器地址.
+    target: "http://localhost:8888",
+    // 是否允许跨域.
+    changeOrigin: true,
+    secure: true,
+    pathRewrite: {
+      "^/proxy": "/",
+    },
+  },
+};
 const vueDefaultConfig = {
-  publicPath: "/",
-  outputDir: "dist",
-  assetsDir: "static",
-  lintOnSave: true,
   production, // 环境配置
   transpileDependencies: ["vue-echarts", "resize-detector"],
   //webpack 配置的项目名称
@@ -32,6 +39,10 @@ const vueDefaultConfig = {
     },
   },
   devServer: {
+    client: {
+      progress: true,
+      overlay: false,
+    },
     // 是否自动打开浏览器.
     // open: false,
     // 局域网和本地访问.
@@ -39,21 +50,7 @@ const vueDefaultConfig = {
     // 端口.
     port: process.env.VUE_APP_PORT || 8080,
     // 代理.
-    proxy:
-      process.env.VUE_APP_PROXY === "false"
-        ? null
-        : {
-            "/proxy": {
-              // 目标代理服务器地址.
-              target: "http://localhost:8888",
-              // 是否允许跨域.
-              changeOrigin: true,
-              secure: true,
-              pathRewrite: {
-                "^/proxy": "/",
-              },
-            },
-          },
+    proxy: process.env.VUE_APP_PROXY === "false" ? null : proxy,
   },
   cdn: {
     // https://unpkg.com/browse/vue@2.6.10/

@@ -16,6 +16,7 @@
   --color-border-default: rgba(0, 0, 0, 0.09);
   --color-time-divider: rgba(0, 0, 0, 0.45);
   --color-message-chat-name: rgba(0, 0, 0, 0.85);
+  --color-group-tip: rgba(0, 0, 0, 0.05);
   // 消息框颜色
   --other-msg-color: #f0f2f5;
   --self-msg-color: #c2e8ff;
@@ -46,8 +47,10 @@
   --self-msg-color: #000;
 
   --color-range: #141414;
+  --color-group-tip: rgba(0, 0, 0, 0.05);
+  --color-toolbar: reg(27, 27, 27);
   // wangEditor
-  --w-e-textarea-bg-color: #333;
+  --w-e-textarea-bg-color: rgb(38, 38, 38);
   --w-e-textarea-color: #fff;
   --w-e-textarea-slight-bg-color: #333;
 

@@ -150,6 +150,13 @@ const onClick = async () => {
 };
 
 const onHandle = (index) => {
+  if (index === 3) {
+    commit("showMessage", {
+      message: `待开发`,
+      type: "error",
+    });
+    return;
+  }
   commit("setCurrentPage", index);
 };
 

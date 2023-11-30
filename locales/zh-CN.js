@@ -1,7 +1,5 @@
 // element-plus国际化
-import elementZhLocale from "element-plus/lib/locale/lang/zh-cn";
-console.log(elementZhLocale);
-// zh-CN
+import elementZhLocale from "element-plus/dist/locale/zh-cn.mjs";
 export default {
   ...elementZhLocale,
   chat: {

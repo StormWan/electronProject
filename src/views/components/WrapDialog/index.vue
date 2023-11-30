@@ -164,6 +164,7 @@ const determine = (formEl) => {
   });
 };
 
+// eslint-disable-next-line no-undef
 defineExpose({ dialogFormVisible });
 </script>
 

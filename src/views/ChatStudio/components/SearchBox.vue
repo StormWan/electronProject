@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick, defineExpose } from "vue";
+import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
@@ -68,6 +68,7 @@ onClickOutside(popoverRef, (event) => {
   // if (!popover.value) return;
   setModal(false);
 });
+// eslint-disable-next-line no-undef
 defineExpose({ setModal });
 </script>
 

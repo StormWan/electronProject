@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { squareUrl } from "../utils/menu";
 import { chatName } from "../utils/utils";
 import { useBoolean } from "@/utils/hooks/index";

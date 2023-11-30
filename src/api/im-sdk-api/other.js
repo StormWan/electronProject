@@ -20,27 +20,6 @@ export const getMyProfile = async () => {
     console.log(e);
   }
 };
-//登录
-export const TIM_login = async (params) => {
-  try {
-    const { userID, userSig } = params;
-    const { code, data } = await tim.login({
-      userID,
-      userSig,
-    });
-    return { code, data };
-  } catch (error) {
-    return { code: 404, data: null };
-  }
-};
-//退出登录
-export const TIM_logout = async () => {
-  const { code, data } = await tim.logout();
-  return {
-    code,
-    data,
-  };
-};
 // 销毁 SDK 实例
 export const TIM_Destroy = async () => {
   // SDK 会先 logout，然后断开 WebSocket 长连接，并释放资源

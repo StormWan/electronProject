@@ -1,6 +1,5 @@
 // element-plus国际化
-import elementEnLocale from "element-plus/lib/locale/lang/en";
-// en
+import elementEnLocale from "element-plus/dist/locale/en.mjs";
 export default {
   ...elementEnLocale,
   chat: {
