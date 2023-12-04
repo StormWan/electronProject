@@ -73,8 +73,6 @@ defineExpose({ setModal });
 </script>
 
 <style lang="scss" scoped>
-.groupChat {
-}
 .item-list {
   // height: 36px;
   padding: 8px 16px;
