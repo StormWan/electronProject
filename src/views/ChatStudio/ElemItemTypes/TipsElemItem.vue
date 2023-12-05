@@ -34,6 +34,7 @@ export default {
       console.log(this.revokeMsgMap);
     },
     onEdit(data = this.message) {
+      console.log("[edit]:", data);
       emitter.emit("handleSetHtml", data?.payload?.text);
       this.$store.commit("setRevokeMsg", { data, type: "delete" });
     },
@@ -48,13 +49,6 @@ export default {
       return "你撤回了一条消息";
     },
   },
-  // render() {
-  //   return (
-  //     <div class="message-view_withdraw" onClick={this.onClick()}>
-  //       {this.getChangeType()}
-  //     </div>
-  //   );
-  // },
 };
 </script>
 

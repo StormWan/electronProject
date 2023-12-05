@@ -95,6 +95,8 @@ export const GroupSystemNotice = (message) => {
       return `${message.payload.operatorID}拒接加群：${groupName}`;
     case 255:
       return "自定义群系统通知: " + message.payload.userDefinedField;
+    default:
+      return "待开发";
   }
 };
 

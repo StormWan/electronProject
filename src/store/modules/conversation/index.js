@@ -13,6 +13,14 @@ import {
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
 
+function checkTextNotEmpty(arr) {
+  return arr.some((obj) => {
+    return obj.children.some((child) => {
+      return child.text !== "";
+    });
+  });
+}
+
 function transformData(data) {
   const inputData = data.filter(
     (item) => !item.isTimeDivider && !item.isDeleted && !item.isRevoked
@@ -315,9 +323,8 @@ const conversation = {
     SET_SESSION_DRAFT(state, action) {
       if (!action) return;
       const { ID, payload } = action;
-      const length = payload?.[0]?.children.length == 1;
-      const text = payload?.[0]?.children[0].text == "";
-      if (length && text) {
+      console.log(payload, "payload");
+      if (!checkTextNotEmpty(payload)) {
         state.sessionDraftMap.delete(ID);
       } else {
         state.sessionDraftMap.set(ID, payload);

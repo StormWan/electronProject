@@ -116,8 +116,8 @@ const insertDraft = (value) => {
   const draftMap = sessionDraftMap.value;
   const draft = draftMap.get(ID);
   clearInputInfo();
-  draft?.[0]?.children.forEach((item) => {
-    editorRef.value.insertNode(item);
+  draft?.forEach((item) => {
+    editorRef.value.insertNode(item.children);
   });
 };
 

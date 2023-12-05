@@ -24,17 +24,7 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  reactive,
-  toRefs,
-  computed,
-  watchEffect,
-  onMounted,
-  onUnmounted,
-  onActivated,
-  onDeactivated,
-} from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import Label from "@/views/ChatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
@@ -73,14 +63,25 @@ onClickOutside(popoverRef, (event) => {
   closeModal();
 });
 
+const offsetLeft = 30;
+const offsetTop = 80;
+const cardWidth = 220;
+const cardHeight = 320;
+
 const setPosition = (data) => {
   if (!data) return;
   try {
-    const { x, y } = data;
-    const l = x + 30;
-    const t = y - 80;
-    left.value = l + "px";
-    top.value = t + "px";
+    const { pageX, pageY, clientY } = data;
+    let cardLeft = pageX + offsetLeft;
+    let cardTop = pageY - offsetTop;
+    let windowHeight = window.innerHeight; // 获取窗口的高度
+    const bottomSpace = windowHeight - clientY;
+    // 判断卡片是否超出屏幕
+    if (bottomSpace < cardHeight - offsetTop) {
+      cardTop = pageY - (cardHeight - offsetTop);
+    }
+    left.value = cardLeft + "px";
+    top.value = cardTop + "px";
   } catch (error) {
     console.log(error);
   }

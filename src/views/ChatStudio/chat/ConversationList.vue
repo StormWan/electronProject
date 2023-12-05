@@ -154,6 +154,22 @@ const createElement = (num = 0) => {
   const messageTypes = ["有人@我", "草稿"];
   return `<span style='color:#f44336;'>[${messageTypes[num]}]</span> `;
 };
+
+const parseData = (data) => {
+  const result = [];
+  try {
+    data.forEach((item) => {
+      if (item.type === "paragraph" && item.children?.[1]?.type == "image") {
+        result.push(item.children[1].alt);
+      } else if (item.type === "paragraph") {
+        result.push(item.children[0].text);
+      }
+    });
+    return result.join("");
+  } catch (error) {
+    return data?.[0]?.children[0].text;
+  }
+};
 // 定义消息提示元素
 const CustomMention = (props) => {
   const { item } = props;
@@ -161,7 +177,7 @@ const CustomMention = (props) => {
   const { messageForShow } = lastMessage;
   const draft = sessionDraftMap.value.get(ID);
   if (draft && isdraft(item)) {
-    return h("span", { innerHTML: `${createElement(1)}${draft?.[0]?.children[0].text}` });
+    return h("span", { innerHTML: `${createElement(1)}${parseData(draft)}` });
   }
   return h("span", {
     innerHTML: `${unreadCount !== 0 ? createElement() : ""}${lastMessage.nick}: ${messageForShow}`,

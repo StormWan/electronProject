@@ -37,4 +37,5 @@ export const logout = () => {
   storage.remove(SET_UP);
   storage.remove(USER_DATA);
   storage.remove(ACCESS_TOKEN);
+  storage.remove('access-control');
 };

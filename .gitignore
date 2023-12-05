@@ -31,6 +31,9 @@ pnpm-debug.log*
 # Yarn lock file
 yarn.lock
 
+# pnpm lock file
+pnpm-lock.yaml
+
 # TypeScript declaration file for components
 components.d.ts
 
