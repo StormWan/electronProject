@@ -63,13 +63,12 @@ onClickOutside(popoverRef, (event) => {
   closeModal();
 });
 
-const offsetLeft = 30;
-const offsetTop = 80;
-const cardWidth = 220;
-const cardHeight = 320;
-
 const setPosition = (data) => {
   if (!data) return;
+  let offsetLeft = 30;
+  let offsetTop = 80;
+  let cardWidth = 220;
+  let cardHeight = 320;
   try {
     const { pageX, pageY, clientY } = data;
     let cardLeft = pageX + offsetLeft;

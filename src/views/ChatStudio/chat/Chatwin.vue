@@ -130,6 +130,7 @@ import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
 import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
 import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
 
+const timeout = ref(false);
 const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
@@ -360,6 +361,7 @@ const handleContextMenuEvent = (event, item) => {
     isRight.value = false;
     return;
   }
+  timeout.value = false;
   isRight.value = true;
   const nowtime = parseInt(new Date().getTime() / 1000);
   MenuItemInfo.value = item;
@@ -372,11 +374,13 @@ const handleContextMenuEvent = (event, item) => {
   }
   // 超过撤回时间
   if (!relinquish) {
+    timeout.value = true;
     RIGHT_CLICK_MENU_LIST.value = MENU_LIST.filter((t) => t.id !== "revoke");
   }
-  // 群主 & 群聊
+  // 群主 & 群聊 & 撤回时间不限制2分钟
   if (isOwner.value && currentType.value === TIM.TYPES.CONV_GROUP) {
-    if (!self) RIGHT_CLICK_MENU_LIST.value = MENU_LIST;
+    // if (!self)
+    RIGHT_CLICK_MENU_LIST.value = MENU_LIST;
   }
   // 合并消息
   if (isRelay) {
@@ -483,6 +487,10 @@ const handleRevokeChange = (msg, type) => {
 };
 // 撤回消息
 const handleRevokeMsg = async (data) => {
+  if (timeout.value) {
+    const result = await showConfirmationBox({ message: "确定撤回这条消息?", iconType: "warning" });
+    if (result == "cancel") return;
+  }
   const { code, message } = await revokeMsg(data);
   if (code !== 0) return;
   if (message.flow !== "out") return;

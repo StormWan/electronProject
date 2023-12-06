@@ -71,14 +71,15 @@ export const createImgtMsg = (params) => {
 // 创建文件消息
 export const createFiletMsg = async (params) => {
   const { convId, convType, files } = params;
-  return tim.createFileMessage({
+  const message = tim.createFileMessage({
     to: convId,
     conversationType: convType,
     payload: { file: files },
-    onProgress: (event) => {
+    onProgress: async (event) => {
       fileUploading(message, event * 100);
     },
   });
+  return message
 };
 // 创建合并消息
 export const createMergerMsg = async (params) => {

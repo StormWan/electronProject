@@ -158,19 +158,6 @@ const conversation = {
           state.currentMessageList = newHistoryList;
           break;
         }
-        case CONVERSATIONTYPE.RECALL_MESSAGE: {
-          console.log("[chat] 撤回消息 RECALL_MESSAGE:", payload);
-          const { convId, message } = payload;
-          let oldConvId = state.currentConversation?.conversationID;
-          let history = state.historyMessageList.get(convId);
-          if (!history) return;
-          if (oldConvId !== convId) return;
-          const newHistory = history.filter((item) => !item.isTimeDivider);
-          const newHistoryList = addTimeDivider(newHistory.reverse()).reverse();
-          state.historyMessageList.set(convId, newHistoryList);
-          state.currentMessageList = newHistoryList;
-          break;
-        }
         case CONVERSATIONTYPE.SET_CURRENT_REPLY_MSG: {
           console.log("[chat] 回复消息 SET_CURRENT_REPLY_MSG:", payload);
           state.currentReplyMsg = payload;

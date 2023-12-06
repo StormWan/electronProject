@@ -133,10 +133,10 @@ export default class TIMProxy {
   onMessageRevoked({ data }) {
     console.log("[chat] 撤回消息 onMessageRevoked:", data);
     store.commit("SET_HISTORYMESSAGE", {
-      type: "RECALL_MESSAGE",
+      type: "UPDATE_MESSAGES",
       payload: {
-        convId: data[0].conversationID,
-        message: data,
+        convId: data?.[0].conversationID,
+        message: cloneDeep(data[0]),
       },
     });
   }
