@@ -59,7 +59,6 @@ const uploading = ({ uuid, num }) => {
 };
 
 emitter.on("fileUploading", (data) => {
-  console.log("[file] uploading:", data);
   uploading(data);
 });
 </script>

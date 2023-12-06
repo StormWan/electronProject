@@ -1,11 +1,16 @@
 import tim from "@/utils/im-sdk/tim";
 import TIM from "@tencentcloud/chat";
 import emitter from "@/utils/mitt-bus";
+import { createProgressHandler } from '@/utils/chat/index';
 import { getReplyMsgContent, getCustomMsgContent } from "@/utils/chat/index";
+const handleProgressUpdate = createProgressHandler();
 
 const fileUploading = (data, bar = 0) => {
-  const uuid = data?.payload?.uuid || "";
-  emitter.emit("fileUploading", { uuid, num: bar?.toFixed(0) });
+  handleProgressUpdate({ num: bar?.toFixed(0) }, () => {
+    const uuid = data?.payload?.uuid || "";
+    emitter.emit("fileUploading", { uuid, num: bar?.toFixed(0) });
+    console.log("[file] uploading:", bar?.toFixed(0) + "%");
+  })
 };
 // 发送消息
 export const sendMsg = async (params) => {

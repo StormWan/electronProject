@@ -1,4 +1,5 @@
 import store from "@/store";
+import { throttle } from "lodash-es";
 /**
  * 将二进制数据转换为 base64 URL 格式
  * @param {string | Buffer} data 要转换的数据，可以是一个字符串或一个 Buffer 对象
@@ -320,6 +321,19 @@ export const scrollToDomPostion = (msgid) => {
   setTimeout(() => {
     dom.classList.remove("shrink-style");
   }, 2000);
+};
+
+export const createProgressHandler = () => {
+  let lastNum = 0; // 记录上次的 num 值
+  const handleProgressUpdate = throttle((progress, cd) => {
+    if (progress.num !== lastNum) {
+      lastNum = progress.num;
+      if (typeof cd === 'function') {
+        cd();
+      }
+    }
+  }, 200);
+  return handleProgressUpdate;
 };
 
 // 匹配机器人账号
