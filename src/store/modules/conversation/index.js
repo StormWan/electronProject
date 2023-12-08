@@ -2,7 +2,7 @@ import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/sto
 import { addTimeDivider } from "@/utils/chat/index";
 import { imCallback, restApi } from "@/api/node-admin-api/index";
 import TIM from "@tencentcloud/chat";
-import { nextTick } from "vue";
+import { cloneDeep } from "lodash-es";
 import {
   deleteConversation,
   getConversationProfile,
@@ -99,28 +99,8 @@ const conversation = {
         case CONVERSATIONTYPE.UPDATE_MESSAGES: {
           console.log("[chat] 更新消息 UPDATE_MESSAGES:", payload);
           const { convId, message } = payload;
-          let oldMessageList = state.historyMessageList.get(convId);
           let matched = false;
-          // let newMessageList = [];
-          // if (oldMessageList) {
-          //   newMessageList = oldMessageList.map((oldMessage) => {
-          //     if (oldMessage.ID === payload.message.ID) {
-          //       matched = true;
-          //       return payload.message;
-          //     } else {
-          //       return oldMessage;
-          //     }
-          //   });
-          // }
-          // 新消息
-          // if (!matched) {
-          //   let baseTime = getBaseTime(newMessageList);
-          //   let timeDividerResult = addTimeDivider([message], baseTime).reverse();
-          //   newMessageList.unshift(...timeDividerResult);
-          // }
-          // 使用reduce()方法来代替map()
-          // 并在reduce过程中判断是否匹配到了消息。
-          // 避免在检查完所有旧消息之后仍需要再次遍历新消息数组来判断是否添加新消息的情况
+          let oldMessageList = state.historyMessageList.get(convId);
           const newMessageList = oldMessageList.reduce((acc, item) => {
             if (item.ID === payload.message.ID) {
               matched = true;
@@ -369,6 +349,23 @@ const conversation = {
           message: action,
         },
       });
+    },
+    async GET_ROBOT_MESSAGE_LIST({ state, commit }, action) {
+      const { convId } = action;
+      const { messageList } = await getMsgList({
+        conversationID: convId,
+        count: 15,
+      });
+      const message = addTimeDivider(messageList).reverse();
+      state.historyMessageList.set(convId, message);
+      commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_MESSAGES",
+        payload: {
+          convId: message?.[0].conversationID,
+          message: cloneDeep(message[0]),
+        },
+      });
+      commit("updataScroll");
     },
     // 新增会话列表
     async CHEC_OUT_CONVERSATION({ state, commit, dispatch }, action) {

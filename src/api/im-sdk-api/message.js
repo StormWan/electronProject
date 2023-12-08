@@ -1,7 +1,7 @@
 import tim from "@/utils/im-sdk/tim";
 import TIM from "@tencentcloud/chat";
 import emitter from "@/utils/mitt-bus";
-import { createProgressHandler } from '@/utils/chat/index';
+import { createProgressHandler } from "@/utils/chat/index";
 import { getReplyMsgContent, getCustomMsgContent } from "@/utils/chat/index";
 const handleProgressUpdate = createProgressHandler();
 
@@ -10,7 +10,7 @@ const fileUploading = (data, bar = 0) => {
     const uuid = data?.payload?.uuid || "";
     emitter.emit("fileUploading", { uuid, num: bar?.toFixed(0) });
     console.log("[file] uploading:", bar?.toFixed(0) + "%");
-  })
+  });
 };
 // 发送消息
 export const sendMsg = async (params) => {
@@ -39,15 +39,17 @@ export const createCustomMsg = async (params) => {
   });
 };
 // 创建文本消息
-export const createTextMsg = async (params) => {
-  const { convId, convType, textMsg, reply } = params;
-  const replyMsgContent = getReplyMsgContent(reply);
-  return await tim.createTextMessage({
+export const createTextMsg = (params) => {
+  const { convId, convType = "C2C", textMsg, reply } = params;
+  let replyMsgContent = "";
+  if (reply) replyMsgContent = getReplyMsgContent(reply);
+  const message = tim.createTextMessage({
     to: convId,
     conversationType: convType,
     payload: { text: textMsg },
     cloudCustomData: replyMsgContent,
   });
+  return message;
 };
 // 创建 @提醒功能的文本消息
 export const createTextAtMsg = async (params) => {
@@ -84,7 +86,7 @@ export const createFiletMsg = async (params) => {
       fileUploading(message, event * 100);
     },
   });
-  return message
+  return message;
 };
 // 创建合并消息
 export const createMergerMsg = async (params) => {
@@ -114,7 +116,6 @@ export const downloadMergerMessage = async (message) => {
   if (message.type === TIM.TYPES.MSG_MERGER && message.payload.downloadKey !== "") {
     try {
       const data = await tim.downloadMergerMessage(message);
-      console.log(data);
     } catch (imError) {
       console.warn("downloadMergerMessage error:", imError);
     }

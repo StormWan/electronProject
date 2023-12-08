@@ -17,6 +17,7 @@ function getConversationID() {
 
 export default class TIMProxy {
   constructor() {
+    this.robotList = ["C2C@RBT#001"]
     this.userProfile = {}; // IM用户信息
     this.userID = "";
     this.userSig = "";
@@ -260,8 +261,14 @@ export default class TIMProxy {
   handleUpdateMessage(data, read = true) {
     const convId = getConversationID();
     if (!convId) return;
+    const isRobot = this.robotList.includes(data?.[0].conversationID)
+    if (isRobot) {
+      store.dispatch("GET_ROBOT_MESSAGE_LIST", {
+        convId: "C2C@RBT#001",
+      });
+    }
     // 更新当前会话消息
-    store.commit("SET_HISTORYMESSAGE", {
+    !isRobot && store.commit("SET_HISTORYMESSAGE", {
       type: "UPDATE_MESSAGES",
       payload: {
         convId: data?.[0].conversationID,

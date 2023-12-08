@@ -13,6 +13,7 @@
       <template v-for="item in decodeText(message.payload.text)" :key="item">
         <span v-if="item.name === 'text'">
           <analysis-url :text="item.text" />
+          <!-- <v-md-preview :text="item.text"></v-md-preview> -->
         </span>
         <img
           v-else-if="item.name === 'img'"

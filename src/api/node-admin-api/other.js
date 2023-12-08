@@ -1,11 +1,11 @@
 import http from "@/utils/http/index";
 import { isRobot } from "@/utils/chat/index";
 import { restApi } from "./rest";
-import { throttle } from "lodash-es";
+import { throttle, cloneDeep } from "lodash-es";
 import store from "@/store";
 import { useAccessStore } from "@/api/openai/constant";
 import { api } from "@/api/openai/api";
-import { nextTick } from "vue";
+import { createTextMsg } from "@/api/im-sdk-api/index";
 
 function fnMsgBody(data) {
   const { type, Text, To, From } = data;
@@ -68,8 +68,6 @@ export const imCallback = async (params) => {
   const { Text, From, To, type } = params;
   if (!isRobot(To)) return;
   sendMessages(params);
-  // const data = fnMsgBody({ Text, From, To, type })
-  // return http({ url: "/imCallback", method: "post", data });
 };
 
 export const sendMsg = async (params, message) => {
@@ -82,42 +80,51 @@ export const sendMsg = async (params, message) => {
     funName: "restSendMsg",
   });
 };
-export const modifyMsg = throttle(async (params, message) => {
-  const { From_Account, To_Account, MsgKey } = params;
-  if (!message) return;
-  restApi({
-    params: { From_Account, To_Account, MsgKey, message },
-    funName: "modifyC2cMsg",
-  })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}, 50);
+
+const fnCreateTextMsg = (params) => {
+  const msg = createTextMsg({ convId: params.From, textMsg: "｜" });
+  msg.conversationID = `C2C${params.From}`;
+  msg.avatar = "https://ljx-1307934606.cos.ap-beijing.myqcloud.com/open-ai-icon.png"
+  msg.flow = "in";
+  msg.to = params.From;
+  msg.from = params.To;
+  msg.nick = "AI机器人";
+  msg.status = "success"
+  return msg
+}
+const updataMessage = (msg, message) => {
+  if (!msg) return
+  msg.payload.text = message;
+  store.commit("SET_HISTORYMESSAGE", {
+    type: "UPDATE_MESSAGES",
+    payload: {
+      convId: "C2C@RBT#001",
+      message: cloneDeep(msg),
+    },
+  });
+}
 
 export const sendMessages = async (params) => {
-  let MsgKey = "";
-  const res = await sendMsg(params);
-  MsgKey = res.MsgKey;
+  const msg = fnCreateTextMsg(params)
   await api.chat({
     messages: params.messages,
     config: { model: useAccessStore().model, stream: true },
     onUpdate(message) {
-      console.log(message, "onUpdate");
-      // MsgKey && modifyMsg({ From_Account: params.From, To_Account: params.To, MsgKey }, message);
+      console.log("[chat] onUpdate:", message);
       store.commit("updataScroll", "instantly");
+      updataMessage(msg, message)
     },
-    onFinish(message) {
-      console.log(message, "onFinish");
-      MsgKey && modifyMsg({ From_Account: params.From, To_Account: params.To, MsgKey }, message);
+    async onFinish(message) {
+      console.log("[chat] onFinish:", message);
+      store.commit("updataScroll", "instantly");
+      updataMessage(msg, message)
+      await sendMsg(params, message);
     },
     onError(error) {
-      console.error("[Chat] failed ", error);
+      console.error("[chat] failed:", error);
     },
     onController(controller) {
-      console.log(controller, "onController");
+      console.log("[chat] onController:", controller);
     },
   });
 };
