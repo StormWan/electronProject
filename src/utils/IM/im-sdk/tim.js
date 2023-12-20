@@ -1,4 +1,4 @@
-import TencentCloudChat from "@tencentcloud/chat";
+import TencentCloudChat from "@/utils/IM/chat/index";
 import TIMUploadPlugin from "tim-upload-plugin";
 
 const appid = process.env.VUE_APP_SDK_APPID;

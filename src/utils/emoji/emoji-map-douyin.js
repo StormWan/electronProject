@@ -49,6 +49,9 @@ export const emojiMap = {
   "[奋斗]": "cpc.png",
   "[V5]": "clv.png",
   "[给力]": "clw.png",
+  "[OK]": "1f44c.png",
+  "[做鬼脸]": "1f61c.png",
+  "[胡瓜]": "1f952.png",
 };
 
 export const emojiName = [
@@ -99,4 +102,7 @@ export const emojiName = [
   "[奋斗]",
   "[V5]",
   "[给力]",
+  "[OK]",
+  "[做鬼脸]",
+  "[胡瓜]",
 ];

@@ -43,7 +43,7 @@
 </template>
 <script setup>
 import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
-import { deepClone } from "@/utils/common";
+import { cloneDeep } from "lodash-es";
 import emitter from "@/utils/mitt-bus";
 import { useStore } from "vuex";
 import { uploadFiles } from "@/api/node-admin-api/index";
@@ -84,7 +84,7 @@ async function uploadAvatar() {
 async function modifyMyProfile(file_url) {
   const { code, data } = await updateMyProfile({ avatar: file_url });
   if (code === 0) {
-    // commit("updateCurrentUserProfile", deepClone(data));
+    // commit("updateCurrentUserProfile", cloneDeep(data));
   } else {
     console.log("修改失败");
   }

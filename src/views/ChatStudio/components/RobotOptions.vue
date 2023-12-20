@@ -48,7 +48,7 @@
 import { ref } from "vue";
 import { useBoolean } from "@/utils/hooks/index";
 import emitter from "@/utils/mitt-bus";
-import { deepClone } from "@/utils/common";
+import { cloneDeep } from "lodash-es";
 import storage from "storejs";
 import { StoreKey, modelValue, useAccessStore } from "@/api/openai/constant";
 
@@ -56,7 +56,7 @@ const [state, setState] = useBoolean();
 const Settings = ref(null);
 
 function initModel() {
-  const value = deepClone(modelValue);
+  const value = cloneDeep(modelValue);
   Object.values(value).map((v) => {
     return (v.defaultValue = useAccessStore()[v.ID]);
   });

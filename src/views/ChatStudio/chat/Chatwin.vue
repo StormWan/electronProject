@@ -107,7 +107,7 @@ import { circleUrl, MENU_LIST, AVATAR_LIST, RIGHT_CLICK_MENU_LIST } from "../uti
 import { useStore } from "vuex";
 import { showConfirmationBox } from "@/utils/message";
 
-import TIM from "@tencentcloud/chat";
+import TIM from "@/utils/IM/chat/index";
 import { debounce } from "lodash-es";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";

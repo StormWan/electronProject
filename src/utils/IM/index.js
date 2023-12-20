@@ -1,6 +1,7 @@
 "use strict";
-import TIM from "@tencentcloud/chat";
-import tim from "@/utils/im-sdk/tim";
+import TIM from "@/utils/IM/chat/index";
+import tim from "@/utils/IM/im-sdk/tim";
+import TIMUploadPlugin from "tim-upload-plugin";
 import storage from "storejs";
 import store from "@/store";
 import { useWindowFocus } from "@vueuse/core";
@@ -15,9 +16,9 @@ function getConversationID() {
   return store.state.conversation?.currentConversation?.conversationID;
 }
 
-export default class TIMProxy {
+export class TIMProxy {
   constructor() {
-    this.robotList = ["C2C@RBT#001"]
+    this.robotList = ["C2C@RBT#001"];
     this.userProfile = {}; // IM用户信息
     this.userID = "";
     this.userSig = "";
@@ -48,11 +49,11 @@ export default class TIMProxy {
     for (const [key, value] of Object.entries(this)) {
       player[key] = value;
     }
-    storage.set("player", player);
+    storage.set("timProxy", player);
   }
   // 更新IM信息
   loadSelfFromLocalStorage() {
-    const player = storage.get("player");
+    const player = storage.get("timProxy");
     if (!player) return;
     for (const [key, value] of Object.entries(player)) {
       this[key] = value;
@@ -168,6 +169,7 @@ export default class TIMProxy {
     this.handleUpdateMessage(data, false);
   }
   onNetStateChange({ data }) {
+    console.log("[chat] 网络状态变更 onNetStateChange:", data);
     store.commit("showMessage", fnCheckoutNetState(data.state));
   }
   onFriendApplicationListUpdated({ data }) {
@@ -261,20 +263,21 @@ export default class TIMProxy {
   handleUpdateMessage(data, read = true) {
     const convId = getConversationID();
     if (!convId) return;
-    const isRobot = this.robotList.includes(data?.[0].conversationID)
+    const isRobot = this.robotList.includes(data?.[0].conversationID);
     if (isRobot) {
       store.dispatch("GET_ROBOT_MESSAGE_LIST", {
         convId: "C2C@RBT#001",
       });
     }
     // 更新当前会话消息
-    !isRobot && store.commit("SET_HISTORYMESSAGE", {
-      type: "UPDATE_MESSAGES",
-      payload: {
-        convId: data?.[0].conversationID,
-        message: cloneDeep(data[0]),
-      },
-    });
+    !isRobot &&
+      store.commit("SET_HISTORYMESSAGE", {
+        type: "UPDATE_MESSAGES",
+        payload: {
+          convId: data?.[0].conversationID,
+          message: cloneDeep(data[0]),
+        },
+      });
     read && this.ReportedMessageRead(data); // 消息已读
     // 更新滚动条位置到底部
     store.commit("updataScroll", "bottom");
@@ -328,3 +331,5 @@ export default class TIMProxy {
     }
   }
 }
+
+export const timProxy = new TIMProxy();

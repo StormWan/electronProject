@@ -1,5 +1,4 @@
-import tim from "@/utils/im-sdk/tim";
-import TIM from "@tencentcloud/chat";
+import tim from "@/utils/IM/im-sdk/tim";
 
 export const getUserProfile = async (userID) => {
   const { code, data } = await tim.getUserProfile({

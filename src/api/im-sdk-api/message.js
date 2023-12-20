@@ -1,5 +1,5 @@
-import tim from "@/utils/im-sdk/tim";
-import TIM from "@tencentcloud/chat";
+import tim from "@/utils/IM/im-sdk/tim";
+import TIM from "@/utils/IM/chat/index";
 import emitter from "@/utils/mitt-bus";
 import { createProgressHandler } from "@/utils/chat/index";
 import { getReplyMsgContent, getCustomMsgContent } from "@/utils/chat/index";

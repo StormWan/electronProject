@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from "vuex";
-import TIM from "@tencentcloud/chat";
+import TIM from "@/utils/IM/chat/index";
 export default {
   name: "GroupTipElement",
   props: {
@@ -59,9 +59,6 @@ export default {
       }
     },
   },
-  // render() {
-  //   return <div class='group-tip-element-wrapper'>{this.getGroupTipContent(this.message)}</div>;
-  // },
 };
 </script>
 
@@ -69,7 +66,7 @@ export default {
 .group-tip-element-wrapper {
   font-size: 12px;
   border-radius: 3px;
-  background: var(--color-group-tip);
+  // background: var(--color-group-tip);
   vertical-align: middle;
   word-wrap: normal;
   word-break: break-all;

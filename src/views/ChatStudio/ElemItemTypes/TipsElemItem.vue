@@ -7,7 +7,7 @@
 
 <script>
 import emitter from "@/utils/mitt-bus";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "TipsElemItem",
   props: {
@@ -20,10 +20,13 @@ export default {
     ...mapState({
       currentConversation: (state) => state.conversation.currentConversation,
       currentMessageList: (state) => state.conversation.currentMessageList,
+      userProfile: (state) => state.user.currentUserProfile,
       revokeMsgMap: (state) => state.conversation.revokeMsgMap,
     }),
+    ...mapGetters(["isOwner"]),
+    // 消息的流向 in 为收到的消息 | out 为发出的消息
     isMine() {
-      return this.message.flow !== "out";
+      return this.message.flow == "out" ? true : false;
     },
     isReEdit() {
       return this.revokeMsgMap.get(this.message.ID);
@@ -39,14 +42,27 @@ export default {
       this.$store.commit("setRevokeMsg", { data, type: "delete" });
     },
     getChangeType(message = this.message) {
-      const { conversationType, nick } = message;
-      if (conversationType === "C2C" && this.isMine) {
-        return "对方撤回了一条消息";
+      const { conversationType: type, nick, revokerInfo, revoker } = message;
+      const isGroup = type === "GROUP";
+      const isC2C = type === "C2C";
+      if (this.isMine) {
+        return "你撤回了一条消息";
+      } else {
+        if (isC2C) {
+          return "对方撤回了一条消息";
+        }
+        if (isGroup) {
+          return `${nick}撤回了一条消息`;
+        }
       }
-      if (conversationType === "GROUP" && this.isMine) {
-        return `${nick}撤回了一条消息`;
-      }
-      return "你撤回了一条消息";
+      // if (isGroup && this.isOwner) {
+      //   const isSelf = this.userProfile.userID === revokerInfo?.userID;
+      //   if (isSelf) {
+      //     return `你撤回了成员${nick}的一条消息`;
+      //   } else if (revoker !== revokerInfo.userID) {
+      //     return `群主${revokerInfo?.nick}撤回了一条成员消息`;
+      //   }
+      // }
     },
   },
 };
@@ -62,8 +78,8 @@ export default {
   line-height: 16px;
   justify-content: center;
   .withdraw {
-    border-radius: 3px;
-    background: rgba(0, 0, 0, 0.05);
+    // border-radius: 3px;
+    // background: rgba(0, 0, 0, 0.05);
     color: var(--color-time-divider);
     padding: 4px 6px;
   }

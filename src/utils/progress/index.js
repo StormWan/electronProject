@@ -1,6 +1,5 @@
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-// import "@/styles/nprogress.scss"; // 自定义样式
 
 NProgress.configure({
   // 动画方式
@@ -14,4 +13,5 @@ NProgress.configure({
   // 初始化时的最小百分比
   minimum: 0.3, // 0.3
 });
+
 export default NProgress;

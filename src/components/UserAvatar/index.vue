@@ -66,6 +66,12 @@ const displayInfo = (info) => {
   background-size: 40px 40px;
   line-height: 40px;
 }
+.mention {
+  width: 18px;
+  height: 18px;
+  background-size: 18px 18px;
+  line-height: 18px;
+}
 .square {
   border-radius: 3px;
 }

@@ -2,10 +2,26 @@
   "name": "pure-admin",
   "version": "0.2.3",
   "license": "MIT",
+  "description": "基于 Vue3、Element-Plus 的清新优雅的中后台模版，提供了丰富的功能组件 聊天工作室 内置ChatGPT (腾讯 IM 即时通讯) 用于学习参考。",
+  "repository": {
+    "url": "https://github.com/Hyk260/PureAdmin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hyk260/PureAdmin/issues"
+  },
   "author": {
     "name": "Hyk260",
     "email": "2607881950@qq.com"
   },
+  "keywords": [
+    "Vue",
+    "Vue3",
+    "admin",
+    "openai",
+    "chatgpt",
+    "webpack",
+    "element-plus"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "report": "vue-cli-service serve --report",
@@ -61,6 +77,7 @@
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
     "nprogress": "^0.2.0",
+    "pinyin-pro": "^3.18.5",
     "pure-tools": "^0.0.3",
     "qrcode": "^1.5.3",
     "storejs": "^2.0.1",
@@ -111,10 +128,6 @@
       "prettier --write",
       "git add -n"
     ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Hyk260"
   },
   "peerDependencies": {
     "snabbdom": "^3.5.1"

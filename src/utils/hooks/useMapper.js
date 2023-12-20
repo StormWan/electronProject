@@ -1,6 +1,5 @@
 import { computed } from "vue";
 import { mapGetters, mapState, useStore, createNamespacedHelpers } from "vuex";
-// import store from "@/store";
 
 /**
  * 使用指定的映射函数，将 Vuex store 中的 state 解构到组件中。

@@ -1,3 +1,5 @@
+import store from "@/store/index";
+import { match } from "pinyin-pro";
 import { useClipboard } from "@vueuse/core";
 import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/chat/index";
 import {
@@ -266,7 +268,7 @@ export const customAlert = (s, t) => {
 export const chatName = (item) => {
   switch (item.type) {
     case "C2C":
-      return item.userProfile.nick;
+      return item.userProfile.nick || item.userProfile.userID;
     case "GROUP":
       return item.groupProfile.name;
     case "@TIM#SYSTEM":
@@ -314,3 +316,115 @@ export const extractFilesInfo = (html) => {
   const link = matchStr?.[1];
   return { fileName, link };
 };
+
+/**
+ * 比较两个用户的 userID，用于排序
+ * @param {Object} a - 第一个用户对象
+ * @param {Object} b - 第二个用户对象
+ * @returns {number} - 返回比较结果，-1 表示 a 在 b 前面，1 表示 b 在 a 前面，0 表示相等
+ */
+export const compareUserID = (a, b) => {
+  const aHasRBT = a.userID.includes("@RBT#");
+  const bHasRBT = b.userID.includes("@RBT#");
+  return aHasRBT && !bHasRBT ? -1 : bHasRBT && !aHasRBT ? 1 : 0;
+};
+
+/**
+ * 根据拼音搜索当前成员列表中的匹配项。
+ * @param {string} searchStr - 要搜索的拼音字符串。
+ * @returns {Array} - 匹配项的数组。
+ */
+export function searchByPinyin(searchStr) {
+  // 获取当前成员列表
+  const memberList = store.state?.groupinfo?.currentMemberList;
+  // 过滤掉当前用户的信息
+  const filteredList = memberList.filter(
+    (member) => member.userID !== store.state?.user.currentUserProfile.userID
+  );
+  // 如果过滤后的列表为空，触发空结果的事件并返回
+  if (!filteredList || filteredList.length === 0) {
+    store.commit("EMITTER_EMIT", {
+      key: "setMentionModal",
+      value: { type: "empty" },
+    });
+    return;
+  }
+  // 存储匹配项的索引
+  const indices = [];
+  // 遍历过滤后的成员列表
+  filteredList.forEach((item) => {
+    // 使用 match 函数进行拼音匹配
+    const nickPinyin = match(item.nick, searchStr);
+    // 如果拼音匹配结果长度大于 0，将当前项添加到索引数组中
+    if (nickPinyin?.length > 0) {
+      indices.push(item);
+    }
+  });
+  // 触发相应的事件根据匹配结果触发不同的操作
+  const eventType = indices.length === 0 ? "empty" : "success";
+  store.commit("EMITTER_EMIT", {
+    key: "setMentionModal",
+    value: {
+      content: indices,
+      type: eventType,
+      searchlength: searchStr.length + 1, // +1 包含@长度
+    },
+  });
+}
+
+/**
+ * 根据输入的字符串过滤提及列表并触发相关操作。
+ * @param {string} inputStr - 输入的字符串。
+ */
+export function filterMentionList(inputStr) {
+  // 如果输入字符串中没有 "@" 符号，直接返回
+  if (inputStr.lastIndexOf("@") == -1) {
+    store.commit("SET_MENTION_MODAL", false);
+    return;
+  }
+  // 如果输入字符串为空，关闭提及模态框并返回
+  if (inputStr === "") {
+    store.commit("SET_MENTION_MODAL", false);
+    return;
+  }
+  const isShowModal = store.state?.conversation.isShowModal;
+  console.log("isShowModal:", isShowModal);
+  console.log("inputStr:", inputStr);
+  console.log("endsWith@:", inputStr.endsWith("@"));
+  // 如果输入字符串仅包含 "@" 符号，或则字符结尾，触发 setMentionModal 操作并返回
+  if (inputStr === "@" || inputStr.endsWith("@")) {
+    if (!isShowModal) {
+      store.commit("SET_MENTION_MODAL", true);
+    }
+    store.commit("EMITTER_EMIT", {
+      key: "setMentionModal",
+      value: {
+        type: "all",
+        searchValue: inputStr,
+      },
+    });
+    return;
+  }
+  // 获取当前光标位置和文本范围
+  const selection = window.getSelection();
+  const focusOffset = selection.focusOffset;
+  const range = selection.getRangeAt(0);
+  const rangeAncestor = range.commonAncestorContainer.data;
+  // 如果文本范围不存在，直接返回
+  if (!rangeAncestor) return;
+  // 获取光标位置之前的文本
+  const text = rangeAncestor.substring(0, focusOffset);
+  // 获取最后一个 "@" 符号的索引位置
+  const lastAtIndex = text.lastIndexOf("@");
+  // 如果找不到 "@" 符号，关闭提及模态框并返回
+  if (lastAtIndex === -1) {
+    store.commit("SET_MENTION_MODAL", false);
+    return;
+  }
+  // 从 "@" 出现的索引位置截取到光标位置，得到搜索值
+  const searchValue = text.substring(lastAtIndex + 1, focusOffset);
+  console.log("searchValue:", searchValue);
+  if (!searchValue) return;
+  // 执行根据拼音搜索的操作
+  searchByPinyin(searchValue);
+}

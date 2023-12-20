@@ -328,9 +328,7 @@ export const createProgressHandler = () => {
   const handleProgressUpdate = throttle((progress, cd) => {
     if (progress.num !== lastNum) {
       lastNum = progress.num;
-      if (typeof cd === 'function') {
-        cd();
-      }
+      if (typeof cd === "function") cd();
     }
   }, 200);
   return handleProgressUpdate;

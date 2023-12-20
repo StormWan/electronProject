@@ -1,4 +1,4 @@
-import tim from "@/utils/im-sdk/tim";
+import tim from "@/utils/IM/im-sdk/tim";
 import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
 /**
  * 获取未读消息总数

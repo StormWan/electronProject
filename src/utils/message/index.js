@@ -75,13 +75,9 @@ export const showConfirmationBox = async (data, Type = "confirm") => {
       type: iconType,
       inputValue,
       draggable,
-      // beforeClose: (action, instance, done) => {
-      //   done();
-      // },
     });
     return formEl;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };

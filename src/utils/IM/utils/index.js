@@ -1,4 +1,4 @@
-import TIM from "@tencentcloud/chat";
+import TIM from "@/utils/IM/chat/index";
 import { throttle } from "lodash-es";
 
 export function kickedOutReason(type) {

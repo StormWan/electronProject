@@ -1,12 +1,11 @@
 import router from "@/router";
 import { ElMessage } from "element-plus";
-import TIMProxy from "@/utils/IM";
+import { timProxy } from "@/utils/IM/index";
 import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
-import chat from "@/utils/im-sdk/tim";
+import chat from "@/utils/IM/im-sdk/tim";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
-import { nextTick } from "vue";
-const timProxy = new TIMProxy();
+
 const user = {
   state: {
     timProxy,
@@ -75,11 +74,16 @@ const user = {
     },
     // 登录im
     async TIM_LOG_IN({ state, commit, dispatch }, user) {
-      const { code, data } = await chat.login(user);
-      if (code == 0) {
-        console.log("[chat] im登录成功 login", data);
-      } else {
+      try {
+        const { code, data } = await chat.login(user);
+        if (code == 0) {
+          console.log("[chat] im登录成功 login", data);
+        } else {
+          dispatch("LOG_OUT");
+        }
+      } catch (error) {
         dispatch("LOG_OUT");
+        console.log("[chat] im登录失败 login", error);
       }
     },
     // 退出im

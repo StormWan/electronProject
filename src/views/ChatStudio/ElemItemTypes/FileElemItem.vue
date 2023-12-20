@@ -11,7 +11,7 @@
             {{ bytesToSize(payload.fileSize) }}
           </span>
           <span class="file-icon" v-show="isShow('success')">
-            <img src="@/assets/message/勾.png" alt="" />
+            <img src="@/assets/message/check.png" alt="" />
           </span>
         </div>
       </div>
@@ -54,8 +54,12 @@ const backstyle = (status = 1, percentage = 0) => {
 backgroundStyle.value = backstyle();
 
 const uploading = ({ uuid, num }) => {
-  const dom = document.getElementById(`${uuid}`);
-  dom.style.background = backstyle(1, num);
+  try {
+    const dom = document.getElementById(`${uuid}`);
+    dom.style.background = backstyle(1, num);
+  } catch (error) {
+    console.error("[upload]:", error);
+  }
 };
 
 emitter.on("fileUploading", (data) => {

@@ -4,7 +4,7 @@ import { $t } from "@/plugins/i18n";
 // 编辑器配置
 export const editorConfig = {
   // 请输入内容... $t("chat.buttonPrompt")
-  placeholder: "",
+  placeholder: $t("chat.buttonPrompt"),
   // 配置编辑器是否只读，默认为 false
   // readOnly: true,
   /* 菜单配置 */
@@ -27,10 +27,12 @@ export const editorConfig = {
   },
 };
 // 显示 modal
-function showModal() {
+function showModal(e) {
+  console.log("[@] 显示 showModal:", e.getText());
   store.commit("SET_MENTION_MODAL", true);
 }
 // 隐藏 modal
-function hideModal() {
-  store.commit("SET_MENTION_MODAL", false);
+function hideModal(e) {
+  // console.log('[@] 隐藏 hideModal:', e.getText());
+  // store.commit("SET_MENTION_MODAL", false);
 }

@@ -19,7 +19,6 @@
       ref="mentionRef"
       v-if="isShowModal"
       :isOwner="isOwner"
-      :memberlist="currentMemberList"
       @insertMention="insertMention"
     />
     <el-tooltip effect="dark" :content="$t('chat.buttonPrompt')" placement="left-start">
@@ -31,20 +30,21 @@
 <script setup>
 import "../utils/custom-menu";
 import "@wangeditor/editor/dist/css/style.css";
+import { SlateTransforms } from "@wangeditor/editor";
 import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
 import { onBeforeUnmount, ref, shallowRef, onMounted, watch, nextTick } from "vue";
 import { sendChatMessage, customAlert, parseHTMLToArr, extractFilesInfo } from "../utils/utils";
-import { empty } from "@/utils/common";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import MentionModal from "../components/MentionModal.vue";
 import { bytesToSize } from "@/utils/chat/index";
 import { fileImgToBase64Url, convertEmoji } from "@/utils/chat/index";
-import { debounce } from "lodash-es";
 const { ipcRenderer } = require("electron");
+import { debounce, isEmpty } from "lodash-es";
+import { filterMentionList } from "../utils/utils";
 
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
@@ -54,7 +54,7 @@ const mentionRef = ref();
 const initState = ref(false);
 
 const { dispatch, commit } = useStore();
-const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
+const { isOwner, toAccount, currentType } = useGetters(["isOwner", "toAccount", "currentType"]);
 const {
   currentConversation,
   showMsgBox,
@@ -80,7 +80,7 @@ const handleCreated = (editor) => {
   // editor.disable(); // 只读
   // editor.hidePanelOrModal();
 };
-const insertMention = (id, name, backward = true) => {
+const insertMention = ({ id, name, backward = true, deleteDigit = 0 }) => {
   const editor = editorRef.value;
   const mentionNode = {
     type: "mention", // 必须是 'mention'
@@ -89,7 +89,13 @@ const insertMention = (id, name, backward = true) => {
     children: [{ text: "" }], // 必须有一个空 text 作为 children
   };
   editor?.restoreSelection(); // 恢复选区
-  backward && editor.deleteBackward("character"); // 删除 '@'
+  if (deleteDigit) {
+    for (let i = 0; i < deleteDigit; i++) {
+      editor.deleteBackward("character");
+    }
+  } else if (backward) {
+    editor.deleteBackward("character"); // 删除 '@'
+  }
   editor.insertNode(mentionNode); // 插入 mention
   editor.move(1); // 移动光标
 };
@@ -117,8 +123,14 @@ const insertDraft = (value) => {
   const draft = draftMap.get(ID);
   clearInputInfo();
   draft?.forEach((item) => {
-    editorRef.value.insertNode(item.children);
+    editor.insertNode(item.children);
+    // editor.insertBreak();
   });
+  // SlateTransforms.removeNodes(editor);
+  // const node1 = { type: "paragraph", children: [{ text: "aaa" }] };
+  // const node2 = { type: "paragraph", children: [{ text: "bbb" }] };
+  // const nodeList = [node1, node2];
+  // SlateTransforms.insertNodes(editor, draft);
 };
 
 // 更新草稿
@@ -129,10 +141,18 @@ const updateDraft = debounce((data) => {
   });
 }, 300);
 
+const handleAt = debounce((editor) => {
+  const str = editor.getText();
+  // 群聊才触发@好友
+  if (currentType.value !== "GROUP") return;
+  filterMentionList(str);
+}, 100);
+
 const onChange = (editor) => {
   const content = editor.children;
   messages.value = content;
   updateDraft(content);
+  handleAt(editor);
 };
 
 const handleFile = (item) => {
@@ -244,9 +264,9 @@ const handleEnter = (event) => {
     return;
   }
   const editor = editorRef.value;
-  const isEmpty = editor.isEmpty(); // 判断当前编辑器内容是否为空
+  const empty = editor.isEmpty(); // 判断当前编辑器内容是否为空
   const { textMsg, aitStr, files, image } = sendMsgBefore();
-  if ((!isEmpty && !empty(textMsg)) || image || aitStr || files) {
+  if ((!empty && !isEmpty(textMsg)) || image || aitStr || files) {
     sendMessage();
   } else {
     clearInputInfo();
@@ -312,7 +332,7 @@ const setEditHtml = (text) => {
 };
 const onEmitter = () => {
   emitter.on("handleAt", ({ id, name }) => {
-    insertMention(id, name, false);
+    insertMention({ id, name, backward: false });
   });
   emitter.on("handleSetHtml", (text) => {
     text && setEditHtml(text);

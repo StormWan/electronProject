@@ -1,29 +1,8 @@
-import tim from "@/utils/im-sdk/tim";
+import tim from "@/utils/IM/im-sdk/tim";
 
 // 获取 SDK 缓存的好友列表
 export const getFriendList = async (params) => {
-  let promise = tim.getFriendList();
-  promise
-    .then(function (imResponse) {
-      const friendList = imResponse.data; // 好友列表
-    })
-    .catch(function (imError) {
-      console.warn("getFriendList error:", imError); // 获取好友列表失败的相关信息
-    });
-};
-// 获取个人资料
-export const getMyProfile = async () => {
-  try {
-    const { code, data } = await tim.getMyProfile();
-    if (code == 0) return data;
-  } catch (e) {
-    console.log(e);
-  }
-};
-// 销毁 SDK 实例
-export const TIM_Destroy = async () => {
-  // SDK 会先 logout，然后断开 WebSocket 长连接，并释放资源
-  await tim.destroy();
+  return tim.getFriendList();
 };
 // 删除消息
 export const deleteMsgList = async (params) => {
@@ -37,7 +16,7 @@ export const deleteMsgList = async (params) => {
   };
 };
 // 会话顶置
-export const TIMpingConv = async (params) => {
+export const pinConversation = async (params) => {
   const { conversationID, isPinned } = params;
   const result = await tim.pinConversation({
     conversationID,
@@ -82,7 +61,6 @@ export const setMessageRemindType = async (params) => {
   }
   let { code, data } = await tim.setMessageRemindType(parameter);
   if (code == 0) {
-    // const { failureUserIDList, successUserIDList } = data;
     return data;
   }
 };
@@ -102,13 +80,11 @@ export const getConversationProfile = async (params) => {
 export const setMessageRead = async (convId) => {
   let promise = tim.setMessageRead({ conversationID: convId });
   promise
-    .then(function (imResponse) {
-      // 已读上报成功，指定 ID 的会话的 unreadCount 属性值被置为0
-      console.log("已读上报成功", imResponse);
+    .then((res) => {
+      console.log("已读上报成功", res);
     })
-    .catch(function (imError) {
-      // 已读上报失败
-      console.warn("setMessageRead error:", imError);
+    .catch((err) => {
+      console.warn("setMessageRead error:", err);
     });
 };
 // 删除会话

@@ -78,11 +78,15 @@
               >
                 <CircleCloseFilled />
               </el-icon>
-              <UserAvatar className="avatar-item" :url="item.avatar" :nickName="item.nick" />
+              <UserAvatar
+                className="avatar-item"
+                :url="item.avatar"
+                :nickName="item.nick || item.userID"
+              />
               <div class="admin" :class="item.role" v-if="item.role !== 'Member'">
                 {{ item.role == "Owner" ? "群主" : "管理员" }}
               </div>
-              <span class="nick">{{ item.nick }}</span>
+              <span class="nick">{{ item.nick || item.userID }}</span>
             </div>
           </div>
         </el-scrollbar>
@@ -120,7 +124,7 @@ import { useI18n } from "vue-i18n";
 import AddMemberPopup from "../components/AddMemberPopup.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";
 import { showConfirmationBox } from "@/utils/message";
-import TIM from "@tencentcloud/chat";
+import TIM from "@/utils/IM/chat/index";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   groupProfile: {

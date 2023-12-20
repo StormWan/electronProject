@@ -1,4 +1,4 @@
-import { typeOf } from "@/utils/common";
+import { isArray } from "lodash-es";
 const duration = 5 * 60;
 
 const isInFiveTime = (curTime, baseTime) => {
@@ -6,7 +6,7 @@ const isInFiveTime = (curTime, baseTime) => {
 };
 
 export const addTimeDivider = (list, baseTime = 0) => {
-  if (typeOf(list) !== "array") return;
+  if (!isArray(list)) return;
   return list.reduce((acc, cur) => {
     const curTime = cur.clientTime;
     if (isInFiveTime(curTime, baseTime)) {

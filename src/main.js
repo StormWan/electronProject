@@ -51,8 +51,8 @@ getServerConfig(app).then(async (config) => {
   app.mount("#app");
 });
 
-app.config.errorHandler = (err, instance, info) => {
-  console.error(`[Error Handler] Error: ${err}`);
-  console.error(`[Error Handler] Vue Instance: `, instance);
-  console.error(`[Error Handler] Additional Info: `, info);
-};
+// app.config.errorHandler = (err, instance, info) => {
+//   console.error(`[Error Handler] Error: ${err}`);
+//   console.error(`[Error Handler] Vue Instance: `, instance);
+//   console.error(`[Error Handler] Additional Info: `, info);
+// };

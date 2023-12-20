@@ -23,12 +23,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span
-      v-if="!production"
-      :data-title="$t('chat.screenshot')"
-      class="icon"
-      @click="clickCscreenshot"
-    >
+    <span :data-title="$t('chat.screenshot')" class="icon" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->

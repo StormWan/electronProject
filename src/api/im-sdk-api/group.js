@@ -1,5 +1,5 @@
-import TIM from "@tencentcloud/chat";
-import tim from "@/utils/im-sdk/tim";
+import TIM from "@/utils/IM/chat/index";
+import tim from "@/utils/IM/im-sdk/tim";
 
 // 群类型
 const GroupType = {
