@@ -121,6 +121,7 @@ import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { updateGroupProfile, addGroupMember, deleteGroupMember } from "@/api/im-sdk-api/index";
 import { useI18n } from "vue-i18n";
+import { restApi } from "@/api/node-admin-api/index";
 import AddMemberPopup from "../components/AddMemberPopup.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";
 import { showConfirmationBox } from "@/utils/message";
@@ -175,6 +176,7 @@ const notify = (val) => {
 };
 const visible = computed({
   get() {
+    console.log(currentMemberList.value);
     return groupDrawer.value;
   },
   set() {
@@ -218,13 +220,22 @@ const removeGroupMemberBtn = async (item) => {
   updataGroup();
 };
 const addGroupMemberBtn = async (value) => {
-  const { groupID } = groupProfile.value;
+  const { groupID, type } = groupProfile.value;
   const { toAccount } = value;
-  const { code, data } = await addGroupMember({ groupID, user: toAccount });
-  if (code == 0) {
+  if (type === "Public") {
+    const { ErrorCode } = await restApi({
+      params: { groupId: groupID, member: toAccount },
+      funName: "addGroupMember",
+    });
+    if (ErrorCode !== 0) return;
     updataGroup();
   } else {
-    console.log(data);
+    const { code, data } = await addGroupMember({ groupID, user: toAccount });
+    if (code == 0) {
+      updataGroup();
+    } else {
+      console.log(data);
+    }
   }
 };
 const updataGroup = () => {
@@ -250,6 +261,7 @@ const handleDismissGroup = async () => {
     convId: conversationID,
     groupId: toAccount.value,
   });
+  commit("setGroupStatus", false);
 };
 const handleTransferGroup = async () => {
   const data = { message: "确定转让群聊?", iconType: "warning" };

@@ -27,7 +27,6 @@
 <script>
 import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
 import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
-import { ACCESS_TOKEN } from "@/store/mutation-types";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
 import pure from "pure-tools";

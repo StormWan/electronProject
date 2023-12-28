@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "vuex";
 import Label from "@/views/ChatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
@@ -112,6 +112,9 @@ onMounted(() => {
   emitter.on("setPopoverStatus", (data) => {
     openCard(data);
   });
+});
+onBeforeUnmount(() => {
+  emitter.off("setPopoverStatus");
 });
 </script>
 

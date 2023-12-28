@@ -28,7 +28,7 @@ export const dismissGroup = async (groupId) => {
 };
 
 // 创建群
-export const createGroup = async (params, type = GroupType.GRP_WORK) => {
+export const createGroup = async (params, type = GroupType.GRP_PUBLIC) => {
   const { groupName } = params;
   const {
     code,

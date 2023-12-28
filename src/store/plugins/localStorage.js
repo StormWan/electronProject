@@ -1,5 +1,5 @@
 import storage from "storejs";
-import { USER_DATA, SET_UP } from "@/store/mutation-types";
+import { USER_DATA, SET_UP } from "@/store/constants";
 
 const handlers = {
   UPDATE_USER_INFO: (state) => {

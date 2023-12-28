@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, SET_UP, USER_DATA } from "@/store/mutation-types";
+import { ACCESS_TOKEN, SET_UP, USER_DATA } from "@/store/constants";
 import http from "@/utils/http/index";
 import storage from "storejs";
 
@@ -37,5 +37,5 @@ export const logout = () => {
   storage.remove(SET_UP);
   storage.remove(USER_DATA);
   storage.remove(ACCESS_TOKEN);
-  storage.remove('access-control');
+  storage.remove("access-control");
 };

@@ -3,9 +3,10 @@
     <ul class="mention-list" ref="listRef">
       <el-scrollbar>
         <li
-          v-for="item in searchedList"
+          v-for="(item, i) in searchedList"
           :key="item.joinTime"
           :class="{ active: isActive(item) }"
+          @mouseover="setActive(i)"
           @click="insertMentionHandler(item.userID, item.nick)"
         >
           <img v-if="item.avatar" :src="item.avatar" class="avatar" alt="头像" />
@@ -37,6 +38,11 @@ export default {
   props: {
     // 群主
     isOwner: {
+      type: Boolean,
+      default: false,
+    },
+    // 是否开启拼音搜索
+    pinyinSearch: {
       type: Boolean,
       default: false,
     },
@@ -110,7 +116,7 @@ export default {
     initMention() {
       this.updateMention();
       onClickOutside(this.$refs.listRef, (event) => {
-        this.SetMentionStatus();
+        this.setMentionStatus();
       });
       useEventListener(document, "keydown", (e) => {
         this.onKeydown(e);
@@ -122,14 +128,16 @@ export default {
         if (type == "all") {
           this.initList();
         } else if (type == "empty") {
-          this.SetMentionStatus();
+          this.setMentionStatus();
         } else if (type == "success") {
           this.initList(false, content);
           this.searchValue = searchlength;
+        } else {
+          this.updateMention();
         }
       });
     },
-    SetMentionStatus(status = false) {
+    setMentionStatus(status = false) {
       this.$store.commit("SET_MENTION_MODAL", status);
     },
     inputKeyupHandler(event) {
@@ -142,7 +150,7 @@ export default {
     },
     insertMentionHandler(id, name) {
       this.$emit("insertMention", { id, name, deleteDigit: this.searchValue });
-      this.SetMentionStatus(); // 隐藏 modal
+      this.setMentionStatus(); // 隐藏 modal
       this.searchValue = 0;
     },
     onKeydown(event) {
@@ -160,6 +168,9 @@ export default {
           }
           break;
       }
+    },
+    setActive(i) {
+      this.tabIndex = i;
     },
     isActive(item) {
       if (!item) return;
@@ -183,7 +194,7 @@ export default {
   },
   beforeUnmount() {
     emitter.off("setMentionModal");
-    this.SetMentionStatus(); // 隐藏 modal
+    this.setMentionStatus(); // 隐藏 modal
   },
 };
 </script>
@@ -192,7 +203,6 @@ export default {
 .mention-modal {
   position: fixed;
   width: 168px;
-  // border: 1px solid #ccc;
   background-color: var(--color-body-bg);
   padding: 5px;
   border-radius: 5px;
@@ -223,10 +233,6 @@ export default {
     border-radius: 4px;
     display: flex;
   }
-}
-
-.mention-modal ul li:hover {
-  text-decoration: underline;
 }
 .active {
   background: var(--color-mention-active);

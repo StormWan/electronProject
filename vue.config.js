@@ -1,5 +1,10 @@
-const pkg = require("./package.json");
-const dayjs = require("dayjs");
+const { defineConfig } = require("@vue/cli-service");
+const AutoImport = require("unplugin-auto-import/webpack");
+const Components = require("unplugin-vue-components/webpack"); // 组件按需引入
+const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer"); // 打包文件分析工具
+const { __APP_INFO__ } = require("./build/info");
+const path = require("path");
 const {
   cdn,
   css,
@@ -12,25 +17,12 @@ const {
   pluginOptions,
 } = require("./src/config/vue.custom.config");
 
-const AutoImport = require("unplugin-auto-import/webpack");
-const Components = require("unplugin-vue-components/webpack"); // 组件按需引入
-const CompressionPlugin = require("compression-webpack-plugin"); // gzip压缩
-const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer"); // 打包文件分析工具
-// const DefineOptions = require('unplugin-vue-define-options/webpack')
-
-const { dependencies, devDependencies, name, version } = pkg;
-const __APP_INFO__ = {
-  pkg: { dependencies, devDependencies, name, version },
-  lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-};
-
-const path = require("path");
 const resolve = (dir) => {
   return path.join(__dirname, dir);
 };
+const lifecycle = process.env.npm_lifecycle_event;
 
-module.exports = {
+module.exports = defineConfig({
   // 是否开启 eslint 校验
   lintOnSave: false,
   // 开发以及生产环境的路径配置
@@ -47,18 +39,6 @@ module.exports = {
   css,
   // 对内部的webpack配置(比如修改、增加Loader选项)(链式操作).
   chainWebpack(config) {
-    // 为生产环境修改配置...
-    if (production) {
-      // 清除css,js版本号
-      // config.output.filename("static/js/[name].js").end();
-      // config.output.chunkFilename("static/js/[name].js").end();
-      // config.plugin("extract-css").tap((args) => [
-      //   {
-      //     filename: `static/css/[name].css`,
-      //     chunkFilename: `static/css/[name].css`,
-      //   },
-      // ]);
-    }
     // svg-sprite-loader 配置
     config.module.rules.delete("svg");
     config.module
@@ -71,10 +51,6 @@ module.exports = {
       .options({ symbolId: "icon-[name]" });
     // 根路径
     config.resolve.alias.set("@", resolve("src"));
-
-    // 删除预加载
-    // config.plugins.delete('preload');
-    // config.plugins.delete('prefetch');
     config.plugin("html").tap((args) => {
       args[0].title = title; // 修改标题
       args[0].cdn = cdn; // CDN外链
@@ -82,35 +58,28 @@ module.exports = {
       return args;
     });
   },
-  // webpack配置
   configureWebpack: {
-    // externals,
     plugins: [
-      // setup语法糖通过defineOptions定义组件name
-      // DefineOptions()
-      // 自动按需引入 vue\vue-router\vuex 等的 api
       AutoImport({
+        // 自动导入 Vue 相关函数，如: ref, reactive, toRef 等
         imports: ["vue"],
-        resolvers: [ElementPlusResolver()],
+        // 自动导入element-plus相关函数, 如: ElMessage, ElMessageBox... (带样式)
+        // resolvers: [ElementPlusResolver()],
       }),
-      // 按需引入Element-plus
+      // 按需引入element-plus组件 (带样式)
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+      // 打包分析
       // new BundleAnalyzerPlugin(),
-      // 压缩配置 用于生成Gzip压缩的文件，从而减小文件的体积，加快网站的加载速度
-      // new CompressionPlugin({
-      //   algorithm: "gzip", // 使用gzip压缩
-      //   test: /\.(js|css|html)?$/i, // 压缩文件格式
-      //   threshold: 10240,
-      //   minRatio: 0.8, // 压缩率小于1才会压缩
-      // }),
     ],
+    // 打包忽略项
+    // externals,
     // 配置代码分割
-    // optimization,
+    optimization,
     // 性能提示
     // performance,
   },
   // 第三方插件配置
   pluginOptions,
-};
+});

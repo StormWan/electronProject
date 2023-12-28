@@ -7,11 +7,7 @@ import {
   createGroup,
   dismissGroup,
 } from "@/api/im-sdk-api/index";
-
-function compareByRole(a, b) {
-  const roles = { Owner: 1, Admin: 2, Member: 3 };
-  return roles[a.role] - roles[b.role];
-}
+import { compareByRole } from "@/utils/chat/index";
 
 export default {
   state: {
@@ -87,14 +83,14 @@ export default {
     // 解散群组
     async DISMISS_GROUP({ state, dispatch, commit }, payload) {
       const { groupId, convId } = payload;
-      // const { code, groupID } = await dismissGroup(groupId);
-      // if (code !== 0) return;
+      const { code, groupID } = await dismissGroup(groupId);
+      if (code !== 0) return;
       // dispatch("DELETE_SESSION", { convId });
-      const { ErrorCode } = await restApi({
-        params: groupId,
-        funName: "destroyGroup",
-      });
-      if (ErrorCode !== 0) return;
+      // const { ErrorCode } = await restApi({
+      //   params: groupId,
+      //   funName: "destroyGroup",
+      // });
+      // if (ErrorCode !== 0) return;
       dispatch("DELETE_SESSION", { convId });
     },
     // 获取群详细资料

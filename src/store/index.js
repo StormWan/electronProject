@@ -5,7 +5,7 @@ import router from "@/router";
 import storage from "storejs";
 import emitter from "@/utils/mitt-bus";
 import { convertToTree, optimizeTree } from "@/utils/ToTree";
-import { USER_DATA, SET_UP } from "@/store/mutation-types";
+import { USER_DATA, SET_UP } from "@/store/constants";
 
 // 默认设置
 const defaultSettings = {
@@ -73,11 +73,14 @@ const store = createStore({
     ACCOUNT_INFORMATION(state, data) {
       storage.set("ACCOUNT", data?.keep ? data : null);
     },
-    EMITTER_EMIT(state, { key, value }) {
-      emitter.emit(key, value);
+    // 设置 storage
+    SET_STORAGE(state, { key, value }) {
+      storage.set(key, value);
     },
-    updataScroll(state, value) {
-      emitter.emit("updataScroll", value);
+    // 触发事件
+    EMITTER_EMIT(state, { key, value = "" }) {
+      console.log("[emit]:", { key, value });
+      emitter.emit(key, value);
     },
   },
   actions: {

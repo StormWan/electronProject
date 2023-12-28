@@ -9,7 +9,7 @@
 <script setup>
 import { toRefs, computed } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
-import { MULTIPLE_CHOICE_MAX } from "@/store/mutation-types";
+import { MULTIPLE_CHOICE_MAX } from "@/store/constants";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   item: {

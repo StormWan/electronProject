@@ -2,7 +2,7 @@
 import axios from "axios";
 import storage from "storejs";
 import NProgress from "@/utils/progress";
-import { ACCESS_TOKEN } from "@/store/mutation-types";
+import { ACCESS_TOKEN } from "@/store/constants";
 import { errorHandler } from "./tools";
 
 const service = axios.create({

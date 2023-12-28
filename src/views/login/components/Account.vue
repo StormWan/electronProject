@@ -39,7 +39,7 @@
           <el-icon class="el-input__icon"><Key /></el-icon>
         </template>
         <template #append>
-          <ReImageVerify v-model:code="imgCode" />
+          <ImageVerify v-model:code="imgCode" />
         </template>
       </el-input>
     </el-form-item>
@@ -105,7 +105,7 @@ import { operates, thirdParty } from "../utils/enums";
 import { useStore } from "vuex";
 import { user, rules } from "../utils/validation";
 import Motion from "@/utils/motion";
-import ReImageVerify from "@/views/components/ReImageVerify/index.vue";
+import ImageVerify from "@/views/components/ImageVerify/index.vue";
 import { useState } from "@/utils/hooks/useMapper";
 const { production } = require("@/config/vue.custom.config");
 

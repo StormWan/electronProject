@@ -26,6 +26,7 @@ export class TIMProxy {
     this.TIM = null; // 命名空间
     this.once = false; // 防止重复初始化
     this.test = {};
+    this.conversationList = []
     Object.defineProperty(this, "test", {
       configurable: true, // 可配置
       enumerable: false, // 不可枚举
@@ -87,6 +88,8 @@ export class TIMProxy {
     tim.on(TIM.EVENT.ERROR, this.onError);
     // 网络监测
     tim.on(TIM.EVENT.NET_STATE_CHANGE, this.onNetStateChange);
+    // 会话未读总数更新
+    tim.on(TIM.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated);
     // 收到好友申请列表更新通知
     // tim.on(TIM.EVENT.FRIEND_APPLICATION_LIST_UPDATED, this.onFriendApplicationListUpdated);
     // 收到好友分组列表更新通知
@@ -95,6 +98,9 @@ export class TIMProxy {
     // tim.on(TIM.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdated);
     // 收到消息被修改的通知
     tim.on(TIM.EVENT.MESSAGE_MODIFIED, this.onMessageModified, this);
+  }
+  onTotalUnreadMessageCountUpdated({ data }) {
+    console.log("[chat] onTotalUnreadMessageCountUpdated:", data);
   }
   onReadyStateUpdate({ name }) {
     console.log("[chat] onReadyStateUpdate:", name);
@@ -130,7 +136,8 @@ export class TIMProxy {
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
     this.handleTrayFlashIng(data);
-    this.handleUpdateMessage(data);
+    const current = getConversationID() == data?.[0].conversationID;
+    this.handleUpdateMessage(data, current);
   }
   onMessageRevoked({ data }) {
     console.log("[chat] 撤回消息 onMessageRevoked:", data);
@@ -268,9 +275,8 @@ export class TIMProxy {
       store.dispatch("GET_ROBOT_MESSAGE_LIST", {
         convId: "C2C@RBT#001",
       });
-    }
-    // 更新当前会话消息
-    !isRobot &&
+    } else {
+      // 更新会话消息
       store.commit("SET_HISTORYMESSAGE", {
         type: "UPDATE_MESSAGES",
         payload: {
@@ -278,13 +284,15 @@ export class TIMProxy {
           message: cloneDeep(data[0]),
         },
       });
-    read && this.ReportedMessageRead(data); // 消息已读
+    }
+    // 消息已读
+    read && this.reportedMessageRead(data);
     // 更新滚动条位置到底部
-    store.commit("updataScroll", "bottom");
+    store.commit("EMITTER_EMIT", { key: "updataScroll", value: "bottom" });
   }
   // 上报消息已读
-  ReportedMessageRead(data) {
-    if (!isFocused) return;
+  reportedMessageRead(data) {
+    if (!isFocused.value) return;
     store.commit("SET_HISTORYMESSAGE", {
       type: "MARKE_MESSAGE_AS_READED",
       payload: {

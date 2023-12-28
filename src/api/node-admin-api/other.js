@@ -84,16 +84,16 @@ export const sendMsg = async (params, message) => {
 const fnCreateTextMsg = (params) => {
   const msg = createTextMsg({ convId: params.From, textMsg: "｜" });
   msg.conversationID = `C2C${params.From}`;
-  msg.avatar = "https://ljx-1307934606.cos.ap-beijing.myqcloud.com/open-ai-icon.png"
+  msg.avatar = "https://ljx-1307934606.cos.ap-beijing.myqcloud.com/open-ai-icon.png";
   msg.flow = "in";
   msg.to = params.From;
   msg.from = params.To;
   msg.nick = "AI机器人";
-  msg.status = "success"
-  return msg
-}
+  msg.status = "success";
+  return msg;
+};
 const updataMessage = (msg, message) => {
-  if (!msg) return
+  if (!msg) return;
   msg.payload.text = message;
   store.commit("SET_HISTORYMESSAGE", {
     type: "UPDATE_MESSAGES",
@@ -102,22 +102,22 @@ const updataMessage = (msg, message) => {
       message: cloneDeep(msg),
     },
   });
-}
+};
 
 export const sendMessages = async (params) => {
-  const msg = fnCreateTextMsg(params)
+  const msg = fnCreateTextMsg(params);
   await api.chat({
     messages: params.messages,
     config: { model: useAccessStore().model, stream: true },
     onUpdate(message) {
       console.log("[chat] onUpdate:", message);
-      store.commit("updataScroll", "instantly");
-      updataMessage(msg, message)
+      store.commit("EMITTER_EMIT", { key: "updataScroll", value: "instantly" });
+      updataMessage(msg, message);
     },
     async onFinish(message) {
       console.log("[chat] onFinish:", message);
-      store.commit("updataScroll", "instantly");
-      updataMessage(msg, message)
+      store.commit("EMITTER_EMIT", { key: "updataScroll", value: "instantly" });
+      updataMessage(msg, message);
       await sendMsg(params, message);
     },
     onError(error) {

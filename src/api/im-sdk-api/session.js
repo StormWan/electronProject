@@ -1,5 +1,5 @@
 import tim from "@/utils/IM/im-sdk/tim";
-import { HISTORY_MESSAGE_COUNT } from "@/store/mutation-types";
+import { HISTORY_MESSAGE_COUNT } from "@/store/constants";
 /**
  * 获取未读消息总数
  * @returns {Promise<number>} 未读消息总数

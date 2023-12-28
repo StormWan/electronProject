@@ -1,7 +1,8 @@
 import store from "@/store/index";
 import { match } from "pinyin-pro";
 import { useClipboard } from "@vueuse/core";
-import { fileImgToBase64Url, dataURLtoFile, urlToBase64 } from "@/utils/chat/index";
+import { dataURLtoFile } from "@/utils/chat/index";
+import { getBlob } from "@/utils/chat/message-input-utils";
 import {
   createTextMsg,
   createTextAtMsg,
@@ -59,10 +60,32 @@ export const validatelastMessage = (msglist) => {
 export const handleCopyMsg = async (data) => {
   const { elements } = data;
   const { content, type } = elements[0];
+  console.log(elements[0]);
   // 文本
   if (type === "TIMTextElem") {
-    const { text, copy, copied, isSupported } = useClipboard({ source: content.text });
-    copy(content.text);
+    const { text, copy, isSupported } = useClipboard({ source: content.text });
+    if (isSupported) {
+      copy(content.text);
+      store.commit("showMessage", { message: "复制成功" });
+    } else {
+      store.commit("showMessage", { message: "您的浏览器不支持剪贴板API" });
+    }
+  }
+  // 图片
+  if (type === "TIMImageElem") {
+    const url = content.imageInfoArray[2].imageUrl;
+    const imageBlob = await getBlob(url);
+    // 创建一个空的 ClipboardItem 对象，并将图片添加到其中
+    const clipboardItem = new ClipboardItem({ "image/png": imageBlob });
+    // 将 ClipboardItem 对象添加到剪贴板
+    navigator.clipboard
+      .write([clipboardItem])
+      .then(() => {
+        store.commit("showMessage", { message: "图片复制成功" });
+      })
+      .catch((error) => {
+        console.error("写入剪贴板时出错:", error);
+      });
   }
 };
 
@@ -304,6 +327,13 @@ export function parseHTMLToArr(html) {
   return arr;
 }
 
+export function parseContentFromHTML(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const content = doc.body.textContent; // trim()
+  return content;
+}
+
 /**
  * 从 HTML 中提取文件信息
  * @param {string} html - 包含文件信息的 HTML 字符串
@@ -315,6 +345,25 @@ export const extractFilesInfo = (html) => {
   const fileName = matchStrName?.[1];
   const link = matchStr?.[1];
   return { fileName, link };
+};
+
+/**
+ * 从编辑器中提取 Ait 信息
+ * @param {Object} editor - 编辑器对象，包含编辑器的内容和方法
+ * @returns {Object} - 包含提及字符串和提及的 id 列表的对象
+ */
+export const extractAitInfo = (editor) => {
+  let aitStr = "";
+  let aitlist = [];
+  let html = editor.getHtml();
+  if (html.includes("mention")) {
+    aitStr = html.replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, "");
+    const paragraph = editor.children[0].children;
+    const newmsg = paragraph.filter((t) => t.type === "mention");
+    newmsg.forEach((t) => aitlist.push(t.info.id));
+    aitlist = Array.from(new Set(aitlist));
+  }
+  return { aitStr, aitlist };
 };
 
 /**
@@ -335,6 +384,7 @@ export const compareUserID = (a, b) => {
  * @returns {Array} - 匹配项的数组。
  */
 export function searchByPinyin(searchStr) {
+  // debugger;
   // 获取当前成员列表
   const memberList = store.state?.groupinfo?.currentMemberList;
   // 过滤掉当前用户的信息
@@ -347,7 +397,7 @@ export function searchByPinyin(searchStr) {
       key: "setMentionModal",
       value: { type: "empty" },
     });
-    return;
+    return "empty";
   }
   // 存储匹配项的索引
   const indices = [];
@@ -360,8 +410,13 @@ export function searchByPinyin(searchStr) {
       indices.push(item);
     }
   });
+  const isShowModal = store.state?.conversation.isShowModal;
+  console.log("isShowModal:", isShowModal);
   // 触发相应的事件根据匹配结果触发不同的操作
   const eventType = indices.length === 0 ? "empty" : "success";
+  if (!isShowModal && eventType === "success") {
+    // store.commit("SET_MENTION_MODAL", true);
+  }
   store.commit("EMITTER_EMIT", {
     key: "setMentionModal",
     value: {
@@ -370,61 +425,64 @@ export function searchByPinyin(searchStr) {
       searchlength: searchStr.length + 1, // +1 包含@长度
     },
   });
+  return eventType;
 }
 
 /**
  * 根据输入的字符串过滤提及列表并触发相关操作。
  * @param {string} inputStr - 输入的字符串。
  */
-export function filterMentionList(inputStr) {
-  // 如果输入字符串中没有 "@" 符号，直接返回
-  if (inputStr.lastIndexOf("@") == -1) {
-    store.commit("SET_MENTION_MODAL", false);
-    return;
-  }
+export function filterMentionList(Str, Html) {
+  // debugger;
+  // 如果当前类型不是群聊
+  if (store.getters.currentType !== "GROUP") return;
+  const inputStr = Str
   // 如果输入字符串为空，关闭提及模态框并返回
   if (inputStr === "") {
     store.commit("SET_MENTION_MODAL", false);
     return;
   }
-  const isShowModal = store.state?.conversation.isShowModal;
-  console.log("isShowModal:", isShowModal);
-  console.log("inputStr:", inputStr);
-  console.log("endsWith@:", inputStr.endsWith("@"));
-  // 如果输入字符串仅包含 "@" 符号，或则字符结尾，触发 setMentionModal 操作并返回
-  if (inputStr === "@" || inputStr.endsWith("@")) {
-    if (!isShowModal) {
-      store.commit("SET_MENTION_MODAL", true);
-    }
-    store.commit("EMITTER_EMIT", {
-      key: "setMentionModal",
-      value: {
-        type: "all",
-        searchValue: inputStr,
-      },
-    });
+  // 如果输入字符串中没有 "@" 符号，直接返回
+  if (inputStr.lastIndexOf("@") == -1) {
+    store.commit("SET_MENTION_MODAL", false);
     return;
   }
-  // 获取当前光标位置和文本范围
-  const selection = window.getSelection();
-  const focusOffset = selection.focusOffset;
-  const range = selection.getRangeAt(0);
-  const rangeAncestor = range.commonAncestorContainer.data;
-  // 如果文本范围不存在，直接返回
-  if (!rangeAncestor) return;
-  // 获取光标位置之前的文本
-  const text = rangeAncestor.substring(0, focusOffset);
+  const inputHtml = parseContentFromHTML(Html)
+  console.log("inputStr:", Str);
+  // console.log("inputHtml:", inputHtml);
+  const isShowModal = store.state?.conversation.isShowModal;
+  // console.log("isShowModal:", isShowModal);
+  // console.log("inputStr:", inputStr);
+  // console.log("endsWith@:", inputStr.endsWith("@"));
+  // 如果输入字符串仅包含 "@" 符号，或则字符结尾，触发 setMentionModal 操作并返回
+  if (inputStr === "@" && inputStr.endsWith("@")) {
+    // if (!isShowModal) {
+    //   store.commit("SET_MENTION_MODAL", true);
+    // }
+    // store.commit("EMITTER_EMIT", {
+    //   key: "setMentionModal",
+    //   value: {
+    //     type: "all",
+    //     searchValue: inputStr,
+    //   },
+    // });
+    return "all";
+  }
+  store.commit("EMITTER_EMIT", {
+    key: "setMentionModal",
+    value: { type: "updata" },
+  });
   // 获取最后一个 "@" 符号的索引位置
-  const lastAtIndex = text.lastIndexOf("@");
+  const lastAtIndex = inputStr.lastIndexOf("@");
   // 如果找不到 "@" 符号，关闭提及模态框并返回
   if (lastAtIndex === -1) {
     store.commit("SET_MENTION_MODAL", false);
     return;
   }
-  // 从 "@" 出现的索引位置截取到光标位置，得到搜索值
-  const searchValue = text.substring(lastAtIndex + 1, focusOffset);
-  console.log("searchValue:", searchValue);
+  const text = inputStr.substring(lastAtIndex);
+  const searchValue = text.substring(1);
+  console.log('searchValue:', searchValue)
   if (!searchValue) return;
   // 执行根据拼音搜索的操作
-  searchByPinyin(searchValue);
+  return searchByPinyin(searchValue);
 }

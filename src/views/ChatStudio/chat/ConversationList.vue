@@ -141,7 +141,9 @@ const formatNewsMessage = (data) => {
     return messageForShow;
   }
   if (type == "GROUP" && isOther) {
-    if (lastMessage.nick) {
+    if (lastMessage.type == "TIMGroupTipElem") {
+      return messageForShow;
+    } else if (lastMessage.nick) {
       return `${lastMessage.nick}: ${messageForShow}`;
     } else {
       messageForShow;
@@ -227,7 +229,7 @@ const handleConvListClick = (data) => {
   dispatch("getGroupProfile", data);
   // 获取会话列表
   dispatch("GET_MESSAGE_LIST", data);
-  commit("updataScroll");
+  commit("EMITTER_EMIT", { key: "updataScroll" });
   commit("setReplyMsg", null);
   emitter.emit("handleInsertDraft", data);
 };

@@ -1,6 +1,13 @@
 <template>
   <div @click="onClick()" class="message-view_withdraw">
-    <span class="withdraw">{{ getChangeType() }} </span>
+    <span class="withdraw">
+      <span>
+        {{ getChangeType() }}
+      </span>
+      <el-icon class="close" @click.stop="onClose()" v-show="!isReEdit">
+        <CircleCloseFilled />
+      </el-icon>
+    </span>
     <span @click.stop="onEdit()" v-if="isReEdit" class="edit">重新编辑</span>
   </div>
 </template>
@@ -8,6 +15,7 @@
 <script>
 import emitter from "@/utils/mitt-bus";
 import { mapState, mapGetters } from "vuex";
+import { deleteMsgList } from "@/api/im-sdk-api/index";
 export default {
   name: "TipsElemItem",
   props: {
@@ -33,6 +41,17 @@ export default {
     },
   },
   methods: {
+    async onClose(data = this.message) {
+      try {
+        await deleteMsgList([data]);
+        this.$store.commit("SET_HISTORYMESSAGE", {
+          type: "DELETE_MESSAGE",
+          payload: { convId: data.conversationID, message: data },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onClick() {
       console.log(this.revokeMsgMap);
     },
@@ -42,27 +61,31 @@ export default {
       this.$store.commit("setRevokeMsg", { data, type: "delete" });
     },
     getChangeType(message = this.message) {
-      const { conversationType: type, nick, revokerInfo, revoker } = message;
+      const { conversationType: type, nick, from, revokerInfo } = message;
       const isGroup = type === "GROUP";
       const isC2C = type === "C2C";
+      // 自己的消息
       if (this.isMine) {
+        if (isGroup) {
+          // 自己的消息 被管理员撤回
+          if (from !== revokerInfo?.userID) {
+            return `${revokerInfo?.nick} 撤回了一条成员消息`;
+          }
+        }
         return "你撤回了一条消息";
       } else {
         if (isC2C) {
           return "对方撤回了一条消息";
         }
         if (isGroup) {
+          // 不是自己的消息 被管理员撤回
+          if (from !== revokerInfo?.userID) {
+            const name = this.userProfile.nick == revokerInfo?.nick ? "你" : revokerInfo?.nick;
+            return `${name} 撤回了成员 ${nick} 的一条消息`;
+          }
           return `${nick}撤回了一条消息`;
         }
       }
-      // if (isGroup && this.isOwner) {
-      //   const isSelf = this.userProfile.userID === revokerInfo?.userID;
-      //   if (isSelf) {
-      //     return `你撤回了成员${nick}的一条消息`;
-      //   } else if (revoker !== revokerInfo.userID) {
-      //     return `群主${revokerInfo?.nick}撤回了一条成员消息`;
-      //   }
-      // }
     },
   },
 };
@@ -82,11 +105,16 @@ export default {
     // background: rgba(0, 0, 0, 0.05);
     color: var(--color-time-divider);
     padding: 4px 6px;
+    .close {
+      margin-left: 4px;
+      cursor: pointer;
+      vertical-align: text-top;
+    }
   }
   .edit {
     user-select: none;
     color: #337ecc;
-    padding-left: 10px;
+    // padding-left: 10px;
     cursor: pointer;
   }
 }

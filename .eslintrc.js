@@ -1,10 +1,15 @@
+/*
+ * "off" -> 0 关闭规则
+ * "warn" -> 1 开启警告规则
+ * "error" -> 2 开启错误规则
+ */
+
 module.exports = {
   root: true,
   env: {
     node: true,
   },
   extends: [
-    // 'plugin:prettier/recommended',
     "plugin:vue/vue3-essential", //  检查 Vue3 语法
     "eslint:recommended", // 使用 ESLint 推荐规则
     "@vue/prettier", // 集成 Prettier，确保 ESLint 规则和 Prettier 规则相一致。
@@ -32,9 +37,3 @@ module.exports = {
     ],
   },
 };
-
-/*
- * "off" -> 0 关闭规则
- * "warn" -> 1 开启警告规则
- * "error" -> 2 开启错误规则
- */

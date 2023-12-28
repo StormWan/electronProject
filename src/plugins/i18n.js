@@ -1,4 +1,4 @@
-import { SET_UP } from "@/store/mutation-types";
+import { SET_UP } from "@/store/constants";
 import { createI18n } from "vue-i18n";
 import storage from "storejs";
 // User defined lang
@@ -21,7 +21,7 @@ export const i18n = createI18n({
   fallbackLocale: "en",
   messages: localesConfigs,
 });
-
+console.log("[locales]:", localesConfigs);
 /**
  * app.config.globalProperties.$t = i18n.global.t;
  * 可以在全局模版语法直接使用

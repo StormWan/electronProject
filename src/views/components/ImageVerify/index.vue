@@ -7,8 +7,9 @@ import { watch } from "vue";
 import { useImageVerify } from "@/utils/hooks/useImageVerify";
 
 const emit = defineEmits();
+
 // defineOptions({
-//   name: "ReImageVerify"
+//   name: "ImageVerify"
 // });
 
 const props = defineProps({

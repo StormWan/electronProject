@@ -1,5 +1,5 @@
 <template>
-  <div class="EditorStyle" id="svgDown" v-if="showMsgBox" v-show="!showCheckbox">
+  <div class="wangeditor" id="svgDown" v-if="showMsgBox" v-show="!showCheckbox">
     <!-- 自定义工具栏 -->
     <RichToolbar @setToolbar="setToolbar" />
     <Editor
@@ -18,6 +18,7 @@
     <mention-modal
       ref="mentionRef"
       v-if="isShowModal"
+      :pinyinSearch="true"
       :isOwner="isOwner"
       @insertMention="insertMention"
     />
@@ -35,8 +36,23 @@ import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
-import { onBeforeUnmount, ref, shallowRef, onMounted, watch, nextTick } from "vue";
-import { sendChatMessage, customAlert, parseHTMLToArr, extractFilesInfo } from "../utils/utils";
+import {
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  onMounted,
+  watch,
+  nextTick,
+  onActivated,
+  onDeactivated,
+} from "vue";
+import {
+  sendChatMessage,
+  customAlert,
+  parseHTMLToArr,
+  extractFilesInfo,
+  extractAitInfo,
+} from "../utils/utils";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import MentionModal from "../components/MentionModal.vue";
@@ -75,10 +91,6 @@ const {
 
 const handleCreated = (editor) => {
   editorRef.value = editor;
-  // editor.getConfig()
-  // editor.enable(); //
-  // editor.disable(); // 只读
-  // editor.hidePanelOrModal();
 };
 const insertMention = ({ id, name, backward = true, deleteDigit = 0 }) => {
   const editor = editorRef.value;
@@ -124,13 +136,7 @@ const insertDraft = (value) => {
   clearInputInfo();
   draft?.forEach((item) => {
     editor.insertNode(item.children);
-    // editor.insertBreak();
   });
-  // SlateTransforms.removeNodes(editor);
-  // const node1 = { type: "paragraph", children: [{ text: "aaa" }] };
-  // const node2 = { type: "paragraph", children: [{ text: "bbb" }] };
-  // const nodeList = [node1, node2];
-  // SlateTransforms.insertNodes(editor, draft);
 };
 
 // 更新草稿
@@ -142,11 +148,8 @@ const updateDraft = debounce((data) => {
 }, 300);
 
 const handleAt = debounce((editor) => {
-  const str = editor.getText();
-  // 群聊才触发@好友
-  if (currentType.value !== "GROUP") return;
-  filterMentionList(str);
-}, 100);
+  filterMentionList(editor.getText(), editor.getHtml());
+}, 150);
 
 const onChange = (editor) => {
   const content = editor.children;
@@ -279,29 +282,15 @@ const clearInputInfo = () => {
   editor && editor.clear();
 };
 
-const extractAitInfo = () => {
-  let aitStr = "";
-  let aitlist = [];
-  let html = valueHtml.value;
-  if (html.includes("mention")) {
-    aitStr = html.replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, "");
-    const newmsg = messages.value[0].children.filter((t) => t.type === "mention");
-    newmsg.forEach((t) => aitlist.push(t.info.id));
-    aitlist = Array.from(new Set(aitlist));
-  }
-  return { aitStr, aitlist };
-};
-
 const sendMsgBefore = () => {
   const editor = editorRef.value;
   const text = editor.getText(); // 纯文本内容
   const HtmlText = editor.getHtml(); // 非格式化的 html
   const image = editor.getElemsByType("image"); // 所有图片
-  const { aitStr, aitlist } = extractAitInfo();
+  const { aitStr, aitlist } = extractAitInfo(editor);
   const { fileName, link } = extractFilesInfo(HtmlText);
   const emoticons = convertEmoji(HtmlText, image);
-  const ElementArray = parseHTMLToArr(HtmlText);
-  console.log(ElementArray);
+  // const ElementArray = parseHTMLToArr(HtmlText);
   return {
     convId: toAccount.value,
     convType: currentConversation.value.type,
@@ -316,6 +305,8 @@ const sendMsgBefore = () => {
 // 发送消息
 const sendMessage = async () => {
   const data = sendMsgBefore();
+  console.log("sendMsgBefore:", data);
+  // return;
   const message = await sendChatMessage(data);
   clearInputInfo();
   dispatch("SESSION_MESSAGE_SENDING", {
@@ -380,11 +371,11 @@ watch(showMsgBox, () => {
 });
 onActivated(() => {
   handleEditorKeyDown();
-  console.log("Editor == onActivated");
+  console.log("[Editor]: onActivated");
 });
 onDeactivated(() => {
   offEmitter();
-  console.log("Editor == onDeactivated");
+  console.log("[Editor]: onDeactivated");
 });
 onMounted(() => {
   onEmitter();
@@ -399,7 +390,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @import "@/styles/mixin.scss";
-.EditorStyle {
+.wangeditor {
   word-break: break-all;
   height: 206px;
   .editor-content {
@@ -415,6 +406,9 @@ onBeforeUnmount(() => {
       font-style: normal;
       font-size: 15px;
       top: 5px;
+    }
+    :deep(.w-e-selected-image-container) {
+      overflow: visible;
     }
     :deep(.w-e-scroll) {
       @include scrollBar;

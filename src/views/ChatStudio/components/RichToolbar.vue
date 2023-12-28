@@ -59,7 +59,6 @@
 </template>
 
 <script setup>
-import html2canvas from "html2canvas";
 import emitter from "@/utils/mitt-bus";
 import EmotionPackBox from "./EmotionPackBox.vue";
 import RobotOptions from "./RobotOptions.vue";
@@ -105,6 +104,7 @@ const SendImageClick = () => {
 };
 const SendFileClick = () => {
   let $el = filePicker.value;
+  $el.value = null;
   $el.click();
 };
 // 截图
@@ -129,7 +129,7 @@ async function sendFile(e) {
   });
 }
 const onTobBottom = () => {
-  commit("updataScroll");
+  commit("EMITTER_EMIT", { key: "updataScroll" });
 };
 emitter.on("onisbot", (state) => {
   tobottom.value = !state;

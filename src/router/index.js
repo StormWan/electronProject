@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
-import { ACCESS_TOKEN } from "@/store/mutation-types";
+import { ACCESS_TOKEN } from "@/store/constants";
 import { setPageTitle } from "@/utils/common";
 import NProgress from "@/utils/progress";
 import storage from "storejs";

@@ -95,9 +95,6 @@ const fnTotalUnreadMsg = () => {
   const num = unreadCount > 99 ? "99+" : unreadCount;
   unread.value = isUnread ? `未读(${num})` : "未读";
 };
-const toBottom = () => {
-  commit("updataScroll");
-};
 const handleClick = ({ props }, event) => {
   const { label, name } = props;
   commit("TOGGLE_LIST", name);
@@ -120,7 +117,7 @@ useEventListener(window, "focus", () => {
   });
 });
 onActivated(() => {
-  commit("updataScroll");
+  commit("EMITTER_EMIT", { key: "updataScroll" });
   commit("TOGGLE_LIST", "whole");
 });
 onDeactivated(() => {});

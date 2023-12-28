@@ -115,11 +115,11 @@ import Checkbox from "../components/Checkbox.vue";
 import Stateful from "../components/Stateful.vue";
 import LoadMore from "../components/LoadMore.vue";
 import MyPopover from "@/views/components/MyPopover/index.vue";
-import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/mutation-types";
+import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/constants";
 import { deleteMsgList, revokeMsg, translateText, getMsgList } from "@/api/im-sdk-api/index";
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
-import { download, downloadCopy, timeFormat } from "@/utils/chat/index";
+import { download, timeFormat } from "@/utils/chat/index";
 
 import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
 import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
@@ -443,8 +443,7 @@ const handleSave = (data) => {
   const {
     payload: { fileName, fileUrl },
   } = data;
-  // download(fileUrl, fileName);
-  downloadCopy(fileUrl, fileName);
+  download(fileUrl, fileName);
 };
 
 const handleTranslate = (data) => {
