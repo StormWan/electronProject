@@ -68,7 +68,7 @@ export const handleScreenshot = () => {
       }
     });
   } else if (isMac) {
-    exec(`screencapture -i  -c`, (error, stdout, stderr) => {
+    exec(`screencapture -w  -c`, (error, stdout, stderr) => {
       if (!error) {
         //截图完成，在粘贴板中
         const pngs = clipboard.readImage().toPNG();
