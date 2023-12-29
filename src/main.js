@@ -2,6 +2,8 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import AppLoading from './views/components/AppLoading';
+
 import { getServerConfig } from "./config";
 
 import "@/styles/index.scss";
@@ -18,6 +20,8 @@ import { loadAllassembly } from "./components/index";
 import { directive } from "v-contextmenu";
 import { MotionPlugin } from "@vueuse/motion";
 import { registerSvgIcon } from "./assets/icons/index";
+// app loading
+const appLoading = createApp(AppLoading);
 const app = createApp(App);
 app.directive("contextmenu", directive);
 // 自动加载组件
@@ -26,10 +30,12 @@ loadAllassembly(app);
 registerSvgIcon(app);
 
 getServerConfig(app).then(async (config) => {
+  appLoading.mount('#appLoading');
   app.use(router);
   app.use(store);
   app.use(useI18n);
   app.use(useElIcons);
   app.use(MotionPlugin);
+  appLoading.unmount();
   app.mount("#app");
 });

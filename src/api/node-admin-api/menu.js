@@ -1,13 +1,12 @@
 import http from "@/utils/http/index";
+import menuJson from '../db/menu.json';
 
 /**
  * 获取菜单列表
  */
 export const getMenu = () => {
-  return http({
-    url: "/menu/query",
-    method: "get",
-  });
+  // return http({  url: "/menu/query",method: "get", });
+  return menuJson.menu
 };
 
 /**
