@@ -17,16 +17,13 @@ export const mainTop = () => {
   mainView.moveTop();
   mainView.center();
 };
-
 /* 隐藏主窗口 */
-export const mainWinHide = () => {};
-
+export const mainWinHide = () => { };
 /* 主窗口最小化 */
 export const minMainWindow = () => {
   const mainView = global.mainWin;
   mainView.minimize();
 };
-
 /* 主窗口最大化 */
 export const maxMainWindow = () => {
   const mainView = global.mainWin;
@@ -36,7 +33,6 @@ export const maxMainWindow = () => {
     mainView.maximize();
   }
 };
-
 /* 外部浏览器打开 */
 export const openExternal = (url) => {
   shell.openExternal(url);
@@ -97,5 +93,36 @@ export const showMessageBox = () => {
       console.log(err);
     });
 };
+/* 窗口抖动 */
+export const shakeWindow = () => {
+  const win = global.mainWin;
+  const originalPosition = win.getPosition()
+  const shakeDistance = 10
+  const shakeDuration = 100
+  const shakeInterval = 20
 
-export const quitApp = (type) => {};
+  const originalSize = win.getSize()
+  const [originalWidth, originalHeight] = originalSize
+
+  let startTime = Date.now()
+
+  const shakeIntervalId = setInterval(() => {
+    const elapsedTime = Date.now() - startTime
+
+    if (elapsedTime >= shakeDuration) {
+      clearInterval(shakeIntervalId)
+      win.setPosition(originalPosition[0], originalPosition[1])
+      win.setSize(originalWidth, originalHeight)
+      return
+    }
+
+    const progress = elapsedTime / shakeDuration
+    const angle = progress * Math.PI * 2
+    const offsetX = Math.round(Math.sin(angle) * shakeDistance)
+    const offsetY = Math.round(Math.cos(angle) * shakeDistance)
+
+    win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY)
+  }, shakeInterval)
+}
+
+export const quitApp = (type) => { };

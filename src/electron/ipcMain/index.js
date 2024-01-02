@@ -3,6 +3,7 @@ import { ipcMain, app, shell, dialog } from "electron";
 import {
   quitApp,
   mainTop,
+  shakeWindow,
   minMainWindow,
   maxMainWindow,
   openExternal,
@@ -28,6 +29,11 @@ const ipcEvent = () => {
   // 主窗口最大化
   ipcMain.on("maxMainWindow", () => {
     maxMainWindow();
+  });
+
+  // 窗口抖动
+  ipcMain.on("shakeWindow", () => {
+    shakeWindow();
   });
 
   // dialog 系统弹框

@@ -20,7 +20,7 @@ class Background {
       if (!gotTheLock) {
         return app.quit();
       } else {
-        app.on("second-instance", (event, argv) => {});
+        app.on("second-instance", (event, argv) => { });
       }
     }
 
@@ -102,6 +102,8 @@ class Background {
       createProtocol("app");
       win.loadURL("app://./index.html");
     }
+    // 在窗口加载完成后
+    win.webContents.on('did-finish-load', () => { })
   }
   handleAppEvents() {
     // 关闭所有窗口后退出
