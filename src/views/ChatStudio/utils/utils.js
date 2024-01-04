@@ -73,7 +73,7 @@ export const handleCopyMsg = async (data) => {
   }
   // 图片
   if (type === "TIMImageElem") {
-    const url = content.imageInfoArray[2].imageUrl;
+    const url = content.imageInfoArray[1].imageUrl;
     const imageBlob = await getBlob(url);
     // 创建一个空的 ClipboardItem 对象，并将图片添加到其中
     const clipboardItem = new ClipboardItem({ "image/png": imageBlob });
@@ -495,23 +495,10 @@ export function filterMentionList(Str, Html) {
  */
 export const showIMPic = (width, height) => {
   let picStyle = {};
-  //图片高宽极大
-  if (height >= 292 && width >= 292) {
+  if (width >= 140) {
     picStyle = {
-      width: 292 + "px",
-      height: Math.round((height / width) * 292) + "px",
-    };
-  } else if (width > 292 && height < 292) {
-    // 图片极宽
-    picStyle = {
-      width: 292 + "px",
-      height: Math.round((height / width) * 292) + "px",
-    };
-  } else if (width < 292 && height > 292) {
-    // 图片极长
-    picStyle = {
-      width: width + "px",
-      height: Math.round((height / width) * width) + "px",
+      width: 140 + "px",
+      height: Math.round((140 / width) * height) + "px",
     };
   } else {
     picStyle = {

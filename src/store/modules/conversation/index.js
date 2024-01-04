@@ -475,7 +475,7 @@ const conversation = {
       );
       // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight
       const reversedUrls = filteredMessages.reduceRight((urls, message) => {
-        const url = message.payload.imageInfoArray[0].url;
+        const url = message.payload.imageInfoArray[1].url;
         urls.push(url);
         return urls;
       }, []);
