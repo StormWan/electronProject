@@ -26,7 +26,7 @@ export class TIMProxy {
     this.TIM = null; // 命名空间
     this.once = false; // 防止重复初始化
     this.test = {};
-    this.conversationList = []
+    this.conversationList = [];
     Object.defineProperty(this, "test", {
       configurable: true, // 可配置
       enumerable: false, // 不可枚举

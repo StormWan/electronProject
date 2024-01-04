@@ -2,24 +2,9 @@
   box-sizing: border-box;
 }
 
-a {
-  text-decoration: none;
-}
-
 html,
 body {
   height: 100%;
-}
-
-audio,
-canvas,
-embed,
-iframe,
-img,
-object,
-svg,
-video {
-  vertical-align: middle;
 }
 
 html {
@@ -34,6 +19,21 @@ body {
     "微软雅黑", Arial, sans-serif;
 }
 
+a {
+  text-decoration: none;
+}
+
+audio,
+canvas,
+embed,
+iframe,
+img,
+object,
+svg,
+video {
+  vertical-align: middle;
+}
+
 ul {
   margin: 0;
   padding: 0;
@@ -41,9 +41,11 @@ ul {
     list-style-type: none;
   }
 }
+
 p {
   margin: 0;
 }
+
 .frame-iframe {
   border: 0;
   box-sizing: border-box;
@@ -86,7 +88,6 @@ p {
   }
 }
 
-/* 头部用户信息样式重置 */
 .hidden {
   display: none !important;
 }

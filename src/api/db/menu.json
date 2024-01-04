@@ -1,164 +1,163 @@
-{
-  "menu": [
-    {
-      "id": "d17d701b-6257-40bd-a6c3-a4672d4823d4",
-      "path": "/root",
-      "meta": {
-        "title": "侧边栏菜单",
-        "icon": "el-",
-        "auth": []
-      },
-      "children": [
-        "57c79357-0309-41b9-919a-253c3dfe6691"
-      ]
+[
+  {
+    "id": "d17d701b-6257-40bd-a6c3-a4672d4823d4",
+    "path": "/root",
+    "meta": {
+      "title": "侧边栏菜单",
+      "icon": "el-",
+      "auth": []
     },
-    {
-      "id": "57c79357-0309-41b9-919a-253c3dfe6691",
-      "path": "/",
-      "name": "home",
-      "componentName": "Home",
-      "meta": {
-        "title": "Home",
-        "icon": "Eleme",
-        "auth": [],
-        "modify": false
-      },
-      "children": [
-        "3936c425-1234-49c3-bc92-5b364b9f4264",
-        "3936c425-1286-49c3-bc92-5b364b9f4264",
-        "7b3c2013-5f52-4191-8080-e18641eda5df",
-        "57c79357-0309-41b9-919a-253c3dfe6690",
-        "34221911-5c1b-451b-933d-143b8cea20dd"
-      ]
+    "children": [
+      "57c79357-0309-41b9-919a-253c3dfe6691"
+    ]
+  },
+  {
+    "id": "57c79357-0309-41b9-919a-253c3dfe6691",
+    "path": "/",
+    "name": "home",
+    "componentName": "Home",
+    "meta": {
+      "title": "Home",
+      "icon": "Eleme",
+      "auth": [],
+      "modify": false
     },
-    {
-      "id": "3936c425-1234-49c3-bc92-5b364b9f4264",
-      "path": "/welcome",
-      "name": "welcome",
-      "componentName": "Welcome",
-      "meta": {
-        "title": "首页",
-        "icon": "Eleme",
-        "auth": [],
-        "modify": false
-      }
-    },
-    {
-      "id": "3936c425-1286-49c3-bc92-5b364b9f4264",
-      "path": "/chatstudio",
-      "name": "chatstudio",
-      "componentName": "ChatStudio",
-      "meta": {
-        "title": "聊天工作室",
-        "icon": "ForkSpoon",
-        "auth": [],
-        "modify": false,
-        "keep": true
-      },
-      "children": []
-    },
-    {
-      "id": "7b3c2013-5f52-4191-8080-e18641eda5df",
-      "path": "/personal",
-      "name": "personal",
-      "componentName": "Personal",
-      "meta": {
-        "title": "个人中心",
-        "icon": "User",
-        "modify": false
-      }
-    },
-    {
-      "id": "57c79357-0309-41b9-919a-253c3dfe6690",
-      "path": "/system",
-      "name": "system",
-      "componentName": "System",
-      "meta": {
-        "title": "系统管理",
-        "icon": "Setting",
-        "auth": [],
-        "modify": false
-      },
-      "children": [
-        "3936c425-a286-49c3-bc92-5b364b9f4261",
-        "4fb62491-8274-4cfd-bfd7-2f0702c7fe6c",
-        "0fe77c86-6751-42c7-bde7-cdd4a8c207b9"
-      ]
-    },
-    {
-      "id": "3936c425-a286-49c3-bc92-5b364b9f4261",
-      "path": "/system/user",
-      "name": "user",
-      "componentName": "User",
-      "meta": {
-        "title": "用户权限",
-        "icon": "CopyDocument",
-        "modify": false
-      },
-      "children": []
-    },
-    {
-      "id": "4fb62491-8274-4cfd-bfd7-2f0702c7fe6c",
-      "path": "/system/menu",
-      "name": "menu",
-      "componentName": "Menu",
-      "meta": {
-        "title": "菜单列表",
-        "icon": "More",
-        "modify": false
-      }
-    },
-    {
-      "id": "0fe77c86-6751-42c7-bde7-cdd4a8c207b9",
-      "path": "/system/role",
-      "name": "role",
-      "componentName": "Role",
-      "meta": {
-        "title": "角色权限",
-        "icon": "User",
-        "modify": false
-      }
-    },
-    {
-      "id": "34221911-5c1b-451b-933d-143b8cea20dd",
-      "path": "/about",
-      "name": "about",
-      "componentName": "About",
-      "meta": {
-        "title": "关于",
-        "icon": "Warning",
-        "auth": [],
-        "modify": false
-      },
-      "children": []
-    },
-    {
-      "id": "2fc78927-9160-4585-8355-36cc795a5692",
-      "path": "/assembly",
-      "name": "assembly",
-      "componentName": "Assembly",
-      "meta": {
-        "title": "组件",
-        "icon": "Menu",
-        "auth": [],
-        "modify": false,
-        "isHide": true
-      },
-      "children": [
-        "22156386-6a76-40b1-8b91-601a6fde5f9f"
-      ]
-    },
-    {
-      "id": "22156386-6a76-40b1-8b91-601a6fde5f9f",
-      "path": "/assembly/jigsaw",
-      "name": "jigsaw",
-      "componentName": "Jigsaw",
-      "meta": {
-        "title": "拼图",
-        "icon": "DishDot",
-        "auth": [],
-        "modify": false
-      }
+    "children": [
+      "3936c425-1234-49c3-bc92-5b364b9f4264",
+      "3936c425-1286-49c3-bc92-5b364b9f4264",
+      "7b3c2013-5f52-4191-8080-e18641eda5df",
+      "57c79357-0309-41b9-919a-253c3dfe6690",
+      "2fc78927-9160-4585-8355-36cc795a5692",
+      "34221911-5c1b-451b-933d-143b8cea20dd"
+    ]
+  },
+  {
+    "id": "3936c425-1234-49c3-bc92-5b364b9f4264",
+    "path": "/welcome",
+    "name": "welcome",
+    "componentName": "Welcome",
+    "meta": {
+      "title": "首页",
+      "icon": "Eleme",
+      "auth": [],
+      "modify": false
     }
-  ]
-}
+  },
+  {
+    "id": "3936c425-1286-49c3-bc92-5b364b9f4264",
+    "path": "/chatstudio",
+    "name": "chatstudio",
+    "componentName": "ChatStudio",
+    "meta": {
+      "title": "聊天工作室",
+      "icon": "ForkSpoon",
+      "auth": [],
+      "modify": false,
+      "keep": true
+    },
+    "children": []
+  },
+  {
+    "id": "7b3c2013-5f52-4191-8080-e18641eda5df",
+    "path": "/personal",
+    "name": "personal",
+    "componentName": "Personal",
+    "meta": {
+      "title": "个人中心",
+      "icon": "User",
+      "modify": false
+    }
+  },
+  {
+    "id": "57c79357-0309-41b9-919a-253c3dfe6690",
+    "path": "/system",
+    "name": "system",
+    "componentName": "System",
+    "meta": {
+      "title": "系统管理",
+      "icon": "Setting",
+      "auth": [],
+      "modify": false
+    },
+    "children": [
+      "3936c425-a286-49c3-bc92-5b364b9f4261",
+      "4fb62491-8274-4cfd-bfd7-2f0702c7fe6c",
+      "0fe77c86-6751-42c7-bde7-cdd4a8c207b9"
+    ]
+  },
+  {
+    "id": "3936c425-a286-49c3-bc92-5b364b9f4261",
+    "path": "/system/user",
+    "name": "user",
+    "componentName": "User",
+    "meta": {
+      "title": "用户权限",
+      "icon": "CopyDocument",
+      "modify": false
+    },
+    "children": []
+  },
+  {
+    "id": "4fb62491-8274-4cfd-bfd7-2f0702c7fe6c",
+    "path": "/system/menu",
+    "name": "menu",
+    "componentName": "Menu",
+    "meta": {
+      "title": "菜单列表",
+      "icon": "More",
+      "modify": false
+    }
+  },
+  {
+    "id": "0fe77c86-6751-42c7-bde7-cdd4a8c207b9",
+    "path": "/system/role",
+    "name": "role",
+    "componentName": "Role",
+    "meta": {
+      "title": "角色权限",
+      "icon": "User",
+      "modify": false
+    }
+  },
+  {
+    "id": "34221911-5c1b-451b-933d-143b8cea20dd",
+    "path": "/about",
+    "name": "about",
+    "componentName": "About",
+    "meta": {
+      "title": "关于",
+      "icon": "Warning",
+      "auth": [],
+      "modify": false
+    },
+    "children": []
+  },
+  {
+    "id": "2fc78927-9160-4585-8355-36cc795a5692",
+    "path": "/assembly",
+    "name": "assembly",
+    "componentName": "Assembly",
+    "meta": {
+      "title": "组件",
+      "icon": "Menu",
+      "auth": [],
+      "modify": false,
+      "isHide": true
+    },
+    "children": [
+      "22156386-6a76-40b1-8b91-601a6fde5f9f"
+    ]
+  },
+  {
+    "id": "22156386-6a76-40b1-8b91-601a6fde5f9f",
+    "path": "/assembly/jigsaw",
+    "name": "jigsaw",
+    "componentName": "Jigsaw",
+    "meta": {
+      "title": "拼图",
+      "icon": "DishDot",
+      "auth": [],
+      "modify": false
+    }
+  }
+]

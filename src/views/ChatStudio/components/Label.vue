@@ -29,7 +29,6 @@ const labelClass = (data) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/mixin.scss";
 .label {
   text-align: center;
   border-radius: 2px;
@@ -39,7 +38,6 @@ const labelClass = (data) => {
     stroke: unset;
   }
   .all {
-    // @include ellipsisBasic(1);
     white-space: nowrap;
     background: #e6f7ff;
     border: 1px solid rgb(145, 213, 255);

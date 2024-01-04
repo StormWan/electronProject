@@ -58,12 +58,12 @@ const vueDefaultConfig = {
     // 是否为CSS开启source map.设置为true之后可能会影响构建的性能.
     sourceMap: false,
     // 向CSS相关的loader传递选项(支持:css-loader postcss-loader sass-loader less-loader stylus-loader).
-    /* loaderOptions: {
+    loaderOptions: {
       sass: {
         // 引入全局scss全局样式
-        prependData: `@import '~@/assets/sass/element.scss';`
-      }
-    } */
+        prependData: `@import '@/styles/mixin.scss';`,
+      },
+    },
   },
   // 打包忽略项
   externals: {},

@@ -90,7 +90,8 @@ export default {
   vertical-align: middle;
   word-wrap: normal;
   word-break: break-all;
-  color: rgba(0, 0, 0, 0.45);
+  // color: rgba(0, 0, 0, 0.45);
+  color: var(--color-time-divider);
   margin-top: 5px;
   padding: 4px 6px;
   line-height: 16px;

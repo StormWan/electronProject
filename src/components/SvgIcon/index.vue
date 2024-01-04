@@ -35,5 +35,10 @@ export default {
   width: 1em;
   height: 1em;
   cursor: pointer;
+  display: inline-block;
+  color: inherit;
+  fill: currentColor;
+  stroke: currentColor;
+  vertical-align: -0.15em;
 }
 </style>

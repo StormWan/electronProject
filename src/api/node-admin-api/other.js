@@ -66,7 +66,7 @@ export const uploadFiles = async (params) => {
 export const imCallback = async (params) => {
   console.log(params, "imCallback");
   const { Text, From, To, type } = params;
-  if (!isRobot(To)) return;
+  if (To !== "@RBT#001") return;
   sendMessages(params);
 };
 

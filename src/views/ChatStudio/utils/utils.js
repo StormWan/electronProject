@@ -436,7 +436,7 @@ export function filterMentionList(Str, Html) {
   // debugger;
   // 如果当前类型不是群聊
   if (store.getters.currentType !== "GROUP") return;
-  const inputStr = Str
+  const inputStr = Str;
   // 如果输入字符串为空，关闭提及模态框并返回
   if (inputStr === "") {
     store.commit("SET_MENTION_MODAL", false);
@@ -447,7 +447,7 @@ export function filterMentionList(Str, Html) {
     store.commit("SET_MENTION_MODAL", false);
     return;
   }
-  const inputHtml = parseContentFromHTML(Html)
+  const inputHtml = parseContentFromHTML(Html);
   console.log("inputStr:", Str);
   // console.log("inputHtml:", inputHtml);
   const isShowModal = store.state?.conversation.isShowModal;
@@ -481,8 +481,64 @@ export function filterMentionList(Str, Html) {
   }
   const text = inputStr.substring(lastAtIndex);
   const searchValue = text.substring(1);
-  console.log('searchValue:', searchValue)
+  console.log("searchValue:", searchValue);
   if (!searchValue) return;
   // 执行根据拼音搜索的操作
   return searchByPinyin(searchValue);
+}
+
+/**
+ * 根据图片的宽度和高度计算展示图片的样式
+ * @param {number} width - 图片宽度
+ * @param {number} height - 图片高度
+ * @returns {Object} - 包含展示图片的宽度和高度的样式对象
+ */
+export const showIMPic = (width, height) => {
+  let picStyle = {};
+  //图片高宽极大
+  if (height >= 292 && width >= 292) {
+    picStyle = {
+      width: 292 + "px",
+      height: Math.round((height / width) * 292) + "px",
+    };
+  } else if (width > 292 && height < 292) {
+    // 图片极宽
+    picStyle = {
+      width: 292 + "px",
+      height: Math.round((height / width) * 292) + "px",
+    };
+  } else if (width < 292 && height > 292) {
+    // 图片极长
+    picStyle = {
+      width: width + "px",
+      height: Math.round((height / width) * width) + "px",
+    };
+  } else {
+    picStyle = {
+      width: width + "px",
+      height: height + "px",
+    };
+  }
+  return picStyle;
+};
+
+/**
+ * 获取图片的宽度和高度属性
+ * @param {string} imageUrl - 图片地址
+ * @returns {Promise<{width: number, height: number}>} - 包含图片宽度和高度的 Promise 对象
+ * 'blob:http://localhost:8080/98f11c82-d402-4d7d-b49f-07a05bb75e89';
+ */
+export function getImageSize(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = function () {
+      const width = this.width;
+      const height = this.height;
+      resolve({ width, height });
+    };
+    img.onerror = function () {
+      reject(new Error("Failed to load image"));
+    };
+    img.src = imageUrl;
+  });
 }

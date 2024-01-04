@@ -30,6 +30,15 @@
     <span v-show="isRobot(toAccount)" data-title="配置" class="icon" @click="openRobotBox">
       <el-icon class="robot icon-hover"><Setting /></el-icon>
     </span>
+    <!-- 窗口抖动 -->
+    <span
+      v-show="currentType == 'C2C' && false"
+      data-title="窗口抖动"
+      class="icon"
+      @click="onShake"
+    >
+      <el-icon class="icon-hover"><Iphone /></el-icon>
+    </span>
     <!-- 滚动到底部 -->
     <span data-title="滚动到底部" class="chat_vot icon" @click="onTobBottom" v-show="tobottom">
       <el-icon class="svg-left icon-hover">
@@ -77,7 +86,7 @@ const filePicker = ref();
 const { commit } = useStore();
 
 const emit = defineEmits(["setToolbar"]);
-const { toAccount } = useGetters(["toAccount"]);
+const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
 
 const sendEmojiClick = () => {
   emitter.emit("onEmotionPackBox", true);
@@ -111,6 +120,7 @@ const SendFileClick = () => {
 const clickCscreenshot = () => {
   commit("ipcRenderer", { key: "screenshot" });
 };
+const onShake = () => {};
 
 async function sendImage(e) {
   emit("setToolbar", {
@@ -176,6 +186,9 @@ emitter.on("onisbot", (state) => {
 .chat_vot {
   cursor: pointer;
   animation: chat_top 0.3s ease;
+  .svg-left {
+    transform: rotate(-90deg);
+  }
 }
 
 @keyframes chat_top {

@@ -83,7 +83,6 @@ export class ChatGPTApi {
         let finished = false; // 是否已完成。
 
         // 通过逐步添加文本的方式，以一种动画效果显示响应文本
-        // eslint-disable-next-line no-inner-declarations
         function animateResponseText() {
           if (finished || controller.signal.aborted) {
             responseText += remainText;

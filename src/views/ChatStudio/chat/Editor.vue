@@ -306,8 +306,10 @@ const sendMsgBefore = () => {
 const sendMessage = async () => {
   const data = sendMsgBefore();
   console.log("sendMsgBefore:", data);
-  // return;
+
   const message = await sendChatMessage(data);
+  console.log("sendChatMessage:", message);
+  // return;
   clearInputInfo();
   dispatch("SESSION_MESSAGE_SENDING", {
     payload: {
@@ -389,7 +391,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/mixin.scss";
 .wangeditor {
   word-break: break-all;
   height: 206px;

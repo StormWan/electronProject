@@ -68,7 +68,6 @@ emitter.on("fileUploading", (data) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/mixin.scss";
 .file-Box {
   height: 70px;
   padding: 12px;

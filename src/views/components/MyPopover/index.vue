@@ -93,6 +93,7 @@ const setUserProfile = async () => {
   const { code, data } = await getUserProfile(userID);
   if (code == 0) {
     userProfile.value = data?.[0];
+    console.log(data);
   }
   console.log(userProfile.value);
 };

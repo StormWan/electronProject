@@ -1,7 +1,6 @@
 <template>
   <el-scrollbar>
-    ROLE
-    <div v-if="false" class="content-wrap">
+    <div class="content-wrap">
       <el-row>
         <el-col :span="24" style="margin-bottom: 24px">
           <el-card>

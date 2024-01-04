@@ -282,8 +282,6 @@ const handleQuitGroup = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/mixin.scss";
-
 .admin {
   width: 40px;
   height: 14px;

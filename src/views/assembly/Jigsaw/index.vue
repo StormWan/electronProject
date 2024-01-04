@@ -94,7 +94,7 @@ const checkPass = () => {
 
 const autoPlay = () => {
   let Setting = {
-    originalNode: _.chunk(puzzles.value, 3),
+    originalNode: chunk(puzzles.value, 3),
     // => [[1, 3, 2],[5, 8, 0],[7, 6, 4]],
     resultNode: [
       [1, 2, 3],
