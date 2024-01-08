@@ -7,7 +7,7 @@
       </div>
       <div class="flex items-center">
         <el-dropdown>
-          <Portrait class="user-info" :size="28" />
+          <UserAvatar type="self" class="user-info" :size="28" />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="$store.dispatch('LOG_OUT')">退出登录</el-dropdown-item>
