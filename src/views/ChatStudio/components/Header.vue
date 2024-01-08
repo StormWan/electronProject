@@ -1,18 +1,21 @@
 <template>
-  <header class="message-info-view-header" v-if="Conver">
+  <header class="message-info-view-header" v-if="chat">
     <div class="message-info-views">
-      <header-view :list="Conver" />
+      <p v-if="currentType">
+        <span v-if="chatType('C2C')" @click="openUser" class="single">
+          {{ chatNick("C2C", chat) }}
+        </span>
+        <span v-else-if="chatType('GROUP')" @click="openSetup" class="group">
+          {{ chatNick("GROUP", chat) }}
+        </span>
+        <span v-else-if="chatType('@TIM#SYSTEM')" class="system"> 系统通知 </span>
+      </p>
     </div>
     <div class="flex">
-      <div class="message-info-add" v-show="Conver.type == 'GROUP' && false" title="添加成员">
+      <div class="message-info-add" v-show="chat.type == 'GROUP' && false" title="添加成员">
         <svg-icon iconClass="tianjia" class="icon-hover" />
       </div>
-      <div
-        class="message-info-setup"
-        v-show="Conver.type == 'GROUP'"
-        title="设置"
-        @click="openSetup"
-      >
+      <div class="message-info-setup" v-show="chat.type == 'GROUP'" title="设置" @click="openSetup">
         <FontIcon iconName="MoreFilled" class="icon-hover" />
       </div>
     </div>
@@ -20,55 +23,39 @@
 </template>
 
 <script setup>
-import { h } from "vue";
-import { useState } from "@/utils/hooks/useMapper";
+import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 
-const { state, commit, dispatch } = useStore();
-const { Conver, groupDrawer, groupProfile } = useState({
-  groupDrawer: (state) => state.groupinfo.groupDrawer,
+const { commit } = useStore();
+const { currentType } = useGetters(["currentType"]);
+const { chat, groupProfile } = useState({
   groupProfile: (state) => state.groupinfo.groupProfile,
-  Conver: (state) => state.conversation.currentConversation,
+  chat: (state) => state.conversation.currentConversation,
 });
+
+const chatType = (type) => {
+  return currentType.value === type;
+};
+
+const chatNick = (type, chat) => {
+  if (type === "C2C") {
+    return chat.userProfile.nick || chat.userProfile.userID || chat.remark;
+  } else if (type === "GROUP") {
+    const {
+      groupProfile: { name, groupID, memberCount },
+    } = chat;
+    const count = memberCount ? `(${memberCount})` : "";
+    return `${name || groupID} ${count}`;
+  }
+};
+
 const openSetup = () => {
   console.log(groupProfile.value);
-  console.log(Conver.value);
+  console.log(chat.value);
   commit("setGroupStatus", true);
 };
 const openUser = () => {
-  console.log(Conver.value);
-};
-const HeaderView = (props) => {
-  const { list } = props;
-  if (!list) return;
-  const { type } = list;
-  let fn = null;
-  switch (type) {
-    case "C2C":
-      const {
-        userProfile: { userID, nick },
-        remark,
-      } = list || {};
-      fn = h("span", { onClick: () => openUser(), class: "style-c2c" }, nick || userID || remark);
-      break;
-    case "GROUP":
-      const {
-        groupProfile: { name, groupID, memberCount },
-      } = list;
-      fn = h(
-        "span",
-        { onClick: () => openSetup(), class: "style-group" },
-        `${name || groupID} (${memberCount})`
-      );
-      break;
-    case "@TIM#SYSTEM":
-      fn = h("span", { class: "style-system" }, "系统通知");
-      break;
-    default:
-      fn = null;
-      break;
-  }
-  return h("p", fn);
+  console.log(chat.value);
 };
 </script>
 
@@ -84,8 +71,14 @@ const HeaderView = (props) => {
   width: 100%;
   position: relative;
   .message-info-views {
-    :deep(.style-group) {
+    .group {
       cursor: pointer;
+    }
+    .single,
+    .group {
+      max-width: 200px;
+      display: inline-block;
+      @include text-ellipsis();
     }
   }
 }

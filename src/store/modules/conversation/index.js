@@ -72,6 +72,7 @@ const conversation = {
           const { convId, message } = payload;
           let matched = false;
           let oldMessageList = state.historyMessageList.get(convId);
+          if (!oldMessageList) return
           const newMessageList = oldMessageList.reduce((acc, item) => {
             if (item.ID === payload.message.ID) {
               matched = true;

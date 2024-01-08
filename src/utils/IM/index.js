@@ -1,7 +1,6 @@
 "use strict";
 import TIM from "@/utils/IM/chat/index";
 import tim from "@/utils/IM/im-sdk/tim";
-import TIMUploadPlugin from "tim-upload-plugin";
 import storage from "storejs";
 import store from "@/store";
 import { useWindowFocus } from "@vueuse/core";
@@ -139,10 +138,11 @@ export class TIMProxy {
   }
   onReceiveMessage({ data }) {
     console.log("[chat] 收到新消息 onReceiveMessage:", data);
+    const current = getConversationID() == data?.[0].conversationID;
+    this.handleTrayFlashIng(data);
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
-    this.handleTrayFlashIng(data);
-    const current = getConversationID() == data?.[0].conversationID;
+    this.handleGroupSystemNoticeTip(data);
     this.handleUpdateMessage(data, current);
   }
   onMessageRevoked({ data }) {
@@ -157,11 +157,6 @@ export class TIMProxy {
   }
   onUpdateGroupList({ data }) {
     console.log("[chat] 群组列表更新 onUpdateGroupList:", data);
-    // store.commit("SET_CONVERSATION", {
-    //   type: "REPLACE_CONV_LIST",
-    //   payload: data,
-    // });
-    // store.commit("updateGroupList", data[0]);
   }
   onKickOut({ data }) {
     console.log("[chat] onKickOut:", data);
@@ -248,32 +243,41 @@ export class TIMProxy {
   }
   /**
    * 收到有群成员/退群/被踢出/入群/的groupTip时,更新群成员列表
-   * @param {Message[]} data
+   * MSG_GRP_TIP: "TIMGroupTipElem" 群提示消息
    */
   handleQuitGroupTip(data) {
+    if (data[0]?.type !== 'TIMGroupTipElem') return
     console.log("[chat] handleQuitGroupTip", data);
     const convId = getConversationID();
-    // MSG_GRP_TIP '"TIMGroupTipElem"' 群提示消息
-    // 筛选出当前会话的/退群/被踢群/入群/的 groupTip
+    if (convId !== data[0]?.conversationID) return
     const list = [
       TIM.TYPES.GRP_TIP_MBR_JOIN, // 1 有成员加群
       TIM.TYPES.GRP_TIP_MBR_QUIT, // 2 有群成员退群
       TIM.TYPES.GRP_TIP_MBR_KICKED_OUT, // 3 有群成员被踢出群
     ];
-    const groupTips = data.filter((message) => {
-      return (
-        convId === message.conversationID &&
-        message.type === TIM.TYPES.MSG_GRP_TIP &&
-        list.includes(message.payload.operationType)
-      );
+    const groupTips = data.filter((t) => {
+      return (list.includes(t.payload.operationType));
     });
     // 更新当前会话的群成员列表
     if (groupTips.length > 0) {
-      groupTips.forEach((groupTip) => {
-        if (Array.isArray(groupTip.payload.userIDList) || groupTip.payload.userIDList.length > 0) {
-          store.dispatch("getGroupMemberList");
-        }
-      });
+      store.dispatch("getGroupMemberList");
+    }
+  }
+  /**
+  * 群系统通知的 系统会在恰当的时机，向特定用户发出群系统通知。例如：user1 被踢出群组，系统会给 user1 发送对应的群系统消息。
+  * https://web.sdk.qcloud.com/im/doc/v3/zh-cn/Message.html#.GroupSystemNoticePayload
+  * MSG_GRP_SYS_NOTICE "TIMGroupSystemNoticeElem"	群系统通知消息
+  */
+  handleGroupSystemNoticeTip(data) {
+    if (data[0]?.type !== 'TIMGroupSystemNoticeElem') return
+    console.log("[chat] handleGroupSystemNoticeTip", data);
+    const list = [4, 5];
+    const convId = getConversationID();
+    const groupSystemTips = data.filter((t) => {
+      return (list.includes(t.payload.operationType));
+    });
+    if (groupSystemTips.length > 0) {
+      store.dispatch("DELETE_SESSION", { convId });
     }
   }
   // 消息更新

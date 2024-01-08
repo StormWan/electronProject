@@ -93,7 +93,7 @@ export const deleteConversation = async (params) => {
   const {
     code,
     data: { conversationID: ID },
-  } = await tim.deleteConversation(convId);
+  } = await tim.deleteConversation({ conversationIDList: [convId], clearHistoryMessage: false });
   return {
     code,
     ID,
