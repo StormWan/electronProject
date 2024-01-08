@@ -31,12 +31,7 @@
       <el-icon class="robot icon-hover"><Setting /></el-icon>
     </span>
     <!-- 窗口抖动 -->
-    <span
-      v-show="currentType == 'C2C' && false"
-      data-title="窗口抖动"
-      class="icon"
-      @click="onShake"
-    >
+    <span v-show="currentType == 'C2C'" data-title="窗口抖动" class="icon" @click="onShake">
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
     <!-- 滚动到底部 -->
@@ -120,7 +115,9 @@ const SendFileClick = () => {
 const clickCscreenshot = () => {
   commit("ipcRenderer", { key: "screenshot" });
 };
-const onShake = () => {};
+const onShake = () => {
+  commit("ipcRenderer", { key: "shakeWindow" });
+};
 
 async function sendImage(e) {
   emit("setToolbar", {
