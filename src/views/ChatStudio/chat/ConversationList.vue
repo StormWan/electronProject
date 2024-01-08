@@ -19,18 +19,12 @@
       <div class="pinned-tag" v-show="item.isPinned"></div>
       <!-- 头像 -->
       <el-badge is-dot :hidden="isShowCount(item) || !isNotify(item)">
-        <img
-          v-if="item.type == 'C2C'"
-          :src="item.userProfile.avatar || squareUrl"
-          class="portrait"
-          alt="头像"
-        />
         <UserAvatar
-          v-else
           words="3"
           shape="square"
+          :type="item.type == 'C2C' ? 'single' : 'group'"
           :nickName="chatName(item)"
-          :url="item?.groupProfile?.avatar"
+          :url="item.type == 'C2C' ? item.userProfile.avatar : item?.groupProfile?.avatar"
         />
       </el-badge>
       <!-- 消息 -->

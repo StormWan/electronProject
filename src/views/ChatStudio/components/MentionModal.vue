@@ -9,12 +9,12 @@
           @mouseover="setActive(i)"
           @click="insertMentionHandler(item.userID, item.nick)"
         >
-          <img v-if="item.avatar" :src="item.avatar" class="avatar" alt="头像" />
           <UserAvatar
-            v-else
             words="3"
             className="mention"
             shape="square"
+            :url="item.avatar"
+            :type="item.avatar ? 'single' : 'group'"
             :nickName="item.userID === magAtAll ? '@' : item.nick"
           />
           <span class="nick">{{ item.nick || item.userID }}</span>
@@ -224,6 +224,8 @@ export default {
   }
   .nick {
     margin-left: 5px;
+    max-width: 125px;
+    @include text-ellipsis();
   }
   li {
     cursor: pointer;

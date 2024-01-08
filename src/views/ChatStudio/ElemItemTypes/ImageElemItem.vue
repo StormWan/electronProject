@@ -33,17 +33,18 @@ const props = defineProps({
   },
 });
 const imgStyle = ref({});
+const index = ref(0);
 const { message, self } = toRefs(props);
 const { imgUrlList } = useGetters(["imgUrlList"]);
 const { showCheckbox } = useState({
   showCheckbox: (state) => state.conversation.showCheckbox,
 });
 
-function getImageProperties(data = message.value, num = 1) {
+function getImageProperties(num = 1) {
   try {
     const {
       payload: { imageInfoArray },
-    } = data;
+    } = message.value;
     const imageInfo = imageInfoArray[num];
     return imageInfo;
   } catch (error) {
@@ -51,11 +52,11 @@ function getImageProperties(data = message.value, num = 1) {
   }
 }
 
-const url = getImageProperties()?.url;
-
-const index = imgUrlList.value.findIndex((item) => {
-  return item == getImageProperties()?.url;
+index.value = imgUrlList.value.findIndex((item) => {
+  return item == getImageProperties(0)?.url;
 });
+
+const url = getImageProperties()?.url;
 
 async function initImageSize() {
   try {

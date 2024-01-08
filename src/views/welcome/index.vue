@@ -2,7 +2,7 @@
   <el-scrollbar>
     <el-card class="top-content">
       <div class="left-mark">
-        <Portrait :size="45" @click="openDepot" />
+        <UserAvatar type="self" :size="45" @click="openDepot" />
         <span class="style-text">{{ greetings }}</span>
       </div>
     </el-card>

@@ -15,6 +15,12 @@ const isFocused = useWindowFocus(); // 判断浏览器窗口是否在前台可�
 function getConversationID() {
   return store.state.conversation?.currentConversation?.conversationID;
 }
+function getConversationList(data) {
+  const List = store.state.conversation?.conversationList;
+  const convId = data?.[0].conversationID;
+  const massage = List.filter((t) => t.conversationID == convId);
+  return massage;
+}
 
 export class TIMProxy {
   constructor() {
@@ -151,6 +157,10 @@ export class TIMProxy {
   }
   onUpdateGroupList({ data }) {
     console.log("[chat] 群组列表更新 onUpdateGroupList:", data);
+    // store.commit("SET_CONVERSATION", {
+    //   type: "REPLACE_CONV_LIST",
+    //   payload: data,
+    // });
     // store.commit("updateGroupList", data[0]);
   }
   onKickOut({ data }) {
@@ -238,10 +248,10 @@ export class TIMProxy {
   }
   /**
    * 收到有群成员/退群/被踢出/入群/的groupTip时,更新群成员列表
-   * @param {Message[]} messageList
+   * @param {Message[]} data
    */
-  handleQuitGroupTip(messageList) {
-    console.log("[chat] handleQuitGroupTip", messageList);
+  handleQuitGroupTip(data) {
+    console.log("[chat] handleQuitGroupTip", data);
     const convId = getConversationID();
     // MSG_GRP_TIP '"TIMGroupTipElem"' 群提示消息
     // 筛选出当前会话的/退群/被踢群/入群/的 groupTip
@@ -250,7 +260,7 @@ export class TIMProxy {
       TIM.TYPES.GRP_TIP_MBR_QUIT, // 2 有群成员退群
       TIM.TYPES.GRP_TIP_MBR_KICKED_OUT, // 3 有群成员被踢出群
     ];
-    const groupTips = messageList.filter((message) => {
+    const groupTips = data.filter((message) => {
       return (
         convId === message.conversationID &&
         message.type === TIM.TYPES.MSG_GRP_TIP &&
@@ -330,6 +340,9 @@ export class TIMProxy {
   handleNotificationTip(data) {
     const { userID } = this.userProfile || {};
     const { atUserList } = data[0];
+    const massage = getConversationList(data);
+    // 消息免打扰
+    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
     if (atUserList.length > 0) {
       let off = atUserList.includes(userID);
       let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);

@@ -19,6 +19,7 @@ import { useElIcons } from "./plugins/icons";
 import { loadAllassembly } from "./components/index";
 import { directive } from "v-contextmenu";
 import { MotionPlugin } from "@vueuse/motion";
+import { motion } from "./directives/index";
 import { registerSvgIcon } from "./assets/icons/index";
 // app loading
 const appLoading = createApp(AppLoading);
@@ -35,7 +36,7 @@ getServerConfig(app).then(async (config) => {
   app.use(store);
   app.use(useI18n);
   app.use(useElIcons);
-  app.use(MotionPlugin);
+  app.use(MotionPlugin, motion);
   appLoading.unmount();
   app.mount("#app");
 });

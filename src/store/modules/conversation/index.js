@@ -25,17 +25,14 @@ const conversation = {
     networkStatus: true, // 网络状态
     needScrollDown: -1, // 是否向下滚动 true ? 0 : -1
     forwardData: new Map(), // 多选数据
-    uploadProgress: new Map(), //上传进度
     downloadProgress: new Map(), //下载进度
     historyMessageList: new Map(), //历史消息
     currentMessageList: [], //当前消息列表(窗口聊天消息)
     currentConversation: null, //跳转窗口的属性
     conversationList: [], // 会话列表数据
     currentReplyMsg: null, // 回复数据
-    currentReplyUser: null,
     activetab: "whole", // 全部 未读 提及我
     outside: "message", // 侧边栏初始状态
-    isNotify: false, // 是否免打扰
     revokeMsgMap: new Map(), // 撤回消息重新编辑
   },
   mutations: {
@@ -126,7 +123,6 @@ const conversation = {
             activetab: "whole",
             showMsgBox: false,
             showCheckbox: false,
-            currentReplyUser: null,
             currentReplyMsg: null,
           });
           console.log("[chat] 清除历史记录 CLEAR_HISTORY:", state);
@@ -240,9 +236,6 @@ const conversation = {
           state.forwardData.clear();
           break;
       }
-    },
-    SET_IS_NOTIFY(state, flag) {
-      state.isNotify = flag;
     },
     // 设置多选框状态
     SET_CHEC_BOX(state, flag) {
@@ -475,7 +468,7 @@ const conversation = {
       );
       // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight
       const reversedUrls = filteredMessages.reduceRight((urls, message) => {
-        const url = message.payload.imageInfoArray[1].url;
+        const url = message.payload.imageInfoArray[0].url;
         urls.push(url);
         return urls;
       }, []);

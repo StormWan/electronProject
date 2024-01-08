@@ -1,7 +1,7 @@
 <template>
   <el-aside width="68px">
     <div class="touxiang">
-      <Portrait :size="40" shape="square" @click="openUploadAvatarDialog" />
+      <UserAvatar type="self" :size="40" shape="square" @click="openUploadAvatarDialog" />
       <!-- <div class="mask-out">
         <span>上传头像</span>
       </div> -->

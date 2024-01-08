@@ -3,8 +3,7 @@
     class="robot-box"
     :class="{ 'is-robot': isRobot(cardData?.from) }"
     :style="{ left: left, top: top }"
-    v-if="cardData"
-    v-show="card"
+    v-if="card && cardData"
     ref="popoverRef"
   >
     <div class="title">

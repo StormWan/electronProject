@@ -7,33 +7,6 @@ import { useAccessStore } from "@/api/openai/constant";
 import { api } from "@/api/openai/api";
 import { createTextMsg } from "@/api/im-sdk-api/index";
 
-function fnMsgBody(data) {
-  const { type, Text, To, From } = data;
-  return {
-    MsgBody: [
-      {
-        MsgType: type,
-        MsgContent: {
-          Text,
-        },
-      },
-    ],
-    SyncOtherMachine: 2,
-    CallbackCommand: "Bot.OnC2CMessage",
-    From_Account: From,
-    To_Account: To,
-    MsgRandom: 707438945,
-    MsgSeq: 350821200,
-    MsgTime: 1686709194,
-    SupportMessageExtension: 0,
-    MsgKey: "1349190009_53349086_1698387209",
-    OnlineOnlyFlag: 0,
-    SendMsgResult: 0,
-    ErrorInfo: "send msg succeed",
-    UnreadMsgNum: 1,
-  };
-}
-
 export const createForData = ({ files }) => {
   const formData = new FormData();
   formData.append("file", files);
@@ -117,8 +90,12 @@ export const sendMessages = async (params) => {
     async onFinish(message) {
       console.log("[chat] onFinish:", message);
       store.commit("EMITTER_EMIT", { key: "updataScroll", value: "instantly" });
-      updataMessage(msg, message);
-      await sendMsg(params, message);
+      if (message) {
+        updataMessage(msg, message);
+        await sendMsg(params, message);
+      } else {
+        await sendMsg(params, "网络异常请稍后再试");
+      }
     },
     onError(error) {
       console.error("[chat] failed:", error);

@@ -1,6 +1,7 @@
 export default {
   chat: {
-    buttonPrompt: "按Enter发送消息,Ctrl+Enter换行",
+    buttonPromptMac: "按Enter发送消息, Meta + Enter 换行",
+    buttonPrompt: "按Enter发送消息, Ctrl + Enter 换行",
     sending: "发送",
     sendMessage: "发送消息",
     searchFor: "搜索",

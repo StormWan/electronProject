@@ -31,6 +31,8 @@ const { Conver, groupDrawer, groupProfile } = useState({
   Conver: (state) => state.conversation.currentConversation,
 });
 const openSetup = () => {
+  console.log(groupProfile.value);
+  console.log(Conver.value);
   commit("setGroupStatus", true);
 };
 const openUser = () => {
@@ -51,9 +53,13 @@ const HeaderView = (props) => {
       break;
     case "GROUP":
       const {
-        groupProfile: { name, groupID },
+        groupProfile: { name, groupID, memberCount },
       } = list;
-      fn = h("span", { onClick: () => openSetup(), class: "style-group" }, name || groupID);
+      fn = h(
+        "span",
+        { onClick: () => openSetup(), class: "style-group" },
+        `${name || groupID} (${memberCount})`
+      );
       break;
     case "@TIM#SYSTEM":
       fn = h("span", { class: "style-system" }, "系统通知");

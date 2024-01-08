@@ -1,15 +1,24 @@
 <template>
   <div
+    v-if="type == 'group'"
     :class="['user-avatar', 'default', className, shape]"
-    :style="{ backgroundImage: url ? `url(${url})` : '' }"
+    :style="backgInfo(url)"
   >
     {{ url ? null : displayInfo(nickName) }}
   </div>
+  <img v-else-if="type == 'single'" class="avatar" :src="url || shapeObj[shape]" alt="头像" />
+  <el-avatar
+    v-else-if="type == 'self'"
+    :size="size"
+    :src="userProfile?.avatar || shapeObj['circle']"
+    :shape="shape"
+  />
 </template>
 
 <script setup>
 import { toRefs } from "vue";
-
+import { useState } from "@/utils/hooks/useMapper";
+// <UserAvatar/>
 const props = defineProps({
   className: {
     type: String,
@@ -27,6 +36,17 @@ const props = defineProps({
     type: String || Number,
     default: "2",
   },
+  size: {
+    type: Number,
+    default: 40,
+  },
+  type: {
+    type: String,
+    default: "group",
+    validator: (value) => {
+      return ["single", "group", "self"].includes(value);
+    },
+  },
   shape: {
     type: String,
     default: "circle",
@@ -36,13 +56,26 @@ const props = defineProps({
   },
 });
 
-const { url, nickName, shape, words } = toRefs(props);
+const { url, nickName, shape, words, className, type, size } = toRefs(props);
+
+const shapeObj = {
+  circle: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+  square: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+};
+
+const { userProfile } = useState({
+  userProfile: (state) => state.user.currentUserProfile,
+});
 
 const displayInfo = (info) => {
   if (!info) {
     return "unknown";
   }
   return info.slice(0, words.value).toUpperCase();
+};
+
+const backgInfo = (url) => {
+  return { backgroundImage: url ? `url(${url})` : "" };
 };
 </script>
 
@@ -58,6 +91,11 @@ const displayInfo = (info) => {
   background-color: #5cadff;
   color: #ffffff;
   font-weight: 400;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
 }
 
 .default {

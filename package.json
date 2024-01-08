@@ -56,7 +56,6 @@
     "autolinker": "^4.0.0",
     "axios": "^0.26.1",
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "bowser": "^2.11.0",
     "core-js": "^3.33.3",
     "dayjs": "^1.11.2",
     "electron": "^22.0.1",

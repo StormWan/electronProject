@@ -58,8 +58,8 @@ import { ref, onMounted } from "vue";
 import { useBoolean } from "@/utils/hooks/index";
 import { ClickOutside as vClickOutside } from "element-plus";
 import { chunk } from "lodash-es";
+import { getOperatingSystem } from "../utils/utils";
 
-import Bowser from "bowser";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
@@ -85,8 +85,7 @@ const initEmotion = () => {
   EmotionPackGroup.value = chunk(emojiQq.emojiName, 12 * 6);
 };
 const getParser = () => {
-  const browser = Bowser.getParser(window.navigator.userAgent);
-  systemOs.value = browser.getOS().name; // "Windows" ""macOS""
+  systemOs.value = getOperatingSystem();
 };
 const selectEmoticon = (item) => {
   emit("SelectEmoticon", item, table.value);

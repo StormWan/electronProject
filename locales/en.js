@@ -1,6 +1,7 @@
 export default {
   chat: {
-    buttonPrompt: "Press Enter to send the message, Ctrl+Enter to wrap",
+    buttonPromptMac: "Press Enter to send the message, Meta + Enter to wrap",
+    buttonPrompt: "Press Enter to send the message, Ctrl + Enter to wrap",
     sending: "Sending",
     sendMessage: "Send message",
     searchFor: "search for",
