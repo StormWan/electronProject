@@ -1,5 +1,5 @@
 <template>
-  <span :class="['label', labelClass()]" v-motion-slide-right>
+  <span :class="['label', labelClass()]">
     <span class="all" v-show="isallStaff(item)">全员</span>
     <svg-icon iconClass="robot" v-show="isRobot(userID)" />
   </span>

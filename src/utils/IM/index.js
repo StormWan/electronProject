@@ -246,17 +246,17 @@ export class TIMProxy {
    * MSG_GRP_TIP: "TIMGroupTipElem" 群提示消息
    */
   handleQuitGroupTip(data) {
-    if (data[0]?.type !== 'TIMGroupTipElem') return
+    if (data[0]?.type !== "TIMGroupTipElem") return;
     console.log("[chat] handleQuitGroupTip", data);
     const convId = getConversationID();
-    if (convId !== data[0]?.conversationID) return
+    if (convId !== data[0]?.conversationID) return;
     const list = [
       TIM.TYPES.GRP_TIP_MBR_JOIN, // 1 有成员加群
       TIM.TYPES.GRP_TIP_MBR_QUIT, // 2 有群成员退群
       TIM.TYPES.GRP_TIP_MBR_KICKED_OUT, // 3 有群成员被踢出群
     ];
     const groupTips = data.filter((t) => {
-      return (list.includes(t.payload.operationType));
+      return list.includes(t.payload.operationType);
     });
     // 更新当前会话的群成员列表
     if (groupTips.length > 0) {
@@ -264,17 +264,17 @@ export class TIMProxy {
     }
   }
   /**
-  * 群系统通知的 系统会在恰当的时机，向特定用户发出群系统通知。例如：user1 被踢出群组，系统会给 user1 发送对应的群系统消息。
-  * https://web.sdk.qcloud.com/im/doc/v3/zh-cn/Message.html#.GroupSystemNoticePayload
-  * MSG_GRP_SYS_NOTICE "TIMGroupSystemNoticeElem"	群系统通知消息
-  */
+   * 群系统通知的 系统会在恰当的时机，向特定用户发出群系统通知。例如：user1 被踢出群组，系统会给 user1 发送对应的群系统消息。
+   * https://web.sdk.qcloud.com/im/doc/v3/zh-cn/Message.html#.GroupSystemNoticePayload
+   * MSG_GRP_SYS_NOTICE "TIMGroupSystemNoticeElem"	群系统通知消息
+   */
   handleGroupSystemNoticeTip(data) {
-    if (data[0]?.type !== 'TIMGroupSystemNoticeElem') return
+    if (data[0]?.type !== "TIMGroupSystemNoticeElem") return;
     console.log("[chat] handleGroupSystemNoticeTip", data);
     const list = [4, 5];
     const convId = getConversationID();
     const groupSystemTips = data.filter((t) => {
-      return (list.includes(t.payload.operationType));
+      return list.includes(t.payload.operationType);
     });
     if (groupSystemTips.length > 0) {
       store.dispatch("DELETE_SESSION", { convId });

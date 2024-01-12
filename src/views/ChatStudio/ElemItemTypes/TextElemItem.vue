@@ -13,7 +13,6 @@
       <template v-for="item in decodeText(message.payload.text)" :key="item">
         <span v-if="item.name === 'text'">
           <analysis-url :text="item.text" />
-          <!-- <v-md-preview :text="item.text"></v-md-preview> -->
         </span>
         <img
           v-else-if="item.name === 'img'"
@@ -72,5 +71,8 @@ const onClick = (data) => {
   word-break: break-all;
   white-space: pre-wrap;
   color: var(--color-text);
+  ::selection {
+    background-color: rgb(193, 203, 244);
+  }
 }
 </style>

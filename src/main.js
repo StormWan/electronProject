@@ -21,17 +21,21 @@ import { directive } from "v-contextmenu";
 import { MotionPlugin } from "@vueuse/motion";
 import { motion } from "./directives/index";
 import { registerSvgIcon } from "./assets/icons/index";
-// app loading
-const appLoading = createApp(AppLoading);
-appLoading.mount("#appLoading");
-const app = createApp(App);
-app.directive("contextmenu", directive);
-// 自动加载组件
-loadAllassembly(app);
-// 自定义SvgIcon组件
-registerSvgIcon(app);
+import "./registerServiceWorker";
 
-getServerConfig(app).then(async (config) => {
+
+async function setupApp() {
+  // app loading
+  const appLoading = createApp(AppLoading);
+  appLoading.mount("#appLoading");
+  const app = createApp(App);
+  app.directive("contextmenu", directive);
+  // 自动加载组件
+  loadAllassembly(app);
+  // 自定义SvgIcon组件
+  registerSvgIcon(app);
+  // 获取全局配置
+  await getServerConfig(app)
   app.use(router);
   app.use(store);
   app.use(useI18n);
@@ -39,4 +43,7 @@ getServerConfig(app).then(async (config) => {
   app.use(MotionPlugin, motion);
   appLoading.unmount();
   app.mount("#app");
-});
+}
+setupApp()
+
+

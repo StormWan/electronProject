@@ -8,6 +8,7 @@ const path = require("path");
 const {
   cdn,
   css,
+  // pwa,
   title,
   externals,
   devServer,
@@ -30,7 +31,7 @@ module.exports = defineConfig({
   // 打包时输出的文件目录
   outputDir: "dist",
   //是否为生产环境构建生成 source map?
-  productionSourceMap: false,
+  productionSourceMap: !production,
   // 加快编译速度 在多核机器下会默认开启
   parallel: require("os").cpus().length > 1,
   // 配置 webpack-dev-server

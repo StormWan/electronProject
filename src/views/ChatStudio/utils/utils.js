@@ -126,21 +126,25 @@ export const GroupSystemNotice = (message) => {
 };
 
 export const renderFileIcon = (fileType = "") => {
-  let type;
+  let type = "default";
   if (fileType == "xlsx" || fileType == "xls") {
-    type = "表格";
+    type = "form";
   } else if (fileType == "doc" || fileType == "docx") {
-    type = "文档";
+    type = "document";
   } else if (fileType == "pptx" || fileType == "ppt") {
     type = "ppt";
   } else if (fileType == "rar" || fileType == "zip") {
-    type = "压缩包";
+    type = "zip";
   } else if (fileType == "txt") {
     type = "txt";
   } else if (fileType == "pdf") {
     type = "pdf";
-  } else {
-    type = "通用";
+  } else if (["png", "jpg", "gif", "jpeg", "webp"].includes(fileType)) {
+    type = "picture";
+  } else if (fileType == "mp4") {
+    type = "video";
+  } else if (fileType == "mp3") {
+    type = "audio";
   }
   return require(`@/assets/message/${type}.png`);
 };

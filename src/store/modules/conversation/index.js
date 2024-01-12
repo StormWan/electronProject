@@ -12,6 +12,7 @@ import {
   getMsgList,
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
+import storage from "storejs";
 
 const conversation = {
   // namespaced: true, //命名空间
@@ -34,6 +35,7 @@ const conversation = {
     activetab: "whole", // 全部 未读 提及我
     outside: "message", // 侧边栏初始状态
     revokeMsgMap: new Map(), // 撤回消息重新编辑
+    recently: new Set(),
   },
   mutations: {
     // 设置历史消息
@@ -72,7 +74,7 @@ const conversation = {
           const { convId, message } = payload;
           let matched = false;
           let oldMessageList = state.historyMessageList.get(convId);
-          if (!oldMessageList) return
+          if (!oldMessageList) return;
           const newMessageList = oldMessageList.reduce((acc, item) => {
             if (item.ID === payload.message.ID) {
               matched = true;
@@ -271,6 +273,23 @@ const conversation = {
         state.revokeMsgMap.set(data.ID, data.payload);
       } else {
         state.revokeMsgMap.delete(data.ID);
+      }
+    },
+    setRecently(state, action) {
+      const { data, type } = action;
+      if (type == "add") {
+        state.recently.add(data);
+        if (state.recently.size > 12) {
+          const iterator = state.recently.values();
+          const oldestElement = iterator.next().value;
+          state.recently.delete(oldestElement);
+        }
+        storage.set("recently", [...state.recently]);
+      } else if (type == "revert") {
+        const recently = storage.get("recently");
+        if (recently) state.recently = new Set([...recently]);
+      } else if (type == "clean") {
+        state.recently.clear();
       }
     },
   },

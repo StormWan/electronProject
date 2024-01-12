@@ -7,12 +7,10 @@
     {{ url ? null : displayInfo(nickName) }}
   </div>
   <img v-else-if="type == 'single'" class="avatar" :src="url || shapeObj[shape]" alt="头像" />
-  <el-avatar
-    v-else-if="type == 'self'"
-    :size="size"
-    :src="userProfile?.avatar || shapeObj['circle']"
-    :shape="shape"
-  />
+  <div v-else-if="type == 'self'" class="badge" :style="{ height: `${size}px` }">
+    <el-avatar :size="size" :src="userProfile?.avatar || shapeObj['circle']" :shape="shape" />
+    <sup v-show="isdot" class="is-dot"></sup>
+  </div>
 </template>
 
 <script setup>
@@ -39,6 +37,10 @@ const props = defineProps({
   size: {
     type: Number,
     default: 40,
+  },
+  isdot: {
+    type: Boolean,
+    default: false,
   },
   type: {
     type: String,
@@ -112,5 +114,23 @@ const backgInfo = (url) => {
 }
 .square {
   border-radius: 3px;
+}
+.badge {
+  position: relative;
+  .is-dot {
+    position: absolute;
+    height: 8px;
+    width: 8px;
+    right: 10px;
+    top: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    border: 1px solid var(--el-bg-color);
+    // background-color: var(--el-color-danger);
+    background-color: #31da84;
+  }
 }
 </style>

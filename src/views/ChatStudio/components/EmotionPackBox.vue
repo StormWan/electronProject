@@ -1,10 +1,31 @@
 <template>
   <div v-show="state" class="emjio-tion" v-click-outside="onClickOutside">
     <div class="emojis">
-      <el-scrollbar wrap-class="custom-scrollbar-wrap">
-        <div class="emoji_QQ" v-show="table == 'QQ'">
-          <!-- 二维数组 window css 滚动贴合 -->
-          <template v-if="systemOs == 'Windows'">
+      <el-scrollbar wrap-class="custom-scrollbar-wrap" always>
+        <!-- QQ表情包 -->
+        <div :class="['emoji_QQ', systemOs]" v-if="table == 'QQ'">
+          <p class="title" v-show="recentlyUsed.length">最近使用</p>
+          <span
+            v-for="item in recentlyUsed"
+            class="emoji"
+            :key="item"
+            @click="selectEmoticon(item)"
+          >
+            <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
+          </span>
+          <p class="title">小黄脸表情</p>
+          <template v-if="!rolling">
+            <span
+              v-for="item in emojiQq.emojiName"
+              class="emoji"
+              :key="item"
+              @click="selectEmoticon(item, 'QQ')"
+            >
+              <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
+            </span>
+          </template>
+          <!-- 二维数组 css 滚动贴合 -->
+          <template v-else>
             <div class="scroll-snap" v-for="emoji in EmotionPackGroup" :key="emoji">
               <span
                 v-for="item in emoji"
@@ -16,19 +37,9 @@
               </span>
             </div>
           </template>
-          <!-- mac -->
-          <template v-else>
-            <span
-              v-for="item in emojiQq.emojiName"
-              class="emoji"
-              :key="item"
-              @click="selectEmoticon(item)"
-            >
-              <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
-            </span>
-          </template>
         </div>
-        <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
+        <!-- 抖音表情包 -->
+        <div class="emoji_Tiktok" v-if="table == 'Tiktok'">
           <span
             v-for="item in emojiDouyin.emojiName"
             class="emoji scroll-content"
@@ -41,12 +52,13 @@
       </el-scrollbar>
     </div>
     <div class="tool">
-      <div v-for="item in toolDate" :key="item.icon" @click="table = item.type">
-        <svg-icon
-          :iconClass="item.icon"
-          :class="item.type == table ? 'isHover' : ''"
-          class="icon-hover"
-        />
+      <div
+        :class="item.type == table ? 'isHover' : ''"
+        v-for="item in toolDate"
+        :key="item.icon"
+        @click="table = item.type"
+      >
+        <svg-icon :iconClass="item.icon" />
       </div>
     </div>
   </div>
@@ -55,20 +67,17 @@
 <script setup>
 import emitter from "@/utils/mitt-bus";
 import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
 import { useBoolean } from "@/utils/hooks/index";
 import { ClickOutside as vClickOutside } from "element-plus";
 import { chunk } from "lodash-es";
 import { getOperatingSystem } from "../utils/utils";
+import { useState } from "@/utils/hooks/useMapper";
 
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
-const systemOs = ref("");
-const table = ref("QQ");
-const EmotionPackGroup = ref([]);
-const [state, setState] = useBoolean();
-const emit = defineEmits(["SelectEmoticon"]);
-
+const rolling = false;
 const toolDate = [
   {
     title: "默认表情",
@@ -76,30 +85,65 @@ const toolDate = [
     type: "QQ",
   },
   {
-    title: "我的收藏",
-    icon: "collect",
+    title: "抖音",
+    icon: "tiktok",
     type: "Tiktok",
   },
+  {
+    title: "我的收藏",
+    icon: "collect",
+    type: "Like",
+  },
 ];
+
+const recentlyUsed = ref([]);
+const systemOs = ref("");
+const table = ref("QQ");
+const EmotionPackGroup = ref([]);
+
+const [state, setState] = useBoolean();
+const { commit } = useStore();
+const emit = defineEmits(["SelectEmoticon"]);
+const { recently } = useState({
+  recently: (state) => state.conversation.recently,
+});
+
+const setClose = () => {
+  setState(false);
+  recentlyUsed.value = [...recently.value].reverse();
+};
+
 const initEmotion = () => {
   EmotionPackGroup.value = chunk(emojiQq.emojiName, 12 * 6);
 };
+
 const getParser = () => {
   systemOs.value = getOperatingSystem();
 };
-const selectEmoticon = (item) => {
+
+const selectEmoticon = (item, type = "") => {
   emit("SelectEmoticon", item, table.value);
-  setState(false);
+  if (type == "QQ") {
+    commit("setRecently", {
+      data: item,
+      type: "add",
+    });
+  }
+  // setClose();
 };
+
 const onClickOutside = () => {
-  setState(false);
+  setClose();
 };
+
 emitter.on("onEmotionPackBox", (state) => {
   setState(state);
 });
+
 onMounted(() => {
   getParser();
   initEmotion();
+  commit("setRecently", { type: "revert" });
 });
 </script>
 
@@ -121,12 +165,18 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  .title {
+    font-size: 12px;
+    padding: 12px 0 6px;
+  }
   .emoji_QQ,
   .emoji_Tiktok {
     padding: 0 10px 0 15px;
   }
 
   .emoji {
+    cursor: pointer;
+    display: inline-block;
     img {
       width: 30px;
       height: 30px;
@@ -136,21 +186,33 @@ onMounted(() => {
 .tool {
   height: 50px;
   display: flex;
+  align-items: center;
   padding: 0 10px;
-  background: rgb(243, 243, 244);
+  background: #fff;
+  border-radius: 0 0 5px 5px;
+  border-top: 1px solid #cccccc4a;
+  div:not(:nth-child(1)) {
+    margin-left: 10px;
+  }
   div {
-    width: 50px;
-    height: 50px;
+    border-radius: 5px;
+    width: 35px;
+    height: 35px;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    &:hover {
+      background: #e6e6e6a8;
+    }
   }
 }
 .isHover {
+  background: #e6e6e6a8 !important;
   color: var(--color-icon-hover) !important;
 }
 .scroll-snap {
-  scroll-snap-align: start;
+  // scroll-snap-align: start;
   height: 180px;
 }
 </style>

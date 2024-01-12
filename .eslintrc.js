@@ -3,7 +3,6 @@
  * "warn" -> 1 开启警告规则
  * "error" -> 2 开启错误规则
  */
-
 module.exports = {
   root: true,
   env: {

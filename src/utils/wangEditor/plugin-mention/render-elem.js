@@ -22,7 +22,7 @@ function renderMention(elem, children, editor) {
           : "2px solid transparent",
         borderRadius: "3px",
         padding: "0 3px",
-        color: '#54b4ef'
+        color: "#54b4ef",
       },
     },
     `@${value}`

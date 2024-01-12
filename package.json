@@ -1,32 +1,13 @@
 {
   "name": "pure-admin",
   "version": "0.2.3",
-  "license": "MIT",
   "description": "基于 Vue3、Element-Plus 的清新优雅的中后台模版，提供了丰富的功能组件 聊天工作室 内置ChatGPT (腾讯 IM 即时通讯) 用于学习参考。",
-  "repository": {
-    "url": "https://github.com/Hyk260/PureAdmin.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Hyk260/PureAdmin/issues"
-  },
   "author": {
     "name": "Hyk260",
     "email": "2607881950@qq.com"
   },
-  "keywords": [
-    "Vue",
-    "Vue3",
-    "admin",
-    "openai",
-    "chatgpt",
-    "webpack",
-    "electron",
-    "wangeditor",
-    "element-plus"
-  ],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "report": "vue-cli-service serve --report",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --fix",
     "build:staging": "vue-cli-service build --mode staging",
@@ -38,7 +19,8 @@
     "electron:build:dev:win": "vue-cli-service electron:build --mode development --win",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "report": "vue-cli-service serve --report"
   },
   "appId": "pureadmin",
   "main": "background.js",
@@ -106,12 +88,30 @@
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "webpack-bundle-analyzer": "^4.6.1"
   },
+  "peerDependencies": {
+    "snabbdom": "^3.5.1"
+  },
+  "bugs": {
+    "url": "https://github.com/Hyk260/PureAdmin/issues"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
+  "keywords": [
+    "Vue",
+    "Vue3",
+    "admin",
+    "openai",
+    "chatgpt",
+    "webpack",
+    "electron",
+    "wangeditor",
+    "element-plus"
+  ],
+  "license": "MIT",
   "lint-staged": {
     "*.{js,vue,html}": [
       "prettier --write",
@@ -123,7 +123,7 @@
       "git add -n"
     ]
   },
-  "peerDependencies": {
-    "snabbdom": "^3.5.1"
+  "repository": {
+    "url": "https://github.com/Hyk260/PureAdmin.git"
   }
 }
