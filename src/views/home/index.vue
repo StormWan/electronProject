@@ -19,6 +19,7 @@ import Theme from "@/views/home/theme/index.vue";
 import SideBar from "@/views/home/SideBar/index.vue";
 import Setup from "@/views/home/setup/index.vue";
 import AddressBook from "@/views/components/AddressBook/index.vue";
+import Navbar from "@/electron/components/Navbar/index.vue";
 </script>
 <style lang="scss" scoped>
 .manView {

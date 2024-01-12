@@ -331,9 +331,7 @@ export class TIMProxy {
   }
   // 托盘闪烁
   handleTrayFlashIng(data) {
-    const List = store.state.conversation?.conversationList;
-    const convId = data?.[0].conversationID;
-    const massage = List.filter((t) => t.conversationID == convId);
+    const massage = getConversationList(data);
     // 消息免打扰
     if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
     store.commit("ipcRenderer", { key: "TrayFlashIng" });

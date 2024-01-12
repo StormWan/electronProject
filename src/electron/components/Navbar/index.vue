@@ -2,7 +2,7 @@
   <header class="header" v-if="isWindows">
     <div class="titlebar flex justify-content" :class="{ 'has-custom-titlebar': true }">
       <div class="log">
-        <img class="" src="../../assets/images/log.png" alt="" />
+        <img class="" src="../../../assets/images/log.png" alt="" />
         <span>{{ $config.Title }}</span>
       </div>
       <div class="flex items-center">
@@ -29,7 +29,6 @@
 import { isWindows } from "@/electron/utils/platform";
 import { showConfirmationBox } from "@/utils/message";
 const { ipcRenderer } = require("electron");
-import { ref } from "vue";
 
 const button = [
   {
@@ -47,7 +46,6 @@ const button = [
 ];
 
 async function onClick(item) {
-  console.log(item);
   const { type, name } = item;
   if (name == "quitApp") {
     const message = { message: "确定退出程序吗?", iconType: "warning" };
@@ -65,10 +63,6 @@ async function onClick(item) {
   height: 42px;
 }
 .titlebar {
-  // position: fixed;
-  // top: 0;
-  // right: 0;
-  // left: 0;
   position: relative;
   width: 100%;
   display: flex;
@@ -76,8 +70,6 @@ async function onClick(item) {
   align-items: center;
   height: 42px;
   backdrop-filter: saturate(180%) blur(20px);
-  // background-color: var(--el-color-danger-light-5);
-  // background: var(--el-color-info-light-7);
   background: rgb(235, 248, 242);
   z-index: 100;
   padding: 0 16px;

@@ -7,13 +7,7 @@ const application = {
       ipcRenderer.send(key, value);
     },
   },
-  actions: {
-    // setViewSize({ state }, type) {
-    //   nextTick(() => {
-    //     ipcRenderer.send("setmainViewSize", type);
-    //   });
-    // },
-  },
+  actions: {},
 };
 
 export default application;

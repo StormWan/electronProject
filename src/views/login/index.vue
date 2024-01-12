@@ -31,7 +31,7 @@ import ThemeSwitch from "../components/ThemeSwitch";
 import Account from "./components/Account.vue";
 import QrCode from "./components/qrCode.vue";
 import Register from "./components/Register.vue";
-import DragBox from "./components/DragBox.vue";
+import DragBox from "@/electron/components/DragBox/index.vue";
 
 const { currentPage } = useState({
   currentPage: (state) => state.user.currentPage,
