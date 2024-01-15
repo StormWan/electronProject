@@ -2,17 +2,7 @@
   <div v-if="originalMsg.messageReply" class="reply-msg-content">
     <div class="reply-msg-content__sender">{{ originalMsg.messageReply.messageSender }}:</div>
     <div class="reply-msg-content__content">
-      <template v-for="item in decodeText(originalMsg.messageReply.messageAbstract)" :key="item">
-        <span v-if="item.name === 'text'">
-          {{ item.text }}
-        </span>
-        <img
-          v-else-if="item.name === 'img'"
-          class="emoji"
-          :src="require('@/assets/emoji/' + item.localSrc)"
-          alt="表情包"
-        />
-      </template>
+      <DynamicContent :text="originalMsg.messageReply.messageAbstract" />
     </div>
     <div class="reply-msg-content__mask" @click="hanldeItemClick"></div>
   </div>
@@ -20,7 +10,8 @@
 
 <script setup>
 import { toRefs } from "vue";
-import { scrollToDomPostion, decodeText } from "@/utils/chat/index";
+import DynamicContent from "../components/DynamicContent.vue";
+import { scrollToDomPostion } from "@/utils/chat/index";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   originalMsg: {

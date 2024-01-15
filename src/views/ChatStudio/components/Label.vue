@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import { ref, toRefs, onMounted } from "vue";
 import { isRobot } from "@/utils/chat/index";
 import { isallStaff } from "../utils/utils";
 
@@ -22,7 +21,6 @@ const props = defineProps({
   },
 });
 
-const { userID, item } = toRefs(props);
 const labelClass = (data) => {
   return "";
 };

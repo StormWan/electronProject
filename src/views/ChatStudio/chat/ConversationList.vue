@@ -272,16 +272,6 @@ onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
-.v-contextmenu {
-  width: 154px;
-  .v-contextmenu-item {
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 16px;
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 12px;
-  }
-}
 .no-msg {
   color: rgba(0, 0, 0, 0.45);
   margin-top: 50%;

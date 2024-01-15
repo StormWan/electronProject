@@ -5,7 +5,7 @@
     :class="{ 'style-MsgBox': !showMsgBox, 'stlyle-Reply': currentReplyMsg }"
     id="svgTop"
   >
-    <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="scrollbar" always>
+    <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="scrollbar">
       <div class="message-view" ref="messageViewRef">
         <div
           v-for="(item, index) in currentMessageList"
@@ -77,14 +77,13 @@
     </el-scrollbar>
     <!-- 卡片 -->
     <MyPopover />
-    <contextmenu ref="contextmenu">
+    <contextmenu ref="contextmenu" :disabled="!isRight">
       <contextmenu-item
         v-for="item in RIGHT_CLICK_MENU_LIST"
         :key="item.id"
         @click="handlRightClick(item)"
-        v-show="isRight"
       >
-        <p class="item">{{ item.text }}</p>
+        <p :class="['item', currentType == 'GROUP' ? 'group' : 'C2C']">{{ item.text }}</p>
       </contextmenu-item>
     </contextmenu>
   </section>
@@ -533,7 +532,6 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 
 <style lang="scss" scoped>
 @import url("../ElemItemTypes/elemType.scss");
-@import "@/styles/mixin.scss";
 .message_name {
   margin-bottom: 5px;
   color: var(--color-time-divider);
@@ -640,19 +638,9 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 }
 
 .v-contextmenu {
-  .v-contextmenu-item--hover {
-    background: #f6f7f8 !important;
-  }
+  width: 200px;
   .item {
     margin: 0;
-  }
-  .v-contextmenu-item {
-    // width: 300px;
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 16px;
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 12px;
   }
 }
 </style>

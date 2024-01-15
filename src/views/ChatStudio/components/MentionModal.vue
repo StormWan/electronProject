@@ -149,7 +149,8 @@ export default {
       }
     },
     insertMentionHandler(id, name) {
-      this.$emit("insertMention", { id, name, deleteDigit: this.searchValue });
+      let nick = name ? name : id;
+      this.$emit("insertMention", { id, name: nick, deleteDigit: this.searchValue });
       this.setMentionStatus(); // 隐藏 modal
       this.searchValue = 0;
     },

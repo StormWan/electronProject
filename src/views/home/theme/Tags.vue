@@ -144,17 +144,6 @@ function closing(tag) {
 </script>
 
 <style lang="scss" scoped>
-.v-contextmenu {
-  width: 154px;
-  .v-contextmenu-item {
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 16px;
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 12px;
-  }
-}
-
 :deep(.Left-rotation .el-icon) {
   transform: rotate(-90deg);
 }

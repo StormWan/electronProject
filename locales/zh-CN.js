@@ -9,6 +9,9 @@ export default {
     picture: "图片",
     file: "文件",
     screenshot: "截图",
+    configuration: '配置',
+    windowJitter: '窗口抖动',
+    scrollToTheBottom: '滚动到底部',
   },
   group: {
     GroupDetails: "群详情",

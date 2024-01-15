@@ -4,7 +4,7 @@
     :class="{ 'is-robot': isRobot(cardData?.from) }"
     :style="{ left: left, top: top }"
     v-if="card && cardData"
-    ref="popoverRef"
+    ref="cardRef"
   >
     <div class="title">
       <img :src="cardData.avatar || squareUrl" alt="头像" />
@@ -35,7 +35,7 @@ import emitter from "@/utils/mitt-bus";
 import { useBoolean } from "@/utils/hooks/index";
 const [card, setCard] = useBoolean();
 
-const popoverRef = ref();
+const cardRef = ref();
 const left = ref("");
 const top = ref("");
 const cardData = ref(null);
@@ -58,7 +58,7 @@ const define = () => {
   dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${cardData.value.from}` });
 };
 
-onClickOutside(popoverRef, (event) => {
+onClickOutside(cardRef, () => {
   closeModal();
 });
 
@@ -97,6 +97,10 @@ const setUserProfile = async () => {
   console.log(userProfile.value);
 };
 const setCardData = (data) => {
+  if (data?.conversationID === "@TIM#SYSTEM") {
+    cardData.value = null;
+    return;
+  }
   cardData.value = data;
 };
 const openCard = (data) => {

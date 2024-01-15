@@ -33,7 +33,7 @@ async function setupApp() {
   // 自定义SvgIcon组件
   registerSvgIcon(app);
   // 获取全局配置
-  await getServerConfig(app)
+  await getServerConfig(app);
   app.use(router);
   app.use(store);
   app.use(useI18n);
@@ -42,6 +42,4 @@ async function setupApp() {
   appLoading.unmount();
   app.mount("#app");
 }
-setupApp()
-
-
+setupApp();

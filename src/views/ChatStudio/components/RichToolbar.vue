@@ -27,15 +27,30 @@
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->
-    <span v-show="isRobot(toAccount)" data-title="配置" class="icon" @click="openRobotBox">
+    <span
+      v-show="isRobot(toAccount)"
+      :data-title="$t('chat.configuration')"
+      class="icon"
+      @click="openRobotBox"
+    >
       <el-icon class="robot icon-hover"><Setting /></el-icon>
     </span>
     <!-- 窗口抖动 -->
-    <span v-show="currentType == 'C2C'" data-title="窗口抖动" class="icon" @click="onShake">
+    <span
+      v-show="currentType == 'C2C'"
+      :data-title="$t('chat.windowJitter')"
+      class="icon"
+      @click="onShake"
+    >
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
     <!-- 滚动到底部 -->
-    <span data-title="滚动到底部" class="chat_vot icon" @click="onTobBottom" v-show="tobottom">
+    <span
+      :data-title="$t('chat.scrollToTheBottom')"
+      class="chat_vot icon"
+      @click="onTobBottom"
+      v-show="tobottom"
+    >
       <el-icon class="svg-left icon-hover">
         <DArrowLeft />
       </el-icon>

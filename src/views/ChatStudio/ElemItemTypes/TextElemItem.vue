@@ -10,26 +10,14 @@
         v-if="message.cloudCustomData"
         :originalMsg="message.cloudCustomData && JSON.parse(message.cloudCustomData)"
       />
-      <template v-for="item in decodeText(message.payload.text)" :key="item">
-        <span v-if="item.name === 'text'">
-          <analysis-url :text="item.text" />
-        </span>
-        <img
-          v-else-if="item.name === 'img'"
-          class="emoji"
-          :src="require('@/assets/emoji/' + item.localSrc)"
-          alt="表情包"
-        />
-      </template>
+      <DynamicContent islink :text="message.payload.text" />
     </template>
   </div>
 </template>
 
 <script setup>
-import { decodeText, isRobot } from "@/utils/chat/index";
-import { toRefs, h } from "vue";
 import ReplyElem from "./ReplyElem.vue";
-import AnalysisUrl from "../components/AnalysisUrl.vue";
+import DynamicContent from "../components/DynamicContent.vue";
 const props = defineProps({
   msgType: {
     type: String,
@@ -44,7 +32,6 @@ const props = defineProps({
     default: false,
   },
 });
-const { message, self, msgType } = toRefs(props);
 
 const onClick = (data) => {
   console.log(data);

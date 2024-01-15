@@ -4,40 +4,28 @@
     <div class="reply-box-content">
       <div class="nick">{{ currentReplyMsg?.nick }} :</div>
       <div class="text" v-if="currentReplyMsg">
-        <template v-for="item in decodeText(fnReplyContent(currentReplyMsg))" :key="item">
-          <span v-if="item.name === 'text'">
-            {{ item.text }}
-          </span>
-          <img
-            v-else-if="item.name === 'img'"
-            class="emoji"
-            :src="require('@/assets/emoji/' + item.localSrc)"
-            alt="表情包"
-          />
-        </template>
+        <DynamicContent :text="fnReplyContent(currentReplyMsg)" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { fnReplyContent, decodeText } from "@/utils/chat/index";
+import { useState } from "@/utils/hooks/useMapper";
+import { fnReplyContent } from "@/utils/chat/index";
+import DynamicContent from "./DynamicContent.vue";
 import { useStore } from "vuex";
 
-const { state, dispatch, commit } = useStore();
+const { commit } = useStore();
 const { currentReplyMsg } = useState({
   currentReplyMsg: (state) => state.conversation.currentReplyMsg,
 });
 const onClose = () => {
-  console.log(currentReplyMsg.value);
   commit("setReplyMsg", null);
 };
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/mixin.scss";
 .reply-box {
   height: 60px;
   position: relative;
@@ -60,9 +48,6 @@ const onClose = () => {
     cursor: pointer;
     right: 20px;
     top: 20px;
-  }
-  .emoji {
-    width: 24px;
   }
 }
 </style>

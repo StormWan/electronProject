@@ -209,7 +209,7 @@ onMounted(() => {
 }
 .isHover {
   background: #e6e6e6a8 !important;
-  color: var(--color-icon-hover) !important;
+  // color: var(--color-icon-hover) !important;
 }
 .scroll-snap {
   // scroll-snap-align: start;
