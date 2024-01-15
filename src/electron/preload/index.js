@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron')
+const { contextBridge } = require("electron");
 
-contextBridge.exposeInMainWorld('platform', process.platform)
-contextBridge.exposeInMainWorld('IS_ELECTRON1', true)
+contextBridge.exposeInMainWorld("platform", process.platform);
+contextBridge.exposeInMainWorld("IS_ELECTRON1", true);
