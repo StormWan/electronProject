@@ -5,9 +5,8 @@
 
 <script setup>
 import { html2Escape } from "../utils/utils";
-import Autolinker from "autolinker";
-import { toRefs, h } from "vue";
-
+import { h } from "vue";
+import linkifyUrls from "@/utils/linkifyUrls";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   text: {
@@ -15,12 +14,11 @@ const props = defineProps({
     default: "",
   },
 });
-const { text } = toRefs(props);
 
 function AnalysisUrl(props) {
   const { text } = props;
   const escapedUrl = html2Escape(text);
-  const linkStr = Autolinker.link(escapedUrl, { stripPrefix: false, className: "linkUrl" });
+  const linkStr = linkifyUrls(escapedUrl);
   return h("span", { innerHTML: linkStr, onClick: () => {} });
 }
 

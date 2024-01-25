@@ -1,6 +1,7 @@
 import { SET_UP } from "@/store/constants";
 import { createI18n } from "vue-i18n";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
+
 // User defined lang
 import enLocale from "../../locales/en";
 import zhLocale from "../../locales/zh-CN";

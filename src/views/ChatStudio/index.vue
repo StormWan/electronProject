@@ -15,7 +15,6 @@ import { useState } from "@/utils/hooks/useMapper";
 
 import Sidebar from "./Sidebar.vue";
 import application from "./application.vue";
-import mailList from "./mailList.vue";
 import Message from "./message.vue";
 import test from "./test.vue";
 import frameView from "./frameView.vue";
@@ -30,7 +29,6 @@ const frame = [
 ];
 const Component = {
   electron: application, // 应用
-  address_book: mailList, //通讯录
   test: test, // 测试
 };
 const { outside, outsideList } = useState({

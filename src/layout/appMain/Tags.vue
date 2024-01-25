@@ -16,6 +16,7 @@
           v-contextmenu:contextmenu
           @contextmenu.prevent="ContextMenuEvent($event, tag)"
         >
+          <!-- {{ tag.name ? $t(`route.${tag.name}`) : tag.title }} -->
           {{ tag.title }}
         </el-tag>
       </div>

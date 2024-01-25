@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import saveToLocalStorage from "./plugins/localStorage"; // 自定义插件
 import { changeAppearance } from "@/utils/common";
 import router from "@/router";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import emitter from "@/utils/mitt-bus";
 import { convertToTree, optimizeTree } from "@/utils/ToTree";
 import { USER_DATA, SET_UP } from "@/store/constants";

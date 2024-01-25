@@ -1,4 +1,4 @@
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 export const REQUEST_TIMEOUT_MS = 6000;
 
 export const StoreKey = {

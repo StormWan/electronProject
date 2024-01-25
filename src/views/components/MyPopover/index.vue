@@ -25,11 +25,11 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "vuex";
-import Label from "@/views/ChatStudio/components/Label.vue";
+import Label from "@/views/chatStudio/components/Label.vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { isRobot } from "@/utils/chat/index";
 import { onClickOutside, onLongPress, useElementBounding } from "@vueuse/core";
-import { squareUrl, circleUrl } from "../../ChatStudio/utils/menu";
+import { squareUrl, circleUrl } from "../../chatStudio/utils/menu";
 import { getUserProfile } from "@/api/im-sdk-api/index";
 import emitter from "@/utils/mitt-bus";
 import { useBoolean } from "@/utils/hooks/index";

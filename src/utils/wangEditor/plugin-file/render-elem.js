@@ -1,7 +1,6 @@
 import { DomEditor } from "@wangeditor/editor";
-import { getFileType } from "@/utils/chat/index";
+import { getFileType, renderFileIcon } from "@/utils/chat/index";
 import { h } from "snabbdom";
-import { renderFileIcon } from "@/views/ChatStudio/utils/utils";
 /**
  * @param elem 附件元素，即上文的 myResume
  * @param children 元素子节点，void 元素可忽略

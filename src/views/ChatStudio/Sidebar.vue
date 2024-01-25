@@ -28,14 +28,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { useStore } from "vuex";
 import { useState } from "@/utils/hooks/useMapper";
-import UploadAvatarDialog from "@/views/ChatStudio/components/UploadAvatarDialog.vue";
-import SidebarEditDialog from "@/views/components/MoreSidebar/SidebarEditDialog.vue";
+import UploadAvatarDialog from "@/views/chatStudio/components/UploadAvatarDialog.vue";
+import SidebarEditDialog from "@/views/components/MoreSidebar/index.vue";
 import emitter from "@/utils/mitt-bus";
 
-const { state, dispatch, commit } = useStore();
+const { commit } = useStore();
 const { outside, unreadMsg, outsideList } = useState({
   outsideList: (state) => state.sidebar.outsideList,
   unreadMsg: (state) => state.conversation.totalUnreadMsg,

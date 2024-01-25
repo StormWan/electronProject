@@ -134,13 +134,8 @@ const isRight = ref(true);
 const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
-const { state, dispatch, commit } = useStore();
-const { isOwner, isAdmin, toAccount, currentType } = useGetters([
-  "isOwner",
-  "isAdmin",
-  "toAccount",
-  "currentType",
-]);
+const { dispatch, commit } = useStore();
+const { isOwner, currentType } = useGetters(["isOwner", "currentType"]);
 const {
   noMore,
   showMsgBox,
@@ -566,6 +561,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   padding: 0 16px 16px 16px;
   box-sizing: border-box;
   .picture {
+    --el-border-radius-base: 6px;
     cursor: pointer;
   }
 }

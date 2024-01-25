@@ -12,7 +12,7 @@ import {
   getMsgList,
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 
 const conversation = {
   // namespaced: true, //命名空间

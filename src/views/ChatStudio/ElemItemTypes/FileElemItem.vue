@@ -1,16 +1,17 @@
 <template>
-  <div class="file-Box flex" :id="payload.uuid" :style="{ background: backgroundStyle }">
-    <div class="file-data flex">
+  <div class="file-box" :id="payload.uuid" :style="{ background: backgroundStyle }">
+    <div class="file-data">
       <img :src="renderFileIcon(FileType)" alt="" />
-      <div class="fileBoxContentEM">
+      <div class="file-box__content">
         <div class="file-name">
           {{ payload.fileName }}
         </div>
-        <div class="fileBoxContentEMsize">
-          <span class="file-size">
+        <div class="file-box__size">
+          <span class="file-box__size-label">
             {{ bytesToSize(payload.fileSize) }}
           </span>
-          <span class="file-icon" v-show="isShow('success')">
+          <span class="progress" v-show="!isStatus('success')"></span>
+          <span class="file-icon" v-show="isStatus('success')">
             <img src="@/assets/message/check.png" alt="" />
           </span>
         </div>
@@ -20,11 +21,9 @@
 </template>
 
 <script setup>
-import { ref, toRefs } from "vue";
-import { bytesToSize } from "@/utils/chat/index";
-import { getFileType } from "@/utils/chat/index";
+import { ref, toRefs, onMounted, onBeforeUnmount } from "vue";
+import { getFileType, renderFileIcon, bytesToSize } from "@/utils/chat/index";
 import emitter from "@/utils/mitt-bus";
-import { renderFileIcon } from "../utils/utils";
 const props = defineProps({
   message: {
     type: Object,
@@ -34,6 +33,10 @@ const props = defineProps({
     type: String,
     default: "success",
   },
+  self: {
+    type: Boolean,
+    default: false,
+  },
 });
 const { message, status } = toRefs(props);
 const { payload } = message.value;
@@ -41,12 +44,14 @@ const { payload } = message.value;
 const backgroundStyle = ref("");
 const FileType = getFileType(payload?.fileName);
 
-const isShow = (value) => {
+const isStatus = (value) => {
   return status.value == value;
 };
 
-const backstyle = (status = 1, percentage = 0) => {
-  if (percentage == 100) return "";
+const backstyle = (status = 0, percentage = 0) => {
+  if (percentage === 100) {
+    return "";
+  }
   return status === 1
     ? `linear-gradient(to right, rgba(24, 144, 255, 0.09) ${percentage}%, white 0%, white 100%)`
     : "";
@@ -57,18 +62,28 @@ const uploading = ({ uuid, num }) => {
   try {
     const dom = document.getElementById(`${uuid}`);
     dom.style.background = backstyle(1, num);
+    const progress = dom.querySelector(".progress");
+    if (progress && !isStatus("success")) {
+      progress.innerText = num + "%";
+    }
   } catch (error) {
     console.error("[upload]:", error);
   }
 };
 
-emitter.on("fileUploading", (data) => {
-  uploading(data);
+onMounted(() => {
+  emitter.on("fileUploading", (data) => {
+    uploading(data);
+  });
+});
+onBeforeUnmount(() => {
+  emitter.off("fileUploading");
 });
 </script>
 
 <style lang="scss" scoped>
-.file-Box {
+.file-box {
+  display: flex;
   height: 70px;
   padding: 12px;
   width: 248px;
@@ -78,7 +93,8 @@ emitter.on("fileUploading", (data) => {
   user-select: none;
   cursor: pointer;
   .file-data {
-    .fileBoxContentEM {
+    display: flex;
+    .file-box__content {
       margin-left: 12px;
       display: flex;
       flex-wrap: wrap;
@@ -89,11 +105,17 @@ emitter.on("fileUploading", (data) => {
         width: 160px;
         @include text-ellipsis;
       }
-      .fileBoxContentEMsize {
+      .file-box__size {
         font-weight: 400;
         color: #999999;
         line-height: 18px;
         font-size: 12px;
+        .progress {
+          display: inline-block;
+          width: 30px;
+          padding: 0 5px;
+          color: #409eff;
+        }
         .file-status,
         .file-icon {
           margin-left: 5px;

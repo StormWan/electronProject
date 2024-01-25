@@ -1,4 +1,4 @@
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import { USER_DATA, SET_UP } from "@/store/constants";
 
 const handlers = {

@@ -10,6 +10,7 @@ module.exports = {
   },
   extends: [
     "plugin:vue/vue3-essential", //  检查 Vue3 语法
+    // "plugin:vue/vue3-strongly-recommended", //  开启 Vue3 强制的最佳实践
     "eslint:recommended", // 使用 ESLint 推荐规则
     "@vue/prettier", // 集成 Prettier，确保 ESLint 规则和 Prettier 规则相一致。
   ],
@@ -28,6 +29,9 @@ module.exports = {
     // "arrow-body-style": ["error", "always"], // 该规则可以强制或禁止箭头函数体使用大括号。
     // 'prefer-arrow-callback': 'off',
     "prettier/prettier": "warn",
+    "vue/valid-define-props": "off",
+    "vue/valid-define-emits": "off",
+    "no-inner-declarations": "off", // function不允许在嵌套块中使用变量或声明
     "vue/multi-word-component-names": [
       "off",
       {

@@ -57,10 +57,10 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, ref, watch, toRefs } from "vue";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-import SideBar from "@/views/home/SideBar/index.vue";
+import SideBar from "../sideBar/index.vue";
 import { showConfirmationBox } from "@/utils/message";
 import screenfull from "./screenfull.vue";
 import { isWindows } from "@/electron/utils/platform";
@@ -116,7 +116,9 @@ const getBreadcrumb = (value) => {
       return t?.title === title;
     });
   }
-  const tag = label ? [...label, { title, path: value }] : [{ title, path: value }];
+  const tag = label
+    ? [...label, { title, path: value, name: route.name }]
+    : [{ title, path: value, name: route.name }];
   if (index == -1) {
     commit("UPDATE_USER_INFO", { key: "elTag", value: tag });
   }

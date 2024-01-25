@@ -16,9 +16,30 @@
         </el-card>
       </el-col>
     </el-row>
+    <!-- <div class="h-full">
+      <Stage
+        v-bind="{
+          initialPieAnimation: true,
+          updateURLHash: true,
+          initialPieLayout: {
+            left: '30%',
+            top: 'center',
+            width: '50%',
+            height: '50%',
+          },
+        }"
+      />
+    </div> -->
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { use } from "echarts/core";
+import { CustomChart } from "echarts/charts";
+import { TitleComponent, GraphicComponent } from "echarts/components";
+use([CustomChart]);
+use([TitleComponent]);
+use([GraphicComponent]);
+</script>
 
 <style lang="scss" scoped></style>

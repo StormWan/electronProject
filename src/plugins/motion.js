@@ -1,4 +1,5 @@
-export const motion = {
+import { MotionPlugin } from "@vueuse/motion";
+const motion = {
   directives: {
     "bottom-0": {
       initial: {
@@ -24,3 +25,5 @@ export const motion = {
     },
   },
 };
+
+export { MotionPlugin, motion };

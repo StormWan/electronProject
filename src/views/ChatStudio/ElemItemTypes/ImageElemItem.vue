@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { toRefs } from "vue";
+import { ref, toRefs } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { showIMPic, getImageSize } from "../utils/utils";
 

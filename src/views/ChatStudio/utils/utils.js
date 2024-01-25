@@ -125,30 +125,6 @@ export const GroupSystemNotice = (message) => {
   }
 };
 
-export const renderFileIcon = (fileType = "") => {
-  let type = "default";
-  if (fileType == "xlsx" || fileType == "xls") {
-    type = "form";
-  } else if (fileType == "doc" || fileType == "docx") {
-    type = "document";
-  } else if (fileType == "pptx" || fileType == "ppt") {
-    type = "ppt";
-  } else if (fileType == "rar" || fileType == "zip") {
-    type = "zip";
-  } else if (fileType == "txt") {
-    type = "txt";
-  } else if (fileType == "pdf") {
-    type = "pdf";
-  } else if (["png", "jpg", "gif", "jpeg", "webp"].includes(fileType)) {
-    type = "picture";
-  } else if (fileType == "mp4") {
-    type = "video";
-  } else if (fileType == "mp3") {
-    type = "audio";
-  }
-  return require(`@/assets/message/${type}.png`);
-};
-
 // 动态class
 export const Megtype = (elem_type) => {
   let resp = "";
@@ -503,6 +479,11 @@ export const showIMPic = (width, height) => {
     picStyle = {
       width: 140 + "px",
       height: Math.round((140 / width) * height) + "px",
+    };
+  } else if (width <= 35) {
+    picStyle = {
+      width: 45 + "px",
+      height: Math.round((45 / width) * height) + "px",
     };
   } else {
     picStyle = {

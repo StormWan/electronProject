@@ -1,7 +1,7 @@
 "use strict";
 import TIM from "@/utils/IM/chat/index";
 import tim from "@/utils/IM/im-sdk/tim";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import store from "@/store";
 import { useWindowFocus } from "@vueuse/core";
 import { scrollToDomPostion } from "@/utils/chat/index";
@@ -343,15 +343,12 @@ export class TIMProxy {
     const { userID } = this.userProfile || {};
     const { atUserList } = data[0];
     const massage = getConversationList(data);
+    if (atUserList.length == 0) return;
     // 消息免打扰
-    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
-    if (atUserList.length > 0) {
-      let off = atUserList.includes(userID);
-      let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
-      if (off || all) {
-        this.notifyMe(data[0]);
-      }
-    }
+    if (!massage || massage?.[0]?.messageRemindType === "AcceptNotNotify") return;
+    let off = atUserList.includes(userID);
+    let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
+    if (off || all) this.notifyMe(data[0]);
   }
 }
 

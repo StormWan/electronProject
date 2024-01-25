@@ -34,7 +34,7 @@
 
 ## 简介
 
-[反馈](https://github.com/Hyk260/PureAdmin/issues) / [QQ 群](https://github.com/Hyk260/PureAdmin/discussions/2) / [打赏开发者](./images/weix.png)
+[反馈](https://github.com/Hyk260/PureAdmin/issues) / [QQ 群](https://github.com/Hyk260/PureAdmin/discussions/2) / [打赏开发者](./images/weix.png) / [文档](https://hngwsw-pureadmin.site.laf.run)
 
 [Pure Admin](https://github.com/Hyk260/PureAdmin) 是一个基于 Vue3、Element-Plus 的清新优雅的中后台模版，内置了 i18n 国际化，动态路由，权限验证，提炼了典型的业务模型，提供了丰富的功能组件 聊天工作室 (腾讯 IM 即时通讯) 用于学习参考。
 
@@ -64,12 +64,6 @@
 - 💡 Commitlint 提交规范
 - ✨ electron 版本 支持 macOS、Windows 双平台
 - 🛠 更多特性开发中
-
-### 按需引入 element-plus 组件
-
-全量引入组件库太过臃肿，项目中使用 `unplugin-vue-components` 插件进行按需自动引入组件，
-
-可通过[官方文档](https://element-plus.org/zh-CN/guide/quickstart.html#按需导入)了解更多。
 
 ### SVG 图标使用
 

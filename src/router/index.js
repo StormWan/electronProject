@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, createWebHashHistory } from "vue-router
 import { ACCESS_TOKEN } from "@/store/constants";
 import { setPageTitle } from "@/utils/common";
 import NProgress from "@/utils/progress";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import routes from "./routes";
 
 // hack router push callback
@@ -49,5 +49,11 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach(async (to, from, next) => {
   NProgress.done();
 });
+
+/** setup vue router. - [安装vue路由] */
+export async function setupRouter(app) {
+  app.use(router);
+  // await router.isReady();
+}
 
 export default router;

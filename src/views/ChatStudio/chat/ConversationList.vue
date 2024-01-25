@@ -1,15 +1,13 @@
 <template>
   <el-scrollbar class="scrollbar-list">
-    <div class="no-msg" v-if="tabList.length == 0">
-      <el-empty :description="$t('el.table.emptyText')" :image-size="150" />
-    </div>
+    <EmptyMessage classNmae="no-msg" :show="tabList.length == 0" />
     <div
       class="message-item"
       v-for="item in tabList"
       :key="item.conversationID"
       :class="fnClass(item)"
       @click="handleConvListClick(item)"
-      @drop="dropHandler(e, item)"
+      @drop="dropHandler($evevt, item)"
       @dragenter="dragenterHandler"
       @dragleave="dragleaveHandler"
       v-contextmenu:contextmenu
@@ -44,7 +42,7 @@
         </div>
         <!-- 未读消息红点 -->
         <el-badge
-          v-show="!isShowCount(item) && !isNotify(item)"
+          v-show="!isShowCount(item) && !isNotify(item) && item.type !== '@TIM#SYSTEM'"
           :value="item.unreadCount"
           :max="99"
         />
@@ -52,6 +50,7 @@
         <svg-icon v-show="isNotify(item)" iconClass="DontDisturb" class="dont" />
       </div>
     </div>
+    <!-- <virtual-list :list="tabList" /> -->
     <!-- 右键菜单 -->
     <contextmenu ref="contextmenu">
       <contextmenu-item
@@ -68,7 +67,9 @@
 
 <script setup>
 import { h, ref, onMounted } from "vue";
-import { squareUrl, RIGHT_CLICK_CHAT_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
+import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
+// import VirtualList from "./VirtualList.vue";
+import EmptyMessage from "../components/EmptyMessage.vue";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import { timeFormat } from "@/utils/chat/index";
 import { useStore } from "vuex";
@@ -76,7 +77,7 @@ import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { pinConversation } from "@/api/im-sdk-api/index";
 import Label from "../components/Label.vue";
 import emitter from "@/utils/mitt-bus";
-import { chatName, isallStaff } from "../utils/utils";
+import { chatName } from "../utils/utils";
 
 const isShowMenu = ref(false);
 const contextMenuItemInfo = ref([]);
@@ -272,10 +273,6 @@ onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
-.no-msg {
-  color: rgba(0, 0, 0, 0.45);
-  margin-top: 50%;
-}
 .scrollbar-list {
   background: var(--color-body-bg);
   height: 100%;

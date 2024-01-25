@@ -33,7 +33,7 @@
       class="icon"
       @click="openRobotBox"
     >
-      <el-icon class="robot icon-hover"><Setting /></el-icon>
+      <svg-icon iconClass="robot" class="icon-hover robot" />
     </span>
     <!-- 窗口抖动 -->
     <span
@@ -176,6 +176,7 @@ emitter.on("onisbot", (state) => {
     color: #808080;
   }
   .robot {
+    stroke: unset;
     cursor: pointer;
   }
   & > .icon:hover:after {

@@ -11,7 +11,6 @@ import { compareByRole } from "@/utils/chat/index";
 
 export default {
   state: {
-    isShowAddBook: false, // 地址本状态
     groupDrawer: false, // 群聊开关
     groupList: [], //群组列表
     groupProfile: null, // 群聊数据
@@ -44,10 +43,6 @@ export default {
     // 更新群详情
     setGroupProfile(state, payload) {
       state.groupProfile = payload;
-    },
-    // 打开地址本
-    setAddbookStatus(state, status) {
-      state.isShowAddBook = status;
     },
     setGroupStatus(state, status) {
       state.groupDrawer = status;

@@ -1,8 +1,8 @@
 <template>
-  <div class="select-none" :class="['sidebar-container']" v-show="vislbile || sidebar">
+  <div class="sidebar-container" v-show="vislbile || sidebar">
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
-        ref="Refelmenu"
+        ref="menuRef"
         class="el-menu-vertical"
         :default-active="route.path"
         :collapse-transition="false"
@@ -19,27 +19,20 @@
 </template>
 
 <script setup>
-import storage from "storejs";
-import { useStore } from "vuex";
-import { ref, toRefs, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 
-const Refelmenu = ref();
+const menuRef = ref();
 const route = useRoute();
-const router = useRouter();
+
 // eslint-disable-next-line no-undef
 const props = defineProps({
   vislbile: {
     type: Boolean,
     default: false,
   },
-  collapse: {
-    type: Boolean,
-    default: false,
-  },
 });
-const { vislbile, collapse } = toRefs(props);
 
 const { isCollapse, sidebar, routeTable } = useState({
   isCollapse: (state) => state.settings.isCollapse,
@@ -70,6 +63,7 @@ const handleClose = (key, keyPath) => {
   height: 100%;
 }
 .sidebar-container {
+  user-select: none;
   background: var(--color-body-bg);
   box-shadow: 0 0 1px #888;
   z-index: 11;

@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 import store from "@/store/index";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import { $t } from "@/plugins/i18n";
 
 /** 6位数字验证码正则 */

@@ -1,16 +1,13 @@
 {
   "name": "pure-admin",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "基于 Vue3、Element-Plus 的清新优雅的中后台模版，提供了丰富的功能组件 聊天工作室 内置ChatGPT (腾讯 IM 即时通讯) 用于学习参考。",
   "author": {
     "name": "Hyk260",
     "email": "2607881950@qq.com"
   },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --fix",
-    "build:staging": "vue-cli-service build --mode staging",
     "electron:serve": "vue-cli-service electron:serve",
     "electron:build": "vue-cli-service electron:build",
     "electron:build:mac": "vue-cli-service electron:build -p never -m",
@@ -35,7 +32,6 @@
     "@vueuse/motion": "^2.0.0-beta.12",
     "@wangeditor/editor": "^5.0.1",
     "@wangeditor/editor-for-vue": "^5.1.11",
-    "autolinker": "^4.0.0",
     "axios": "^0.26.1",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "core-js": "^3.33.3",
@@ -47,6 +43,7 @@
     "electron-log": "^5.0.0",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
+    "echarts": "^5.4.3",
     "element-plus": "^2.4.3",
     "husky": ">=6",
     "lint-staged": "14.0.0",
@@ -63,6 +60,7 @@
     "unplugin-vue-components": "^0.22.4",
     "v-contextmenu": "3.0.0",
     "vue": "^3.2.36",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "vue-draggable-next": "^2.1.1",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.0-0",

@@ -15,7 +15,7 @@
     "id": "57c79357-0309-41b9-919a-253c3dfe6691",
     "path": "/",
     "name": "home",
-    "componentName": "Home",
+    "componentName": "Layout",
     "meta": {
       "title": "Home",
       "icon": "Eleme",

@@ -31,7 +31,7 @@ import TIM from "@/utils/IM/chat/index";
 import { onClickOutside } from "@vueuse/core";
 import { cloneDeep } from "lodash-es";
 import { useEventListener } from "@vueuse/core";
-import { compareUserID } from "@/views/ChatStudio/utils/utils";
+import { compareUserID } from "@/views/chatStudio/utils/utils";
 
 export default {
   name: "MentionModal",

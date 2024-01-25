@@ -1,5 +1,15 @@
 export default {
+  route: {
+    chatStudio: "聊天工作室",
+    welcome: "首页",
+    personal: "个人中心",
+    about: "关于",
+  },
   chat: {
+    whole: "全部",
+    unread: "未读",
+    mention: "{'@'}我",
+    message: "消息",
     buttonPromptMac: "按Enter发送消息, Meta⌘ + Enter 换行",
     buttonPrompt: "按Enter发送消息, Ctrl + Enter 换行",
     sending: "发送",
@@ -9,9 +19,9 @@ export default {
     picture: "图片",
     file: "文件",
     screenshot: "截图",
-    configuration: '配置',
-    windowJitter: '窗口抖动',
-    scrollToTheBottom: '滚动到底部',
+    configuration: "配置",
+    windowJitter: "窗口抖动",
+    scrollToTheBottom: "滚动到底部",
   },
   group: {
     GroupDetails: "群详情",

@@ -53,10 +53,6 @@ export default defineComponent({
           onclick: () => this.openSetup(),
         },
         {
-          title: "地址本",
-          onclick: () => this.openAddress(),
-        },
-        {
           title: "设置Cookes",
           onclick: () => this.setCookies(),
         },
@@ -87,11 +83,9 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapMutations(["TAGGLE_OUE_SIDE", "setAddbookStatus", "UPDATE_USER_SETUP"]),
+    ...mapMutations(["TAGGLE_OUE_SIDE", "UPDATE_USER_SETUP"]),
     ...mapActions(["getGroupList", "CHEC_OUT_CONVERSATION"]),
-    openAddress() {
-      this.setAddbookStatus(true);
-    },
+    openAddress() {},
     openSetup() {
       this.UPDATE_USER_SETUP({ key: "setswitch", value: true });
     },

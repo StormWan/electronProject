@@ -1,6 +1,6 @@
 "use strict";
 import axios from "axios";
-import storage from "storejs";
+import storage from "@/utils/localforage/index";
 import NProgress from "@/utils/progress";
 import { ACCESS_TOKEN } from "@/store/constants";
 import { errorHandler } from "./tools";

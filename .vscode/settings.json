@@ -46,7 +46,7 @@
   // 启用命名空间。查看文档了解更多详细信息。
   "i18n-ally.namespace": true,
   // 指定启用文件格式
-  "i18n-ally.enabledParsers": ["yaml", "js"],
+  "i18n-ally.enabledParsers": ["js"],
   // 翻译源语言
   "i18n-ally.sourceLanguage": "en",
   // 显示语言

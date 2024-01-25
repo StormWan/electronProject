@@ -13,14 +13,12 @@ const props = defineProps({
     default: "",
   },
 });
-const frameRef = ref();
-const { type } = toRefs(props);
-
 const frameSrc = {
-  document: "https://hyk260.github.io/PureAdmin",
+  document: "https://hngwsw-pureadmin.site.laf.run",
   github: "https://github.com/Hyk260",
   gitee: "https://gitee.com",
 };
+const frameRef = ref();
 const loading = ref(true);
 
 function hideLoading() {

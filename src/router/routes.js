@@ -1,3 +1,5 @@
+import asyncRoute from "./asyncRoute";
+
 const routes = [
   { path: "/", redirect: "/chatstudio" },
   {
@@ -9,6 +11,7 @@ const routes = [
       icon: "Eleme",
     },
   },
+  // ...asyncRoute
 ];
 
 export default routes;

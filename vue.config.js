@@ -8,7 +8,6 @@ const path = require("path");
 const {
   cdn,
   css,
-  // pwa,
   title,
   externals,
   devServer,
@@ -21,7 +20,6 @@ const {
 const resolve = (dir) => {
   return path.join(__dirname, dir);
 };
-const lifecycle = process.env.npm_lifecycle_event;
 
 module.exports = defineConfig({
   // 是否开启 eslint 校验
@@ -61,16 +59,16 @@ module.exports = defineConfig({
   },
   configureWebpack: {
     plugins: [
-      AutoImport({
-        // 自动导入 Vue 相关函数，如: ref, reactive, toRef 等
-        imports: ["vue"],
-        // 自动导入element-plus相关函数, 如: ElMessage, ElMessageBox... (带样式)
-        // resolvers: [ElementPlusResolver()],
-      }),
+      // AutoImport({
+      //   // 自动导入 Vue 相关函数，如: ref, reactive, toRef 等
+      //   // imports: ["vue"],
+      //   // 自动导入element-plus相关函数, 如: ElMessage, ElMessageBox... (带样式)
+      //   // resolvers: [ElementPlusResolver()],
+      // }),
       // 按需引入element-plus组件 (带样式)
-      Components({
-        resolvers: [ElementPlusResolver()],
-      }),
+      // Components({
+      //   resolvers: [ElementPlusResolver()],
+      // }),
       // 打包分析
       // new BundleAnalyzerPlugin(),
     ],
