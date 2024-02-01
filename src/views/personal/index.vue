@@ -34,12 +34,12 @@
 </template>
 
 <script setup>
-import { use } from "echarts/core";
-import { CustomChart } from "echarts/charts";
-import { TitleComponent, GraphicComponent } from "echarts/components";
-use([CustomChart]);
-use([TitleComponent]);
-use([GraphicComponent]);
+// import { use } from "echarts/core";
+// import { CustomChart } from "echarts/charts";
+// import { TitleComponent, GraphicComponent } from "echarts/components";
+// use([CustomChart]);
+// use([TitleComponent]);
+// use([GraphicComponent]);
 </script>
 
 <style lang="scss" scoped></style>

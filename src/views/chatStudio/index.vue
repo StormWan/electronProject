@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full flex">
     <!-- 侧边栏 -->
-    <Sidebar />
+    <sidebar />
     <!-- chat -->
     <Message v-show="showChat(outside)" />
     <!-- iframe -->
@@ -13,7 +13,7 @@
 <script setup>
 import { useState } from "@/utils/hooks/useMapper";
 
-import Sidebar from "./Sidebar.vue";
+import sidebar from "./sidebar.vue";
 import application from "./application.vue";
 import Message from "./message.vue";
 import test from "./test.vue";
