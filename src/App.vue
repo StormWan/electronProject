@@ -11,6 +11,7 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { ElConfigProvider } from "element-plus";
 import { useState } from "@/utils/hooks/useMapper";
+const { ipcRenderer } = require("electron");
 
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
@@ -35,7 +36,13 @@ onMounted(async () => {
   nextTick(() => {
     setWatermark("Pure Admin");
   });
+  fnElectron();
 });
+function fnElectron() {
+  ipcRenderer.on("renderer-scheme", (event, data) => {
+    console.log(data);
+  });
+}
 onBeforeUnmount(() => {
   clear();
 });

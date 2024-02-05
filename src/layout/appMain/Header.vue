@@ -63,7 +63,7 @@ import { useState } from "@/utils/hooks/useMapper";
 import SideBar from "../sideBar/index.vue";
 import { showConfirmationBox } from "@/utils/message";
 import screenfull from "./screenfull.vue";
-import { isWindows } from "@/electron/utils/platform";
+import { isWindows } from "@/electron/utils/index";
 import Tags from "./Tags.vue";
 
 const { dispatch, commit } = useStore();

@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { isWindows } from "@/electron/utils/platform";
+import { isWindows } from "@/electron/utils/index";
 const { ipcRenderer } = require("electron");
 function onClick() {
   ipcRenderer.send("quitApp");

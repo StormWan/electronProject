@@ -106,7 +106,7 @@ const vueDefaultConfig = {
           },
         ],
         win: {
-          target: ["nsis"],
+          target: ["nsis", "zip"],
           icon: "images/log.png",
         },
         mac: {
@@ -116,24 +116,15 @@ const vueDefaultConfig = {
           mirror: "https://npm.taobao.org/mirrors/electron/",
         },
         nsis: {
-          // 一键安装，如果设为true，nsis设置就无意义请直接删除 nsis 配置
-          oneClick: false,
-          // true全用户安装 目录为：C:\Program Files (x86)，false安装到当前用户
-          perMachine: true,
-          // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
-          allowElevation: true,
-          // 允许修改安装目录
-          allowToChangeInstallationDirectory: true,
-          // 创建桌面图标
-          createDesktopShortcut: true,
-          // 创建开始菜单图标
-          createStartMenuShortcut: true,
-          // 安装图标
-          installerIcon: "images/icon.ico",
-          // 卸载图标
-          uninstallerIcon: "images/icon.ico",
-          // 安装时头部图标
-          installerHeaderIcon: "images/icon.ico",
+          oneClick: false, // true: 一键安装 false: 辅助安装
+          perMachine: true, // false: 可选择为所有人或当前用户安装 true: 为所有人安装
+          allowElevation: true, // 是否允许请求提升（仅辅助安装程序）
+          allowToChangeInstallationDirectory: true, // 是否允许用户修改安装目录
+          createDesktopShortcut: true, // 是否创建桌面快捷方式
+          createStartMenuShortcut: true, // 是否创建开始菜单快捷方式
+          installerIcon: "images/icon.ico", // 安装图标
+          uninstallerIcon: "images/icon.ico", // 卸载图标
+          installerHeaderIcon: "images/icon.ico", // 安装时头部图标
         },
         asar: false, // 是否开启asar打包
         //打包后拷贝静态文件到指定位置,

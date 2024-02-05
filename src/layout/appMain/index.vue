@@ -27,7 +27,7 @@ import { vElementSize } from "@vueuse/components";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
-import { isWindows } from "@/electron/utils/platform";
+import { isWindows } from "@/electron/utils/index";
 import Header from "./Header.vue";
 
 const route = useRoute();

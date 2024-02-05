@@ -1,10 +1,18 @@
 "use strict";
-import { app, Menu, shell, dialog, protocol, BrowserWindow, session } from "electron";
-import { isMac, isWindows, isCreateTray, isDevelopment } from "@/electron/utils/platform";
+import { app, Menu, shell, protocol, BrowserWindow, session } from "electron";
+import {
+  isMac,
+  isWindows,
+  isTest,
+  isDevelopment,
+  webpackDevServerUrl,
+  electronNodeIntegration,
+} from "@/electron/utils/index";
 import electronLocalshortcut from "electron-localshortcut";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import ipcEvent from "./ipcMain/index";
+import { setDefaultProtocol } from "./utils/index";
 import path from "path";
 
 class Background {
@@ -20,10 +28,12 @@ class Background {
       if (!gotTheLock) {
         return app.quit();
       } else {
-        app.on("second-instance", (event, argv) => {});
+        // 外部协议被点击的事件;
+        app.on("second-instance", (event, argv) => {
+          this.window.webContents.sed("renderer-scheme", argv);
+        });
       }
     }
-
     // 注册协议
     protocol.registerSchemesAsPrivileged([
       { scheme: "app", privileges: { secure: true, standard: true } },
@@ -37,7 +47,7 @@ class Background {
     app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
   }
   async initDevtools() {
-    if (isDevelopment && !process.env.IS_TEST) {
+    if (isDevelopment && !isTest) {
       try {
         await installExtension(VUEJS3_DEVTOOLS);
       } catch (e) {
@@ -79,13 +89,14 @@ class Background {
         // 否启用 Node.js 的集成
         nodeIntegration: true,
         // 是否启用渲染进程的上下文隔离
-        contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+        contextIsolation: !electronNodeIntegration,
         // 是否启用渲染进程访问 Electron 的 remote 模块
         enableRemoteModule: true,
       },
     };
     // 创建浏览器窗口
     const win = new BrowserWindow(options);
+    this.window = win;
     global.mainWin = win;
     // 用于定义菜单栏的内容和行为，包括菜单项、子菜单、快捷键等。它是在应用程序启动时设置菜单栏的一种方式。
     // win.setMenuBarVisibility(false);
@@ -93,10 +104,10 @@ class Background {
       // 为窗口注册ctrl+Shift+i 唤起控制台
       win.webContents.openDevTools();
     });
-    if (process.env.WEBPACK_DEV_SERVER_URL) {
+    if (webpackDevServerUrl) {
       // 如果处于开发模式，则加载开发服务器的url
-      win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-      if (!process.env.IS_TEST) win.webContents.openDevTools();
+      win.loadURL(webpackDevServerUrl);
+      if (!isTest) win.webContents.openDevTools();
     } else {
       // 生产环境下加载打包后的文件
       createProtocol("app");
@@ -109,7 +120,7 @@ class Background {
     // 关闭所有窗口后退出
     app.on("window-all-closed", () => {
       // 在macOS上，应用程序及其菜单栏通常保持活动状态，直到用户使用Cmd+Q明确退出
-      if (process.platform !== "darwin") {
+      if (!isMac) {
         app.quit();
       }
     });
@@ -124,6 +135,8 @@ class Background {
       this.initDevtools();
       this.createWindow();
       ipcEvent();
+      // 注册协议
+      setDefaultProtocol();
       session.defaultSession.maxConnections = 10;
     });
 

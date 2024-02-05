@@ -1,7 +1,6 @@
-import { app } from "electron";
+import { app, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
-import { ipcMain } from "electron";
-import { isWindows, isMac } from "@/electron/utils/platform";
+import { isWindows, isMac } from "@/electron/utils/index";
 /**
  * -1 检查更新失败 0 正在检查更新 1 检测到新版本，准备下载 2 未检测到新版本 3 下载中 4 下载完成
  **/

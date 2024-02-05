@@ -1,9 +1,9 @@
-import { app, shell, clipboard, BrowserWindow, dialog, Menu, nativeImage } from "electron";
-const { execFile, exec } = require("child_process");
-import { isWindows, isMac } from "@/electron/utils/platform";
-const os = require("os");
-const { version } = require("../../../package.json");
+import { app, shell, clipboard, dialog } from "electron";
+import { isWindows, isMac, isProduction } from "@/electron/utils/index";
 import path from "path";
+const os = require("os");
+const { execFile, exec } = require("child_process");
+const { version } = require("../../../package.json");
 
 const viewSize = {
   login: { width: 380, height: 550 },
@@ -123,6 +123,17 @@ export const shakeWindow = () => {
 
     win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY);
   }, shakeInterval);
+};
+
+/**注册协议 并通过浏览器打开PureAdmin程序 */
+export const setDefaultProtocol = () => {
+  if (isProduction) {
+    const agreement = "pure"; // 自定义协议名
+    let isSet = false; // 是否注册成功
+    app.removeAsDefaultProtocolClient(agreement); // 每次运行都删除自定义协议 然后再重新注册
+    isSet = app.setAsDefaultProtocolClient(agreement);
+    console.log("注册协议", isSet ? "成功" : "失败");
+  }
 };
 
 export const quitApp = (type) => {};
