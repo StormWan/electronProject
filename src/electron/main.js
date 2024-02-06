@@ -83,15 +83,16 @@ class Background {
       titleBarStyle: isWindows ? "hiddenInset" : "default",
       webPreferences: {
         // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
-        // preload: path.join(__dirname, './preload/index.js'),
+        // preload: path.join(__dirname, "./preload/index.js"),
         // 在外部浏览器中打开链接
         nativeWindowOpen: true,
         // 否启用 Node.js 的集成
         nodeIntegration: true,
         // 是否启用渲染进程的上下文隔离
-        contextIsolation: !electronNodeIntegration,
+        contextIsolation: false, // !electronNodeIntegration
         // 是否启用渲染进程访问 Electron 的 remote 模块
         enableRemoteModule: true,
+        preload: path.join(__dirname, "preload.js"),
       },
     };
     // 创建浏览器窗口

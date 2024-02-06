@@ -65,6 +65,7 @@ async function onClick(item) {
 .titlebar {
   position: relative;
   width: 100%;
+  min-width: 500px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -76,6 +77,7 @@ async function onClick(item) {
   -webkit-app-region: drag;
 }
 .log {
+  display: flex;
   img {
     width: 15px;
   }
