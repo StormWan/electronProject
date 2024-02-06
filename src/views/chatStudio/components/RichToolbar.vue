@@ -72,7 +72,7 @@
       accept=".mp4"
       hidden
     /> -->
-    <RobotOptions />
+    <RobotOptions v-if="isRobot(toAccount)" />
     <EmotionPackBox @SelectEmoticon="SelectEmoticon" />
   </div>
 </template>
@@ -107,14 +107,13 @@ function openRobotBox() {
 const SelectEmoticon = (item, table) => {
   let url = "";
   if (table == "QQ") {
-    url = emojiQq.emojiUrl + emojiQq.emojiMap[item];
+    // url = emojiQq.emojiUrl + emojiQq.emojiMap[item];
+    url = require("@/assets/emoji/" + emojiQq.emojiMap[item]);
   } else {
-    url = emojiDouyin.emojiUrl + emojiDouyin.emojiMap[item];
+    // url = emojiDouyin.emojiUrl + emojiDouyin.emojiMap[item];
+    url = require("@/assets/emoji/" + emojiDouyin.emojiMap[item]);
   }
-  emit("setToolbar", {
-    data: { url, item },
-    key: "setEmoj",
-  });
+  emit("setToolbar", { data: { url, item }, key: "setEmoj" });
 };
 const SendImageClick = () => {
   let $el = imagePicker.value;

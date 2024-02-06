@@ -7,9 +7,7 @@
       "icon": "el-",
       "auth": []
     },
-    "children": [
-      "57c79357-0309-41b9-919a-253c3dfe6691"
-    ]
+    "children": ["57c79357-0309-41b9-919a-253c3dfe6691"]
   },
   {
     "id": "57c79357-0309-41b9-919a-253c3dfe6691",
@@ -38,6 +36,7 @@
     "componentName": "Welcome",
     "meta": {
       "title": "首页",
+      "locale": "welcome",
       "icon": "Eleme",
       "auth": [],
       "modify": false
@@ -50,6 +49,7 @@
     "componentName": "ChatStudio",
     "meta": {
       "title": "聊天工作室",
+      "locale": "chatStudio",
       "icon": "ForkSpoon",
       "auth": [],
       "modify": false,
@@ -64,6 +64,7 @@
     "componentName": "Personal",
     "meta": {
       "title": "个人中心",
+      "locale": "personal",
       "icon": "User",
       "modify": false
     }
@@ -75,6 +76,7 @@
     "componentName": "System",
     "meta": {
       "title": "系统管理",
+      "locale": "system",
       "icon": "Setting",
       "auth": [],
       "modify": false
@@ -92,6 +94,7 @@
     "componentName": "User",
     "meta": {
       "title": "用户权限",
+      "locale": "role",
       "icon": "CopyDocument",
       "modify": false
     },
@@ -104,6 +107,7 @@
     "componentName": "Menu",
     "meta": {
       "title": "菜单列表",
+      "locale": "menu",
       "icon": "More",
       "modify": false
     }
@@ -115,6 +119,7 @@
     "componentName": "Role",
     "meta": {
       "title": "角色权限",
+      "locale": "role",
       "icon": "User",
       "modify": false
     }
@@ -126,6 +131,7 @@
     "componentName": "About",
     "meta": {
       "title": "关于",
+      "locale": "about",
       "icon": "Warning",
       "auth": [],
       "modify": false
@@ -139,14 +145,13 @@
     "componentName": "Assembly",
     "meta": {
       "title": "组件",
+      "locale": "assembly",
       "icon": "Menu",
       "auth": [],
       "modify": false,
       "isHide": true
     },
-    "children": [
-      "22156386-6a76-40b1-8b91-601a6fde5f9f"
-    ]
+    "children": ["22156386-6a76-40b1-8b91-601a6fde5f9f"]
   },
   {
     "id": "22156386-6a76-40b1-8b91-601a6fde5f9f",
@@ -155,6 +160,7 @@
     "componentName": "Jigsaw",
     "meta": {
       "title": "拼图",
+      "locale": "jigsaw",
       "icon": "DishDot",
       "auth": [],
       "modify": false

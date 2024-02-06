@@ -1,7 +1,7 @@
 <template>
   <div class="viewref" v-if="index == currentMessageList.length - 1">
     <div class="showMore">
-      {{ noMore ? "没有更多了" : "" }}
+      {{ noMore ? $t("chat.noMore") : "" }}
     </div>
     <Loader v-show="!noMore" />
   </div>

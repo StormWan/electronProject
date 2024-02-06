@@ -7,6 +7,8 @@ import { useElementPlus } from "./elementPlus";
 import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
+import "@/styles/index.scss";
+
 export function setupPlugins(app) {
   app.use(useI18n);
   app.use(useElIcons);

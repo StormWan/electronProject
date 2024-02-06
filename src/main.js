@@ -1,13 +1,10 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import { setupRouter } from "./router/index";
 import store from "./store/index";
 import AppLoading from "./views/components/AppLoading/index.vue";
 
-import { getServerConfig } from "./config";
-
-import "@/styles/index.scss";
-
+import { getServerConfig } from "./config/index";
+import { setupRouter } from "./router/index";
 import { setupDirectives } from "./directives/index";
 import { setupPlugins } from "./plugins/index";
 import { loadAllassembly } from "./components/index";

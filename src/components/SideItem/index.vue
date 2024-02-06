@@ -11,14 +11,14 @@
           <font-icon :iconName="item.meta.icon" />
         </el-badge>
         <template #title>
-          <span>{{ item.meta.title }}</span>
+          {{ item.meta.locale ? $t(`route.${item.meta.locale}`) : item.meta.title }}
         </template>
       </el-menu-item>
       <!-- 二级菜单 -->
       <el-sub-menu v-else :index="item.path">
         <template #title>
           <font-icon :iconName="item.meta.icon" />
-          <span>{{ item.meta.title }}</span>
+          <span>{{ item.meta.locale ? $t(`route.${item.meta.locale}`) : item.meta.title }}</span>
         </template>
         <SideItem :tree="item.children" />
       </el-sub-menu>
@@ -40,8 +40,6 @@ const props = defineProps({
     default: true,
   },
 });
-
-const { tree } = toRefs(props);
 
 const { unreadMsg } = useState({
   unreadMsg: (state) => state.conversation.totalUnreadMsg,

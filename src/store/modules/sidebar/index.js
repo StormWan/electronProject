@@ -5,6 +5,7 @@ const sidebar = {
       {
         only: "message",
         icon: "ChatDotSquare",
+        locale: "message",
         title: "消息",
         class: "fixed",
         if_fixed: 1,
@@ -13,6 +14,7 @@ const sidebar = {
       {
         only: "document",
         icon: "Document",
+        locale: "document",
         title: "文档",
         type: "el-icon",
       },
@@ -39,6 +41,7 @@ const sidebar = {
       {
         only: "more",
         icon: "MoreFilled",
+        locale: "more",
         title: "更多",
         mode: "other",
         type: "el-icon",

@@ -15,7 +15,7 @@
             </template>
             <el-skeleton animated :rows="7" :loading="loading">
               <template #default>
-                <div :id="`main${index}`" style="height: 200px"></div>
+                <div></div>
               </template>
             </el-skeleton>
           </el-card>
@@ -27,53 +27,8 @@
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
-const option = {
-  tooltip: {
-    trigger: "item",
-  },
-  legend: {
-    top: "5%",
-    left: "center",
-  },
-  series: [
-    {
-      name: "Access From",
-      type: "pie",
-      radius: ["40%", "70%"],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: "#fff",
-        borderWidth: 2,
-      },
-      label: {
-        show: false,
-        position: "center",
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 40,
-          fontWeight: "bold",
-        },
-      },
-      labelLine: {
-        show: false,
-      },
-      data: [
-        { value: 1048, name: "Search Engine" },
-        { value: 735, name: "Direct" },
-        { value: 580, name: "Email" },
-        { value: 484, name: "Union Ads" },
-        { value: 300, name: "Video Ads" },
-      ],
-    },
-  ],
-};
-const header = [
-  { title: "GitHub饼图信息", option },
-  { title: "Gitee饼图信息", option },
-];
+
+const header = [{ title: "GitHub饼图信息" }, { title: "Gitee饼图信息" }];
 let loading = ref(true);
 const date = new Date();
 
@@ -91,13 +46,7 @@ const openDepot = () => {
   window.open("https://github.com/Hyk260");
 };
 
-onMounted(() => {
-  // header.map((t, i) => {
-  //   var chartDom = document.getElementById(`main${i}`);
-  //   var myChart = echarts.init(chartDom);
-  //   option && myChart.setOption(t.option);
-  // });
-});
+onMounted(() => {});
 </script>
 <style lang="scss" scoped>
 .style-row {

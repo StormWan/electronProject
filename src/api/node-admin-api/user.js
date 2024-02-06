@@ -22,12 +22,12 @@ export const register = (data) => {
 
 // 账号列表
 export const getuser = async () => {
-  const data = [
-    { value: "admin", link: "" },
-    { value: "zhangal", link: "" },
-  ];
   return {
-    loadAll: data,
+    loadAll: [
+      { value: "admin", link: "" },
+      { value: "zhangal", link: "" },
+      { value: "jinwx", link: "" },
+    ],
   };
 };
 

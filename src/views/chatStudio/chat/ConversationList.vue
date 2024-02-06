@@ -1,6 +1,7 @@
 <template>
   <el-scrollbar class="scrollbar-list">
-    <EmptyMessage classNmae="no-msg" :show="tabList.length == 0" />
+    <EmptyMessage classNmae="no-msg" v-if="tabList.length == 0" />
+    <!-- <Skeleton v-else-if="activetab === 'whole'" :loading="false" /> -->
     <div
       class="message-item"
       v-for="item in tabList"
@@ -66,9 +67,10 @@
 </template>
 
 <script setup>
-import { h, ref, onMounted } from "vue";
+import { h, ref, watch, onMounted, nextTick, onActivated } from "vue";
 import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
 // import VirtualList from "./VirtualList.vue";
+import Skeleton from "../components/Skeleton.vue";
 import EmptyMessage from "../components/EmptyMessage.vue";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import { timeFormat } from "@/utils/chat/index";
@@ -79,15 +81,17 @@ import Label from "../components/Label.vue";
 import emitter from "@/utils/mitt-bus";
 import { chatName } from "../utils/utils";
 
+const loading = ref(true);
 const isShowMenu = ref(false);
 const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { messageList, Conver, currentUserProfile, sessionDraftMap } = useState({
+const { messageList, activetab, Conver, currentUserProfile, sessionDraftMap } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
   currentUserProfile: (state) => state.user.currentUserProfile,
   messageList: (state) => state.conversation.currentMessageList,
+  activetab: (state) => state.conversation.activetab,
   conversationList: (state) => state.conversation.conversationList,
   Conver: (state) => state.conversation.currentConversation,
 });
@@ -268,8 +272,15 @@ const pingConv = async (data, off) => {
     isPinned,
   });
 };
-
-onMounted(() => {});
+// watch(
+//   () => tabList.value,
+//   (value) => {},
+//   {
+//     deep: true,
+//   }
+// );
+// onActivated(() => {});
+// onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
@@ -280,6 +291,7 @@ onMounted(() => {});
 }
 .message-item {
   padding: 12px 12px 12px 16px;
+  user-select: none;
   height: 64px;
   display: flex;
   align-items: center;

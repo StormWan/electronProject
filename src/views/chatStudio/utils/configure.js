@@ -32,6 +32,10 @@ export const editorConfig = {
     },
   },
 };
+
+// 代码语言
+editorConfig.MENU_CONF["codeSelectLang"] = {};
+
 // 显示 modal
 function showModal(e) {
   // console.log("[@] 显示 showModal:", e.getText());

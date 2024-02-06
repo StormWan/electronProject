@@ -20,7 +20,7 @@
     </div>
     <!-- 聊天框 -->
     <div class="message-right" id="svgBox">
-      <EmptyMessage classNmae="empty" :show="!conver" />
+      <EmptyMessage classNmae="empty" v-if="!conver" />
       <Header />
       <!-- 聊天窗口 -->
       <Chatwin ref="ChatRef" />
@@ -129,6 +129,7 @@ watchEffect(() => {
 
 <style lang="scss" scoped>
 .demo-tabs {
+  user-select: none;
   :deep(.el-tabs__header) {
     margin: 0;
     padding: 0 16px;

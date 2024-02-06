@@ -527,11 +527,6 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 
 <style lang="scss" scoped>
 @import url("../ElemItemTypes/elemType.scss");
-.message_name {
-  margin-bottom: 5px;
-  color: var(--color-time-divider);
-  font-size: 12px;
-}
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
   border-bottom: 1px solid var(--color-border-default);
@@ -543,6 +538,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
   height: calc(100% - 70px - 206px - 60px) !important;
 }
 .message-view__item--time-divider {
+  user-select: none;
   position: relative;
   top: 8px;
   margin: 20px 0;

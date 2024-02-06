@@ -3,7 +3,7 @@
     <div class="emojis">
       <el-scrollbar wrap-class="custom-scrollbar-wrap" always>
         <!-- QQ表情包 -->
-        <div :class="['emoji_QQ', systemOs]" v-if="table == 'QQ'">
+        <div :class="['emoji_QQ', systemOs]" v-show="table == 'QQ'">
           <p class="title" v-show="recentlyUsed.length">最近使用</p>
           <span
             v-for="item in recentlyUsed"
@@ -39,7 +39,7 @@
           </template>
         </div>
         <!-- 抖音表情包 -->
-        <div class="emoji_Tiktok" v-if="table == 'Tiktok'">
+        <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
           <span
             v-for="item in emojiDouyin.emojiName"
             class="emoji scroll-content"
@@ -89,11 +89,11 @@ const toolDate = [
     icon: "tiktok",
     type: "Tiktok",
   },
-  {
-    title: "我的收藏",
-    icon: "collect",
-    type: "Like",
-  },
+  // {
+  //   title: "我的收藏",
+  //   icon: "collect",
+  //   type: "Like",
+  // },
 ];
 
 const recentlyUsed = ref([]);

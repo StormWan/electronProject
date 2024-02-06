@@ -1,5 +1,4 @@
 <template>
-  <!-- 表单 -->
   <el-form ref="ruleFormRef" :model="user" :rules="rules">
     <!-- 账号 -->
     <el-form-item prop="username">

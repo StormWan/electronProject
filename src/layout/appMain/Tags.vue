@@ -6,18 +6,16 @@
       </div>
       <div class="scroll-container">
         <el-tag
-          v-show="tags"
-          v-for="tag in tags"
-          :key="tag.title"
-          closable
-          :type="curTitle === tag.title ? '' : 'info'"
-          @click="onClick(tag.path)"
-          @close="handleClose(tag)"
+          v-for="item in tags"
+          :key="item.title"
+          :closable="item.name !== 'welcome'"
+          :type="curTitle === item.title ? '' : 'info'"
+          @click="onClick(item.path)"
+          @close="handleClose(item)"
           v-contextmenu:contextmenu
-          @contextmenu.prevent="ContextMenuEvent($event, tag)"
+          @contextmenu.prevent="contextMenuEvent($event, item)"
         >
-          <!-- {{ tag.name ? $t(`route.${tag.name}`) : tag.title }} -->
-          {{ tag.title }}
+          {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
         </el-tag>
       </div>
       <div class="arrow-right">
@@ -29,7 +27,7 @@
       <contextmenu-item
         v-for="item in RIGHT_CLICK_TAGS_LIST"
         :key="item.id"
-        @click="ClickMenuItem(item)"
+        @click="clickMenuItem(item)"
       >
         {{ item.text }}
       </contextmenu-item>
@@ -38,13 +36,12 @@
 </template>
 
 <script setup>
-import { Back, Right, Minus, Plus, Close } from "@element-plus/icons-vue";
-import { computed, ref, watch, toRefs } from "vue";
+import { computed } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import { useStore } from "vuex";
-const { state, dispatch, commit } = useStore();
+const { commit } = useStore();
 
 const router = useRouter();
 const curTitle = computed(() => {
@@ -73,10 +70,10 @@ const RIGHT_CLICK_TAGS_LIST = [
   //   text: "关闭全部",
   // },
 ];
-const ContextMenuEvent = (event, tag) => {
+const contextMenuEvent = (event, tag) => {
   console.log(tag);
 };
-const ClickMenuItem = (item) => {
+const clickMenuItem = (item) => {
   // closing(item.id);
 };
 
@@ -154,7 +151,6 @@ function closing(tag) {
 .tags-view {
   width: 100%;
   height: 38px;
-  // box-shadow: 1px 0 1px #888;
   border-top: 1px solid #88888852;
   border-bottom: 1px solid #88888852;
   display: flex;
@@ -186,10 +182,9 @@ function closing(tag) {
   }
 
   .arrow-left,
-  .dropdown,
   .arrow-right {
-    width: 40px;
-    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
     color: #00000073;
     display: flex;
     justify-content: center;

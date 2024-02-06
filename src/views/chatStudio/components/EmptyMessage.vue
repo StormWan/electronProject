@@ -1,15 +1,11 @@
 <template>
-  <div :class="[classNmae]" v-if="show">
+  <div :class="[classNmae]">
     <el-empty :description="$t('el.table.emptyText')" :image-size="150" />
   </div>
 </template>
 
 <script setup>
 const props = defineProps({
-  show: {
-    type: Boolean,
-    default: false,
-  },
   classNmae: {
     type: String,
     default: "",

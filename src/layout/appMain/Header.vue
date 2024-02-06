@@ -11,12 +11,12 @@
         </div>
         <el-breadcrumb>
           <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
-            {{ value.title }}
+            {{ value.locale ? $t(`route.${value.locale}`) : value.title }}
           </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <div class="arrow-setup">
-        <screenfull />
+        <Fullscreen />
         <div class="user" v-show="!isWindows">
           <el-dropdown>
             <span class="el-dropdown-link">
@@ -62,8 +62,8 @@ import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 import SideBar from "../sideBar/index.vue";
 import { showConfirmationBox } from "@/utils/message";
-import screenfull from "./screenfull.vue";
 import { isWindows } from "@/electron/utils/index";
+import Fullscreen from "./Fullscreen.vue";
 import Tags from "./Tags.vue";
 
 const { dispatch, commit } = useStore();
@@ -117,7 +117,7 @@ const getBreadcrumb = (value) => {
     });
   }
   const tag = label
-    ? [...label, { title, path: value, name: route.name }]
+    ? [...label, { title, path: value, name: route.name, locale: route.meta.locale }]
     : [{ title, path: value, name: route.name }];
   if (index == -1) {
     commit("UPDATE_USER_INFO", { key: "elTag", value: tag });

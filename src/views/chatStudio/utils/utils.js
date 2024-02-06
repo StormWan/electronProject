@@ -175,7 +175,7 @@ export const html2Escape = (str) => {
   const map = {
     "<": "&lt;",
     ">": "&gt;",
-    "&": "&amp;",
+    // "&": "&amp;",
     '"': "&quot;",
   };
   return str.replace(/[<>&"]/g, function (c) {

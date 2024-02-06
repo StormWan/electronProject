@@ -12,12 +12,12 @@
 
 <script setup>
 import { useState } from "@/utils/hooks/useMapper";
-
+import application from "@/electron/components/Application/index.vue";
 import sidebar from "./sidebar.vue";
-import application from "./application.vue";
 import Message from "./message.vue";
 import test from "./test.vue";
 import frameView from "./frameView.vue";
+
 const showChat = (value) => {
   return outsideList.value[0].only.includes(value);
 };

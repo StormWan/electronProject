@@ -21,7 +21,7 @@ export const modelConfig = {
   frequency_penalty: 0,
   token: process.env.VUE_APP_OPENAI_API_KEY,
   openaiUrl: process.env.VUE_APP_BASE_URL,
-  historyMessageCount: 4,
+  historyMessageCount: 1,
   compressMessageLengthThreshold: 1000,
 };
 

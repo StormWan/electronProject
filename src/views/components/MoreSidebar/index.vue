@@ -10,7 +10,7 @@
   >
     <div class="draggable flex">
       <div class="container" v-for="item in list" :key="item.title">
-        <p class="text left-text">{{ item.title }}</p>
+        <p class="left-text">{{ item.title }}</p>
         <div class="edit-area h-full" :class="item.class">
           <draggable
             class="dragArea list-group w-full"
@@ -231,6 +231,9 @@ export default defineComponent({
   .container {
     border-radius: 4px;
     width: 195px;
+    .left-text {
+      padding-bottom: 10px;
+    }
   }
   .edit-area {
     background-color: #f5f5f5;

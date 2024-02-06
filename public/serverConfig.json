@@ -1,6 +1,7 @@
 {
-  "Version": "0.2.0",
+  "Version": "0.2.4",
   "Title": "PureAdmin",
-  "KeepAlive": true,
-  "Locale": "zh-CN"
+  "KeepAlive": false,
+  "Locale": "zh-CN",
+  "AsyncRoute": false
 }
