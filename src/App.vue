@@ -61,11 +61,17 @@ onBeforeUnmount(() => {
     background: #f6f7f8 !important;
   }
   .v-contextmenu-item {
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 16px;
+    height: 23px;
+    line-height: 23px;
+    padding: 0px 5px;
+    border-radius: 3px;
     color: rgba(0, 0, 0, 0.65);
     font-size: 12px;
+    font-weight: 500;
+  }
+  .v-contextmenu-inner {
+    width: 110px;
+    padding: 5px 5px;
   }
 }
 </style>

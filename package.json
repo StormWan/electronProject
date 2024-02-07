@@ -1,6 +1,6 @@
 {
   "name": "pure-admin",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "基于 Vue3、Element-Plus 的清新优雅的中后台模版，提供了丰富的功能组件 聊天工作室 内置ChatGPT (腾讯 IM 即时通讯) 用于学习参考。",
   "author": {
     "name": "Hyk260",

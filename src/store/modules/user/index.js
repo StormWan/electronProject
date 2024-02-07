@@ -36,7 +36,7 @@ const user = {
         message: options.message,
         type: options.type || "success",
         duration: options.duration || 2000,
-        // offset: 40,
+        offset: 30,
       });
     },
   },
