@@ -43,7 +43,6 @@
     "electron-log": "^5.0.0",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
-    "echarts": "^5.4.3",
     "element-plus": "^2.4.3",
     "husky": ">=6",
     "lint-staged": "14.0.0",

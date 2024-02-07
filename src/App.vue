@@ -40,7 +40,7 @@ onMounted(async () => {
 });
 function fnElectron() {
   ipcRenderer.on("renderer-scheme", (event, data) => {
-    console.log(data);
+    console.log("renderer-scheme", data);
   });
 }
 onBeforeUnmount(() => {
