@@ -3,9 +3,9 @@ import { isDevelopment } from "./platform";
 
 export const winSingle = () => {
   // 注册协议
-  // protocol.registerSchemesAsPrivileged([
-  //   { scheme: "app", privileges: { secure: true, standard: true } },
-  // ]);
+  protocol.registerSchemesAsPrivileged([
+    { scheme: "app", privileges: { secure: true, standard: true } },
+  ]);
   if (isDevelopment) return;
   // 请求单实例锁
   const gotTheLock = app.requestSingleInstanceLock();

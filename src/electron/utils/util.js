@@ -1,6 +1,5 @@
 import { app, shell, clipboard, dialog } from "electron";
 import { isWindows, isMac, isProduction, isTest, isDevelopment } from "@/electron/utils/index";
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import path from "path";
 const os = require("os");
 const { execFile, exec } = require("child_process");
@@ -125,7 +124,6 @@ export const shakeWindow = () => {
     win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY);
   }, shakeInterval);
 };
-
 /**注册协议 并通过浏览器打开PureAdmin程序 pure:// */
 export const setDefaultProtocol = () => {
   if (isProduction) {
@@ -136,25 +134,17 @@ export const setDefaultProtocol = () => {
     console.log("注册协议", isSet ? "成功" : "失败");
   }
 };
-
-export const initDevtools = async () => {
-  // if (isDevelopment && !isTest) {
-  //   try {
-  //     await installExtension(VUEJS3_DEVTOOLS);
-  //   } catch (e) {
-  //     console.error("Vue Devtools failed to install:", e.toString());
-  //   }
-  // }
-  // 在开发模式下，应父进程的请求退出。
-  // if (isWindows) {
-  //   process.on("message", (data) => {
-  //     if (data === "graceful-exit") app.quit();
-  //   });
-  // } else {
-  //   process.on("SIGTERM", () => {
-  //     app.quit();
-  //   });
-  // }
+/** 在开发模式下，应父进程的请求退出。 */
+export const setupGracefulExit = async () => {
+  if (isWindows) {
+    process.on("message", (data) => {
+      if (data === "graceful-exit") app.quit();
+    });
+  } else {
+    process.on("SIGTERM", () => {
+      app.quit();
+    });
+  }
 };
 
 export const quitApp = (type) => {};
