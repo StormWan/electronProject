@@ -6,14 +6,7 @@ import { initShortcut } from "../shortcut/index";
 
 export const createBrowserWindow = (_options) => {
   const options = {
-    width: 1038,
-    height: 706,
-    minWidth: 1038,
-    minHeight: 706,
-    // width: 380,
-    // height: 550,
-    // minWidth: 380,
-    // minHeight: 550,
+    ...global.mainWinOptions, // mainWinOptions loginWinOptions
     show: false,
     frame: isWindows ? false : true,
     titleBarStyle: isWindows ? "hiddenInset" : "default",
@@ -33,7 +26,7 @@ export const createBrowserWindow = (_options) => {
   // 创建浏览器窗口
   const win = new BrowserWindow(options);
   global.mainWin = win;
-  windowMap.set("main", win);
+  windowMap.set("mainWin", win);
   // 用于定义菜单栏的内容和行为，包括菜单项、子菜单、快捷键等。它是在应用程序启动时设置菜单栏的一种方式。
   // win.setMenuBarVisibility(false);
   if (webpackDevServerUrl) {

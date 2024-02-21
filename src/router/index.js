@@ -4,6 +4,7 @@ import { setPageTitle } from "@/utils/common";
 import NProgress from "@/utils/progress";
 import storage from "@/utils/localforage/index";
 import routes from "./routes";
+import { isElectron } from "@/electron/utils/index";
 
 // hack router push callback
 const originalPush = createRouter.prototype.push;
@@ -26,11 +27,11 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   if (from.path === to.path) return;
-  !process.env.IS_ELECTRON && setPageTitle(to.meta.title);
+  !isElectron && setPageTitle(to.meta.title);
   const token = storage.get(ACCESS_TOKEN);
   if (token) {
     // start progress bar
-    !process.env.IS_ELECTRON && NProgress.start();
+    !isElectron && NProgress.start();
     if (isF) {
       next();
     } else {

@@ -2,6 +2,7 @@
 import { app, Menu, shell, protocol, BrowserWindow, session } from "electron";
 import { isMac, setDefaultProtocol, winSingle, setupGracefulExit } from "@/electron/utils/index";
 import ipcEvent from "./ipcMain/index";
+import "./config";
 import { createBrowserWindow } from "./utils/create-window";
 
 class Background {

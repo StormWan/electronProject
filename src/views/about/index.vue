@@ -117,6 +117,11 @@ const data = [
     url: "https://gitee.com/H260788/PureAdmin",
     title: "gitee",
   },
+  {
+    label: "打开应用",
+    url: "pure://openapp?name=1&pwd=2",
+    title: "PureApp",
+  },
 ];
 
 Object.keys(dependencies).forEach((key) => {
