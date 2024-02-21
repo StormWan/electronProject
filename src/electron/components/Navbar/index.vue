@@ -1,8 +1,8 @@
 <template>
   <header class="header" v-if="isWindows">
-    <div class="titlebar flex justify-content" :class="{ 'has-custom-titlebar': true }">
+    <div class="has-custom-titlebar">
       <div class="log">
-        <img class="" src="../../../assets/images/log.png" alt="" />
+        <img class="log-img" :src="logSrc" alt="log" />
         <span>{{ $config.Title }}</span>
       </div>
       <div class="flex items-center">
@@ -10,7 +10,7 @@
           <UserAvatar type="self" class="user-info" :size="28" />
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="$store.dispatch('LOG_OUT')">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="logOut">退出登录</el-dropdown-item>
               <!-- <el-dropdown-item></el-dropdown-item> -->
             </el-dropdown-menu>
           </template>
@@ -25,44 +25,57 @@
   </header>
 </template>
 
-<script setup>
+<script>
 import { isWindows } from "@/electron/utils/index";
 import { showConfirmationBox } from "@/utils/message";
-const { ipcRenderer } = require("electron");
 
-const button = [
-  {
-    type: "minimize",
-    name: "minMainWindow",
+export default {
+  name: "Navbar",
+  data() {
+    return {
+      logSrc: require("@/assets/images/log.png"),
+      isWindows,
+      button: [
+        {
+          type: "minimize",
+          name: "minMainWindow",
+        },
+        {
+          type: "maximize",
+          name: "maxMainWindow",
+        },
+        {
+          type: "exit",
+          name: "quitApp",
+        },
+      ],
+    };
   },
-  {
-    type: "maximize",
-    name: "maxMainWindow",
+  methods: {
+    logOut() {
+      this.$store.dispatch("LOG_OUT");
+    },
+    async onClick({ name }) {
+      if (name === "quitApp") {
+        const result = await showConfirmationBox({
+          message: "确定退出程序吗?",
+          iconType: "warning",
+        });
+        if (result == "cancel") return;
+        this.$store.commit("ipcRenderer", { key: name });
+      } else {
+        this.$store.commit("ipcRenderer", { key: name });
+      }
+    },
   },
-  {
-    type: "exit",
-    name: "quitApp",
-  },
-];
-
-async function onClick(item) {
-  const { type, name } = item;
-  if (name == "quitApp") {
-    const message = { message: "确定退出程序吗?", iconType: "warning" };
-    const result = await showConfirmationBox(message);
-    if (result == "cancel") return;
-    ipcRenderer.send(name);
-  } else {
-    ipcRenderer.send(name);
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .header {
   height: 42px;
 }
-.titlebar {
+.has-custom-titlebar {
   position: relative;
   width: 100%;
   min-width: 500px;

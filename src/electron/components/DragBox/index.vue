@@ -6,12 +6,21 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import { isWindows } from "@/electron/utils/index";
-const { ipcRenderer } = require("electron");
-function onClick() {
-  ipcRenderer.send("quitApp");
-}
+export default {
+  name: "DragBox",
+  data() {
+    return {
+      isWindows,
+    };
+  },
+  methods: {
+    onClick() {
+      this.$store.commit("ipcRenderer", { key: "quitApp" });
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
