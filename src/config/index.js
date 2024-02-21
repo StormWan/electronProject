@@ -1,4 +1,6 @@
 import axios from "axios";
+const pkg = require("../../package.json");
+const { version } = pkg;
 
 let config = {};
 const VUE_APP_PUBLIC_PATH = process.env.VUE_APP_PUBLIC_PATH;
@@ -40,13 +42,12 @@ const getConfig = (key) => {
  * @returns {Promise<Object>} - 返回包含项目配置的 Promise 对象
  */
 export const getServerConfig = async (app) => {
-  app.config.globalProperties.$config = getConfig();
   try {
     const { data: configData } = await axios.get(`${VUE_APP_PUBLIC_PATH}serverConfig.json`);
-    let $config = app.config.globalProperties.$config;
+    let $config = getConfig();
     // 自动注入项目配置
     if (app && $config && typeof configData === "object") {
-      $config = { ...$config, ...configData };
+      $config = { ...$config, ...configData, Version: version };
       app.config.globalProperties.$config = $config;
       // 设置全局配置
       setConfig($config);
