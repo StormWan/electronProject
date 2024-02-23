@@ -1,17 +1,25 @@
 "use strict";
 import { app, Menu, shell, protocol, BrowserWindow, session } from "electron";
-import { isMac, setDefaultProtocol, winSingle, setupGracefulExit } from "@/electron/utils/index";
+import {
+  isMac,
+  isWindows,
+  setDefaultProtocol,
+  setupGracefulExit,
+  handleAfterReady,
+} from "@/electron/utils/index";
 import ipcEvent from "./ipcMain/index";
 import "./config";
+import { winSingle } from "./utils/win-single";
 import { createBrowserWindow } from "./utils/create-window";
+import { windowMap } from "./utils/windows-map";
 
 class Background {
   constructor() {
+    // 确保应用程序是单例的。
+    winSingle();
     this.init();
   }
   init() {
-    // 确保应用程序是单例的。
-    winSingle();
     // handle app events
     this.handleAppEvents();
   }
@@ -37,13 +45,13 @@ class Background {
       // 在macOS上，当 dock图标被单击，并且没有其他窗口打开。
       if (BrowserWindow.getAllWindows().length === 0) this.createWindow();
     });
-    //此方法将在Electron完成后调用 初始化，并准备创建浏览器窗口。 某些API只能在此事件发生后使用。
+    // 此方法将在Electron完成后调用 初始化，并准备创建浏览器窗口。 某些API只能在此事件发生后使用。
     app.on("ready", () => {
+      ipcEvent();
+      setDefaultProtocol();
       setupGracefulExit();
       this.createWindow();
-      ipcEvent();
-      // 注册协议
-      setDefaultProtocol();
+      // handleAfterReady();
       session.defaultSession.maxConnections = 10;
     });
 
@@ -60,9 +68,17 @@ class Background {
         };
       });
     });
-
+    // Windows 下通过协议URL启动
+    app.on("second-instance", async (event, argv) => {
+      if (isWindows) {
+        const win = windowMap.get("mainWin");
+        win.webContents.send("awaken", argv);
+      }
+    });
+    // macOS 下通过协议URL启动
     app.on("open-url", (event, url) => {
-      // win.webContents.send("second-instance", { });
+      const win = windowMap.get("mainWin");
+      win.webContents.send("awaken", url);
     });
 
     // 用于开发环境 测试热更新

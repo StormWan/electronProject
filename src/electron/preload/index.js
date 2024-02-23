@@ -1,4 +1,4 @@
-const { contextBridge } = require("electron");
+import { contextBridge } from "electron";
 
 // contextBridge.exposeInMainWorld("platform", process.platform);
 // contextBridge.exposeInMainWorld("IS_ELECTRON", true);

@@ -3,6 +3,7 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { isWindows, isTest, webpackDevServerUrl } from "./platform";
 import { windowMap } from "./windows-map";
 import { initShortcut } from "../shortcut/index";
+import path from "path";
 
 export const createBrowserWindow = (_options) => {
   const options = {
@@ -10,9 +11,8 @@ export const createBrowserWindow = (_options) => {
     show: false,
     frame: isWindows ? false : true,
     titleBarStyle: isWindows ? "hiddenInset" : "default",
+    // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
     webPreferences: {
-      // 在上阅读更多信息https://www.electronjs.org/docs/latest/tutorial/context-isolation
-      // preload: path.join(__dirname, "preload.js"),
       // 在外部浏览器中打开链接
       nativeWindowOpen: true,
       // 否启用 Node.js 的集成
@@ -21,12 +21,12 @@ export const createBrowserWindow = (_options) => {
       contextIsolation: false,
       // 是否启用渲染进程访问 Electron 的 remote 模块
       enableRemoteModule: true,
+      // 预加载文件preload
+      // preload: path.join(__dirname, "preload.js"),
     },
   };
   // 创建浏览器窗口
   const win = new BrowserWindow(options);
-  global.mainWin = win;
-  windowMap.set("mainWin", win);
   // 用于定义菜单栏的内容和行为，包括菜单项、子菜单、快捷键等。它是在应用程序启动时设置菜单栏的一种方式。
   // win.setMenuBarVisibility(false);
   if (webpackDevServerUrl) {
@@ -39,7 +39,7 @@ export const createBrowserWindow = (_options) => {
     win.loadURL("app://./index.html");
   }
   // 在窗口加载完成后
-  win.webContents.once("did-finish-load", () => {
+  win.webContents.on("did-finish-load", () => {
     // 直接打开软件的话开发环境的启动参数为2，安装包为1，大于这个数的话说明是通过伪协议拉起软件的
     if (process.argv.length > (app.isPackaged ? 1 : 2)) {
       app.emit("second-instance", null, process.argv);
@@ -49,4 +49,6 @@ export const createBrowserWindow = (_options) => {
     initShortcut(win);
     win.show();
   });
+  global.mainWin = win;
+  windowMap.set("mainWin", win);
 };

@@ -36,15 +36,14 @@ onMounted(async () => {
   nextTick(() => {
     setWatermark("Pure Admin");
   });
-  fnElectron();
 });
-function fnElectron() {
-  ipcRenderer.on("renderer-scheme", (event, data) => {
-    console.log("renderer-scheme", data);
-  });
-}
+
 onBeforeUnmount(() => {
   clear();
+});
+
+ipcRenderer.on("awaken", (event, data) => {
+  console.log("awaken:", data);
 });
 </script>
 

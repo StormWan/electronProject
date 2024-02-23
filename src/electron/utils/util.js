@@ -134,6 +134,22 @@ export const setDefaultProtocol = () => {
     console.log("注册协议", isSet ? "成功" : "失败");
   }
 };
+
+export const handleAfterReady = () => {
+  // windows如果是通过url schema启动则发出时间处理
+  // 启动参数超过1个才可能是通过url schema启动
+  if (process.argv.length > 1) {
+    if (!app.isReady()) {
+      app.once("browser-window-created", () => {
+        // app 未打开时，通过 open-url打开 app，此时可能还没 ready，需要延迟发送事件
+        // 此段ready延迟无法触发 service/app/ open-url 处理，因为saga初始化需要时间
+        app.emit("second-instance", null, process.argv);
+      });
+    } else {
+      app.emit("second-instance", null, process.argv);
+    }
+  }
+};
 /** 在开发模式下，应父进程的请求退出。 */
 export const setupGracefulExit = async () => {
   if (isWindows) {
