@@ -19,7 +19,7 @@
           <span class="file-icon" v-show="isStatus('success') && self">
             <img src="@/assets/message/check.png" alt="" />
           </span>
-          <HandleFolder v-if="false" :folder="payload" ref="folderRef" />
+          <HandleFolder :folder="payload" ref="folderRef" />
         </div>
       </div>
     </div>

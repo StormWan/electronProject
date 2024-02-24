@@ -1,7 +1,8 @@
 import { app, shell, clipboard, dialog } from "electron";
 import { isWindows, isMac, isProduction, isTest, isDevelopment } from "@/electron/utils/index";
-import path from "path";
 const os = require("os");
+const fs = require("fs");
+const path = require("path");
 const { execFile, exec } = require("child_process");
 const { version } = require("../../../package.json");
 
@@ -164,3 +165,19 @@ export const setupGracefulExit = async () => {
 };
 
 export const quitApp = (type) => {};
+
+export const initFolder = (type) => {
+  const dirname = path.resolve(os.homedir(), "Download/");
+  // const dirname = path.resolve(process.cwd(), "./download/");
+  // console.log(dirname);
+  if (fs.existsSync(dirname)) {
+    return true;
+  } else {
+    if (this.mkdirsSync(path.dirname(dirname))) {
+      fs.mkdirSync(dirname);
+      return true;
+    } else {
+      return false; // 递归创建目录失败
+    }
+  }
+};
