@@ -1,8 +1,8 @@
 const { defineConfig } = require("@vue/cli-service");
-const AutoImport = require("unplugin-auto-import/webpack");
-const Components = require("unplugin-vue-components/webpack"); // 组件按需引入
-const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer"); // 打包文件分析工具
+// const AutoImport = require("unplugin-auto-import/webpack");
+// const Components = require("unplugin-vue-components/webpack"); // 组件按需引入
+// const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+// const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer"); // 打包文件分析工具
 const { __APP_INFO__ } = require("./build/info");
 const path = require("path");
 const {

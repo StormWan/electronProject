@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 右键菜单 -->
-    <contextmenu ref="contextmenu">
+    <!-- <contextmenu ref="contextmenu">
       <contextmenu-item
         v-for="item in RIGHT_CLICK_TAGS_LIST"
         :key="item.id"
@@ -31,7 +31,7 @@
       >
         {{ item.text }}
       </contextmenu-item>
-    </contextmenu>
+    </contextmenu> -->
   </div>
 </template>
 

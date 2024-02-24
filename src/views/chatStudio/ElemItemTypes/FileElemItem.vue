@@ -1,5 +1,10 @@
 <template>
-  <div class="file-box" :id="payload.uuid" :style="{ background: backgroundStyle }">
+  <div
+    class="file-box"
+    @click="handleOpen"
+    :id="payload.uuid"
+    :style="{ background: backgroundStyle }"
+  >
     <div class="file-data">
       <img :src="renderFileIcon(FileType)" alt="" />
       <div class="file-box__content">
@@ -11,9 +16,10 @@
             {{ bytesToSize(payload.fileSize) }}
           </span>
           <span class="progress" v-show="!isStatus('success')"></span>
-          <span class="file-icon" v-show="isStatus('success')">
+          <span class="file-icon" v-show="isStatus('success') && self">
             <img src="@/assets/message/check.png" alt="" />
           </span>
+          <HandleFolder v-if="false" :folder="payload" ref="folderRef" />
         </div>
       </div>
     </div>
@@ -23,6 +29,7 @@
 <script setup>
 import { ref, toRefs, onMounted, onBeforeUnmount } from "vue";
 import { getFileType, renderFileIcon, bytesToSize } from "@/utils/chat/index";
+import HandleFolder from "../components/HandleFolder.vue";
 import emitter from "@/utils/mitt-bus";
 const props = defineProps({
   message: {
@@ -42,12 +49,16 @@ const { message, status } = toRefs(props);
 const { payload } = message.value;
 
 const backgroundStyle = ref("");
+const folderRef = ref(null);
 const FileType = getFileType(payload?.fileName);
 
 const isStatus = (value) => {
   return status.value == value;
 };
 
+function handleOpen() {
+  folderRef.value.handleOpen();
+}
 const backstyle = (status = 0, percentage = 0) => {
   if (percentage === 100) {
     return "";
@@ -95,6 +106,7 @@ onBeforeUnmount(() => {
   .file-data {
     display: flex;
     .file-box__content {
+      position: relative;
       margin-left: 12px;
       display: flex;
       flex-wrap: wrap;
