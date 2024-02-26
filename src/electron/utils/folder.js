@@ -77,7 +77,14 @@ export const openFolder = ({ folder = folderDir, fileName = "" }) => {
 /**
  * 下载文件
  */
-export const downloadFolder = ({ folder = folderDir, fileName, fileSize, fileUrl }) => {
+export const downloadFolder = ({
+  folder = folderDir,
+  fileName,
+  fileSize,
+  fileUrl,
+  onFinish,
+  onProgress,
+}) => {
   const isFolder = createFolderChild();
   if (!isFolder) {
     console.log("文件路径不存在 downloadFolder:");
@@ -103,17 +110,17 @@ export const downloadFolder = ({ folder = folderDir, fileName, fileSize, fileUrl
       //下载完成后重命名文件
       if (fs.existsSync(file_path_temp)) {
         fs.renameSync(file_path_temp, file_path);
-        console.log("文件下载完成:", file_path);
+        onFinish(file_path);
       }
     });
   const requestItem = request(requestParams);
   const stream = progressStream({
     length: fileSize,
-    time: 100, // ms
+    time: 50, // ms
   });
-  stream.on("progress", (progress) => {
-    let percentage = Math.round(progress.percentage) + "%";
-    console.log(percentage);
+  stream.on("progress", ({ percentage }) => {
+    let progress = Math.round(percentage);
+    onProgress(progress);
   });
   requestItem.pipe(stream).pipe(fileStream);
 };

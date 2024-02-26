@@ -1,6 +1,6 @@
 <template>
   <FontIcon
-    v-show="!isExist"
+    v-show="!isExist && isStatus"
     @click.stop="handleDownload"
     class="download"
     iconName="Download"
@@ -29,8 +29,13 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  isStatus: {
+    type: Boolean,
+    default: false,
+  },
 });
 const { folder } = toRefs(props);
+const emit = defineEmits(["loadProgress"]);
 
 const isFolder = ref(false); // 文件夹是否存在
 const isExist = ref(false); //文件是否存在
@@ -38,9 +43,20 @@ const isExist = ref(false); //文件是否存在
 // 下载文件
 function handleDownload() {
   console.log("download");
-  const { fileName, fileUrl, fileSize } = folder.value;
-  downloadFolder({ fileName, fileUrl, fileSize });
-  updateFileState();
+  const { fileName, fileUrl, fileSize, uuid } = folder.value;
+  downloadFolder({
+    fileName,
+    fileUrl,
+    fileSize,
+    onFinish(url) {
+      console.log("下载完成 onFinish:", url);
+      updateFileState();
+    },
+    onProgress(progress) {
+      console.log("progress:", progress + "%");
+      emit("loadProgress", { uuid, num: progress });
+    },
+  });
 }
 // 打开文件夹
 function handleOpenFolder() {
@@ -49,7 +65,6 @@ function handleOpenFolder() {
 }
 // 打开文件
 function handleOpen() {
-  console.log(isFolder);
   console.log("handleOpen");
   console.log(folder.value);
   const { fileName } = folder.value;

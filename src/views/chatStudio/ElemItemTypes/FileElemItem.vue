@@ -17,9 +17,14 @@
           </span>
           <span class="progress" v-show="!isStatus('success')"></span>
           <span class="file-icon" v-show="isStatus('success') && self">
-            <img src="@/assets/message/check.png" alt="" />
+            <img src="@/assets/message/check.png" alt="√" />
           </span>
-          <HandleFolder :folder="payload" ref="folderRef" />
+          <HandleFolder
+            @loadProgress="loadProgress"
+            :isStatus="isStatus('success')"
+            :folder="payload"
+            ref="folderRef"
+          />
         </div>
       </div>
     </div>
@@ -55,7 +60,9 @@ const FileType = getFileType(payload?.fileName);
 const isStatus = (value) => {
   return status.value == value;
 };
-
+function loadProgress({ uuid, num }) {
+  uploading({ uuid, num }, true);
+}
 function handleOpen() {
   folderRef.value.handleOpen();
 }
@@ -69,12 +76,12 @@ const backstyle = (status = 0, percentage = 0) => {
 };
 backgroundStyle.value = backstyle();
 
-const uploading = ({ uuid, num }) => {
+const uploading = ({ uuid, num }, off) => {
   try {
     const dom = document.getElementById(`${uuid}`);
     dom.style.background = backstyle(1, num);
     const progress = dom.querySelector(".progress");
-    if (progress && !isStatus("success")) {
+    if (progress && off) {
       progress.innerText = num + "%";
     }
   } catch (error) {
@@ -84,7 +91,7 @@ const uploading = ({ uuid, num }) => {
 
 onMounted(() => {
   emitter.on("fileUploading", (data) => {
-    uploading(data);
+    uploading(data, !isStatus("success"));
   });
 });
 onBeforeUnmount(() => {
