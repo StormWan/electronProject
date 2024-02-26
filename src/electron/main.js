@@ -9,6 +9,7 @@ import {
 } from "@/electron/utils/index";
 import ipcEvent from "./ipcMain/index";
 import "./config";
+import { initFolder } from "./utils/folder";
 import { winSingle } from "./utils/win-single";
 import { createBrowserWindow } from "./utils/create-window";
 import { windowMap } from "./utils/windows-map";
@@ -16,6 +17,7 @@ import { windowMap } from "./utils/windows-map";
 class Background {
   constructor() {
     // 确保应用程序是单例的。
+    initFolder();
     winSingle();
     this.init();
   }
@@ -51,7 +53,7 @@ class Background {
       setDefaultProtocol();
       setupGracefulExit();
       this.createWindow();
-      // handleAfterReady();
+      handleAfterReady();
       session.defaultSession.maxConnections = 10;
     });
 
