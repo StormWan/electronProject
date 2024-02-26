@@ -1,7 +1,13 @@
 <template>
-  <!-- <FontIcon @click.stop="handleDownload" class="download" iconName="Download" title="下载文件" /> -->
   <FontIcon
-    v-show="isFolder"
+    v-show="!isExist"
+    @click.stop="handleDownload"
+    class="download"
+    iconName="Download"
+    title="下载文件"
+  />
+  <FontIcon
+    v-show="isExist"
     @click.stop="handleOpenFolder()"
     class="opened"
     iconName="FolderOpened"
@@ -10,8 +16,14 @@
 </template>
 
 <script setup>
-import { createFolderChild, openFile, openFolder, downloadFolder } from "@/electron/utils/folder";
-import { toRefs } from "vue";
+import {
+  openFile,
+  openFolder,
+  downloadFolder,
+  checkFileExist,
+  createFolderChild,
+} from "@/electron/utils/folder";
+import { ref, toRefs, onMounted } from "vue";
 const props = defineProps({
   folder: {
     type: Object,
@@ -19,12 +31,16 @@ const props = defineProps({
   },
 });
 const { folder } = toRefs(props);
-// 文件夹是否存在
-const isFolder = createFolderChild();
+
+const isFolder = ref(false); // 文件夹是否存在
+const isExist = ref(false); //文件是否存在
+
 // 下载文件
 function handleDownload() {
   console.log("download");
-  downloadFolder();
+  const { fileName, fileUrl, fileSize } = folder.value;
+  downloadFolder({ fileName, fileUrl, fileSize });
+  updateFileState();
 }
 // 打开文件夹
 function handleOpenFolder() {
@@ -33,11 +49,20 @@ function handleOpenFolder() {
 }
 // 打开文件
 function handleOpen() {
+  console.log(isFolder);
   console.log("handleOpen");
   console.log(folder.value);
   const { fileName } = folder.value;
   openFile({ fileName });
 }
+function updateFileState() {
+  isFolder.value = createFolderChild();
+  isExist.value = checkFileExist(folder.value.fileName);
+}
+
+onMounted(() => {
+  updateFileState();
+});
 defineExpose({ handleOpen });
 </script>
 

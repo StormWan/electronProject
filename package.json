@@ -40,7 +40,7 @@
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-localshortcut": "^3.2.1",
-    "electron-log": "^5.0.0",
+    "electron-log": "^5.1.1",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
     "element-plus": "^2.4.3",
@@ -50,6 +50,7 @@
     "mitt": "^3.0.0",
     "nprogress": "^0.2.0",
     "pinyin-pro": "^3.18.5",
+    "progress-stream": "^2.0.0",
     "pure-tools": "^0.0.3",
     "qrcode": "^1.5.3",
     "storejs": "^2.0.1",
@@ -57,10 +58,10 @@
     "tim-upload-plugin": "^1.0.5",
     "v-contextmenu": "3.0.0",
     "vue": "^3.2.36",
-    "vue-virtual-scroller": "2.0.0-beta.8",
     "vue-draggable-next": "^2.1.1",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.0-0",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

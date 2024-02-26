@@ -1,7 +1,9 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const request = require("request");
 const { shell } = require("electron");
+const progressStream = require("progress-stream");
 
 const folderDir = "File";
 const mainDir = "Pure Files";
@@ -11,9 +13,14 @@ export const initFolder = () => {
   createFolder();
 };
 
+export const checkFileExist = (fileName) => {
+  const filePath = path.join(rootDir, folderDir, fileName);
+  return fs.existsSync(filePath);
+};
+
 /**
  * 创建文件夹
- * @param {string} dirPath - 要创建的文件夹路径，默认为全局变量 global.rootDir
+ * @param {string} dirPath - 要创建的文件夹路径
  * @returns {boolean} - 返回是否成功创建文件夹
  * C:\Users\{user}\Documents\Pure Files
  */
@@ -70,10 +77,43 @@ export const openFolder = ({ folder = folderDir, fileName = "" }) => {
 /**
  * 下载文件
  */
-export const downloadFolder = () => {
+export const downloadFolder = ({ folder = folderDir, fileName, fileSize, fileUrl }) => {
   const isFolder = createFolderChild();
   if (!isFolder) {
-    console.log("文件路径不存在 openFolder:", filePath);
+    console.log("文件路径不存在 downloadFolder:");
     return;
   }
+  const file_path = path.join(rootDir, folder, fileName);
+  const file_path_temp = `${file_path}.tmp`;
+  const requestParams = {
+    method: "get",
+    url: fileUrl,
+    responseType: "stream",
+  };
+  //创建写入流
+  const fileStream = fs.createWriteStream(file_path_temp);
+  fileStream
+    .on("error", (e) => {
+      console.error("error==>", e);
+    })
+    .on("ready", () => {
+      console.log("开始下载:", fileUrl);
+    })
+    .on("finish", () => {
+      //下载完成后重命名文件
+      if (fs.existsSync(file_path_temp)) {
+        fs.renameSync(file_path_temp, file_path);
+        console.log("文件下载完成:", file_path);
+      }
+    });
+  const requestItem = request(requestParams);
+  const stream = progressStream({
+    length: fileSize,
+    time: 100, // ms
+  });
+  stream.on("progress", (progress) => {
+    let percentage = Math.round(progress.percentage) + "%";
+    console.log(percentage);
+  });
+  requestItem.pipe(stream).pipe(fileStream);
 };
