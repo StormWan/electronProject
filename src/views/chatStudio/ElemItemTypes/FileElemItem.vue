@@ -64,7 +64,7 @@ function loadProgress({ uuid, num }) {
   uploading({ uuid, num }, true);
 }
 function handleOpen() {
-  folderRef.value.handleOpen();
+  folderRef.value?.handleOpen();
 }
 const backstyle = (status = 0, percentage = 0) => {
   if (percentage === 100) {

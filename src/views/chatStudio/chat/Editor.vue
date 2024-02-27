@@ -22,7 +22,7 @@
       :isOwner="isOwner"
       @insertMention="insertMention"
     />
-    <el-tooltip effect="dark" :content="$t('chat.buttonPrompt')" placement="left-start">
+    <el-tooltip effect="dark" :content="editorConfig.placeholder" placement="left-start">
       <el-button class="btn-send" @click="handleEnter()"> {{ $t("chat.sending") }} </el-button>
     </el-tooltip>
   </div>

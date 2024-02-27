@@ -57,7 +57,6 @@
       <contextmenu-item
         v-for="item in RIGHT_CLICK_CHAT_LIST"
         :key="item.id"
-        v-show="isShowMenu"
         @click="handleClickMenuItem(item)"
       >
         {{ item.text }}
@@ -82,7 +81,7 @@ import emitter from "@/utils/mitt-bus";
 import { chatName } from "../utils/utils";
 
 const loading = ref(true);
-const isShowMenu = ref(false);
+const isShowMenu = ref(true);
 const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
@@ -190,7 +189,7 @@ const handleContextMenuEvent = (e, item) => {
   const { type } = item;
   const isStystem = type == "@TIM#SYSTEM";
   // 系统通知屏蔽右键菜单
-  isShowMenu.value = !isStystem;
+  // isShowMenu.value = !isStystem;
   contextMenuItemInfo.value = item;
   // 会话
   RIGHT_CLICK_CHAT_LIST.map((t) => {
