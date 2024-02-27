@@ -2,7 +2,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const request = require("request");
-const { shell } = require("electron");
+const { shell, ipcRenderer } = require("electron");
 const progressStream = require("progress-stream");
 
 const folderDir = "File";
@@ -56,7 +56,8 @@ export const createFolderChild = (folder = folderDir) => {
 export const openFile = ({ folder = folderDir, fileName = "" }) => {
   const filePath = path.join(rootDir, folder, fileName);
   if (fs.existsSync(filePath)) {
-    shell.openPath(filePath);
+    // shell.openPath(filePath);
+    ipcRenderer.send("openFolder", { type: "openPath", data: filePath });
   } else {
     console.log("文件路径不存在 openFile:", filePath);
   }
@@ -68,7 +69,8 @@ export const openFile = ({ folder = folderDir, fileName = "" }) => {
 export const openFolder = ({ folder = folderDir, fileName = "" }) => {
   const filePath = path.join(rootDir, folder, fileName);
   if (fs.existsSync(filePath)) {
-    shell.showItemInFolder(filePath);
+    // shell.showItemInFolder(filePath);
+    ipcRenderer.send("openFolder", { type: "showItemInFolder", data: filePath });
   } else {
     console.log("文件路径不存在 openFolder:", filePath);
   }
@@ -116,7 +118,7 @@ export const downloadFolder = ({
   const requestItem = request(requestParams);
   const stream = progressStream({
     length: fileSize,
-    time: 50, // ms
+    time: 100, // ms
   });
   stream.on("progress", ({ percentage }) => {
     let progress = Math.round(percentage);

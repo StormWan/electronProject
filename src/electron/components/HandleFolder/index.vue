@@ -35,7 +35,7 @@ const props = defineProps({
   },
 });
 const { folder } = toRefs(props);
-const emit = defineEmits(["loadProgress"]);
+const emit = defineEmits(["loadProgress", "loadFinish"]);
 
 const isFolder = ref(false); // 文件夹是否存在
 const isExist = ref(false); //文件是否存在
@@ -51,6 +51,7 @@ function handleDownload() {
     onFinish(url) {
       console.log("下载完成 onFinish:", url);
       updateFileState();
+      emit("loadFinish", isExist.value);
     },
     onProgress(progress) {
       console.log("progress:", progress + "%");

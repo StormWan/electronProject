@@ -63,6 +63,11 @@ const ipcEvent = () => {
     openExternal(option);
   });
 
+  ipcMain.on("openFolder", (event, { type, data }) => {
+    // showItemInFolder openPath
+    shell[type](data);
+  });
+
   // 托盘闪烁
   ipcMain.on("TrayFlashIng", (event, option) => {
     global.mainWin.flashFrame(true);

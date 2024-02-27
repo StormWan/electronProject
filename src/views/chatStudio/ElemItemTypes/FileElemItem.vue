@@ -15,11 +15,13 @@
           <span class="file-box__size-label">
             {{ bytesToSize(payload.fileSize) }}
           </span>
-          <span class="progress" v-show="!isStatus('success')"></span>
-          <span class="file-icon" v-show="isStatus('success') && self">
+          <span class="upload_progress" v-show="!isStatus('success')"></span>
+          <span class="download_progress" v-show="!isExist && isStatus('success')"></span>
+          <span class="file-icon" v-show="isStatus('success') && self && isExist">
             <img src="@/assets/message/check.png" alt="√" />
           </span>
           <HandleFolder
+            @loadFinish="loadFinish"
             @loadProgress="loadProgress"
             :isStatus="isStatus('success')"
             :folder="payload"
@@ -34,7 +36,8 @@
 <script setup>
 import { ref, toRefs, onMounted, onBeforeUnmount } from "vue";
 import { getFileType, renderFileIcon, bytesToSize } from "@/utils/chat/index";
-import HandleFolder from "../components/HandleFolder.vue";
+import HandleFolder from "@/electron/components/HandleFolder/index.vue";
+import { checkFileExist } from "@/electron/utils/folder";
 import emitter from "@/utils/mitt-bus";
 const props = defineProps({
   message: {
@@ -53,6 +56,9 @@ const props = defineProps({
 const { message, status } = toRefs(props);
 const { payload } = message.value;
 
+const uploadProgress = ref(0); // 上传进度
+const downloadProgress = ref(0); // 下载进度
+const isExist = ref(false);
 const backgroundStyle = ref("");
 const folderRef = ref(null);
 const FileType = getFileType(payload?.fileName);
@@ -60,29 +66,34 @@ const FileType = getFileType(payload?.fileName);
 const isStatus = (value) => {
   return status.value == value;
 };
+function loadFinish(value) {
+  isExist.value = value;
+}
 function loadProgress({ uuid, num }) {
-  uploading({ uuid, num }, true);
+  uploading({ uuid, num, type: "dow" });
 }
 function handleOpen() {
   folderRef.value?.handleOpen();
 }
 const backstyle = (status = 0, percentage = 0) => {
-  if (percentage === 100) {
-    return "";
-  }
+  if (percentage === 100) return "";
   return status === 1
     ? `linear-gradient(to right, rgba(24, 144, 255, 0.09) ${percentage}%, white 0%, white 100%)`
     : "";
 };
 backgroundStyle.value = backstyle();
 
-const uploading = ({ uuid, num }, off) => {
+const uploading = ({ uuid, num, type = "up" }) => {
   try {
     const dom = document.getElementById(`${uuid}`);
     dom.style.background = backstyle(1, num);
-    const progress = dom.querySelector(".progress");
-    if (progress && off) {
-      progress.innerText = num + "%";
+    if (type == "up") {
+      const upProgress = dom.querySelector(".upload_progress");
+      upProgress.innerText = num + "%";
+    }
+    if (type == "dow") {
+      const downProgress = dom.querySelector(".download_progress");
+      downProgress.innerText = num + "%";
     }
   } catch (error) {
     console.error("[upload]:", error);
@@ -91,8 +102,9 @@ const uploading = ({ uuid, num }, off) => {
 
 onMounted(() => {
   emitter.on("fileUploading", (data) => {
-    uploading(data, !isStatus("success"));
+    uploading(data);
   });
+  isExist.value = checkFileExist(payload.fileName);
 });
 onBeforeUnmount(() => {
   emitter.off("fileUploading");
@@ -129,12 +141,6 @@ onBeforeUnmount(() => {
         color: #999999;
         line-height: 18px;
         font-size: 12px;
-        .progress {
-          display: inline-block;
-          width: 30px;
-          padding: 0 5px;
-          color: #409eff;
-        }
         .file-status,
         .file-icon {
           margin-left: 5px;
@@ -142,5 +148,17 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+.upload_progress {
+  display: inline-block;
+  width: 30px;
+  padding: 0 5px;
+  color: #409eff;
+}
+.download_progress {
+  display: inline-block;
+  width: 30px;
+  padding: 0 5px;
+  color: #409eff;
 }
 </style>
