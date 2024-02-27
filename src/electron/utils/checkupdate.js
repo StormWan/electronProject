@@ -8,8 +8,6 @@ import { isWindows, isMac } from "@/electron/utils/index";
 // 配置更新服务器 URL
 const updateServerUrl = process.env.VUE_APP_UPDATE_SERVER_URL;
 
-const system = { win32: "win", darwin: "mac" };
-
 class Update {
   constructor() {
     this.mainWindow = global.mainWin;
