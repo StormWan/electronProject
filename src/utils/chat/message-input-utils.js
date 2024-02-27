@@ -306,7 +306,7 @@ export const createProgressHandler = () => {
       lastNum = progress.num;
       if (typeof cd === "function") cd();
     }
-  }, 100);
+  }, 80);
   return handleProgressUpdate;
 };
 

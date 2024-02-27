@@ -40,6 +40,7 @@
       <el-descriptions border>
         <el-descriptions-item
           :label="item.label"
+          :label-class-name="getMainLabel(item.label)"
           label-align="left"
           align="left"
           v-for="(item, index) in schema"
@@ -63,6 +64,7 @@
       <el-descriptions border>
         <el-descriptions-item
           :label="item.label"
+          :label-class-name="getMainLabel(item.label)"
           label-align="left"
           align="left"
           v-for="(item, index) in devSchema"
@@ -80,6 +82,7 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 const { repository } = require("../../../package.json");
 const APP_INFO = JSON.parse(window.__APP_INFO__);
 const { pkg, lastBuildTime } = APP_INFO;
@@ -123,6 +126,26 @@ const data = [
     title: "PureApp",
   },
 ];
+const words = [
+  "@vue/cli-service",
+  "@vueuse/core",
+  "mitt",
+  "axios",
+  "vuex",
+  "dayjs",
+  "vue",
+  "lodash-es",
+  "element-plus",
+  "vue-i18n",
+  "vue-router",
+  "eslint",
+  "prettier",
+  "sass",
+];
+
+const getMainLabel = computed(() => (label) => {
+  return words.includes(label) ? "main-label" : null;
+});
 
 Object.keys(dependencies).forEach((key) => {
   schema.push({ field: dependencies[key], label: key });
@@ -134,6 +157,10 @@ Object.keys(devDependencies).forEach((key) => {
 </script>
 
 <style scoped lang="scss">
+:deep(.main-label) {
+  font-size: 16px !important;
+  color: var(--el-color-danger) !important;
+}
 .style-color {
   color: var(--el-color-primary);
 }
