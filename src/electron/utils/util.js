@@ -17,6 +17,31 @@ export const mainTop = () => {
   mainView.moveTop();
   mainView.center();
 };
+
+export const toggleLogIn = (type) => {
+  console.log(type);
+  if (global.mainWin) {
+    // global mainWinOptions; mainWinOptions
+    // type  login main
+    // global.mainWin.hide();
+    setTimeout(() => {
+      if (type === "login") {
+        const { width, height } = global.loginWinOptions;
+        global.mainWin.setMinimumSize(width, height);
+        global.mainWin.setSize(width, height);
+        // global.mainWin.show();
+        global.mainWin.center();
+      } else {
+        const { width, height } = global.mainWinOptions;
+        global.mainWin.setMinimumSize(width, height);
+        global.mainWin.setSize(width, height);
+        // global.mainWin.show();
+        global.mainWin.center();
+      }
+    }, 200);
+  }
+};
+
 /* 隐藏主窗口 */
 export const mainWinHide = () => {};
 /* 主窗口最小化 */
