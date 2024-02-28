@@ -161,7 +161,7 @@ export function download(url, filename) {
  * @param {string} String - 查询字符串，例如 "https://pureadmin.cn?name=John&age=30"
  * @return {object} - 转换后的对象，例如 { name: "John", age: "30" }
  */
-function queryStringToObject(queryString) {
+export function queryStringToObject(queryString) {
   const str = queryString.split("?")[1];
   const params = new URLSearchParams(str);
   const obj = {};

@@ -3,7 +3,6 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { isWindows, isTest, webpackDevServerUrl } from "./platform";
 import { windowMap } from "./windows-map";
 import { initShortcut } from "../shortcut/index";
-import path from "path";
 
 export const createBrowserWindow = (_options) => {
   const options = {
@@ -40,9 +39,10 @@ export const createBrowserWindow = (_options) => {
   }
   // 在窗口加载完成后
   win.webContents.on("did-finish-load", () => {
+    let argv = process.argv;
     // 直接打开软件的话开发环境的启动参数为2，安装包为1，大于这个数的话说明是通过伪协议拉起软件的
-    if (process.argv.length > (app.isPackaged ? 1 : 2)) {
-      app.emit("second-instance", null, process.argv);
+    if (argv.length > (app.isPackaged ? 1 : 2)) {
+      app.emit("second-instance", null, argv);
     }
   });
   win.on("ready-to-show", () => {

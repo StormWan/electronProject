@@ -1,14 +1,9 @@
-import { app, protocol } from "electron";
-import { isDevelopment } from "./platform";
-import { windowMap } from "./windows-map";
+const { app } = require("electron");
+const { isDevelopment } = require("./platform");
 // 请求单实例锁
 const gotTheLock = app.requestSingleInstanceLock();
 
-export const winSingle = () => {
-  // 注册协议
-  protocol.registerSchemesAsPrivileged([
-    { scheme: "app", privileges: { secure: true, standard: true } },
-  ]);
+export function winSingle() {
   if (isDevelopment) return;
   // 点击图标启动时检测窗口是否存在，存在则打开
   if (!gotTheLock) {
@@ -16,7 +11,7 @@ export const winSingle = () => {
   } else {
     // 外部协议被点击的事件;
     app.on("second-instance", (event, argv) => {
-      const win = windowMap.get("mainWin");
+      const win = global.mainWin;
       if (win) {
         // 直接把伪协议链接发送给渲染进程，可以获取通过协议携带的参数
         win.webContents.send("awaken", argv[argv.length - 1]);
@@ -33,4 +28,4 @@ export const winSingle = () => {
       }
     });
   }
-};
+}

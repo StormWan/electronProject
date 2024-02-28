@@ -27,7 +27,7 @@ const currentLocale = computed(() => {
   return lang.value === "zh-CN" ? zhCn : en;
 });
 
-onMounted(async () => {
+onMounted(() => {
   dispatch("reloadRoute");
   setTimeout(() => {
     if (route.name == "login") return;
@@ -36,14 +36,15 @@ onMounted(async () => {
   nextTick(() => {
     setWatermark("Pure Admin");
   });
+  ipcRenderer.on("awaken", (event, data) => {
+    console.warn("awaken:", data);
+    const { queryStringToObject } = require("@/utils/chat/message-input-utils");
+    console.warn(queryStringToObject(data));
+  });
 });
 
 onBeforeUnmount(() => {
   clear();
-});
-
-ipcRenderer.on("awaken", (event, data) => {
-  console.log("awaken:", data);
 });
 </script>
 

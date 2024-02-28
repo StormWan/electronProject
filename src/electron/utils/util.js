@@ -1,5 +1,5 @@
 import { app, shell, clipboard, dialog } from "electron";
-import { isWindows, isMac, isProduction, isTest, isDevelopment } from "@/electron/utils/index";
+import { isWindows, isMac, isProduction } from "@/electron/utils/index";
 const os = require("os");
 const path = require("path");
 const { execFile, exec } = require("child_process");
@@ -124,7 +124,11 @@ export const shakeWindow = () => {
     win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY);
   }, shakeInterval);
 };
-/**注册协议 并通过浏览器打开PureAdmin程序 pure:// */
+/**
+ * 注册协议
+ * 并通过浏览器打开 PureApp 程序 pure://
+ * pure://groupShare?groupID=@TGS#2P5E55UNV
+ */
 export const setDefaultProtocol = () => {
   if (isProduction) {
     const agreement = "pure"; // 自定义协议名
@@ -135,21 +139,7 @@ export const setDefaultProtocol = () => {
   }
 };
 
-export const handleAfterReady = () => {
-  // windows如果是通过url schema启动则发出时间处理
-  // 启动参数超过1个才可能是通过url schema启动
-  if (process.argv.length > 1) {
-    if (!app.isReady()) {
-      app.once("browser-window-created", () => {
-        // app 未打开时，通过 open-url打开 app，此时可能还没 ready，需要延迟发送事件
-        // 此段ready延迟无法触发 service/app/ open-url 处理，因为saga初始化需要时间
-        app.emit("second-instance", null, process.argv);
-      });
-    } else {
-      app.emit("second-instance", null, process.argv);
-    }
-  }
-};
+export const handleAfterReady = () => {};
 /** 在开发模式下，应父进程的请求退出。 */
 export const setupGracefulExit = async () => {
   if (isWindows) {

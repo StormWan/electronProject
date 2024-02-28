@@ -1,24 +1,17 @@
 "use strict";
 import { app, Menu, shell, protocol, BrowserWindow, session } from "electron";
-import {
-  isMac,
-  isWindows,
-  setDefaultProtocol,
-  setupGracefulExit,
-  handleAfterReady,
-} from "@/electron/utils/index";
+import { isMac, setDefaultProtocol, setupGracefulExit } from "./utils/index";
 import ipcEvent from "./ipcMain/index";
 import "./config";
 import { initFolder } from "./utils/folder";
 import { winSingle } from "./utils/win-single";
 import { createBrowserWindow } from "./utils/create-window";
-import { windowMap } from "./utils/windows-map";
 
 class Background {
   constructor() {
     // 确保应用程序是单例的。
-    initFolder();
     winSingle();
+    initFolder();
     this.init();
   }
   init() {
@@ -31,6 +24,10 @@ class Background {
     createBrowserWindow();
   }
   handleAppEvents() {
+    // 注册协议
+    protocol.registerSchemesAsPrivileged([
+      { scheme: "app", privileges: { secure: true, standard: true } },
+    ]);
     // 禁用 Chrome 扩展加载
     app.commandLine.appendSwitch("disable-extensions");
     // 允许加载远程资源
@@ -53,7 +50,6 @@ class Background {
       setDefaultProtocol();
       setupGracefulExit();
       this.createWindow();
-      handleAfterReady();
       session.defaultSession.maxConnections = 10;
     });
 
@@ -71,15 +67,15 @@ class Background {
       });
     });
     // Windows 下通过协议URL启动
-    app.on("second-instance", async (event, argv) => {
-      if (isWindows) {
-        const win = windowMap.get("mainWin");
-        win.webContents.send("awaken", argv);
-      }
-    });
+    // app.on("second-instance", (event, argv) => {
+    //   if (isWindows) {
+    //     const win = global.mainWin;
+    //     win.webContents.send("awaken", argv[argv.length - 1]);
+    //   }
+    // });
     // macOS 下通过协议URL启动
     app.on("open-url", (event, url) => {
-      const win = windowMap.get("mainWin");
+      const win = global.mainWin;
       win.webContents.send("awaken", url);
     });
 
