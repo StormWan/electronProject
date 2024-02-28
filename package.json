@@ -22,8 +22,6 @@
   "appId": "pureadmin",
   "main": "background.js",
   "dependencies": {
-    "@commitlint/cli": "^17.2.0",
-    "@commitlint/config-conventional": "^17.2.0",
     "@element-plus/icons-vue": "^2.0.10",
     "@fortaine/fetch-event-source": "^3.0.6",
     "@tencentcloud/chat": "3.1.2",
@@ -33,7 +31,6 @@
     "@wangeditor/editor": "^5.0.1",
     "@wangeditor/editor-for-vue": "^5.1.11",
     "axios": "^0.26.1",
-    "babel-plugin-transform-remove-console": "^6.9.4",
     "core-js": "^3.33.3",
     "dayjs": "^1.11.2",
     "electron": "^22.0.1",
@@ -44,8 +41,6 @@
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
     "element-plus": "^2.4.3",
-    "husky": ">=6",
-    "lint-staged": "14.0.0",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
     "nprogress": "^0.2.0",
@@ -74,6 +69,8 @@
     "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -82,7 +79,10 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "~2.1.1",
-    "webpack-bundle-analyzer": "^4.6.1"
+    "webpack-bundle-analyzer": "^4.6.1",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "husky": ">=6",
+    "lint-staged": "14.0.0"
   },
   "engines": {
     "node": ">=16"

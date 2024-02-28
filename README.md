@@ -56,6 +56,7 @@
   - 接入 ChatGpt 机器人(支持上下文以及流式输出)
   - 切换会话列表时 输入框草稿保存与回填功能
   - 截图功能(仅 electron 客户端支持)
+  - 支持外部协议打开应用(客户端)
 
 - 🌚 光明/黑暗 模式主题切换`自动根据系统主题改变`
 - ⚡️ 自定义 SVG 图标组件`svg-sprite-loader`
@@ -135,6 +136,7 @@ yarn lint
 │   ├── components             // 全局公用组件
 │   ├── directives             // 自定义指令
 │   ├── electron               // electron配置
+│   ├── layout                 // 主页面
 │   ├── plugins                // 插件
 │   ├── router                 // 路由
 │   ├── store                  // 全局 store管理
