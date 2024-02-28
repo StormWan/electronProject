@@ -37,6 +37,7 @@ export const createBrowserWindow = (_options) => {
     createProtocol("app");
     win.loadURL("app://./index.html");
   }
+  // createLoginWindow();
   // 在窗口加载完成后
   win.webContents.on("did-finish-load", () => {
     let argv = process.argv;
@@ -52,3 +53,22 @@ export const createBrowserWindow = (_options) => {
   global.mainWin = win;
   windowMap.set("mainWin", win);
 };
+
+export function createLoginWindow() {
+  // 创建登录窗口
+  const loginWin = new BrowserWindow({
+    ...global.loginWinOptions, // mainWinOptions loginWinOptions
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
+  });
+  if (webpackDevServerUrl) {
+    loginWin.loadURL(webpackDevServerUrl + "#/login");
+    if (!isTest) loginWin.webContents.openDevTools();
+  } else {
+    loginWin.loadURL(`app://./index.html/#/login`);
+  }
+  windowMap.set("loginWin", loginWin);
+}
