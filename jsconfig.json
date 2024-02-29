@@ -3,6 +3,7 @@
     "target": "es6",
     "module": "esnext",
     "baseUrl": ".",
+    "sourceMap": true,
     "paths": {
       "@/*": ["src/*"]
     }

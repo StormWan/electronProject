@@ -82,18 +82,16 @@
     </el-button>
   </div>
   <!-- 第三方登录 -->
-  <Motion :delay="250" v-if="false">
-    <el-form-item>
-      <el-divider>
-        <p class="text-gray-500 text-xs">{{ $t("login.thirdLogin") }}</p>
-      </el-divider>
-      <div class="w-full flex justify-evenly">
-        <span v-for="(item, index) in thirdParty" :key="index" :title="item.title">
-          <svg-icon @click="onClick" class="icon" :iconClass="item.icon" />
-        </span>
-      </div>
-    </el-form-item>
-  </Motion>
+  <el-form-item v-if="false">
+    <el-divider>
+      <p class="text-gray-500 text-xs">{{ $t("login.thirdLogin") }}</p>
+    </el-divider>
+    <div class="w-full flex justify-evenly">
+      <span v-for="(item, index) in thirdParty" :key="index" :title="item.title">
+        <svg-icon @click="onClick" class="icon" :iconClass="item.icon" />
+      </span>
+    </div>
+  </el-form-item>
 </template>
 
 <script setup>
@@ -103,7 +101,6 @@ import { login, getuser, openAuthUrl } from "@/api/node-admin-api/index";
 import { operates, thirdParty } from "../utils/enums";
 import { useStore } from "vuex";
 import { user, rules } from "../utils/validation";
-import Motion from "@/utils/motion";
 import ImageVerify from "@/views/components/ImageVerify/index.vue";
 import { useState } from "@/utils/hooks/useMapper";
 const { production } = require("@/config/vue.custom.config");
@@ -151,8 +148,8 @@ const onClick = async () => {
 const onHandle = (index) => {
   if (index === 3) {
     commit("showMessage", {
-      message: `待开发`,
-      type: "error",
+      message: "待开发",
+      type: "warning",
     });
     return;
   }
