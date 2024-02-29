@@ -17,7 +17,9 @@
         </el-dropdown>
         <div class="setting flex">
           <div class="item" v-for="item in button" :key="item.type" @click="onClick(item)">
-            <svg-icon :iconClass="item.type" />
+            <span :title="item.title">
+              <svg-icon :iconClass="item.type" />
+            </span>
           </div>
         </div>
       </div>
@@ -28,7 +30,7 @@
 <script>
 import { isWindows } from "@/electron/utils/index";
 import { showConfirmationBox } from "@/utils/message";
-
+const { ipcRenderer } = require("electron");
 export default {
   name: "Navbar",
   data() {
@@ -38,22 +40,44 @@ export default {
       button: [
         {
           type: "minimize",
+          title: "最小化",
           name: "minMainWindow",
         },
         {
-          type: "maximize",
-          name: "maxMainWindow",
+          type: "maximize", // restored maximize
+          title: "最大化",
+          name: "maxMainWindow", // restoredMainWin maxMainWin
         },
         {
           type: "exit",
+          title: "关闭",
           name: "quitApp",
         },
       ],
     };
   },
+  mounted() {
+    ipcRenderer.on("toggleSize", (e, { type }) => {
+      if (type === "maximize") {
+        this.showRestoreIcon();
+      } else {
+        this.showMaximizeIcon();
+      }
+    });
+  },
   methods: {
     logOut() {
       this.$store.dispatch("LOG_OUT");
+    },
+    showRestoreIcon() {
+      // this.button[1].name = "restoredMainWin";
+      this.button[1].title = "向下还原";
+      this.button[1].type = "restored";
+    },
+    showMaximizeIcon() {
+      // this.button[1].name = "maxMainWin";
+      this.button[1].title = "最大化";
+      this.button[1].type = "maximize";
     },
     async onClick({ name }) {
       if (name === "quitApp") {
