@@ -11,7 +11,7 @@ const routes = [
       icon: "Eleme",
     },
   },
-  // ...asyncRoute,
+  ...asyncRoute,
 ];
 
 export default routes;

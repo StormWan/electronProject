@@ -7,10 +7,21 @@ const winURL = isDevelopment ? webpackDevServerUrl : "app://./index.html";
 const windowItems = [];
 const poolSize = 1;
 const defaultConfig = {
+  width: 320,
+  height: 80,
+  // minWidth: 260,
+  // minHeight: 80,
   show: false,
-  frame: isWindows ? false : true,
-  minHeight: 100,
-  minWidth: 700,
+  frame: false, // 边框
+  hidden: true,
+
+  // transparent: true, // 使窗口透明
+  // module: true,
+  autoHideMenuBar: true, // 自动隐藏菜单栏，除非按了Alt键
+  disableAutoHideCursor: true, // 是否在打字时隐藏光标
+  alwaysOnTop: true, //窗口是否永远在别的窗口的上面
+  resizable: false,
+  skipTaskbar: true, // 是否在任务栏中显示窗口
   webPreferences: {
     nodeIntegration: true,
     contextIsolation: false,
@@ -31,8 +42,14 @@ class WindowPool {
     ipcMain.handle("loadWindowInPool", (event, options) => {
       if (this.isWindowInUse(options)) return;
       this.consumeWindow(options);
-      // const win = windowMap.get(options.name)
-      // win.webContents.openDevTools()
+      const win = windowMap.get(options.name);
+      win.webContents.openDevTools();
+    });
+    ipcMain.handle("setIgnore", (event, options) => {
+      const { bol, forward } = options;
+      const win = windowMap.get("customCardWin");
+      console.log(bol, forward);
+      if (win) win.setIgnoreMouseEvents(bol, forward ? forward : null);
     });
   }
   /**
@@ -95,11 +112,7 @@ class WindowPoolItem {
   }
 
   loadUrl(window, options) {
-    if (options.type === 0) {
-      window.loadURL(winURL + `#${options.path}`);
-    } else {
-      window.loadURL(options.path);
-    }
+    window.loadURL(winURL + `#${options.path}`);
   }
 }
 

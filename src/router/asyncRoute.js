@@ -115,4 +115,14 @@ export default [
       },
     ],
   },
+  {
+    path: "/desktop",
+    name: "desktop",
+    component: () => import(/* webpackChunkName: "Desktop" */ "@/views/desktop/index"),
+    meta: {
+      title: "",
+      locale: "",
+      icon: "",
+    },
+  },
 ];

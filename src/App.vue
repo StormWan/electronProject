@@ -30,17 +30,17 @@ const currentLocale = computed(() => {
 
 const options = {
   name: "customCardWin",
-  path: "",
+  path: "/desktop",
   customSize: {
     width: 320,
-    height: 800,
+    height: 80,
     minWidth: 260,
     minHeight: 80,
   },
 };
 
 onMounted(() => {
-  dispatch("reloadRoute");
+  // dispatch("reloadRoute");
   setTimeout(() => {
     if (route.name == "login") return;
     dispatch("LOG_IN_AGAIN");
@@ -53,7 +53,7 @@ onMounted(() => {
     const { queryStringToObject } = require("@/utils/chat/message-input-utils");
     console.warn(queryStringToObject(data));
   });
-  // store.commit("ipcRenderer", { method: "invoke", key: "loadWindowInPool", value: options });
+  store.commit("ipcRenderer", { method: "invoke", key: "loadWindowInPool", value: options });
 });
 
 onBeforeUnmount(() => {

@@ -1,10 +1,10 @@
-"use strict";
 import { app, Menu, shell, protocol, BrowserWindow, session } from "electron";
 import { isMac, setDefaultProtocol, setupGracefulExit } from "./utils/index";
 import ipcEvent from "./ipcMain/index";
 import "./config";
 import { initFolder } from "./utils/folder";
 import { winSingle } from "./utils/win-single";
+import { initWindowPool } from "./utils/windows-pool";
 import { createBrowserWindow } from "./utils/create-window";
 
 class Background {
@@ -50,6 +50,7 @@ class Background {
       setDefaultProtocol();
       setupGracefulExit();
       this.createWindow();
+      // initWindowPool();
       session.defaultSession.maxConnections = 10;
     });
 
