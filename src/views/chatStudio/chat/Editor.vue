@@ -334,19 +334,20 @@ const onEmitter = () => {
   emitter.on("handleInsertDraft", (value) => {
     value && insertDraft(value);
   });
-  ipcRenderer.on("captureScreenBack", (event, url) => {
-    const ImageElement = {
-      type: "image",
-      class: "img",
-      src: url,
-      alt: "",
-      href: "",
-      style: { width: "125px" },
-      children: [{ text: "" }],
-    };
-    editorRef.value.insertNode(ImageElement);
-  });
 };
+ipcRenderer.on("captureScreenBack", (event, url) => {
+  const ImageElement = {
+    type: "image",
+    class: "img",
+    src: url,
+    alt: "",
+    href: "",
+    style: { width: "125px" },
+    children: [{ text: "" }],
+  };
+  const editor = editorRef.value;
+  editor.insertNode(ImageElement);
+});
 function offEmitter() {
   emitter.off("handleAt");
   emitter.off("handleSetHtml");
