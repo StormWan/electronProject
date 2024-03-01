@@ -1,13 +1,10 @@
 const { ipcRenderer } = require("electron");
 const application = {
-  state: {},
-  getters: {},
   mutations: {
-    ipcRenderer(state, { key, value = null }) {
-      ipcRenderer.send(key, value);
+    ipcRenderer(state, { key, value = null, method = "send" }) {
+      ipcRenderer[method](key, value);
     },
   },
-  actions: {},
 };
 
 export default application;

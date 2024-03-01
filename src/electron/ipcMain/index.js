@@ -6,6 +6,7 @@ import {
   shakeWindow,
   minMainWindow,
   maxMainWindow,
+  customMessage,
   openExternal,
   showMessageBox,
   setmainViewSize,
@@ -78,6 +79,11 @@ const ipcEvent = () => {
     global.mainWin.flashFrame(true);
   });
 
+  // 自定义消息
+  ipcMain.on("customMessage", (event, option) => {
+    customMessage(option);
+  });
+
   //截图
   ipcMain.on("screenshot", (event, data) => {
     handleScreenshot();
@@ -102,7 +108,6 @@ const ipcEvent = () => {
   ipcMain.on("confirm-update", () => {
     allUpdater.quitInstall();
   });
-
   // 热更新
   // ipcMain.on('hot-update', (event, data) => {})
 };

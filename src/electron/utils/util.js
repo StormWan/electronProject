@@ -1,7 +1,8 @@
-import { app, shell, clipboard, dialog } from "electron";
+import { app, shell, clipboard, dialog, screen } from "electron";
 import { isWindows, isMac, isProduction } from "@/electron/utils/index";
 const os = require("os");
 const path = require("path");
+const { windowMap } = require("./windows-map");
 const { execFile, exec } = require("child_process");
 const { version } = require("../../../package.json");
 
@@ -39,6 +40,25 @@ export const toggleLogIn = (type) => {
         global.mainWin.center();
       }
     }, 200);
+  }
+};
+
+export const customMessage = (data) => {
+  console.log(data);
+  if (windowMap.has("mainWin")) {
+    // 获取屏幕尺寸
+    let screenSize = screen.getPrimaryDisplay().workAreaSize;
+    let mainView = windowMap.get("customCardWin");
+    if (!mainView) return;
+    mainView.webContents.send("customCardNotice", data);
+    const offsetX = screenSize.width - mainView.getBounds().width - 10;
+    const offsetY = screenSize.height - mainView.getBounds().height - 5;
+    mainView.setBounds({
+      x: parseInt(offsetX),
+      y: parseInt(offsetY),
+    });
+    //显示但不聚焦窗口
+    mainView.showInactive();
   }
 };
 
