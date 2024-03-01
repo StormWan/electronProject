@@ -7,13 +7,11 @@
       <!-- 主题开关 -->
       <ThemeSwitch />
       <!-- 标题 -->
-      <Motion>
-        <header class="login-form">
-          <div class="tip">
-            <h2>{{ $config.Title }}</h2>
-          </div>
-        </header>
-      </Motion>
+      <header class="login-form">
+        <div class="tip">
+          <h2>{{ $config.Title }}</h2>
+        </div>
+      </header>
       <!-- 账号登陆 -->
       <Account v-if="currentPage === 0" />
       <!-- 二维码登录 -->
@@ -26,7 +24,6 @@
 
 <script setup>
 import { useState } from "@/utils/hooks/useMapper";
-import Motion from "@/utils/motion";
 import ThemeSwitch from "../components/ThemeSwitch";
 import Account from "./components/Account.vue";
 import QrCode from "./components/qrCode.vue";

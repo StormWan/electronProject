@@ -1,29 +1,22 @@
 <template>
-  <Motion>
-    <div class="flex justify-center">
-      <QrCode class="QrCode" v-show="loading" />
-      <Character :loading="loading" />
-    </div>
-  </Motion>
-  <Motion :delay="100">
-    <el-divider>
-      <p class="m-0">{{ $t("login.tip") }}</p>
-    </el-divider>
-  </Motion>
-  <Motion :delay="150">
-    <el-button class="w-full mt-4" @click="commit('setCurrentPage', 0)">
-      {{ $t("login.back") }}
-    </el-button>
-  </Motion>
+  <div class="flex justify-center">
+    <QrCode class="QrCode" v-show="loading" />
+    <Character :loading="loading" />
+  </div>
+  <el-divider>
+    <p class="m-0">{{ $t("login.tip") }}</p>
+  </el-divider>
+  <el-button class="w-full mt-4" @click="commit('setCurrentPage', 0)">
+    {{ $t("login.back") }}
+  </el-button>
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, computed, watch, nextTick } from "vue";
-import Motion from "@/utils/motion";
 import { useStore } from "vuex";
 import Character from "./Character.vue";
-const { dispatch, commit } = useStore();
 import { useBoolean } from "@/utils/hooks/index";
+
+const { dispatch, commit } = useStore();
 const [loading, setLoading] = useBoolean();
 setTimeout(() => {
   setLoading(true);
