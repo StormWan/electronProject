@@ -44,7 +44,6 @@ export const toggleLogIn = (type) => {
 };
 
 export const customMessage = (data) => {
-  console.log(data);
   if (windowMap.has("mainWin")) {
     // 获取屏幕尺寸
     let screenSize = screen.getPrimaryDisplay().workAreaSize;

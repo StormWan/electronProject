@@ -9,14 +9,12 @@ const poolSize = 1;
 const defaultConfig = {
   width: 320,
   height: 80,
-  // minWidth: 260,
-  // minHeight: 80,
+  minWidth: 260,
+  minHeight: 80,
   show: false,
   frame: false, // 边框
   hidden: true,
-
-  // transparent: true, // 使窗口透明
-  // module: true,
+  transparent: true, // 使窗口透明
   autoHideMenuBar: true, // 自动隐藏菜单栏，除非按了Alt键
   disableAutoHideCursor: true, // 是否在打字时隐藏光标
   alwaysOnTop: true, //窗口是否永远在别的窗口的上面
@@ -48,8 +46,7 @@ class WindowPool {
     ipcMain.handle("setIgnore", (event, options) => {
       const { bol, forward } = options;
       const win = windowMap.get("customCardWin");
-      console.log(bol, forward);
-      if (win) win.setIgnoreMouseEvents(bol, forward ? forward : null);
+      if (win) win.setIgnoreMouseEvents(bol, forward);
     });
   }
   /**
@@ -103,7 +100,7 @@ class WindowPoolItem {
       this.window.maximize();
     }
     if (customSize) {
-      const { width, height, minWidth = 0, minHeight = 0 } = options.customSize;
+      const { width, height, minWidth = 0, minHeight = 0 } = customSize;
       this.window.setSize(Math.floor(width), Math.floor(height));
       this.window.setMinimumSize(Math.floor(minWidth), Math.floor(minHeight));
     }

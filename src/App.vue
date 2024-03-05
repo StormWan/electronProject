@@ -11,8 +11,7 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { ElConfigProvider } from "element-plus";
 import { useState } from "@/utils/hooks/useMapper";
-import store from "@/store";
-const { ipcRenderer } = require("electron");
+import { appIpcEmit } from "@/utils/appEmit";
 
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
@@ -28,17 +27,6 @@ const currentLocale = computed(() => {
   return lang.value === "zh-CN" ? zhCn : en;
 });
 
-const options = {
-  name: "customCardWin",
-  path: "/desktop",
-  customSize: {
-    width: 320,
-    height: 80,
-    minWidth: 260,
-    minHeight: 80,
-  },
-};
-
 onMounted(() => {
   // dispatch("reloadRoute");
   setTimeout(() => {
@@ -48,12 +36,7 @@ onMounted(() => {
   nextTick(() => {
     setWatermark("Pure Admin");
   });
-  ipcRenderer.on("awaken", (event, data) => {
-    console.warn("awaken:", data);
-    const { queryStringToObject } = require("@/utils/chat/message-input-utils");
-    console.warn(queryStringToObject(data));
-  });
-  store.commit("ipcRenderer", { method: "invoke", key: "loadWindowInPool", value: options });
+  appIpcEmit();
 });
 
 onBeforeUnmount(() => {
