@@ -1,23 +1,22 @@
 <template>
   <div>
     <template v-for="item in tree" :key="item.path">
-      <!-- 一级菜单 -->
-      <el-menu-item
-        :class="{ 'active-item': $route.name === item.name }"
-        v-if="fn(item)"
-        :index="item.path"
-      >
-        <el-badge :value="unreadMsg" :hidden="item.meta.icon !== 'ForkSpoon' || unreadMsg == 0">
-          <font-icon :iconName="item.meta.icon" />
-        </el-badge>
+      <el-menu-item v-if="level(item)" :index="item.path">
+        <!-- 一级菜单 -->
+        <template v-if="isChat(item)">
+          <el-badge :value="unreadMsg" :hidden="unreadMsg === 0">
+            <FontIcon :iconName="item.meta.icon" />
+          </el-badge>
+        </template>
+        <FontIcon v-else :iconName="item.meta.icon" />
         <template #title>
           {{ item.meta.locale ? $t(`route.${item.meta.locale}`) : item.meta.title }}
         </template>
       </el-menu-item>
-      <!-- 二级菜单 -->
       <el-sub-menu v-else :index="item.path">
+        <!-- 二级菜单 -->
         <template #title>
-          <font-icon :iconName="item.meta.icon" />
+          <FontIcon :iconName="item.meta.icon" />
           <span>{{ item.meta.locale ? $t(`route.${item.meta.locale}`) : item.meta.title }}</span>
         </template>
         <SideItem :tree="item.children" />
@@ -26,27 +25,38 @@
   </div>
 </template>
 
-<script setup>
-import { toRefs } from "vue";
-import { useState } from "@/utils/hooks/useMapper";
-
-const props = defineProps({
-  tree: {
-    type: Object,
-    required: true,
+<script>
+import { mapState } from "vuex";
+export default {
+  name: "SideItem",
+  props: {
+    tree: {
+      type: Object,
+      required: true,
+    },
+    hidden: {
+      type: Boolean,
+      default: true,
+    },
   },
-  hidden: {
-    type: Boolean,
-    default: true,
+  computed: {
+    ...mapState({
+      unreadMsg: (state) => state.conversation.totalUnreadMsg,
+    }),
   },
-});
-
-const { unreadMsg } = useState({
-  unreadMsg: (state) => state.conversation.totalUnreadMsg,
-});
-
-const fn = (item) => {
-  return !item.children || item.children.length === 0;
+  methods: {
+    itemClass(item) {
+      return {
+        "active-item": this.$route.name === item.name,
+      };
+    },
+    level(item) {
+      return !item.children || item.children.length === 0;
+    },
+    isChat(item) {
+      return item.name === "chatstudio";
+    },
+  },
 };
 </script>
 

@@ -58,7 +58,7 @@ const props = defineProps({
   },
 });
 
-const { url, nickName, shape, words, className, type, size } = toRefs(props);
+const { words } = toRefs(props);
 
 const shapeObj = {
   circle: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",

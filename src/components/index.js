@@ -1,17 +1,16 @@
-/**
- * @description 加载所有组件
- * @param  {ReturnType<typeofcreateApp>} app 整个应用的实例
- */
-const whiteList = ["SvgIcon", "Stage"]; //组件白名单
+import * as FontIcon from "./FontIcon";
+import * as UserAvatar from "./UserAvatar";
+import * as QrCode from "./QrCode";
+import * as SideItem from "./SideItem";
+
+const components = [FontIcon, UserAvatar, QrCode, SideItem];
+const regex = /\/([^/]+)\/index\.vue$/;
 
 /** 自动加载全局组件 */
 export function loadAllassembly(app) {
-  const files = require.context("./", true, /\.vue$/);
-  files.keys().forEach((key) => {
-    const name = key.replace(/\.\/(.*)\/index\.vue/, "$1"); // 获取组件名称
-    if (!whiteList.includes(name)) {
-      const meter = files(key).default;
-      app.component(name, meter);
-    }
+  components.forEach((t) => {
+    const { __file } = t.default;
+    const name = __file.match(regex)[1];
+    app.component(name, t.default);
   });
 }

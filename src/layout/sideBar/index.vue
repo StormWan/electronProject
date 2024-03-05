@@ -84,6 +84,6 @@ const handleClose = (key, keyPath) => {
 }
 /* 卡頓bug */
 .el-menu-vertical :deep(.el-icon) {
-  width: auto;
+  // width: auto;
 }
 </style>

@@ -12,9 +12,11 @@
           :type="curTitle === item.title ? '' : 'info'"
           @click="onClick(item.path)"
           @close="handleClose(item)"
+        >
+          <!-- 
           v-contextmenu:contextmenu
           @contextmenu.prevent="contextMenuEvent($event, item)"
-        >
+         -->
           {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
         </el-tag>
       </div>

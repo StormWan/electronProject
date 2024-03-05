@@ -10,8 +10,8 @@
           <FontIcon class="icon-hover" :iconName="isActive ? 'Expand' : 'Fold'" />
         </div>
         <el-breadcrumb>
-          <el-breadcrumb-item :key="value.title" v-for="value in route.matched.map((t) => t.meta)">
-            {{ value.locale ? $t(`route.${value.locale}`) : value.title }}
+          <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item.title">
+            {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
           </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -57,7 +57,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 import SideBar from "../sideBar/index.vue";
@@ -82,6 +82,10 @@ const { isActive, userProfile, tags, sidebar, setswitch } = useState({
 const topersonal = () => {
   router.push({ name: "personal" });
 };
+
+const breadcrumbItems = computed(() => {
+  return route.matched.map((t) => t.meta);
+});
 
 const opensetup = (val) => {
   commit("UPDATE_USER_SETUP", {

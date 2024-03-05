@@ -1,8 +1,8 @@
-import axios from "axios";
+const axios = require("axios");
 const pkg = require("../../package.json");
-const { version } = pkg;
 
 let config = {};
+const { version } = pkg;
 const VUE_APP_PUBLIC_PATH = process.env.VUE_APP_PUBLIC_PATH;
 
 /**
