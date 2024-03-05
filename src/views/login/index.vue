@@ -43,7 +43,6 @@ const { currentPage } = useState({
     text-align: center;
     margin-bottom: 50px;
     h2 {
-      // text-transform: uppercase;
       margin: 15px 0;
       color: #999;
       font: bold 200% Consolas, Monaco, monospace;

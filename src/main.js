@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import store from "./store/index";
-import AppLoading from "./views/components/AppLoading/index.vue";
 
 import { getServerConfig } from "./config/index";
 import { setupRouter } from "./router/index";
@@ -11,9 +10,6 @@ import { loadAllassembly } from "./components/index";
 import { registerSvgIcon } from "./assets/icons/index";
 
 async function setupApp() {
-  // app loading
-  const appLoading = createApp(AppLoading);
-  appLoading.mount("#appLoading");
   const app = createApp(App);
   // vue custom directives
   setupDirectives(app);
@@ -25,7 +21,6 @@ async function setupApp() {
   // vue router
   await setupRouter(app);
   app.use(store);
-  appLoading.unmount();
   app.mount("#app");
 }
 setupApp();
