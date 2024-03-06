@@ -1,9 +1,9 @@
-import { app, shell, clipboard, dialog, screen } from "electron";
 import { isWindows, isMac, isProduction } from "@/electron/utils/index";
 const os = require("os");
 const path = require("path");
-const { windowMap } = require("./windows-map");
+const { app, shell, clipboard, dialog, screen } = require("electron");
 const { execFile, exec } = require("child_process");
+const { windowMap } = require("./windows-map");
 const { version } = require("../../../package.json");
 
 const viewSize = {
@@ -90,30 +90,37 @@ export const setmainViewSize = (type) => {
   mainView.setSize(width, height);
   // mainView.center();
 };
+/**
+ * 发送截图数据到主窗口
+ * @param {BrowserWindow} win - 主窗口对象
+ */
+const sendCapturedImageData = (win) => {
+  const pngData = clipboard.readImage().toPNG();
+  const imageData = "data:image/png;base64," + pngData.toString("base64");
+  win.webContents.send("captureScreenBack", imageData);
+};
 /* 截屏 */
 export const handleScreenshot = () => {
-  const mainView = global.mainWin;
+  const mainWin = global.mainWin;
   if (isWindows) {
-    const url = app.isPackaged ? "../ScreenCapture.exe" : "../static/ScreenCapture.exe";
-    // const url = app.isPackaged ? '../screenshot/ScreenCapture.exe' : '../static/screenshot/ScreenCapture.exe'
-    const filePath = path.join(__dirname, url);
-    const screen_window = execFile(filePath);
-    screen_window.on("exit", (code, stdout, stderr) => {
-      console.log(code, stdout, stderr, "code, stdout, stderr");
+    const capturePath = app.isPackaged ? "../ScreenCapture.exe" : "../static/ScreenCapture.exe";
+    // const capturePath = app.isPackaged
+    //   ? "../screenshot/ScreenCapture.exe"
+    //   : "../static/screenshot/ScreenCapture.exe";
+    const filePath = path.join(__dirname, capturePath);
+    const screenWindow = execFile(filePath);
+    screenWindow.on("exit", (code, stdout, stderr) => {
+      console.log("退出码 code:", code, "输出流 stdout:", stdout, "错误流 stderr:", stderr);
       // 粘贴
       if (code == 7) {
-        const pngs = clipboard.readImage().toPNG();
-        const imgs = "data:image/png;base64," + pngs.toString("base64");
-        mainView.webContents.send("captureScreenBack", imgs);
+        sendCapturedImageData(mainWin);
       }
     });
   } else if (isMac) {
     exec(`screencapture -w  -c`, (error, stdout, stderr) => {
       if (!error) {
         //截图完成，在粘贴板中
-        const pngs = clipboard.readImage().toPNG();
-        const imgs = "data:image/png;base64," + pngs.toString("base64");
-        mainView.webContents.send("captureScreenBack", imgs);
+        sendCapturedImageData(mainWin);
       }
     });
   }
