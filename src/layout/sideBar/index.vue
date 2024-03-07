@@ -12,7 +12,7 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <SideItem :tree="routeTable[0].children" />
+        <SideItem v-if="routeTable" :tree="routeTable[0].children" />
       </el-menu>
     </el-scrollbar>
   </div>

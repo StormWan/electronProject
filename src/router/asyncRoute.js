@@ -91,28 +91,28 @@ export default [
           },
         ],
       },
-      {
-        path: "/assembly",
-        name: "assembly",
-        meta: {
-          title: $t("route.assembly"),
-          locale: "assembly",
-          icon: "Menu",
-        },
-        children: [
-          {
-            path: "/assembly/jigsaw",
-            name: "jigsaw",
-            component: () =>
-              import(/* webpackChunkName: "Jigsaw" */ "@/views/assembly/Jigsaw/index"),
-            meta: {
-              title: $t("route.jigsaw"),
-              locale: "jigsaw",
-              icon: "DishDot",
-            },
-          },
-        ],
-      },
+      // {
+      //   path: "/assembly",
+      //   name: "assembly",
+      //   meta: {
+      //     title: $t("route.assembly"),
+      //     locale: "assembly",
+      //     icon: "Menu",
+      //   },
+      //   children: [
+      //     {
+      //       path: "/assembly/jigsaw",
+      //       name: "jigsaw",
+      //       component: () =>
+      //         import(/* webpackChunkName: "Jigsaw" */ "@/views/assembly/Jigsaw/index"),
+      //       meta: {
+      //         title: $t("route.jigsaw"),
+      //         locale: "jigsaw",
+      //         icon: "DishDot",
+      //       },
+      //     },
+      //   ],
+      // },
     ],
   },
   {

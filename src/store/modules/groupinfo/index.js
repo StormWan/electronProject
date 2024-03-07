@@ -22,21 +22,15 @@ export default {
     },
     // 群主
     isOwner(state) {
-      if (state.groupProfile) {
-        const { role } = state.groupProfile?.selfInfo;
-        return role == "Owner";
-      } else {
-        return "";
-      }
+      if (!state.groupProfile) return "";
+      const { role } = state.groupProfile?.selfInfo;
+      return role === "Owner";
     },
     // 管理员
     isAdmin(state) {
-      if (state.groupProfile) {
-        const { role } = state.groupProfile?.selfInfo;
-        return role == "Admin";
-      } else {
-        return "";
-      }
+      if (!state.groupProfile) return "";
+      const { role } = state.groupProfile?.selfInfo;
+      return role === "Admin";
     },
   },
   mutations: {

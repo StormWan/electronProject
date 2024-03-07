@@ -14,7 +14,7 @@ export function convertToTree(node, Menu) {
       // 查找子级组件
       let child = Menu.find((item) => item.id === id);
       // 如果子级里面仍然存在子级 在次调用本身
-      if (child.children?.length > 0) {
+      if (child && child.children?.length > 0) {
         convertToTree(child, Menu);
       }
       child.label = child.meta.title;

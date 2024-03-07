@@ -15,14 +15,27 @@ createRouter.prototype.push = function push(location, onResolve, onReject) {
 
 // 登录验证白名单
 let isF = false;
-const whiteList = ["login", "home"];
-const loginRoutePath = "/login";
-const defaultRoutePath = "/home";
 console.log("[routes]", routes);
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+  /*
+   * 自定义路由切换时页面如何滚动
+   * 参考 https://router.vuejs.org/zh/guide/advanced/scroll-behavior.html
+   */
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      if (savedPosition) {
+        return savedPosition;
+      } else {
+        if (from.meta.saveSrollTop) {
+          const top = document.documentElement.scrollTop || document.body.scrollTop;
+          resolve({ left: 0, top });
+        }
+      }
+    });
+  },
 });
 
 router.beforeEach(async (to, from, next) => {
@@ -39,8 +52,8 @@ router.beforeEach(async (to, from, next) => {
       next({ ...to, replace: true });
     }
   } else {
-    if (to.path !== loginRoutePath) {
-      next({ path: loginRoutePath });
+    if (to.path !== "/login") {
+      next({ path: "/login" });
     } else {
       next();
     }

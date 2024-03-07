@@ -31,17 +31,10 @@ const data = storage.get(USER_DATA) || defaultData;
 
 const modules = {};
 const plugins = [saveToLocalStorage];
-// 使用Webpack的require.context方法
-// 自动导入指定目录下的所有以index.ts或index.js结尾的文件
-// true表示会搜索子目录
-// iu表示不区分大小写，支持Unicode字符
+// 自动导入指定目录下的所有以index.js结尾的文件
 const requireModules = require.context("./modules/", true, /index\.(ts|js)$/iu);
 
-/**
- * @description: 自动导入模块文件中的所有vuex模块
- * @param {*}
- * @return {*}
- */
+// 自动导入模块文件中的所有vuex模块
 requireModules.keys().forEach((filePath) => {
   const modular = requireModules(filePath);
   // 从文件路径中提取模块名称，如'./modules/user/index.ts' => 'user'
@@ -87,11 +80,11 @@ const store = createStore({
     // 初始化路由表 将扁平化数据结构 转化为 符合 ElementUI 菜单组件的格式
     updateRoute({ commit }, route) {
       const root = route.find((t) => (t.path = "/root"));
-      optimizeTree(route);
+      // optimizeTree(route);
       convertToTree(root, route);
-      root.children.forEach((item) => {
-        router.addRoute(item);
-      });
+      // root.children.forEach((item) => {
+      //   router.addRoute(item);
+      // });
       commit("UPDATE_USER_INFO", { key: "routeTable", value: root.children });
     },
     // 页面刷新重新加载路由
@@ -108,8 +101,8 @@ const store = createStore({
       }
     },
     // 设置验证码
-    SET_VERIFYCODE({ state }, verifyCode) {
-      state.data.verifyCode = verifyCode;
+    SET_VERIFYCODE({ state }, code) {
+      state.data.verifyCode = code;
     },
     // 清除 eltag 标签
     CLEAR_EL_TAG({ state }) {
