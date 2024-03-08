@@ -106,6 +106,7 @@ const vueDefaultConfig = {
           },
         ],
         win: {
+          // 安装包和免安装版
           target: ["nsis", "zip"],
           icon: "images/log.png",
         },

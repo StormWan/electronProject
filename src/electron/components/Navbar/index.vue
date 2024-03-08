@@ -31,29 +31,30 @@
 import { isWindows } from "@/electron/utils/index";
 import { showConfirmationBox } from "@/utils/message";
 const { ipcRenderer } = require("electron");
+const button = [
+  {
+    type: "minimize",
+    title: "最小化",
+    name: "minMainWindow",
+  },
+  {
+    type: "maximize", // restored maximize
+    title: "最大化",
+    name: "maxMainWindow", // restoredMainWin maxMainWin
+  },
+  {
+    type: "exit",
+    title: "关闭",
+    name: "quitApp",
+  },
+];
 export default {
   name: "Navbar",
   data() {
     return {
       logSrc: require("@/assets/images/log.png"),
       isWindows,
-      button: [
-        {
-          type: "minimize",
-          title: "最小化",
-          name: "minMainWindow",
-        },
-        {
-          type: "maximize", // restored maximize
-          title: "最大化",
-          name: "maxMainWindow", // restoredMainWin maxMainWin
-        },
-        {
-          type: "exit",
-          title: "关闭",
-          name: "quitApp",
-        },
-      ],
+      button,
     };
   },
   mounted() {
