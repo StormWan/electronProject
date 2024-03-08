@@ -7,6 +7,10 @@ export const appIpcEmit = () => {
     const { queryStringToObject } = require("@/utils/chat/message-input-utils");
     console.warn(queryStringToObject(data));
   });
+  ipcRenderer.on("updateMsg", (event, data) => {
+    console.warn("updateMsg:", data);
+  });
+
   // const options = {
   //   name: "customCardWin",
   //   path: "/desktop",
