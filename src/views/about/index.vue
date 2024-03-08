@@ -102,7 +102,7 @@ const data = [
   },
   {
     label: "文档地址",
-    url: "https://hyk260.github.io/PureAdmin",
+    url: "https://hyk260.github.io/pure-docs",
     title: "文档地址",
   },
   {

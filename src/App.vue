@@ -1,46 +1,42 @@
 <template>
-  <el-config-provider :locale="currentLocale">
+  <el-config-provider :locale="locale">
     <router-view />
   </el-config-provider>
 </template>
 
-<script setup>
-import { onMounted, nextTick, onBeforeUnmount, computed } from "vue";
-import { useWatermark } from "@/utils/hooks/useWatermark";
-import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+<script>
+import { mapState } from "vuex";
+import { defineComponent } from "vue";
 import { ElConfigProvider } from "element-plus";
-import { useState } from "@/utils/hooks/useMapper";
 import { appIpcEmit } from "@/utils/appEmit";
-
+import { useWatermark } from "@/utils/hooks/useWatermark";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
 
-const { setWatermark, clear } = useWatermark();
-const route = useRoute();
+const { setWatermark } = useWatermark();
 
-const { dispatch, commit } = useStore();
-const { lang } = useState({
-  lang: (state) => state.settings.lang,
-});
-const currentLocale = computed(() => {
-  return lang.value === "zh-CN" ? zhCn : en;
-});
-
-onMounted(() => {
-  // dispatch("reloadRoute");
-  setTimeout(() => {
-    if (route.name == "login") return;
-    dispatch("LOG_IN_AGAIN");
-  }, 200);
-  nextTick(() => {
+export default defineComponent({
+  name: "app",
+  components: {
+    [ElConfigProvider.name]: ElConfigProvider,
+  },
+  computed: {
+    ...mapState({
+      lang: (state) => state.settings.lang,
+    }),
+    locale() {
+      return this.lang === "zh" ? zhCn : en;
+    },
+  },
+  mounted() {
+    appIpcEmit();
+    // dispatch("reloadRoute");
     setWatermark("Pure Admin");
-  });
-  appIpcEmit();
-});
-
-onBeforeUnmount(() => {
-  clear();
+    setTimeout(() => {
+      if (this.$route.name === "login") return;
+      this.$store.dispatch("LOG_IN_AGAIN");
+    }, 200);
+  },
 });
 </script>
 

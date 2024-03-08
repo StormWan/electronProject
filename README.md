@@ -34,7 +34,7 @@
 
 ## 简介
 
-[反馈](https://github.com/Hyk260/PureAdmin/issues) / [QQ 群](https://github.com/Hyk260/PureAdmin/discussions/2) / [打赏开发者](./images/weix.png) / [文档](https://hyk260.github.io/PureAdmin)
+[反馈](https://github.com/Hyk260/PureAdmin/issues) / [QQ 群](https://github.com/Hyk260/PureAdmin/discussions/2) / [打赏开发者](./images/weix.png) / [文档](https://hyk260.github.io/pure-docs)
 
 [Pure Admin](https://github.com/Hyk260/PureAdmin) 是一个基于 Vue3、Element-Plus 的清新优雅的中后台模版，内置了 i18n 国际化，动态路由，权限验证，提炼了典型的业务模型，提供了丰富的功能组件 聊天工作室 (腾讯 IM 即时通讯) 用于学习参考。
 
@@ -65,20 +65,6 @@
 - 💡 Commitlint 提交规范
 - ✨ electron 版本 支持 macOS、Windows 双平台
 - 🛠 更多特性开发中
-
-### SVG 图标使用
-
-将 svg 图标文件放在 `src/icons/svg` 目录下
-
-在项目中直接使用 `<svg-icon iconClass="svg图标文件命名" />` 即可
-
-### ✨ 安装使用
-
-本项目由 [node-admin](https://node-admin.cn) 提供 API。本地运行 node-admin，或者将 API [部署至 Vercel](https://vercel.com)
-
-本地启动需将后端地址切换成线上地址 baseURL: "https://node-admin.cn/", 路径 src/utils/http/index
-
-暂时因密钥安全后端源码暂时不公开 测试使用线上地址
 
 环境配置
 
@@ -120,47 +106,6 @@ yarn report
 
 ```
 yarn lint
-```
-
-### 🎨 目录结构
-
-```
-├── .vscode                    // 编辑器配置
-├── dist                       // 打包文件
-├── locales                    // 国际化语言包
-├── node_modules               // 依赖包
-├── public                     // 静态目录
-├── src                        // 源代码
-│   ├── api                    // 所有请求
-│   ├── assets                 // 主题字体图片svg icons等静态资源
-│   ├── components             // 全局公用组件
-│   ├── directives             // 自定义指令
-│   ├── electron               // electron配置
-│   ├── layout                 // 主页面
-│   ├── plugins                // 插件
-│   ├── router                 // 路由
-│   ├── store                  // 全局 store管理
-│   ├── styles                 // 全局样式
-│   ├── utils                  // 全局公用方法
-│   ├── views                  // view 页面目录
-│   ├── App.vue                // 入口页面
-│   ├── main.js                // 入口 加载组件 初始化等
-├── static                     // 静态资源
-├── browserslistrc             // 配置兼容浏览器
-├── .eslintignore              // eslint 忽略项
-├── .eslintrc.js               // eslint 配置项
-├── .env.development           // 开发环境变量
-├── .env.production            // 生产环境变量
-├── .env.local                 // 本地环境变量
-├── .gitignore                 // git 忽略项
-├── prettierrc                 // prettier 配置
-├── babel.config.js            // babel-loader 配置
-├── commitlint.md              // Commitlint 提交规范
-├── README.md                  // 说明
-├── jsconfig.json              // JavaScript配置
-├── LICENSE                    // 开源协议
-├── package.json               // 项目名称 项目版本 项目描述 项目运行的一些脚本(依赖)
-└── vue.config.js              // vue配置文件
 ```
 
 ### 🖼️ 截图

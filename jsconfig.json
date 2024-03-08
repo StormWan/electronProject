@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
     "baseUrl": ".",
+    "target": "esnext",
+    "module": "esnext",
     "sourceMap": true,
     "paths": {
       "@/*": ["src/*"]

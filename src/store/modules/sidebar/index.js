@@ -1,5 +1,4 @@
 const { production } = require("@/config/vue.custom.config");
-
 const outsideList = [
   {
     only: "message",
@@ -21,6 +20,13 @@ const outsideList = [
     only: "test",
     icon: "SwitchFilled",
     title: "web",
+    show: production ? "hide" : "",
+    type: "el-icon",
+  },
+  {
+    only: "electron",
+    icon: "Eleme",
+    title: "electron",
     show: production ? "hide" : "",
     type: "el-icon",
   },

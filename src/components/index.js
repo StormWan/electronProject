@@ -3,14 +3,16 @@ import * as UserAvatar from "./UserAvatar";
 import * as QrCode from "./QrCode";
 import * as SideItem from "./SideItem";
 
-const components = [FontIcon, UserAvatar, QrCode, SideItem];
-const regex = /\/([^/]+)\/index\.vue$/;
+const components = [
+  { name: "FontIcon", component: FontIcon.default },
+  { name: "UserAvatar", component: UserAvatar.default },
+  { name: "QrCode", component: QrCode.default },
+  { name: "SideItem", component: SideItem.default },
+];
 
 /** 自动加载全局组件 */
 export function loadAllassembly(app) {
-  components.forEach((t) => {
-    const { __file } = t.default;
-    const name = __file.match(regex)[1];
-    app.component(name, t.default);
+  components.forEach(({ name, component }) => {
+    app.component(name, component);
   });
 }

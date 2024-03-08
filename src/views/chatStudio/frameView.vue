@@ -14,7 +14,7 @@ const props = defineProps({
   },
 });
 const frameSrc = {
-  document: "https://hyk260.github.io/PureAdmin",
+  document: "https://hyk260.github.io/pure-docs",
   github: "https://github.com/Hyk260",
   gitee: "https://gitee.com",
 };
