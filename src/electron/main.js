@@ -79,13 +79,6 @@ class Background {
       const win = global.mainWin;
       win.webContents.send("awaken", url);
     });
-
-    // 用于开发环境 测试热更新
-    // Object.defineProperty(app, 'isPackaged', {
-    //   get() {
-    //     return true;
-    //   }
-    // });
   }
 }
 

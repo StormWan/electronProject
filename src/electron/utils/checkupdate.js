@@ -1,8 +1,8 @@
 import { app, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
-import { isWindows, isMac } from "@/electron/utils/index";
+import { isDevelopment, isWindows, isMac } from "@/electron/utils/index";
 import { windowMap } from "../utils/windows-map";
-
+const path = require("path");
 /*
  * -1 检查更新失败
  * 0 正在检查更新
@@ -12,9 +12,29 @@ import { windowMap } from "../utils/windows-map";
  * 4 下载完成
  */
 
-// 配置更新服务器 URL
-const updateServerUrl = process.env.VUE_APP_UPDATE_SERVER_URL;
+if (!app.isPackaged) {
+  // 用于开发环境 测试热更新
+  autoUpdater.forceDevUpdateConfig = true;
+  // Error: ENOENT: no such file or directory /xxxx/app-update.yml
+  autoUpdater.updateConfigPath = path.join(__dirname, "dev-update.yml");
+  // console.log(path.join(__dirname, "dev-update.yml"));
+  // provider: generic;
+  // url: //127.0.0.1:5500/
+  // updaterCacheDirName: pure-admin-updater;
+}
 
+function platform() {
+  let platform = "";
+  // if (isDevelopment) return "";
+  if (isWindows) {
+    platform = "win/";
+  } else if (isMac) {
+    platform = "mac/";
+  }
+  return platform;
+}
+// 配置更新服务器 URL
+const updateServerUrl = `${process.env.VUE_APP_UPDATE_SERVER_URL}${platform()}`;
 // 负责向渲染进程发送信息
 function sendMessage({ type, data }) {
   const mainWin = windowMap.get("mainWin");
@@ -35,7 +55,7 @@ class Update {
     });
     // 当开始检查更新的时候触发
     autoUpdater.on("checking-for-update", (event, arg) => {
-      sendMessage({ type: "checking-for-update", data: "开始检查更新" });
+      sendMessage({ type: "checking-for-update", data: `开始检查更新${updateServerUrl}` });
     });
     // 发现可更新数据时
     autoUpdater.on("update-available", (event, arg) => {
