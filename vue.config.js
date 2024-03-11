@@ -77,7 +77,7 @@ module.exports = defineConfig({
     // 配置代码分割
     optimization,
     // 性能提示
-    // performance,
+    performance,
   },
   // 第三方插件配置
   pluginOptions,
