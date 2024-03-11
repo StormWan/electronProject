@@ -13,7 +13,7 @@ const path = require("path");
  */
 
 if (!app.isPackaged) {
-  // 用于开发环境 测试热更新
+  // 用于开发环境 测试全量更新
   autoUpdater.forceDevUpdateConfig = true;
   // Error: ENOENT: no such file or directory /xxxx/app-update.yml
   autoUpdater.updateConfigPath = path.join(__dirname, "dev-update.yml");
@@ -21,11 +21,13 @@ if (!app.isPackaged) {
   // provider: generic;
   // url: //127.0.0.1:5500/
   // updaterCacheDirName: pure-admin-updater;
+
+  // C:\Users\H2607\AppData\Local\pure-admin-updater;
 }
 
 function platform() {
   let platform = "";
-  // if (isDevelopment) return "";
+  if (isDevelopment) return "";
   if (isWindows) {
     platform = "win/";
   } else if (isMac) {

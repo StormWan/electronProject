@@ -12,6 +12,13 @@ export const appIpcEmit = () => {
     let downloadComplete = false; //下载完成
     let downloadProgress = 0; //下载进度
     let hasupdates = false; //是否更新可用
+    if (type === "error") {
+      store.commit("showMessage", {
+        message: "error",
+        type: "error",
+      });
+      return;
+    }
     if (type === "update-available") {
       // 有更新 hasupdates true
     } else if (type === "update-not-available") {
@@ -39,4 +46,8 @@ export const appIpcEmit = () => {
   //   },
   // };
   // store.commit("ipcRenderer", { method: "invoke", key: "loadWindowInPool", value: options });
+};
+
+export const checkUpdates = (data) => {
+  store.commit("ipcRenderer", { key: "check-update" });
 };

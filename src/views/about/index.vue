@@ -24,8 +24,13 @@
           align="left"
         >
           <el-tag v-if="item?.tag">{{ item.tag }}</el-tag>
-          <a v-else :href="item.url" target="_blank">
+          <a v-else-if="item?.url" :href="item.url" target="_blank">
             <span class="style-color"> {{ item.title }} </span>
+          </a>
+          <a v-else-if="item?.func">
+            <span class="style-color" @click="checkUpdates(item.func)">
+              {{ item.title }}
+            </span>
           </a>
         </el-descriptions-item>
       </el-descriptions>
@@ -83,6 +88,7 @@
 
 <script setup>
 import { computed } from "vue";
+import { checkUpdates } from "@/utils/appEmit";
 const { repository } = require("../../../package.json");
 const APP_INFO = JSON.parse(window.__APP_INFO__);
 const { pkg, lastBuildTime } = APP_INFO;
@@ -120,11 +126,16 @@ const data = [
     url: "https://gitee.com/H260788/PureAdmin",
     title: "gitee",
   },
-  {
-    label: "打开应用",
-    url: "pure://openapp?name=1&pwd=2",
-    title: "PureApp",
-  },
+  // {
+  //   label: "打开应用",
+  //   url: "pure://openapp?name=1&pwd=2",
+  //   title: "PureApp",
+  // },
+  // {
+  //   label: "检查更新",
+  //   func: "check-update",
+  //   title: "检查更新",
+  // },
 ];
 const words = [
   "@babel/core",
