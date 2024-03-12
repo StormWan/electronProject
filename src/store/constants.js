@@ -1,6 +1,13 @@
+// token
 export const ACCESS_TOKEN = "Access-Token";
-export const SET_UP = "setup";
-export const USER_DATA = "User-Model";
+// 用户设置
+export const USER_SETUP = "User-Setup";
+// 用户信息
+export const USER_MODEL = "User-Model";
+// 免登录信息
+export const ACCOUNT = "ACCOUNT";
+// 表情包最近使用
+export const EMOJI_RECENTLY = "Emoji-Recently";
 
 export const CONVERSATIONTYPE = {
   UPDATE_NOMORE: "UPDATE_NOMORE", //更新加载更多

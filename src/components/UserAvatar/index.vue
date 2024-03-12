@@ -66,7 +66,7 @@ const shapeObj = {
 };
 
 const { userProfile } = useState({
-  userProfile: (state) => state.user.currentUserProfile,
+  userProfile: (state) => state.user.userProfile,
 });
 
 const displayInfo = (info) => {

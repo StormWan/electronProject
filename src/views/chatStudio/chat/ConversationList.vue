@@ -86,9 +86,9 @@ const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { messageList, activetab, Conver, currentUserProfile, sessionDraftMap } = useState({
+const { messageList, activetab, Conver, userProfile, sessionDraftMap } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
-  currentUserProfile: (state) => state.user.currentUserProfile,
+  userProfile: (state) => state.user.userProfile,
   messageList: (state) => state.conversation.currentMessageList,
   activetab: (state) => state.conversation.activetab,
   conversationList: (state) => state.conversation.conversationList,
@@ -122,7 +122,7 @@ const fnClass = (item) => {
 const formatNewsMessage = (data) => {
   const { type, lastMessage, unreadCount } = data;
   const { messageForShow, fromAccount, isRevoked } = lastMessage;
-  const { userID } = currentUserProfile.value;
+  const { userID } = userProfile.value;
   const isOther = userID !== fromAccount; // 其他人消息
   const isFound = fromAccount == "@TLS#NOT_FOUND"; // 未知消息
   const isSystem = type == "@TIM#SYSTEM"; //系统消息

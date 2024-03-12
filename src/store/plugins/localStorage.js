@@ -1,12 +1,12 @@
 import storage from "@/utils/localforage/index";
-import { USER_DATA, SET_UP } from "@/store/constants";
+import { USER_MODEL, USER_SETUP } from "@/store/constants";
 
 const handlers = {
   UPDATE_USER_INFO: (state) => {
-    storage.set(USER_DATA, state.data);
+    storage.set(USER_MODEL, state.data);
   },
   UPDATE_USER_SETUP: (state) => {
-    storage.set(SET_UP, state.settings);
+    storage.set(USER_SETUP, state.settings);
   },
 };
 

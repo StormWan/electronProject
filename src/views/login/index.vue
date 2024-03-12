@@ -77,16 +77,4 @@ const { currentPage } = useState({
     width: 400px;
   }
 }
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-}
-
-@keyframes cursor-blink {
-  50% {
-    border-color: transparent;
-  }
-}
 </style>

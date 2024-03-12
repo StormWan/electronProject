@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['app-wrapper', sidebar ? '' : 'style-wrapper']"
-    :style="fnStyle(isActive)"
+    :style="fnStyle(isCollapse)"
     v-element-size="onResize"
   >
     <Header />
@@ -34,8 +34,8 @@ const route = useRoute();
 const router = useRouter();
 const { state, dispatch, commit } = useStore();
 
-const { isActive, sidebar } = useState({
-  isActive: (state) => state.settings.isCollapse,
+const { isCollapse, sidebar } = useState({
+  isCollapse: (state) => state.settings.isCollapse,
   sidebar: (state) => state.settings.sidebar,
 });
 /**

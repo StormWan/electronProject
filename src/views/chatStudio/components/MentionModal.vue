@@ -50,7 +50,7 @@ export default {
   computed: {
     ...mapState({
       isShowModal: (state) => state.conversation.isShowModal,
-      currentUserProfile: (state) => state.user.currentUserProfile,
+      userProfile: (state) => state.user.userProfile,
       currentMemberList: (state) => state.groupinfo.currentMemberList,
     }),
     // 根据 <input> value 筛选 list
@@ -97,7 +97,7 @@ export default {
         return data.sort(compareUserID);
       }
       return this.currentMemberList
-        .filter((t) => t.userID !== this.currentUserProfile.userID)
+        .filter((t) => t.userID !== this.userProfile.userID)
         .sort(compareUserID);
     },
     updateMention() {

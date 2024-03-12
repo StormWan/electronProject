@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUserProfile: (state) => state.user.currentUserProfile,
+      userProfile: (state) => state.user.userProfile,
       memberList: (state) => state.groupinfo.currentMemberList,
     }),
     details() {
@@ -33,7 +33,7 @@ export default {
         return `${this.details.nick || "管理员"} 邀请 ${message.nick || userIDList[0]} 加入群聊 🎉`;
       }
       if (userIDList.length == 1) {
-        if (this.currentUserProfile?.userID == userIDList[0]) {
+        if (this.userProfile?.userID == userIDList[0]) {
           return "你已经是群成员了，和大家打个招呼吧！";
         }
       }

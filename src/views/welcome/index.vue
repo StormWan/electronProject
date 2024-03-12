@@ -45,8 +45,6 @@ let greetings = computed(() => {
 const openDepot = () => {
   window.open("https://github.com/Hyk260");
 };
-
-onMounted(() => {});
 </script>
 <style lang="scss" scoped>
 .style-row {

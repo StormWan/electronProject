@@ -11,7 +11,6 @@ import { compareByRole } from "@/utils/chat/index";
 
 export default {
   state: {
-    groupDrawer: false, // 群聊开关
     groupList: [], //群组列表
     groupProfile: null, // 群聊数据
     currentMemberList: [], // 当前群组成员列表
@@ -37,9 +36,6 @@ export default {
     // 更新群详情
     setGroupProfile(state, payload) {
       state.groupProfile = payload;
-    },
-    setGroupStatus(state, status) {
-      state.groupDrawer = status;
     },
   },
   actions: {

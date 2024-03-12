@@ -1,4 +1,5 @@
-import { ACCESS_TOKEN, SET_UP, USER_DATA } from "@/store/constants";
+import { ACCESS_TOKEN, USER_SETUP, USER_MODEL } from "@/store/constants";
+import { StoreKey } from "@/api/openai/constant";
 import http from "@/utils/http/index";
 import storage from "@/utils/localforage/index";
 
@@ -34,8 +35,8 @@ export const getuser = async () => {
 // 退出登录
 export const logout = () => {
   // storage.clear();
-  storage.remove(SET_UP);
-  storage.remove(USER_DATA);
+  storage.remove(USER_SETUP);
+  storage.remove(USER_MODEL);
   storage.remove(ACCESS_TOKEN);
-  storage.remove("access-control");
+  storage.remove(StoreKey.Access);
 };

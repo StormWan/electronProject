@@ -7,9 +7,9 @@
       <div class="scroll-container">
         <el-tag
           v-for="item in tags"
-          :key="item.title"
-          :closable="item.name !== 'welcome'"
-          :type="curTitle === item.title ? '' : 'info'"
+          :key="item.name"
+          :closable="true"
+          :type="curTitle === item.title ? 'primary' : 'info'"
           @click="onClick(item.path)"
           @close="handleClose(item)"
         >

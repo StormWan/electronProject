@@ -55,7 +55,7 @@ export default {
       showMsgBox: (state) => state.conversation.showMsgBox,
       forwardData: (state) => state.conversation.forwardData,
       showCheckbox: (state) => state.conversation.showCheckbox,
-      currentUserProfile: (state) => state.user.currentUserProfile,
+      userProfile: (state) => state.user.userProfile,
       conversationList: (state) => state.conversation.conversationList,
       currentConversation: (state) => state.conversation.currentConversation,
     }),
@@ -131,7 +131,7 @@ export default {
     },
     mergeTitle() {
       const { type, userProfile } = this.currentConversation || {};
-      const self = this.currentUserProfile.nick;
+      const self = this.userProfile.nick;
       return type == "GROUP" ? "群聊" : `${userProfile?.nick}和${self}的聊天记录`;
     },
     // 合并转发

@@ -1,7 +1,7 @@
 <template>
   <el-drawer
-    ref="drawerRef"
-    v-model="visible"
+    ref="groupRef"
+    v-model="drawer"
     :title="$t('group.GroupDetails')"
     size="360px"
     :modal="true"
@@ -112,16 +112,17 @@
 </template>
 
 <script setup>
-import { nextTick, ref, computed, toRefs, watchEffect } from "vue";
+import { ref, toRefs, watchEffect, onMounted, onBeforeUnmount } from "vue";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { updateGroupProfile, addGroupMember, deleteGroupMember } from "@/api/im-sdk-api/index";
-import { useI18n } from "vue-i18n";
 import { restApi } from "@/api/node-admin-api/index";
 import AddMemberPopup from "../components/AddMemberPopup.vue";
 import AnalysisUrl from "../components/AnalysisUrl.vue";
 import { showConfirmationBox } from "@/utils/message";
+import { useBoolean } from "@/utils/hooks/index";
 import TIM from "@/utils/IM/chat/index";
+import emitter from "@/utils/mitt-bus";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   groupProfile: {
@@ -133,7 +134,7 @@ const props = defineProps({
     default: false,
   },
 });
-const { groupProfile, staff } = toRefs(props);
+const { groupProfile } = toRefs(props);
 
 const GROUP_TYPE_MAP = {
   Public: "陌生人社交群(Public)",
@@ -143,11 +144,10 @@ const GROUP_TYPE_MAP = {
 };
 const isNotify = ref(false);
 const AddMemberRef = ref();
-const { locale, t } = useI18n();
-const { state, commit, dispatch } = useStore();
-const { userProfile, groupDrawer, currentMemberList, currentConversation } = useState({
-  userProfile: (state) => state.user.currentUserProfile,
-  groupDrawer: (state) => state.groupinfo.groupDrawer,
+const { commit, dispatch } = useStore();
+const [drawer, setDrawer] = useBoolean();
+const { userProfile, currentMemberList, currentConversation } = useState({
+  userProfile: (state) => state.user.userProfile,
   currentMemberList: (state) => state.groupinfo.currentMemberList,
   currentConversation: (state) => state.conversation.currentConversation,
 });
@@ -158,27 +158,11 @@ const { isOwner, isAdmin, toAccount, currentType } = useGetters([
   "currentType",
 ]);
 
-watchEffect(() => {
-  isNotify.value = currentConversation.value.messageRemindType === "AcceptNotNotify" ? true : false;
-});
-
 const notify = (val) => {
   const { type, toAccount, messageRemindType: remindType } = currentConversation.value;
-  dispatch("SET_MESSAGE_REMIND_TYPE", {
-    type,
-    toAccount,
-    remindType,
-  });
+  dispatch("SET_MESSAGE_REMIND_TYPE", { type, toAccount, remindType });
 };
-const visible = computed({
-  get() {
-    console.log(currentMemberList.value);
-    return groupDrawer.value;
-  },
-  set() {
-    commit("setGroupStatus", false);
-  },
-});
+
 const openNamePopup = async () => {
   const { name } = groupProfile.value;
   const data = { message: "输入群名", inputValue: name };
@@ -187,6 +171,7 @@ const openNamePopup = async () => {
   const { value, action } = result;
   modifyGroupInfo(value);
 };
+
 const openNoticePopup = async () => {
   const { notification } = groupProfile.value;
   const data = { message: "输入群公告", inputValue: notification };
@@ -195,17 +180,22 @@ const openNoticePopup = async () => {
   const { value, action } = result;
   modifyGroupInfo(value, "notification");
 };
+
 const openDetails = () => {};
+
 const handleClose = (done) => {
   done();
 };
+
 const groupMemberAdd = () => {
   AddMemberRef.value.onenDialog();
 };
+
 const navigate = (item) => {
   dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${item.userID}` });
-  commit("setGroupStatus", false);
+  setDrawer(false);
 };
+
 const removeGroupMemberBtn = async (item) => {
   const data = { message: `确定将 ${item.nick} 移出群聊?`, iconType: "warning" };
   const result = await showConfirmationBox(data);
@@ -215,6 +205,7 @@ const removeGroupMemberBtn = async (item) => {
   if (code !== 0) return;
   updataGroup();
 };
+
 const addGroupMemberBtn = async (value) => {
   const { groupID, type } = groupProfile.value;
   const { toAccount } = value;
@@ -234,6 +225,7 @@ const addGroupMemberBtn = async (value) => {
     }
   }
 };
+
 const updataGroup = () => {
   setTimeout(() => {
     dispatch("getGroupMemberList");
@@ -248,6 +240,7 @@ const modifyGroupInfo = async (value, modify) => {
     value,
   });
 };
+
 const handleDismissGroup = async () => {
   const data = { message: "确定解散群聊?", iconType: "warning" };
   const result = await showConfirmationBox(data);
@@ -257,13 +250,15 @@ const handleDismissGroup = async () => {
     convId: conversationID,
     groupId: toAccount.value,
   });
-  commit("setGroupStatus", false);
+  setDrawer(false);
 };
+
 const handleTransferGroup = async () => {
   const data = { message: "确定转让群聊?", iconType: "warning" };
   const result = await showConfirmationBox(data);
   if (result == "cancel") return;
 };
+
 const handleQuitGroup = async () => {
   const data = { message: "确定退出群聊?", iconType: "warning" };
   const result = await showConfirmationBox(data);
@@ -273,8 +268,22 @@ const handleQuitGroup = async () => {
     convId: conversationID,
     groupId: toAccount.value,
   });
-  commit("setGroupStatus", false);
+  setDrawer(false);
 };
+
+watchEffect(() => {
+  isNotify.value = currentConversation.value.messageRemindType === "AcceptNotNotify" ? true : false;
+});
+
+onMounted(() => {
+  emitter.on("onGroupDrawer", (val) => {
+    setDrawer(val);
+  });
+});
+
+onBeforeUnmount(() => {
+  emitter.off("onGroupDrawer");
+});
 </script>
 
 <style lang="scss" scoped>
@@ -324,8 +333,6 @@ const handleQuitGroup = async () => {
 }
 .group-accountecment {
   padding: 12px 0;
-  // .group-accountecment--title {
-  // }
   .group-accountecment--info {
     font-size: 12px;
     font-weight: 400;

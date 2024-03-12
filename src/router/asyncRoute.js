@@ -1,4 +1,3 @@
-import { $t } from "@/plugins/i18n";
 export default [
   {
     path: "/",
@@ -14,7 +13,7 @@ export default [
         name: "welcome",
         component: () => import(/* webpackChunkName: "Welcome" */ "@/views/welcome/index"),
         meta: {
-          title: $t("route.welcome"),
+          title: "首页",
           locale: "welcome",
           icon: "Eleme",
         },
@@ -24,7 +23,7 @@ export default [
         name: "chatStudio",
         component: () => import(/* webpackChunkName: "ChatStudio" */ "@/views/chatStudio/index"),
         meta: {
-          title: $t("route.chatStudio"),
+          title: "聊天工作室",
           locale: "chatStudio",
           icon: "ForkSpoon",
           keep: true,
@@ -35,7 +34,7 @@ export default [
         name: "personal",
         component: () => import(/* webpackChunkName: "Personal" */ "@/views/personal/index"),
         meta: {
-          title: $t("route.personal"),
+          title: "个人中心",
           locale: "personal",
           icon: "User",
         },
@@ -45,7 +44,7 @@ export default [
         name: "about",
         component: () => import(/* webpackChunkName: "About" */ "@/views/about/index"),
         meta: {
-          title: $t("route.about"),
+          title: "关于",
           locale: "about",
           icon: "Warning",
         },
@@ -54,7 +53,7 @@ export default [
         path: "/system",
         name: "system",
         meta: {
-          title: $t("route.system"),
+          title: "系统管理",
           locale: "system",
           icon: "Setting",
         },
@@ -64,7 +63,7 @@ export default [
             name: "menu",
             component: () => import(/* webpackChunkName: "Menu" */ "@/views/system/menu/index"),
             meta: {
-              title: $t("route.menu"),
+              title: "菜单",
               locale: "menu",
               icon: "More",
             },
@@ -74,7 +73,7 @@ export default [
             name: "role",
             component: () => import(/* webpackChunkName: "Role" */ "@/views/system/role/index"),
             meta: {
-              title: $t("route.role"),
+              title: "角色",
               locale: "role",
               icon: "CopyDocument",
             },
@@ -84,7 +83,7 @@ export default [
             name: "user",
             component: () => import(/* webpackChunkName: "user" */ "@/views/system/user/index"),
             meta: {
-              title: $t("route.user"),
+              title: "用户",
               locale: "user",
               icon: "User",
             },
@@ -95,7 +94,7 @@ export default [
       //   path: "/assembly",
       //   name: "assembly",
       //   meta: {
-      //     title: $t("route.assembly"),
+      //     title: '组件',
       //     locale: "assembly",
       //     icon: "Menu",
       //   },
@@ -106,7 +105,7 @@ export default [
       //       component: () =>
       //         import(/* webpackChunkName: "Jigsaw" */ "@/views/assembly/Jigsaw/index"),
       //       meta: {
-      //         title: $t("route.jigsaw"),
+      //         title: '拼图游戏',
       //         locale: "jigsaw",
       //         icon: "DishDot",
       //       },

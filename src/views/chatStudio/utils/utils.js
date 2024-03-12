@@ -369,7 +369,7 @@ export function searchByPinyin(searchStr) {
   const memberList = store.state?.groupinfo?.currentMemberList;
   // 过滤掉当前用户的信息
   const filteredList = memberList.filter(
-    (member) => member.userID !== store.state?.user.currentUserProfile.userID
+    (member) => member.userID !== store.state?.user.userProfile.userID
   );
   // 如果过滤后的列表为空，触发空结果的事件并返回
   if (!filteredList || filteredList.length === 0) {

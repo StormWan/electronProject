@@ -5,7 +5,7 @@ import router from "@/router";
 import storage from "@/utils/localforage/index";
 import emitter from "@/utils/mitt-bus";
 import { convertToTree, optimizeTree } from "@/utils/ToTree";
-import { USER_DATA, SET_UP } from "@/store/constants";
+import { USER_MODEL, USER_SETUP, ACCOUNT } from "@/store/constants";
 
 // 默认设置
 const defaultSettings = {
@@ -18,16 +18,14 @@ const defaultSettings = {
 
 // 默认用户信息
 const defaultData = {
-  verifyCode: "",
   user: null,
-  token: null,
   elTag: [], // Tag 标签
   routeTable: null, // 路由表  Route Table
 };
 
 // 获取本地存储中的设置和用户信息，如果没有则使用默认值
-const settings = storage.get(SET_UP) || defaultSettings;
-const data = storage.get(USER_DATA) || defaultData;
+const settings = storage.get(USER_SETUP) || defaultSettings;
+const data = storage.get(USER_MODEL) || defaultData;
 
 const modules = {};
 const plugins = [saveToLocalStorage];
@@ -44,8 +42,6 @@ requireModules.keys().forEach((filePath) => {
     ...modular.default,
   };
 });
-
-console.log(modules, "modules");
 
 const store = createStore({
   modules,
@@ -64,7 +60,7 @@ const store = createStore({
     },
     // 保存登录信息 keep
     ACCOUNT_INFORMATION(state, data) {
-      storage.set("ACCOUNT", data?.keep ? data : null);
+      data?.keep && storage.set(ACCOUNT, data);
     },
     // 设置 storage
     SET_STORAGE(state, { key, value }) {
@@ -72,7 +68,6 @@ const store = createStore({
     },
     // 触发事件
     EMITTER_EMIT(state, { key, value = "" }) {
-      console.log("[emit]:", { key, value });
       emitter.emit(key, value);
     },
   },
@@ -100,10 +95,6 @@ const store = createStore({
         console.error(error);
       }
     },
-    // 设置验证码
-    SET_VERIFYCODE({ state }, code) {
-      state.data.verifyCode = code;
-    },
     // 清除 eltag 标签
     CLEAR_EL_TAG({ state }) {
       state.data.elTag = [];
@@ -116,5 +107,4 @@ const store = createStore({
 // 刷新页面保存当前主题色
 changeAppearance(store.state.settings.appearance);
 
-console.log(store, "store实例");
 export default store;

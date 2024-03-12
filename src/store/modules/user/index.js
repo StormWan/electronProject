@@ -9,23 +9,25 @@ import { verification } from "@/utils/message/index";
 const user = {
   state: {
     timProxy,
+    verifyCode: "",
     message: null,
     showload: false, // 登录按钮加载状态
     currentPage: 0,
-    currentUserProfile: {}, // IM用户信息
+    userProfile: {}, // IM用户信息
   },
   mutations: {
     setCurrentPage(state, num) {
       state.currentPage = num;
     },
     setCurrentUserProfile(state, profile) {
-      state.currentUserProfile = profile;
+      state.userProfile = profile;
     },
     reset(state) {
       Object.assign(state, {
         showload: false,
+        verifyCode: "",
         currentPage: 0,
-        currentUserProfile: {},
+        userProfile: {},
       });
     },
     showMessage(state, options) {
@@ -38,6 +40,10 @@ const user = {
         duration: options.duration || 2000,
         offset: 30,
       });
+    },
+    // 设置验证码
+    SET_VERIFYCODE(state, code) {
+      state.verifyCode = code;
     },
   },
   actions: {
@@ -59,9 +65,6 @@ const user = {
         commit("UPDATE_USER_INFO", { key: "user", value: result });
         commit("ACCOUNT_INFORMATION", data);
         router.push("/welcome");
-        // setTimeout(() => {
-        //   router.push("/welcome");
-        // }, 1000);
       } else {
         verification(code, msg);
       }

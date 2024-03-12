@@ -28,7 +28,7 @@ export default {
     ...mapState({
       currentConversation: (state) => state.conversation.currentConversation,
       currentMessageList: (state) => state.conversation.currentMessageList,
-      userProfile: (state) => state.user.currentUserProfile,
+      userProfile: (state) => state.user.userProfile,
       revokeMsgMap: (state) => state.conversation.revokeMsgMap,
     }),
     ...mapGetters(["isOwner"]),

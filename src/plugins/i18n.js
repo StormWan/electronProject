@@ -1,4 +1,4 @@
-import { SET_UP } from "@/store/constants";
+import { USER_SETUP } from "@/store/constants";
 import { createI18n } from "vue-i18n";
 import storage from "@/utils/localforage/index";
 
@@ -14,7 +14,7 @@ const localesConfigs = {
     ...zhLocale,
   },
 };
-const lang = storage.get(SET_UP)?.lang || "zh-CN";
+const lang = storage.get(USER_SETUP)?.lang || "zh-CN";
 
 export const i18n = createI18n({
   legacy: false,

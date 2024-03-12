@@ -53,8 +53,8 @@ export class ChatGPTApi {
       messages: messages.slice(-Number(modelConfig.historyMessageCount)), // 上下文
       stream: options.config.stream, // 流式传输
       model: modelConfig.model, // 模型
-      max_tokens: modelConfig.max_tokens, // 单次回复限制
-      temperature: modelConfig.temperature, // 随机性
+      // max_tokens: modelConfig.max_tokens, // 单次回复限制
+      temperature: Number(modelConfig.temperature), // 随机性
       presence_penalty: modelConfig.presence_penalty, //话题新鲜度
       frequency_penalty: modelConfig.frequency_penalty, // 频率惩罚度
       top_p: modelConfig.top_p, // 核采样

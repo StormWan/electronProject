@@ -31,13 +31,11 @@
 <script setup>
 import "../utils/custom-menu";
 import "@wangeditor/editor/dist/css/style.css";
-import { SlateTransforms } from "@wangeditor/editor";
 import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
 import {
-  onBeforeUnmount,
   ref,
   shallowRef,
   onMounted,
@@ -45,6 +43,7 @@ import {
   nextTick,
   onActivated,
   onDeactivated,
+  onBeforeUnmount,
 } from "vue";
 import {
   sendChatMessage,
@@ -70,18 +69,16 @@ const mentionRef = ref();
 const initState = ref(false);
 
 const { dispatch, commit } = useStore();
-const { isOwner, toAccount, currentType } = useGetters(["isOwner", "toAccount", "currentType"]);
+const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
 const {
   currentConversation,
   showMsgBox,
   showCheckbox,
   isShowModal,
-  currentMemberList,
   currentReplyMsg,
   sessionDraftMap,
 } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
-  currentMemberList: (state) => state.groupinfo.currentMemberList,
   currentConversation: (state) => state.conversation.currentConversation,
   showCheckbox: (state) => state.conversation.showCheckbox,
   showMsgBox: (state) => state.conversation.showMsgBox,
@@ -399,7 +396,6 @@ onBeforeUnmount(() => {
   .editor-content {
     height: calc(100% - 40px) !important;
     overflow-y: hidden;
-    // :deep(.w-e-image-container) {}
     :deep(.w-e-text-container p) {
       margin: 0;
     }

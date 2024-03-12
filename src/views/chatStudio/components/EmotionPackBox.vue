@@ -124,12 +124,9 @@ const getParser = () => {
 const selectEmoticon = (item, type = "") => {
   emit("SelectEmoticon", item, table.value);
   if (type == "QQ") {
-    commit("setRecently", {
-      data: item,
-      type: "add",
-    });
+    commit("setRecently", { data: item, type: "add" });
   }
-  // setClose();
+  setClose();
 };
 
 const onClickOutside = () => {

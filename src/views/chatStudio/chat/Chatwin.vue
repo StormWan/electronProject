@@ -143,7 +143,7 @@ const {
   showCheckbox,
   needScrollDown,
   currentReplyMsg,
-  currentUserProfile,
+  userProfile,
   currentMessageList,
   currentConversation,
 } = useState({
@@ -152,7 +152,7 @@ const {
   forwardData: (state) => state.conversation.forwardData,
   showCheckbox: (state) => state.conversation.showCheckbox,
   needScrollDown: (state) => state.conversation.needScrollDown,
-  currentUserProfile: (state) => state.user.currentUserProfile,
+  userProfile: (state) => state.user.userProfile,
   currentReplyMsg: (state) => state.conversation.currentReplyMsg,
   currentMessageList: (state) => state.conversation.currentMessageList,
   currentConversation: (state) => state.conversation.currentConversation,
@@ -218,7 +218,7 @@ const isTime = (item) => {
   return item?.isTimeDivider;
 };
 const ISown = (item) => {
-  return item.from == currentUserProfile.value.userID;
+  return item.from == userProfile.value.userID;
 };
 
 const onclickavatar = (e, item) => {
@@ -429,8 +429,7 @@ const handleAt = (data) => {
   emitter.emit("handleAt", { id: from, name: nick });
 };
 const handleSendMessage = (data) => {
-  const { from } = data;
-  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${from}` });
+  dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${data.from}` });
 };
 // 另存为
 const handleSave = (data) => {

@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
 });
 
 watch(imgCode, (value) => {
-  dispatch("SET_VERIFYCODE", value);
+  commit("SET_VERIFYCODE", value);
   // 测试环境自动填充图形验证码
   if (!production) {
     user.verifyCode = value;

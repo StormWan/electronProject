@@ -50,13 +50,9 @@ const chatNick = (type, chat) => {
 };
 
 const openSetup = () => {
-  console.log(groupProfile.value);
-  console.log(chat.value);
-  commit("setGroupStatus", true);
+  commit("EMITTER_EMIT", { key: "onGroupDrawer", value: true });
 };
-const openUser = () => {
-  console.log(chat.value);
-};
+const openUser = () => {};
 </script>
 
 <style lang="scss" scoped>

@@ -13,6 +13,7 @@ import {
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
 import storage from "@/utils/localforage/index";
+import { EMOJI_RECENTLY } from "@/store/constants";
 
 const conversation = {
   // namespaced: true, //命名空间
@@ -284,9 +285,9 @@ const conversation = {
           const oldestElement = iterator.next().value;
           state.recently.delete(oldestElement);
         }
-        storage.set("recently", [...state.recently]);
+        storage.set(EMOJI_RECENTLY, [...state.recently]);
       } else if (type == "revert") {
-        const recently = storage.get("recently");
+        const recently = storage.get(EMOJI_RECENTLY);
         if (recently) state.recently = new Set([...recently]);
       } else if (type == "clean") {
         state.recently.clear();

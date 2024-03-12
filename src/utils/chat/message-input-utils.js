@@ -314,3 +314,23 @@ export const createProgressHandler = () => {
 export const isRobot = (text) => {
   return /@RBT#/.test(text);
 };
+
+export function readFromFile() {
+  return new Promise((res, rej) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "application/json";
+
+    fileInput.onchange = (event) => {
+      const file = event.target.files[0];
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        res(e.target.result);
+      };
+      fileReader.onerror = (e) => rej(e);
+      fileReader.readAsText(file);
+    };
+
+    fileInput.click();
+  });
+}

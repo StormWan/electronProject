@@ -13,9 +13,7 @@ createRouter.prototype.push = function push(location, onResolve, onReject) {
   return originalPush.call(this, location).catch((err) => err);
 };
 
-// 登录验证白名单
 let isF = false;
-console.log("[routes]", routes);
 
 const router = createRouter({
   history: createWebHashHistory(),
