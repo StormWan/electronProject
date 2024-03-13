@@ -6,12 +6,11 @@
         <span>{{ $config.Title }}</span>
       </div>
       <div class="flex items-center">
-        <el-dropdown>
+        <el-dropdown v-if="false">
           <UserAvatar type="self" class="user-info" :size="28" />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="logOut">退出登录</el-dropdown-item>
-              <!-- <el-dropdown-item></el-dropdown-item> -->
             </el-dropdown-menu>
           </template>
         </el-dropdown>

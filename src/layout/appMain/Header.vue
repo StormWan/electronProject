@@ -17,7 +17,7 @@
       </div>
       <div class="arrow-setup">
         <Fullscreen />
-        <div class="user" v-show="!isWindows">
+        <div class="user">
           <el-dropdown>
             <span class="el-dropdown-link">
               <UserAvatar type="self" :size="28" />
