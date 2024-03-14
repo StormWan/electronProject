@@ -5,13 +5,16 @@ import NProgress from "@/utils/progress";
 import { scrollBehavior } from "./utils";
 import storage from "@/utils/localforage/index";
 import { isElectron } from "@/electron/utils/index";
+import remainingRouter from "./modules/remaining";
 
 const routes = [];
 const files = require.context("./modules/", false, /\.js$/);
 files.keys().forEach((key) => {
+  if (key === "./remaining.js") return;
   routes.push(...files(key).default);
 });
-console.log(routes);
+
+routes.unshift(...remainingRouter);
 
 let isF = false;
 const router = createRouter({
