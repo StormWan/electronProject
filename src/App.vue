@@ -12,7 +12,6 @@ import { appIpcEmit } from "@/utils/appEmit";
 import { useWatermark } from "@/utils/hooks/useWatermark";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-
 const { setWatermark } = useWatermark();
 
 export default defineComponent({
@@ -32,10 +31,16 @@ export default defineComponent({
     appIpcEmit();
     // dispatch("reloadRoute");
     setWatermark("Pure Admin");
-    setTimeout(() => {
-      if (this.$route.name === "login") return;
-      this.$store.dispatch("LOG_IN_AGAIN");
-    }, 200);
+    this.loginAgain(this.$route);
+  },
+  methods: {
+    loginAgain({ name }) {
+      if (!name) return;
+      this.$nextTick(() => {
+        if (name === "login") return;
+        this.$store.dispatch("LOG_IN_AGAIN");
+      });
+    },
   },
 });
 </script>

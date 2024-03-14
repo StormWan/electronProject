@@ -5,6 +5,8 @@ import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
 import chat from "@/utils/IM/im-sdk/tim";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
+import { USER_MODEL } from "@/store/constants";
+import storage from "@/utils/localforage/index";
 
 const user = {
   state: {
@@ -19,8 +21,8 @@ const user = {
     setCurrentPage(state, num) {
       state.currentPage = num;
     },
-    setCurrentUserProfile(state, profile) {
-      state.userProfile = profile;
+    setCurrentProfile(state, user) {
+      state.userProfile = user;
     },
     reset(state) {
       Object.assign(state, {
@@ -102,14 +104,20 @@ const user = {
       }
     },
     // 重新登陆
-    LOG_IN_AGAIN({ state, rootState, dispatch }) {
-      const { username: userID, userSig } = rootState.data.user || {};
-      console.log({ userID, userSig }, "LOG_IN_AGAIN");
-      if (!userID || !userSig) dispatch("LOG_OUT");
-      setTimeout(() => {
-        window.TIMProxy.init();
-        dispatch("TIM_LOG_IN", { userID, userSig });
-      }, 500);
+    LOG_IN_AGAIN({ state, dispatch }) {
+      try {
+        const { user } = storage.get(USER_MODEL) || {};
+        if (user) {
+          const { username: userID, userSig } = user;
+          console.log({ userID, userSig }, "LOG_IN_AGAIN");
+          window.TIMProxy.init();
+          dispatch("TIM_LOG_IN", { userID, userSig });
+        } else {
+          dispatch("LOG_OUT");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     // 菜单列表
     async GET_MENU({ dispatch }) {

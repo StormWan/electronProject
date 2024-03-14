@@ -62,10 +62,6 @@ const store = createStore({
     ACCOUNT_INFORMATION(state, data) {
       data?.keep && storage.set(ACCOUNT, data);
     },
-    // 设置 storage
-    SET_STORAGE(state, { key, value }) {
-      storage.set(key, value);
-    },
     // 触发事件
     EMITTER_EMIT(state, { key, value = "" }) {
       emitter.emit(key, value);
@@ -85,10 +81,10 @@ const store = createStore({
     // 页面刷新重新加载路由
     reloadRoute({ state }, route) {
       try {
-        const routing = state.data.routeTable;
-        if (!routing) return;
-        optimizeTree(routing);
-        routing.forEach((item) => {
+        const { routeTable } = storage.get(USER_MODEL) || {};
+        if (!routeTable) return;
+        optimizeTree(routeTable);
+        routeTable.forEach((item) => {
           router.addRoute(item);
         });
       } catch (error) {

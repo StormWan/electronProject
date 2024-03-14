@@ -22,7 +22,7 @@ export const i18n = createI18n({
   fallbackLocale: "en",
   messages: localesConfigs,
 });
-console.log("[locales]:", localesConfigs);
+
 /**
  * app.config.globalProperties.$t = i18n.global.t;
  * 可以在全局模版语法直接使用

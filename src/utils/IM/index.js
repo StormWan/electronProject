@@ -1,4 +1,3 @@
-"use strict";
 import TIM from "@/utils/IM/chat/index";
 import tim from "@/utils/IM/im-sdk/tim";
 import storage from "@/utils/localforage/index";
@@ -114,7 +113,7 @@ export class TIMProxy {
     this.chat.getMyProfile().then(({ code, data }) => {
       this.userProfile = data;
       // this.userID = this.chat.getLoginUser();
-      store.commit("setCurrentUserProfile", data);
+      store.commit("setCurrentProfile", data);
     });
   }
   onUpdateConversationList({ data }) {
