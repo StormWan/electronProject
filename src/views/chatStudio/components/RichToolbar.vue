@@ -186,7 +186,7 @@ emitter.on("onisbot", (state) => {
     color: rgba(0, 0, 0, 0.75);
     position: absolute;
     left: 17px;
-    top: 28px;
+    top: 38px;
     border-radius: 3px;
     // border: 1px solid #e9e9e9;
     background-color: #eaeaea;
