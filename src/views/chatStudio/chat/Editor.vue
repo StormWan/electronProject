@@ -22,7 +22,11 @@
       :isOwner="isOwner"
       @insertMention="insertMention"
     />
-    <el-tooltip effect="dark" :content="editorConfig.placeholder" placement="left-start">
+    <el-tooltip
+      effect="dark"
+      :content="placeholderMap[getOperatingSystem()]"
+      placement="left-start"
+    >
       <el-button class="btn-send" @click="handleEnter()"> {{ $t("chat.sending") }} </el-button>
     </el-tooltip>
   </div>
@@ -33,7 +37,8 @@ import "../utils/custom-menu";
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
-import { editorConfig } from "../utils/configure";
+import { editorConfig, placeholderMap } from "../utils/configure";
+import { getOperatingSystem } from "../utils/utils";
 import emitter from "@/utils/mitt-bus";
 import {
   ref,
@@ -71,6 +76,7 @@ const initState = ref(false);
 const { dispatch, commit } = useStore();
 const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
 const {
+  lang,
   currentConversation,
   showMsgBox,
   showCheckbox,
@@ -78,6 +84,7 @@ const {
   currentReplyMsg,
   sessionDraftMap,
 } = useState({
+  lang: (state) => state.settings.lang,
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
   currentConversation: (state) => state.conversation.currentConversation,
   showCheckbox: (state) => state.conversation.showCheckbox,
@@ -369,6 +376,11 @@ const handleEditorKeyDown = async () => {
 
 watch(showMsgBox, () => {
   handleEditorKeyDown();
+});
+watch(lang, () => {
+  const systemOs = getOperatingSystem();
+  const placeholder = document.querySelector(".w-e-text-placeholder");
+  placeholder.innerHTML = placeholderMap.value[systemOs];
 });
 onActivated(() => {
   handleEditorKeyDown();

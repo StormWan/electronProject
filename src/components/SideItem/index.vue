@@ -60,4 +60,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-menu--collapse {
+  height: 50px;
+  .el-menu-item {
+    // margin: 0 10px 0 10px;
+    border-radius: 5px;
+  }
+}
+</style>

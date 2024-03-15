@@ -5,7 +5,7 @@
         ref="menuRef"
         class="el-menu-vertical"
         :default-active="route.path"
-        :collapse-transition="false"
+        :collapse-transition="true"
         :unique-opened="false"
         :collapse="isCollapse"
         router
