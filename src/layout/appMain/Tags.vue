@@ -17,7 +17,8 @@
           v-contextmenu:contextmenu
           @contextmenu.prevent="contextMenuEvent($event, item)"
          -->
-          {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
+          <FontIcon v-if="item.icon" :iconName="item.icon" class="icon" />
+          <span> {{ item.locale ? $t(`route.${item.locale}`) : item.title }} </span>
         </el-tag>
       </div>
       <div class="arrow-right">
@@ -177,9 +178,17 @@ function closing(tag) {
     align-items: center;
     padding: 0 5px;
     overflow: hidden;
-    span {
+    .el-tag {
       cursor: pointer;
       margin-right: 3px;
+    }
+    :deep(.el-tag__close) {
+      margin-left: 3px;
+    }
+    .icon {
+      color: var(--el-tag-text-color);
+      margin-right: 3px;
+      vertical-align: text-bottom;
     }
   }
 
