@@ -11,6 +11,7 @@
         </div>
         <el-breadcrumb>
           <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item.title">
+            <FontIcon class="icon" :iconName="item.icon" />
             {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
           </el-breadcrumb-item>
         </el-breadcrumb>
@@ -101,15 +102,13 @@ export default {
   methods: {
     getBreadcrumb(path) {
       const { name, meta } = this.$route;
-      const { title, locale } = meta;
+      const { title, locale, icon } = meta;
       const label = this.tags;
       let index = -1;
       if (label) {
-        index = label.findIndex((t) => {
-          return t?.path === path;
-        });
+        index = label.findIndex((t) => t?.path === path);
       }
-      const append = { title, name, locale, path };
+      const append = { title, name, locale, path, icon };
       const tag = label ? [...label, append] : [append];
       const uniqueData = uniqBy(tag, "name");
       if (index === -1) {
@@ -199,5 +198,9 @@ export default {
     display: flex;
     align-items: center;
   }
+}
+.icon {
+  font-size: 15px !important;
+  vertical-align: text-bottom;
 }
 </style>

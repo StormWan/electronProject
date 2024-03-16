@@ -61,6 +61,8 @@ const fnStyle = (off) => {
 }
 .app-wrapper {
   width: 100%;
+  transition-duration: 220ms;
+  transition-delay: 50ms;
 }
 .continer-theme {
   height: 100%;

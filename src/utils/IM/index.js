@@ -1,24 +1,19 @@
+import store from "@/store";
 import TIM from "@/utils/IM/chat/index";
 import tim from "@/utils/IM/im-sdk/tim";
 import storage from "@/utils/localforage/index";
-import store from "@/store";
 import { useWindowFocus } from "@vueuse/core";
 import { scrollToDomPostion } from "@/utils/chat/index";
-import { kickedOutReason, fnCheckoutNetState } from "./utils/index";
 import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
+import {
+  kickedOutReason,
+  fnCheckoutNetState,
+  getConversationID,
+  getConversationList,
+} from "./utils/index";
 
 const isFocused = useWindowFocus(); // 判断浏览器窗口是否在前台可见状态
-
-function getConversationID() {
-  return store.state.conversation?.currentConversation?.conversationID;
-}
-function getConversationList(data) {
-  const List = store.state.conversation?.conversationList;
-  const convId = data?.[0].conversationID;
-  const massage = List.filter((t) => t.conversationID == convId);
-  return massage;
-}
 
 export class TIMProxy {
   constructor() {
@@ -29,22 +24,13 @@ export class TIMProxy {
     this.chat = null; // im实例
     this.TIM = null; // 命名空间
     this.once = false; // 防止重复初始化
-    this.test = {};
-    this.conversationList = [];
-    Object.defineProperty(this, "test", {
-      configurable: true, // 可配置
-      enumerable: false, // 不可枚举
-      value: 1, // 赋值
-      writable: true, // 可写
-    });
     // 暴露给全局
     window.TIMProxy = new Proxy(this, {
       set(target, key, val) {
         return Reflect.set(target, key, val);
       },
       get(target, key) {
-        const value = Reflect.get(target, key);
-        return value;
+        return Reflect.get(target, key);
       },
     });
   }
@@ -112,7 +98,7 @@ export class TIMProxy {
     if (!isSDKReady) return;
     this.chat.getMyProfile().then(({ code, data }) => {
       this.userProfile = data;
-      // this.userID = this.chat.getLoginUser();
+      this.userID = this.chat.getLoginUser();
       store.commit("setCurrentProfile", data);
     });
   }
@@ -159,9 +145,8 @@ export class TIMProxy {
   }
   onKickOut({ data }) {
     console.log("[chat] onKickOut:", data);
-    const message = kickedOutReason(data.type);
     store.commit("showMessage", {
-      message: `${message}被踢出，请重新登录。`,
+      message: `${kickedOutReason(data.type)}被踢出，请重新登录。`,
       type: "error",
     });
     store.dispatch("LOG_OUT");
@@ -198,25 +183,29 @@ export class TIMProxy {
    * https://developer.mozilla.org/zh-CN/docs/Web/API/notification
    * @param {Message} message
    */
-  async notifyMe(message) {
+  async notifyUser(message) {
+    const permission = Notification.permission;
+    console.log("[chat] notifyUser:", permission);
+    // denied 用户拒绝显示通知
+    // granted 用户接受显示通知
+    // default 用户选择是未知的 因此浏览器的行为类似于值是 denied
     // 需检测浏览器支持和用户授权
     if (!("Notification" in window)) {
-      return;
-    } else if (window.Notification.permission === "granted") {
+      console.log("浏览器不支持通知");
+      this.handleElNotification(message);
+    } else if (permission === "granted") {
       this.handleNotify(message);
-    } else if (window.Notification.permission !== "denied") {
-      window.Notification.requestPermission().then((permission) => {
-        // 如果用户同意，就可以向他们发送通知
-        if (permission === "granted") this.handleNotify(message);
-      });
-    }
-    // 用户选择是未知的，因此浏览器的行为类似于值是 denied
-    if (window.Notification.permission == "default") {
+    } else if (permission === "denied") {
       this.handleElNotification(message);
-    }
-    // 用户拒绝显示通知
-    if (window.Notification.permission == "denied") {
-      this.handleElNotification(message);
+    } else if (permission !== "denied") {
+      // 如果用户同意，就可以向他们发送通知
+      Notification.requestPermission()
+        .then(() => {
+          this.handleNotify(message);
+        })
+        .catch((err) => {
+          this.handleElNotification(message);
+        });
     }
   }
   handleNotify(message) {
@@ -281,8 +270,7 @@ export class TIMProxy {
   }
   // 消息更新
   handleUpdateMessage(data, read = true) {
-    const convId = getConversationID();
-    if (!convId) return;
+    if (!getConversationID()) return;
     const isRobot = this.robotList.includes(data?.[0].conversationID);
     if (isRobot) {
       store.dispatch("GET_ROBOT_MESSAGE_LIST", {
@@ -348,7 +336,7 @@ export class TIMProxy {
     if (!massage || massage?.[0]?.messageRemindType === "AcceptNotNotify") return;
     let off = atUserList.includes(userID);
     let all = atUserList.includes(TIM.TYPES.MSG_AT_ALL);
-    if (off || all) this.notifyMe(data[0]);
+    if (off || all) this.notifyUser(data[0]);
   }
 }
 

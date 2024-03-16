@@ -40,10 +40,23 @@
   }
 }
 
+.h-full {
+  height: 100%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
 .flex-col {
   display: flex;
   flex-direction: column;
 }
+
 .fixed-center {
   position: fixed;
   left: 0;
@@ -59,15 +72,19 @@
   display: flex;
   display: -webkit-flex;
 }
+
 .justify-center {
   justify-content: center;
 }
+
 .items-center {
   align-items: center;
 }
+
 .justify-between {
   justify-content: space-between;
 }
+
 .justify-evenly {
   justify-content: space-evenly;
 }

@@ -1,3 +1,4 @@
+import store from "@/store";
 import TIM from "@/utils/IM/chat/index";
 import { throttle } from "lodash-es";
 
@@ -28,3 +29,13 @@ export function checkoutNetState(state) {
 export const fnCheckoutNetState = throttle((state) => {
   checkoutNetState(state);
 }, 3000);
+
+export function getConversationID() {
+  return store.state.conversation?.currentConversation?.conversationID;
+}
+export function getConversationList(data) {
+  const list = store.state.conversation?.conversationList;
+  const convId = data?.[0].conversationID;
+  const massage = list.filter((t) => t.conversationID == convId);
+  return massage;
+}
