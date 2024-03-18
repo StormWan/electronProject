@@ -9,7 +9,7 @@
       :defaultConfig="editorConfig"
       @drop="dropHandler"
       @onChange="onChange"
-      @onCreated="handleCreated"
+      @onCreated="handleEditor"
       @customPaste="customPaste"
       @customAlert="customAlert"
       @keyup.enter="handleEnter"
@@ -38,14 +38,12 @@ import "@wangeditor/editor/dist/css/style.css";
 import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig, placeholderMap } from "../utils/configure";
-import { getOperatingSystem } from "../utils/utils";
 import emitter from "@/utils/mitt-bus";
 import {
   ref,
   shallowRef,
   onMounted,
   watch,
-  nextTick,
   onActivated,
   onDeactivated,
   onBeforeUnmount,
@@ -56,6 +54,10 @@ import {
   parseHTMLToArr,
   extractFilesInfo,
   extractAitInfo,
+  getOperatingSystem,
+  handleToggleLanguage,
+  filterMentionList,
+  handleEditorKeyDown,
 } from "../utils/utils";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
@@ -64,14 +66,12 @@ import { bytesToSize } from "@/utils/chat/index";
 import { fileImgToBase64Url, convertEmoji } from "@/utils/chat/index";
 const { ipcRenderer } = require("electron");
 import { debounce, isEmpty } from "lodash-es";
-import { filterMentionList } from "../utils/utils";
 
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
 const messages = ref(null); //编辑器内容 对象格式
 const mode = "simple"; // 'default' 或 'simple'
 const mentionRef = ref();
-const initState = ref(false);
 
 const { dispatch, commit } = useStore();
 const { isOwner, toAccount } = useGetters(["isOwner", "toAccount"]);
@@ -93,9 +93,16 @@ const {
   currentReplyMsg: (state) => state.conversation.currentReplyMsg,
 });
 
-const handleCreated = (editor) => {
-  editorRef.value = editor;
+const handleEditor = (editor, created = true) => {
+  if (created) {
+    editorRef.value = editor;
+  } else {
+    if (editor == null) return;
+    // 组件销毁时，及时销毁编辑器
+    editor.destroy();
+  }
 };
+
 const insertMention = ({ id, name, backward = true, deleteDigit = 0 }) => {
   const editor = editorRef.value;
   const mentionNode = {
@@ -357,47 +364,24 @@ function offEmitter() {
   emitter.off("handleSetHtml");
   emitter.off("handleInsertDraft");
 }
-const handleEditorKeyDown = async () => {
-  await nextTick();
-  if (initState.value) return;
-  // 解决@好友上键切换光标移动问题
-  const editorElement = document.querySelector(".w-e-text-container");
-  if (!editorElement) return;
-  initState.value = false;
-  editorElement.onkeydown = (e) => {
-    // 键盘上下键
-    if (isShowModal.value) {
-      if ([38, 40].includes(e.keyCode)) {
-        return false;
-      }
-    }
-  };
-};
 
 watch(showMsgBox, () => {
   handleEditorKeyDown();
 });
 watch(lang, () => {
-  const systemOs = getOperatingSystem();
-  const placeholder = document.querySelector(".w-e-text-placeholder");
-  placeholder.innerHTML = placeholderMap.value[systemOs];
+  handleToggleLanguage();
 });
 onActivated(() => {
   handleEditorKeyDown();
-  console.log("[Editor]: onActivated");
 });
 onDeactivated(() => {
   offEmitter();
-  console.log("[Editor]: onDeactivated");
 });
 onMounted(() => {
   onEmitter();
 });
-// 组件销毁时，及时销毁编辑器
 onBeforeUnmount(() => {
-  const editor = editorRef.value;
-  if (editor == null) return;
-  editor.destroy();
+  handleEditor(editorRef.value, false);
 });
 </script>
 

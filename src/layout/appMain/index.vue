@@ -24,15 +24,9 @@
 
 <script setup>
 import { vElementSize } from "@vueuse/components";
-import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
 import { useState } from "@/utils/hooks/useMapper";
 import { isWindows } from "@/electron/utils/index";
 import Header from "./Header.vue";
-
-const route = useRoute();
-const router = useRouter();
-const { state, dispatch, commit } = useStore();
 
 const { isCollapse, sidebar } = useState({
   isCollapse: (state) => state.settings.isCollapse,
@@ -61,8 +55,8 @@ const fnStyle = (off) => {
 }
 .app-wrapper {
   width: 100%;
-  transition-duration: 220ms;
-  transition-delay: 50ms;
+  transition-duration: 300ms;
+  // transition-delay: 50ms;
 }
 .continer-theme {
   height: 100%;

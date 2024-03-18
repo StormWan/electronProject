@@ -203,7 +203,7 @@ export class TIMProxy {
         .then(() => {
           this.handleNotify(message);
         })
-        .catch((err) => {
+        .catch(() => {
           this.handleElNotification(message);
         });
     }

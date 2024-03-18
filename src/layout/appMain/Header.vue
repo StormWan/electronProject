@@ -11,7 +11,7 @@
         </div>
         <el-breadcrumb>
           <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item.title">
-            <FontIcon class="icon" :iconName="item.icon" />
+            <FontIcon v-if="item.icon" class="icon" :iconName="item.icon" />
             {{ item.locale ? $t(`route.${item.locale}`) : item.title }}
           </el-breadcrumb-item>
         </el-breadcrumb>

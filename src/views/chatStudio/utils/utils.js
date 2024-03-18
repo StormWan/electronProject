@@ -1,3 +1,4 @@
+import { nextTick } from "vue";
 import store from "@/store/index";
 import { match } from "pinyin-pro";
 import { useClipboard } from "@vueuse/core";
@@ -9,6 +10,7 @@ import {
   createFiletMsg,
   createImgtMsg,
 } from "@/api/im-sdk-api/index";
+import { placeholderMap } from "./configure";
 
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块
@@ -524,3 +526,24 @@ export function getOperatingSystem(userAgent = navigator.userAgent) {
     return "";
   }
 }
+
+export const handleToggleLanguage = () => {
+  const systemOs = getOperatingSystem();
+  const placeholder = document.querySelector(".w-e-text-placeholder");
+  placeholder.innerHTML = placeholderMap.value[systemOs];
+};
+
+export const handleEditorKeyDown = async () => {
+  await nextTick();
+  // 解决@好友上键切换光标移动问题
+  const container = document.querySelector(".w-e-text-container");
+  if (!container) return;
+  container.onkeydown = (e) => {
+    // 键盘上下键
+    if (store.state?.conversation.isShowModal) {
+      if ([38, 40].includes(e.keyCode)) {
+        return false;
+      }
+    }
+  };
+};
