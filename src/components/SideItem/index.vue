@@ -4,8 +4,9 @@
       <el-menu-item v-if="level(item)" :index="item.path">
         <!-- 一级菜单 -->
         <template v-if="isChat(item)">
-          <el-badge :value="unreadMsg" :hidden="unreadMsg === 0">
+          <el-badge is-dot :value="unreadMsg" :hidden="unreadMsg === 0">
             <FontIcon :iconName="item.meta.icon" />
+            <!-- <span class="column-bar"><span></span></span> -->
           </el-badge>
         </template>
         <FontIcon v-else :iconName="item.meta.icon" />
@@ -66,6 +67,35 @@ export default {
   .el-menu-item {
     // margin: 0 10px 0 10px;
     border-radius: 5px;
+  }
+}
+
+.column-bar {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--el-color-error);
+  span {
+    background: var(--el-color-error);
+    transition: var(--el-transition);
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: dot 1.2s ease-in-out infinite;
+  }
+}
+@keyframes dot {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.4);
   }
 }
 </style>
