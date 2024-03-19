@@ -135,7 +135,6 @@ const clickCscreenshot = () => {
   commit("ipcRenderer", { key: "screenshot" });
 };
 const onShake = () => {
-  commit("ipcRenderer", { key: "shakeWindow" });
   const message = createCustomMsg({
     convId: toAccount.value,
     convType: currentType.value,

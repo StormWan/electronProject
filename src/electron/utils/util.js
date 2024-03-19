@@ -10,6 +10,8 @@ const viewSize = {
   login: { width: 380, height: 550 },
   main: { width: 1038, height: 706 },
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 /* 置顶主窗口 */
 export const mainTop = () => {
   const mainView = global.mainWin;
@@ -145,33 +147,30 @@ export const showMessageBox = () => {
     });
 };
 /* 窗口抖动 */
-export const shakeWindow = () => {
+export const shakeWindow = async () => {
   const win = global.mainWin;
+  win.showInactive();
+  await sleep(500);
   const originalPosition = win.getPosition();
   const shakeDistance = 10;
   const shakeDuration = 100;
-  const shakeInterval = 20;
+  const shakeInterval = 10;
 
   const originalSize = win.getSize();
   const [originalWidth, originalHeight] = originalSize;
-
   let startTime = Date.now();
-
   const shakeIntervalId = setInterval(() => {
     const elapsedTime = Date.now() - startTime;
-
     if (elapsedTime >= shakeDuration) {
       clearInterval(shakeIntervalId);
       win.setPosition(originalPosition[0], originalPosition[1]);
       win.setSize(originalWidth, originalHeight);
       return;
     }
-
     const progress = elapsedTime / shakeDuration;
     const angle = progress * Math.PI * 2;
     const offsetX = Math.round(Math.sin(angle) * shakeDistance);
     const offsetY = Math.round(Math.cos(angle) * shakeDistance);
-
     win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY);
   }, shakeInterval);
 };

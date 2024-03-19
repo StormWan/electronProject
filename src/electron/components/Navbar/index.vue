@@ -108,7 +108,8 @@ export default {
   align-items: center;
   height: 42px;
   backdrop-filter: saturate(180%) blur(20px);
-  background: rgb(235, 248, 242);
+  // background: rgb(235, 248, 242);
+  background: rgb(238 238 238);
   z-index: 100;
   padding: 0 16px;
   -webkit-app-region: drag;

@@ -15,7 +15,6 @@ import {
 
 import Update from "../utils/checkupdate";
 const allUpdater = new Update();
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const ipcEvent = () => {
   // 置顶主窗口
