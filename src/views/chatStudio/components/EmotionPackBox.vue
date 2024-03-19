@@ -1,16 +1,11 @@
 <template>
-  <div v-show="state" class="emjio-tion" v-click-outside="onClickOutside">
+  <div v-show="flag" class="emjio-tion" v-click-outside="onClickOutside">
     <div class="emojis">
       <el-scrollbar wrap-class="custom-scrollbar-wrap" always>
         <!-- QQ表情包 -->
         <div :class="['emoji_QQ', systemOs]" v-show="table == 'QQ'">
           <p class="title" v-show="recentlyUsed.length">最近使用</p>
-          <span
-            v-for="item in recentlyUsed"
-            class="emoji"
-            :key="item"
-            @click="selectEmoticon(item)"
-          >
+          <span v-for="item in recentlyUsed" class="emoji" :key="item" @click="setEmoji(item)">
             <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
           </span>
           <p class="title">小黄脸表情</p>
@@ -19,7 +14,7 @@
               v-for="item in emojiQq.emojiName"
               class="emoji"
               :key="item"
-              @click="selectEmoticon(item, 'QQ')"
+              @click="setEmoji(item, 'QQ')"
             >
               <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
             </span>
@@ -31,7 +26,7 @@
                 v-for="item in emoji"
                 class="emoji scroll-content"
                 :key="item"
-                @click="selectEmoticon(item)"
+                @click="setEmoji(item)"
               >
                 <img :src="require('@/assets/emoji/' + emojiQq.emojiMap[item])" :title="item" />
               </span>
@@ -44,7 +39,7 @@
             v-for="item in emojiDouyin.emojiName"
             class="emoji scroll-content"
             :key="item"
-            @click="selectEmoticon(item)"
+            @click="setEmoji(item)"
           >
             <img :src="require('@/assets/emoji/' + emojiDouyin.emojiMap[item])" :title="item" />
           </span>
@@ -65,7 +60,6 @@
 </template>
 
 <script setup>
-import emitter from "@/utils/mitt-bus";
 import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useBoolean } from "@/utils/hooks/index";
@@ -101,15 +95,15 @@ const systemOs = ref("");
 const table = ref("QQ");
 const EmotionPackGroup = ref([]);
 
-const [state, setState] = useBoolean();
+const [flag, setFlag] = useBoolean();
 const { commit } = useStore();
-const emit = defineEmits(["SelectEmoticon"]);
+const emit = defineEmits(["setEmoji"]);
 const { recently } = useState({
   recently: (state) => state.conversation.recently,
 });
 
 const setClose = () => {
-  setState(false);
+  setFlag(false);
   recentlyUsed.value = [...recently.value].reverse();
 };
 
@@ -121,8 +115,8 @@ const getParser = () => {
   systemOs.value = getOperatingSystem();
 };
 
-const selectEmoticon = (item, type = "") => {
-  emit("SelectEmoticon", item, table.value);
+const setEmoji = (item, type = "") => {
+  emit("setEmoji", item, table.value);
   if (type == "QQ") {
     commit("setRecently", { data: item, type: "add" });
   }
@@ -133,15 +127,13 @@ const onClickOutside = () => {
   setClose();
 };
 
-emitter.on("onEmotionPackBox", (state) => {
-  setState(state);
-});
-
 onMounted(() => {
   getParser();
   initEmotion();
   commit("setRecently", { type: "revert" });
 });
+
+defineExpose({ setFlag });
 </script>
 
 <style lang="scss" scoped>

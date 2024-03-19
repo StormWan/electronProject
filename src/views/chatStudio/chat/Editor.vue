@@ -280,7 +280,6 @@ const handleEnter = (event) => {
   const editor = editorRef.value;
   const empty = editor.isEmpty(); // 判断当前编辑器内容是否为空
   const { textMsg, aitStr, files, image } = sendMsgBefore();
-  commit("EMITTER_EMIT", { key: "onEmotionPackBox", value: false });
   if ((!empty && !isEmpty(textMsg)) || image || aitStr || files) {
     sendMessage();
   } else {
@@ -318,10 +317,8 @@ const sendMsgBefore = () => {
 const sendMessage = async () => {
   const data = sendMsgBefore();
   console.log("sendMsgBefore:", data);
-
   const message = await sendChatMessage(data);
   console.log("sendChatMessage:", message);
-  // return;
   clearInputInfo();
   dispatch("SESSION_MESSAGE_SENDING", {
     payload: {

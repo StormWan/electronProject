@@ -296,13 +296,13 @@ const conversation = {
   },
   actions: {
     // 获取消息列表
-    async [GET_MESSAGE_LIST]({ commit, dispatch, state, rootState }, action) {
+    async [GET_MESSAGE_LIST]({ commit, dispatch, state }, action) {
       const isSDKReady = window.TIMProxy.chat.isReady();
-      const { conversationID, type, toAccount } = action;
+      const { conversationID, type } = action;
       let status = !state.currentMessageList || state.currentMessageList?.length == 0;
       // 当前会话有值
       if (state.currentConversation && isSDKReady && status) {
-        const { isCompleted, messageList, nextReqMessageID } = await getMsgList({
+        const { messageList } = await getMsgList({
           conversationID: conversationID,
           count: 15,
         });
@@ -321,7 +321,7 @@ const conversation = {
           dispatch("getGroupMemberList", { groupID });
         }
       } else {
-        const { conversationID, type, toAccount } = action;
+        const { type } = action;
         if (type == "GROUP") {
           const { groupID } = action.groupProfile;
           dispatch("getGroupMemberList", { groupID });
@@ -355,7 +355,7 @@ const conversation = {
       commit("EMITTER_EMIT", { key: "updataScroll" });
     },
     // 新增会话列表
-    async CHEC_OUT_CONVERSATION({ state, commit, dispatch }, action) {
+    async CHEC_OUT_CONVERSATION({ commit, dispatch }, action) {
       const { convId } = action;
       const { conversation } = await getConversationProfile({
         conversationID: convId,
@@ -371,14 +371,14 @@ const conversation = {
       dispatch("GET_MESSAGE_LIST", conversation);
     },
     // 删除会话列表
-    async DELETE_SESSION({ state, commit, dispatch }, action) {
+    async DELETE_SESSION({ state }, action) {
       const { convId } = action;
       const { code } = await deleteConversation({ convId });
       if (code !== 0) return;
       dispatch("CLEAR_CURRENT_MSG");
     },
     // 清除当前消息记录
-    async CLEAR_CURRENT_MSG({ state, commit }, action) {
+    async CLEAR_CURRENT_MSG({ state }) {
       state.currentConversation = null;
       state.currentMessageList = [];
       commit("SET_SHOW_MSG_BOX", false);
@@ -390,7 +390,7 @@ const conversation = {
       state.totalUnreadMsg = await getUnreadMsg();
     },
     // 消息免打扰
-    async SET_MESSAGE_REMIND_TYPE({ state, commit }, action) {
+    async SET_MESSAGE_REMIND_TYPE({ state }, action) {
       const { type, toAccount, remindType } = action;
       if (type == "@TIM#SYSTEM") return;
       await setMessageRemindType({
@@ -400,35 +400,29 @@ const conversation = {
       });
     },
     // 会话消息发送
-    async SESSION_MESSAGE_SENDING({ state, commit, dispatch }, action) {
+    async SESSION_MESSAGE_SENDING({ commit, dispatch }, action) {
       const { payload } = action;
-      const { convId } = payload;
+      const { convId, message } = payload;
       commit("SET_HISTORYMESSAGE", {
         type: "UPDATE_MESSAGES",
-        payload: {
-          convId: convId,
-          message: payload.message,
-        },
+        payload: { convId, message },
       });
       commit("EMITTER_EMIT", { key: "updataScroll" });
       // 发送消息
-      const { code, message } = await sendMsg(payload.message);
-      if (code == 0) {
-        dispatch("SENDMSG_SUCCESS_CALLBACK", { convId, message });
+      const { code, message: result } = await sendMsg(message);
+      if (code === 0) {
+        dispatch("SENDMSG_SUCCESS_CALLBACK", { convId, message: result });
       } else {
-        console.log("发送失败", code, message);
+        console.log("发送失败", code, result);
       }
     },
     // 消息发送成功回调
     async SENDMSG_SUCCESS_CALLBACK({ state, commit }, action) {
-      console.log(action, "sendMsg消息发送成功");
+      console.log("消息发送成功 SENDMSG_SUCCESS_CALLBACK", action);
       const { convId, message } = action;
       commit("SET_HISTORYMESSAGE", {
         type: "UPDATE_MESSAGES",
-        payload: {
-          convId: convId,
-          message: message,
-        },
+        payload: { convId, message },
       });
       commit("EMITTER_EMIT", { key: "updataScroll" });
       imCallback({

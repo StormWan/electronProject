@@ -73,7 +73,7 @@
       hidden
     /> -->
     <RobotOptions v-if="isRobot(toAccount)" />
-    <EmotionPackBox @SelectEmoticon="SelectEmoticon" />
+    <EmotionPackBox @setEmoji="setEmoji" ref="emjRef" />
   </div>
 </template>
 
@@ -90,6 +90,7 @@ const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 const { production } = require("@/config/vue.custom.config");
 
+const emjRef = ref();
 const tobottom = ref();
 const imagePicker = ref();
 const filePicker = ref();
@@ -99,12 +100,12 @@ const emit = defineEmits(["setToolbar"]);
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
 
 const sendEmojiClick = () => {
-  emitter.emit("onEmotionPackBox", true);
+  emjRef.value.setFlag(true);
 };
 function openRobotBox() {
   emitter.emit("onRobotBox", true);
 }
-const SelectEmoticon = (item, table) => {
+const setEmoji = (item, table) => {
   let url = "";
   if (table == "QQ") {
     // url = emojiQq.emojiUrl + emojiQq.emojiMap[item];

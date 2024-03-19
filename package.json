@@ -1,7 +1,7 @@
 {
-  "name": "pure-admin",
-  "version": "0.2.6",
-  "description": "基于 Vue3、Element-Plus 的清新优雅的中后台模版，提供了丰富的功能组件 聊天工作室 内置ChatGPT (腾讯 IM 即时通讯) 用于学习参考。",
+  "name": "purechat",
+  "version": "0.2.7",
+  "description": "PureChat",
   "author": {
     "name": "Hyk260",
     "email": "2607881950@qq.com"
@@ -92,7 +92,7 @@
     "snabbdom": "^3.5.1"
   },
   "bugs": {
-    "url": "https://github.com/Hyk260/PureAdmin/issues"
+    "url": "https://github.com/Hyk260/PureChat/issues"
   },
   "husky": {
     "hooks": {
@@ -124,6 +124,6 @@
     ]
   },
   "repository": {
-    "url": "https://github.com/Hyk260/PureAdmin.git"
+    "url": "https://github.com/Hyk260/PureChat.git"
   }
 }

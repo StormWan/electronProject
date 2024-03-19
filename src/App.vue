@@ -30,7 +30,7 @@ export default defineComponent({
   mounted() {
     appIpcEmit();
     // dispatch("reloadRoute");
-    setWatermark("Pure Admin");
+    setWatermark("PureChat");
     this.loginAgain(this.$route);
   },
   methods: {

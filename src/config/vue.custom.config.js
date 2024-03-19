@@ -17,10 +17,10 @@ const proxy = {
 };
 const vueDefaultConfig = {
   production, // 环境配置
-  title: "Pure Admin", // 标题
+  title: "PureChat", // 标题
   // pwa 渐进式网页应用
   pwa: {
-    name: "PureAdmin",
+    name: "PureChat",
     iconPaths: {
       favicon32: "img/icons/favicon-32x32.png",
     },
