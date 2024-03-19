@@ -147,18 +147,29 @@ export const showMessageBox = () => {
     });
 };
 /* 窗口抖动 */
+let lastExecutionTimestamp = 0;
 export const shakeWindow = async () => {
+  let startTime = Date.now();
+  if (startTime - lastExecutionTimestamp < 5000) {
+    // 在 5 秒内已经执行过一次，不再执行
+    return;
+  }
+  // 更新上次执行时间戳
+  lastExecutionTimestamp = startTime;
   const win = global.mainWin;
-  win.showInactive();
-  await sleep(500);
+  // 如果窗口最小化了，就会尝试将其显示出来，但不会使其成为焦点窗口
+  if (win.isMinimized()) {
+    win.showInactive();
+    await sleep(500);
+  }
   const originalPosition = win.getPosition();
-  const shakeDistance = 10;
-  const shakeDuration = 100;
+  const shakeDistance = 15;
+  const shakeDuration = 150;
   const shakeInterval = 10;
 
   const originalSize = win.getSize();
   const [originalWidth, originalHeight] = originalSize;
-  let startTime = Date.now();
+
   const shakeIntervalId = setInterval(() => {
     const elapsedTime = Date.now() - startTime;
     if (elapsedTime >= shakeDuration) {
@@ -174,6 +185,7 @@ export const shakeWindow = async () => {
     win.setPosition(originalPosition[0] + offsetX, originalPosition[1] + offsetY);
   }, shakeInterval);
 };
+
 /**
  * 注册协议
  * 并通过浏览器打开 PureApp 程序 pure://

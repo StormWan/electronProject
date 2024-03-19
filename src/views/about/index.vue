@@ -6,7 +6,7 @@
           <span class="name"> {{ $config.Title }} </span>
         </div>
       </template>
-      <span class="describe"> {{ $config.Title }} 是一个基于Vue3、Element-Plus的后台管理模板 </span>
+      <span class="describe"> {{ $config.Title }} 是一个基于Vue3、Element-Plus的聊天工作室 </span>
     </el-card>
     <!-- 项目信息 -->
     <el-card class="style-card" shadow="hover">

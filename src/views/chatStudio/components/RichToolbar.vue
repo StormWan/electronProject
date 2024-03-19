@@ -37,7 +37,7 @@
     </span>
     <!-- 窗口抖动 -->
     <span
-      v-show="currentType == 'C2C'"
+      v-show="currentType === 'C2C' && !isRobot(toAccount)"
       :data-title="$t('chat.windowJitter')"
       class="icon"
       @click="onShake"
