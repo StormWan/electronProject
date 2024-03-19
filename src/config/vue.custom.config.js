@@ -94,10 +94,10 @@ const vueDefaultConfig = {
       // 打包配置
       builderOptions: {
         // 应用名称
-        productName: "PureAdmin",
+        productName: "PureChat",
         // 安装包名称
-        artifactName: "PureAdmin_${version}.${ext}",
-        copyright: "PureAdmin",
+        artifactName: "PureChat_${version}.${ext}",
+        copyright: "PureChat",
         // 应用更新服务器地址
         publish: [
           {

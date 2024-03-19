@@ -20,9 +20,9 @@ if (!app.isPackaged) {
   // console.log(path.join(__dirname, "dev-update.yml"));
   // provider: generic;
   // url: //127.0.0.1:5500/
-  // updaterCacheDirName: pure-admin-updater;
+  // updaterCacheDirName: pure-chat-updater;
 
-  // C:\Users\H2607\AppData\Local\pure-admin-updater;
+  // C:\Users\H2607\AppData\Local\pure-chat-updater;
 }
 
 function platform() {

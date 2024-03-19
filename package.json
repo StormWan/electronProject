@@ -19,7 +19,7 @@
     "prepare": "husky install",
     "report": "vue-cli-service serve --report"
   },
-  "appId": "pureadmin",
+  "appId": "purechat",
   "main": "background.js",
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",

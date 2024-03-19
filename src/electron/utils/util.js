@@ -130,7 +130,7 @@ export const showMessageBox = () => {
   const options = {
     title: "关于",
     type: "info",
-    message: "Pure Admin",
+    message: "PureCaht",
     detail: `版本信息：${version}\n当前系统：${os.type()} ${os.arch()} ${os.release()}`,
     noLink: true,
     buttons: ["查看github", "确定"],
