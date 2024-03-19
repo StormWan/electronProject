@@ -5,7 +5,7 @@
       'isown-style': !isown,
       'single-style': item.conversationType == 'C2C',
     }"
-    v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'"
+    v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem' && item.payload?.data !== 'dithering'"
   >
     <!-- 发送中 -->
     <el-icon class="is-loading" v-show="isShow('unSend')"><Loading /></el-icon>

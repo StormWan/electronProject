@@ -1,5 +1,6 @@
 import store from "@/store";
 import { throttle } from "lodash-es";
+import { msgContent } from "@/api/im-sdk-api/custom";
 /**
  * 将二进制数据转换为 base64 URL 格式
  * @param {string | Buffer} data 要转换的数据，可以是一个字符串或一个 Buffer 对象
@@ -201,21 +202,8 @@ export function getReplyMsgContent(reply) {
   return replyMsgContent;
 }
 
-export function getCustomMsgContent() {
-  return JSON.stringify({
-    data: {
-      body: {
-        bodyType: "loadingBody",
-        text: {
-          loadingIcon: "",
-          value: "正在输入中...",
-        },
-      },
-    },
-    display: 0,
-    ID: "loading",
-    listMessage: "正在输入中...",
-  });
+export function getCustomMsgContent(type) {
+  return JSON.stringify(msgContent(type));
 }
 
 /**

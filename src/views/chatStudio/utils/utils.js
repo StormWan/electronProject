@@ -9,6 +9,7 @@ import {
   createTextAtMsg,
   createFiletMsg,
   createImgtMsg,
+  createCustomMsg,
 } from "@/api/im-sdk-api/index";
 import { placeholderMap } from "./configure";
 
@@ -157,10 +158,9 @@ export const Megtype = (elem_type) => {
 };
 
 export const msgOne = (item) => {
-  const { isRevoked, type } = item;
-  if (isRevoked) {
-    return "message-view__tips-elem";
-  } else if (type == "TIMGroupTipElem") {
+  const { isRevoked, type, payload } = item;
+  payload.data === "dithering";
+  if (isRevoked || type === "TIMGroupTipElem" || payload?.data === "dithering") {
     return "message-view__tips-elem";
   } else {
     return "message-view__item--index";

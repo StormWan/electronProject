@@ -88,16 +88,20 @@ import { isRobot } from "@/utils/chat/index";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
+import { createCustomMsg } from "@/api/im-sdk-api/message";
 const { production } = require("@/config/vue.custom.config");
 
 const emjRef = ref();
 const tobottom = ref();
 const imagePicker = ref();
 const filePicker = ref();
-const { commit } = useStore();
+const { commit, dispatch } = useStore();
 
 const emit = defineEmits(["setToolbar"]);
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
+const { currentConversation } = useState({
+  currentConversation: (state) => state.conversation.currentConversation,
+});
 
 const sendEmojiClick = () => {
   emjRef.value.setFlag(true);
@@ -132,6 +136,14 @@ const clickCscreenshot = () => {
 };
 const onShake = () => {
   commit("ipcRenderer", { key: "shakeWindow" });
+  const message = createCustomMsg({
+    convId: toAccount.value,
+    convType: currentType.value,
+    customType: "dithering",
+  });
+  dispatch("SESSION_MESSAGE_SENDING", {
+    payload: { convId: currentConversation.value.conversationID, message },
+  });
 };
 
 async function sendImage(e) {

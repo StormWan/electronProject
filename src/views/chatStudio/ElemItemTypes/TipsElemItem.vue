@@ -4,7 +4,11 @@
       <span>
         {{ getChangeType() }}
       </span>
-      <el-icon class="close" @click.stop="onClose()" v-show="!isReEdit">
+      <el-icon
+        class="close"
+        @click.stop="onClose()"
+        v-show="!isReEdit && message.type !== 'TIMCustomElem'"
+      >
         <CircleCloseFilled />
       </el-icon>
     </span>
@@ -61,7 +65,10 @@ export default {
       this.$store.commit("setRevokeMsg", { data, type: "delete" });
     },
     getChangeType(message = this.message) {
-      const { conversationType: type, nick, from, revokerInfo } = message;
+      const { conversationType: type, nick, from, revokerInfo, payload } = message;
+      if (payload?.data === "dithering") {
+        return "[窗口抖动]";
+      }
       const isGroup = type === "GROUP";
       const isC2C = type === "C2C";
       // 自己的消息

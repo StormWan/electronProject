@@ -36,10 +36,7 @@
               :isRevoked="item.isRevoked"
               @click.stop="handleSelect($event, item, 'initial')"
             />
-            <div
-              class="picture select-none"
-              v-if="!item.isRevoked && item.type !== 'TIMGroupTipElem'"
-            >
+            <div class="picture select-none" v-if="showAvatar(item)">
               <el-avatar
                 :size="36"
                 shape="square"
@@ -172,6 +169,10 @@ const updateLoadMore = (newValue) => {
   });
 };
 
+const showAvatar = (item) => {
+  return !item.isRevoked && item.type !== "TIMGroupTipElem" && item?.payload?.data !== "dithering";
+};
+
 const getElementById = (ID) => {
   return document.getElementById(`choice${ID}`);
 };
@@ -179,8 +180,13 @@ const setSelect = (el) => {
   el.classList.toggle("style-select");
 };
 const handleSelect = (e, item, type = "initial") => {
-  // tip消息 撤回消息
-  if (!showCheckbox.value || item.type == "TIMGroupTipElem" || item.isRevoked) {
+  // tip消息 撤回消息 抖动消息
+  if (
+    !showCheckbox.value ||
+    item.type == "TIMGroupTipElem" ||
+    item.isRevoked ||
+    item.payload?.data === "dithering"
+  ) {
     return;
   }
   const _el = getElementById(item.ID);
@@ -318,7 +324,7 @@ const getMoreMsg = async () => {
 };
 // 动态组件
 const loadMsgModule = (item) => {
-  const { type, isRevoked } = item;
+  const { type, isRevoked, payload } = item;
   const CompMap = {
     TIMTextElem: TextElemItem, //文本消息
     TIMRelayElem: RelayElemItem, // 合并转发消息
@@ -329,6 +335,9 @@ const loadMsgModule = (item) => {
     TIMGroupSystemNoticeElem: GroupSystemNoticeElem, // 系统通知
   };
   if (isRevoked) return TipsElemItem;
+  if (type === "TIMCustomElem" && payload.data === "dithering") {
+    return TipsElemItem;
+  }
   return CompMap[type] || null;
 };
 
@@ -344,14 +353,15 @@ const handleContextAvatarMenuEvent = (event, item) => {
   RIGHT_CLICK_MENU_LIST.value = AVATAR_LIST;
 };
 const handleContextMenuEvent = (event, item) => {
-  const { isRevoked, time, type } = item;
+  const { isRevoked, time, type, payload } = item;
   console.log(item, "右键菜单数据");
   const isTip = type == "TIMGroupTipElem";
   const isFile = type == "TIMFileElem";
   const isRelay = type == "TIMRelayElem";
+  const isDithering = payload?.data === "dithering";
   const isCheckStatus = showCheckbox.value; // 多选状态
   // 撤回消息 提示类型消息
-  if (isRevoked || isTip || isCheckStatus) {
+  if (isRevoked || isTip || isCheckStatus || isDithering) {
     isRight.value = false;
     return;
   }
@@ -525,7 +535,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 </script>
 
 <style lang="scss" scoped>
-@import url("../ElemItemTypes/elemType.scss");
+@import url("../style/elemType.scss");
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
   border-bottom: 1px solid var(--color-border-default);

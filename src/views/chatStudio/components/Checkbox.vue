@@ -31,7 +31,12 @@ const isMask = computed(() => {
 });
 
 const isShowCheck = computed(() => {
-  return showCheckbox.value && !isRevoked.value && item.value.type !== "TIMGroupTipElem";
+  return (
+    showCheckbox.value &&
+    !isRevoked.value &&
+    item.value.type !== "TIMGroupTipElem" &&
+    item.value.payload?.data !== "dithering"
+  );
 });
 </script>
 
