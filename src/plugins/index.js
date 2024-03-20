@@ -6,6 +6,8 @@ import { useElementPlus } from "./elementPlus";
 import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
+// https://animate.style/
+import "animate.css";
 import "@/styles/index.scss";
 
 export function setupPlugins(app) {

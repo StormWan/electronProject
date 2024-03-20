@@ -54,10 +54,7 @@ export const customMessage = (data) => {
     mainView.webContents.send("customCardNotice", data);
     const offsetX = screenSize.width - mainView.getBounds().width - 10;
     const offsetY = screenSize.height - mainView.getBounds().height - 5;
-    mainView.setBounds({
-      x: parseInt(offsetX),
-      y: parseInt(offsetY),
-    });
+    mainView.setBounds({ x: parseInt(offsetX), y: parseInt(offsetY) });
     //显示但不聚焦窗口
     mainView.showInactive();
   }

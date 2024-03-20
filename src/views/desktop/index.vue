@@ -1,5 +1,10 @@
 <template>
-  <div class="desktop-crad animation border"></div>
+  <div class="desktop-crad">
+    <div class="container border animate__animated" :class="fnStyle(mode)">
+      <el-icon class="close" @click="onClose"><Close /></el-icon>
+      <div></div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -10,11 +15,15 @@ export default {
   computed: {},
   props: {},
   data() {
-    return {};
+    return {
+      station: [],
+      mode: "enter", // enter leave
+    };
   },
   mounted() {
     window.addEventListener("mousemove", (event) => {
-      let flag = event.target === document.documentElement;
+      // let flag = event.target === document.documentElement;
+      let flag = this.mode !== "enter";
       this.$store.commit("ipcRenderer", {
         method: "invoke",
         key: "setIgnore",
@@ -22,25 +31,57 @@ export default {
       });
     });
     ipcRenderer.on("customCardNotice", (event, data) => {
-      console.log(data);
+      console.log(data, "customCardNotice");
+      this.station.push(...data);
+      this.setMode("enter");
+      console.log("station", this.station);
     });
   },
-  methods: {},
+  methods: {
+    setMode(data = "leave") {
+      this.mode = data;
+    },
+    fnStyle(t) {
+      switch (t) {
+        case "enter":
+          return "animate__fadeInRightBig";
+        case "leave":
+          return "animate__bounceOutRight";
+        default:
+          return "";
+      }
+    },
+    onClose() {
+      this.setMode();
+      console.log(this.station);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+.close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+}
 .desktop-crad {
+  position: relative;
   width: 100vw;
-  height: auto;
+  height: 100vh;
   display: flex;
+  border-radius: 4px;
+  // box-shadow: var(--el-box-shadow-lighter);
 }
-.animation {
-  animation: all linear 0.4s;
-}
-.border {
+.container {
+  border-radius: 4px;
+  background: #fff;
   height: 100%;
   width: 100%;
-  border: 1px solid #ccc;
+}
+.border {
+  // border-radius: 4px;
+  // border: 1px solid #ccc;
 }
 </style>

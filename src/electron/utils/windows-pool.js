@@ -11,6 +11,8 @@ const defaultConfig = {
   height: 80,
   minWidth: 260,
   minHeight: 80,
+  maxWidth: 320,
+  maxHeight: 800,
   show: false,
   frame: false, // 边框
   hidden: true,
@@ -18,7 +20,7 @@ const defaultConfig = {
   autoHideMenuBar: true, // 自动隐藏菜单栏，除非按了Alt键
   disableAutoHideCursor: true, // 是否在打字时隐藏光标
   alwaysOnTop: true, //窗口是否永远在别的窗口的上面
-  resizable: false,
+  resizable: isDevelopment ? false : true,
   skipTaskbar: true, // 是否在任务栏中显示窗口
   webPreferences: {
     nodeIntegration: true,
