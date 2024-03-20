@@ -99,6 +99,7 @@ export class TIMProxy {
     this.chat.getMyProfile().then(({ code, data }) => {
       this.userProfile = data;
       this.userID = this.chat.getLoginUser();
+      this.saveSelfToLocalStorage();
       store.commit("setCurrentProfile", data);
     });
   }

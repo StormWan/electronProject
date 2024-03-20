@@ -12,7 +12,7 @@ import { appIpcEmit } from "@/utils/appEmit";
 import { useWatermark } from "@/utils/hooks/useWatermark";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-const { setWatermark } = useWatermark();
+// const { setWatermark } = useWatermark();
 
 export default defineComponent({
   name: "app",
@@ -30,7 +30,7 @@ export default defineComponent({
   mounted() {
     appIpcEmit();
     // dispatch("reloadRoute");
-    setWatermark("PureChat");
+    // setWatermark("PureChat");
     this.loginAgain(this.$route);
   },
   methods: {

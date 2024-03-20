@@ -159,7 +159,6 @@ export const Megtype = (elem_type) => {
 
 export const msgOne = (item) => {
   const { isRevoked, type, payload } = item;
-  payload.data === "dithering";
   if (isRevoked || type === "TIMGroupTipElem" || payload?.data === "dithering") {
     return "message-view__tips-elem";
   } else {

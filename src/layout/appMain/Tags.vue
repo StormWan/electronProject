@@ -9,7 +9,7 @@
           v-for="item in tags"
           :key="item.name"
           :closable="true"
-          :type="curTitle === item.title ? '' : 'info'"
+          :type="curTitle === item.title ? 'primary' : 'info'"
           @click="onClick(item.path)"
           @close="handleClose(item)"
         >

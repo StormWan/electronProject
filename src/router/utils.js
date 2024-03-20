@@ -11,7 +11,6 @@
  */
 export const scrollBehavior = (to, from) => {
   return new Promise((resolve) => {
-    console.log(to);
     if (to.hash) {
       const el = document.querySelector(to.hash);
       if (el) {
