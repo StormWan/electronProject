@@ -134,7 +134,20 @@ const SendFileClick = () => {
 const clickCscreenshot = () => {
   commit("ipcRenderer", { key: "screenshot" });
 };
+let lastExecutionTimestamp = 0;
 const onShake = () => {
+  let startTime = Date.now();
+  if (startTime - lastExecutionTimestamp < 5000) {
+    // 在 5 秒内已经执行过一次，不再执行
+    commit("showMessage", {
+      message: "发送窗口抖动太过频繁,请稍后再试!",
+      type: "warning",
+    });
+    return;
+  }
+  // 更新上次执行时间戳
+  lastExecutionTimestamp = startTime;
+  commit("ipcRenderer", { key: "shakeWindow" });
   const message = createCustomMsg({
     convId: toAccount.value,
     convType: currentType.value,

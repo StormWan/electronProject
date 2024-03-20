@@ -147,29 +147,20 @@ export const showMessageBox = () => {
     });
 };
 /* 窗口抖动 */
-let lastExecutionTimestamp = 0;
 export const shakeWindow = async () => {
-  let startTime = Date.now();
-  if (startTime - lastExecutionTimestamp < 5000) {
-    // 在 5 秒内已经执行过一次，不再执行
-    return;
-  }
-  // 更新上次执行时间戳
-  lastExecutionTimestamp = startTime;
   const win = global.mainWin;
   // 如果窗口最小化了，就会尝试将其显示出来，但不会使其成为焦点窗口
-  if (win.isMinimized()) {
-    win.showInactive();
-    await sleep(500);
-  }
+  console.log(win.isMinimized());
+  const isMinimize = win.isMinimized();
+  mainTop();
+  isMinimize && (await sleep(500)); // 应用处于最小化时延迟5秒后开始闪动
   const originalPosition = win.getPosition();
   const shakeDistance = 15;
   const shakeDuration = 150;
   const shakeInterval = 10;
-
   const originalSize = win.getSize();
   const [originalWidth, originalHeight] = originalSize;
-
+  let startTime = Date.now();
   const shakeIntervalId = setInterval(() => {
     const elapsedTime = Date.now() - startTime;
     if (elapsedTime >= shakeDuration) {

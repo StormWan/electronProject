@@ -329,6 +329,10 @@ export class TIMProxy {
   handlesOnShake(data) {
     const { payload, type } = data[0];
     if (type !== "TIMCustomElem") return;
+    if (payload?.data !== "dithering") return;
+    const massage = getConversationList(data);
+    // 消息免打扰
+    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
     if (payload?.data === "dithering") store.commit("ipcRenderer", { key: "shakeWindow" });
   }
   /**
