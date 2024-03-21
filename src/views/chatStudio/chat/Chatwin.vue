@@ -55,7 +55,7 @@
               @contextmenu.prevent="handleContextMenuEvent($event, item)"
             >
               <NameComponent :item="item" />
-              <div :class="Megtype(item.type)" :id="item.ID">
+              <div :class="msgType(item.type)" :id="item.ID">
                 <component
                   :key="item.ID"
                   :is="loadMsgModule(item)"
@@ -88,7 +88,6 @@
 
 <script setup>
 import {
-  h,
   ref,
   watch,
   nextTick,
@@ -98,7 +97,7 @@ import {
   onBeforeUpdate,
   onBeforeUnmount,
 } from "vue";
-import { handleCopyMsg, validatelastMessage, Megtype, msgOne } from "../utils/utils";
+import { handleCopyMsg, validatelastMessage, msgType, msgOne, loadMsgModule } from "../utils/utils";
 import { circleUrl, MENU_LIST, AVATAR_LIST, RIGHT_CLICK_MENU_LIST } from "../utils/menu";
 import { useStore } from "vuex";
 import { showConfirmationBox } from "@/utils/message";
@@ -116,15 +115,6 @@ import { deleteMsgList, revokeMsg, translateText, getMsgList } from "@/api/im-sd
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
 import { download, timeFormat } from "@/utils/chat/index";
-
-import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
-import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
-import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
-import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
-import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
-import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
-import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
-import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
 
 const timeout = ref(false);
 const isRight = ref(true);
@@ -281,9 +271,9 @@ const updateScrollbar = () => {
 const getMoreMsg = async () => {
   try {
     // 获取指定会话的消息列表
-    const Conv = currentConversation.value;
+    const conv = currentConversation.value;
     const msglist = currentMessageList.value;
-    const { conversationID, toAccount } = Conv;
+    const { conversationID } = conv;
     const { ID } = validatelastMessage(msglist);
     const result = await getMsgList({
       conversationID: conversationID,
@@ -295,20 +285,12 @@ const getMoreMsg = async () => {
     if (messageList.length > 0) noMore = Loadmore;
     if (isCompleted || messageList.length == 0) {
       console.log("[chat] 没有更多消息了 getMoreMsg:");
-      commit("SET_HISTORYMESSAGE", {
-        type: "UPDATE_NOMORE",
-        payload: noMore,
-      });
+      commit("SET_HISTORYMESSAGE", { type: "UPDATE_NOMORE", payload: noMore });
       return;
     }
-    const Response = messageList;
-    const payload = {
-      convId: conversationID,
-      messages: Response,
-    };
     commit("SET_HISTORYMESSAGE", {
       type: "ADD_MORE_MESSAGE",
-      payload,
+      payload: { convId: conversationID, messages: messageList },
     });
     commit("SET_CONVERSATION", {
       type: "UPDATE_SCROLL_DOWN",
@@ -321,24 +303,6 @@ const getMoreMsg = async () => {
       payload: true,
     });
   }
-};
-// 动态组件
-const loadMsgModule = (item) => {
-  const { type, isRevoked, payload } = item;
-  const CompMap = {
-    TIMTextElem: TextElemItem, //文本消息
-    TIMRelayElem: RelayElemItem, // 合并转发消息
-    TIMImageElem: ImageElemItem, // 图片消息
-    TIMFileElem: FileElemItem, // 文件消息
-    TIMCustomElem: CustomElemItem, // 自定义消息
-    TIMGroupTipElem: groupTipElement, // 群消息提示
-    TIMGroupSystemNoticeElem: GroupSystemNoticeElem, // 系统通知
-  };
-  if (isRevoked) return TipsElemItem;
-  if (type === "TIMCustomElem" && payload.data === "dithering") {
-    return TipsElemItem;
-  }
-  return CompMap[type] || null;
 };
 
 const handleContextAvatarMenuEvent = (event, item) => {
@@ -468,7 +432,7 @@ const handleDeleteMsg = async (data) => {
     if (result == "cancel") return;
     const { code } = await deleteMsgList([data]);
     if (code !== 0) return;
-    const { conversationID, toAccount, to } = data;
+    const { conversationID } = data;
     const payload = { convId: conversationID, message: data };
     commit("SET_HISTORYMESSAGE", {
       type: "DELETE_MESSAGE",

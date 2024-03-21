@@ -2,12 +2,12 @@
 export const emojiUrl = "https://www.emojiall.com/images/60/douyin/";
 
 export const emojiMap = {
-  "[喷血]": "fc20.png",
-  "[酷哭]": "10001.png",
+  "[九转大肠]": "fc20.png",
+  "[逞强落泪]": "10001.png",
   "[恭喜]": "6ff8.png",
-  "[拴Q]": "8de4.png",
-  "[你不想]": "22fd.png",
-  "[思考]": "e704.png",
+  "[真的会谢]": "8de4.png",
+  "[不你不想]": "22fd.png",
+  "[宕机]": "e704.png",
   "[吐彩虹]": "1f308.png",
   "[绝望的凝视]": "1f61e.png",
   "[听歌]": "1f3a7.png",
@@ -61,12 +61,12 @@ export const emojiMap = {
 };
 
 export const emojiName = [
-  "[喷血]",
-  "[酷哭]",
+  "[九转大肠]",
+  "[逞强落泪]",
   "[恭喜]",
-  "[拴Q]",
-  "[你不想]",
-  "[思考]",
+  "[真的会谢]",
+  "[不你不想]",
+  "[宕机]",
   "[吐彩虹]",
   "[绝望的凝视]",
   "[听歌]",

@@ -15,9 +15,9 @@
       <!-- 账号登陆 -->
       <Account v-if="currentPage === 0" />
       <!-- 二维码登录 -->
-      <QrCode v-if="currentPage === 2" />
+      <QrCode v-else-if="currentPage === 2" />
       <!-- 注册 -->
-      <Register v-if="currentPage === 3" />
+      <Register v-else-if="currentPage === 3" />
     </div>
   </div>
 </template>

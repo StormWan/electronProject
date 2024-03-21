@@ -48,26 +48,11 @@
       <div class="forget">{{ $t("login.forget") }}</div>
     </div>
     <!-- 登录 -->
-    <el-button type="primary" class="login-btn" @click="LoginBtn(ruleFormRef)" :loading="false">
+    <el-button type="primary" class="login-btn" @click="loginBtn(ruleFormRef)" :loading="false">
       <template #loading>
-        <div class="custom-loading">
-          <svg class="circular" viewBox="-10, -10, 50, 50">
-            <path
-              class="path"
-              d="
-                  M 30 15
-                  L 28 17
-                  M 25.61 25.61
-                  A 15 15, 0, 0, 1, 15 30
-                  A 15 15, 0, 1, 1, 27.99 7.5
-                  L 15 15"
-              style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"
-            />
-          </svg>
-          <!-- <FontIcon iconName="Eleme" class="circular" /> -->
-        </div>
+        <loadingSvg />
       </template>
-      {{ $t("login.login") }}
+      <span> {{ $t("login.login") }}</span>
     </el-button>
   </el-form>
   <!-- other hidden -->
@@ -88,7 +73,7 @@
     </el-divider>
     <div class="w-full flex justify-evenly">
       <span v-for="(item, index) in thirdParty" :key="index" :title="item.title">
-        <svg-icon @click="onClick" class="icon" :iconClass="item.icon" />
+        <svg-icon @click="onClick(item)" class="icon" :iconClass="item.icon" />
       </span>
     </div>
   </el-form-item>
@@ -96,24 +81,20 @@
 
 <script setup>
 import { Lock, User, Key } from "@element-plus/icons-vue";
-import { reactive, ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import { login, getuser, openAuthUrl } from "@/api/node-admin-api/index";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { getuser, openAuthUrl } from "@/api/node-admin-api/index";
 import { operates, thirdParty } from "../utils/enums";
 import { useStore } from "vuex";
 import { user, rules } from "../utils/validation";
 import ImageVerify from "@/views/components/ImageVerify/index.vue";
-import { useState } from "@/utils/hooks/useMapper";
+import loadingSvg from "./loadingSvg";
 const { production } = require("@/config/vue.custom.config");
 
 const restaurants = ref([]);
 const ruleFormRef = ref();
 const imgCode = ref("");
 
-const { state, dispatch, commit } = useStore();
-
-const { currentPage } = useState({
-  currentPage: (state) => state.user.currentPage,
-});
+const { dispatch, commit } = useStore();
 
 const handleSelect = (item) => {
   console.log(item);
@@ -130,19 +111,23 @@ const querySearch = (queryString, cb) => {
   cb(results);
 };
 
-const LoginBtn = async (formEl) => {
+const loginBtn = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid) => {
-    if (valid) Signin();
+    if (valid) dispatch("LOG_IN", user);
   });
 };
 
-const Signin = () => {
-  dispatch("LOG_IN", user);
-};
-const onClick = async () => {
-  const res = await openAuthUrl();
-  window.open(res, "_self");
+const onClick = async ({ title }) => {
+  if (title === "GitHub") {
+    window.open(
+      `https://github.com/login/oauth/authorize?client_id=${process.env.VUE_APP_CLIENT_ID}`,
+      "_self"
+    );
+  } else {
+    const res = await openAuthUrl();
+    window.open(res, "_self");
+  }
 };
 
 const onHandle = (index) => {
@@ -158,7 +143,7 @@ const onHandle = (index) => {
 
 const onkeypress = ({ code }) => {
   if (code === "Enter") {
-    LoginBtn(ruleFormRef.value);
+    loginBtn(ruleFormRef.value);
   }
 };
 
@@ -199,20 +184,6 @@ watch(imgCode, (value) => {
     cursor: pointer;
     color: var(--el-color-primary);
   }
-}
-.el-button .custom-loading .circular {
-  margin-right: 6px;
-  width: 18px;
-  height: 18px;
-  animation: loading-rotate 2s linear infinite;
-}
-.el-button .custom-loading .circular .path {
-  animation: loading-dash 1.5s ease-in-out infinite;
-  stroke-dasharray: 90, 150;
-  stroke-dashoffset: 0;
-  stroke-width: 2;
-  stroke: var(--el-button-text-color);
-  stroke-linecap: round;
 }
 :deep(.el-autocomplete) {
   width: 100%;

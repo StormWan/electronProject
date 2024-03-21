@@ -124,6 +124,7 @@ const conversation = {
             historyMessageList: new Map(),
             currentConversation: null,
             currentMessageList: [],
+            conversationList: [],
             activetab: "whole",
             showMsgBox: false,
             showCheckbox: false,

@@ -13,6 +13,15 @@ import {
 } from "@/api/im-sdk-api/index";
 import { placeholderMap } from "./configure";
 
+import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
+import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
+import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
+import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
+import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
+import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
+import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
+import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
+
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块
   let svgTop = document.getElementById("svgTop"); //聊天框
@@ -129,7 +138,7 @@ export const GroupSystemNotice = (message) => {
 };
 
 // 动态class
-export const Megtype = (elem_type) => {
+export const msgType = (elem_type) => {
   let resp = "";
   switch (elem_type) {
     case "TIMTextElem":
@@ -164,6 +173,24 @@ export const msgOne = (item) => {
   } else {
     return "message-view__item--index";
   }
+};
+// 动态组件
+export const loadMsgModule = (item) => {
+  const { type, isRevoked, payload } = item;
+  const messageComponentMap = {
+    TIMTextElem: TextElemItem, //文本消息
+    TIMRelayElem: RelayElemItem, // 合并转发消息
+    TIMImageElem: ImageElemItem, // 图片消息
+    TIMFileElem: FileElemItem, // 文件消息
+    TIMCustomElem: CustomElemItem, // 自定义消息
+    TIMGroupTipElem: groupTipElement, // 群消息提示
+    TIMGroupSystemNoticeElem: GroupSystemNoticeElem, // 系统通知
+  };
+  if (isRevoked) return TipsElemItem;
+  if (type === "TIMCustomElem" && payload?.data === "dithering") {
+    return TipsElemItem;
+  }
+  return messageComponentMap[type] || null;
 };
 
 /**
