@@ -6,6 +6,7 @@ import { useWindowFocus } from "@vueuse/core";
 import { scrollToDomPostion } from "@/utils/chat/index";
 import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
+import { handleTrayFlashIng, handlesOnShake } from "./utils/app";
 import {
   kickedOutReason,
   fnCheckoutNetState,
@@ -125,8 +126,8 @@ export class TIMProxy {
   onReceiveMessage({ data }) {
     console.log("[chat] 收到新消息 onReceiveMessage:", data);
     const current = getConversationID() == data?.[0].conversationID;
-    this.handlesOnShake(data);
-    this.handleTrayFlashIng(data);
+    handlesOnShake(data);
+    handleTrayFlashIng(data);
     this.handleQuitGroupTip(data);
     this.handleNotificationTip(data);
     this.handleGroupSystemNoticeTip(data);
@@ -317,24 +318,6 @@ export class TIMProxy {
         Notification.close();
       },
     });
-  }
-  // 托盘闪烁
-  handleTrayFlashIng(data) {
-    const massage = getConversationList(data);
-    // store.commit("ipcRenderer", { key: "customMessage", value: data });
-    // 消息免打扰
-    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
-    store.commit("ipcRenderer", { key: "TrayFlashIng" });
-  }
-  // 窗口抖动
-  handlesOnShake(data) {
-    const { payload, type } = data[0];
-    if (type !== "TIMCustomElem") return;
-    if (payload?.data !== "dithering") return;
-    const massage = getConversationList(data);
-    // 消息免打扰
-    if (!massage || massage?.[0].messageRemindType === "AcceptNotNotify") return;
-    if (payload?.data === "dithering") store.commit("ipcRenderer", { key: "shakeWindow" });
   }
   /**
    * 群详情 @好友 @全体成员 系统通知tis
