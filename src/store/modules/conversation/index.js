@@ -307,13 +307,11 @@ const conversation = {
           conversationID: conversationID,
           count: 15,
         });
-        // 添加时间
-        const addTimeDividerResponse = addTimeDivider(messageList).reverse();
         commit("SET_HISTORYMESSAGE", {
           type: "ADD_MESSAGE",
           payload: {
             convId: conversationID,
-            message: addTimeDividerResponse,
+            message: addTimeDivider(messageList).reverse(), // 添加时间
           },
         });
         commit("EMITTER_EMIT", { key: "updataScroll" });

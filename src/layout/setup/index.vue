@@ -10,12 +10,11 @@
       <li>
         <span>{{ t("common.closeSidebar") }}</span>
         <el-switch
-          v-model="sidebar"
+          v-model="sider"
           inline-prompt
           inactive-color="#a6a6a6"
           :active-icon="Check"
           :inactive-icon="Close"
-          @change="greyChange"
         />
       </li>
       <!-- <li>
@@ -53,62 +52,57 @@
           />
         </el-select>
       </li>
+      <li>
+        <span>水印</span>
+        <el-switch
+          v-model="mark"
+          inline-prompt
+          inactive-color="#a6a6a6"
+          :active-icon="Check"
+          :inactive-icon="Close"
+        />
+      </li>
     </ul>
   </el-drawer>
 </template>
 
 <script setup>
 import { Close, Check } from "@element-plus/icons-vue";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted } from "vue";
 import { useState } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
 import { changeAppearance } from "@/utils/common";
 import { useI18n } from "vue-i18n";
+import { useWatermark } from "@/utils/hooks/useWatermark";
+import { languages, options } from "./enums";
 
 const { locale, t } = useI18n();
-
-const options = computed(() => {
-  return [
-    {
-      value: "auto",
-      label: t("common.auto"),
-    },
-    {
-      value: "light",
-      label: t("common.light"),
-    },
-    {
-      value: "dark",
-      label: t("common.dark"),
-    },
-  ];
-});
-
-const languages = [
-  {
-    value: "zh-CN",
-    label: "简体中文",
-  },
-  {
-    value: "en",
-    label: "English",
-  },
-];
-
-const { dispatch, commit } = useStore();
-const { sidebar, appearance, lang, setswitch } = useState({
-  sidebar: (state) => !state.settings.sidebar,
+const { commit } = useStore();
+const { setWatermark, clear } = useWatermark();
+const { sidebar, appearance, lang, setswitch, watermark } = useState({
+  watermark: (state) => state.settings.watermark,
+  sidebar: (state) => state.settings.sidebar,
   appearance: (state) => state.settings.appearance,
   setswitch: (state) => state.settings.setswitch,
   lang: (state) => state.settings.lang,
 });
 
-const greyChange = (val) => {
-  commit("UPDATE_USER_SETUP", {
-    key: "sidebar",
-    value: !val,
-  });
-};
+onMounted(() => {
+  clear();
+  watermark.value && setWatermark("PureChat");
+});
+
+const sider = computed({
+  get() {
+    return sidebar.value;
+  },
+  set(val) {
+    commit("UPDATE_USER_SETUP", {
+      key: "sidebar",
+      value: val,
+    });
+  },
+});
 
 const drawer = computed({
   get() {
@@ -127,34 +121,43 @@ const themecolor = computed({
     return appearance.value;
   },
   set(val) {
-    ThemeColorChange(val);
+    commit("UPDATE_USER_SETUP", {
+      key: "appearance",
+      value: val,
+    });
+    changeAppearance(val);
   },
 });
-
-const ThemeColorChange = (val) => {
-  commit("UPDATE_USER_SETUP", {
-    key: "appearance",
-    value: val,
-  });
-  changeAppearance(val);
-};
 
 const language = computed({
   get() {
     return lang.value;
   },
   set(val) {
-    languageChange(val);
+    commit("UPDATE_USER_SETUP", {
+      key: "lang",
+      value: val,
+    });
+    locale.value = val;
   },
 });
 
-const languageChange = (val) => {
-  commit("UPDATE_USER_SETUP", {
-    key: "lang",
-    value: val,
-  });
-  locale.value = val;
-};
+const mark = computed({
+  get() {
+    return watermark.value;
+  },
+  set(val) {
+    commit("UPDATE_USER_SETUP", {
+      key: "watermark",
+      value: val,
+    });
+    if (val) {
+      setWatermark("PureChat");
+    } else {
+      clear();
+    }
+  },
+});
 </script>
 
 <style lang="scss" scoped>

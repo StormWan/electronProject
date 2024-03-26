@@ -82,8 +82,9 @@
 <script setup>
 import { Lock, User, Key } from "@element-plus/icons-vue";
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
-import { getuser, openAuthUrl } from "@/api/node-admin-api/index";
+import { getuser } from "@/api/node-admin-api/index";
 import { operates, thirdParty } from "../utils/enums";
+import { oauthAuthorize } from "../utils/auth";
 import { useStore } from "vuex";
 import { user, rules } from "../utils/validation";
 import ImageVerify from "@/views/components/ImageVerify/index.vue";
@@ -118,16 +119,8 @@ const loginBtn = async (formEl) => {
   });
 };
 
-const onClick = async ({ title }) => {
-  if (title === "GitHub") {
-    window.open(
-      `https://github.com/login/oauth/authorize?client_id=${process.env.VUE_APP_CLIENT_ID}`,
-      "_self"
-    );
-  } else {
-    const res = await openAuthUrl();
-    window.open(res, "_self");
-  }
+const onClick = async ({ icon }) => {
+  oauthAuthorize(icon);
 };
 
 const onHandle = (index) => {

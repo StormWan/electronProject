@@ -6,7 +6,7 @@ NProgress.configure({
   easing: "ease",
   // 递增进度条的速度
   speed: 500,
-  // 是否显示加载ico
+  // 是否显示加载icon
   showSpinner: false,
   // 自动递增间隔
   trickleSpeed: 200,

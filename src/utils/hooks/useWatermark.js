@@ -3,7 +3,7 @@ import { throttle } from "lodash-es";
 
 /**
  * 创建水印
- * @param {Ref} appendEl - 水印要附加到的元素，默认为 document.body
+ * @param {ref} appendEl - 水印要附加到的元素，默认为 document.body
  * @returns {Object} - 包含设置水印和清除水印的方法
  */
 export function useWatermark(appendEl = ref(document.body)) {

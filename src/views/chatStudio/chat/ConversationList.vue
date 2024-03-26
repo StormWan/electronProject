@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { h, ref, watch, onMounted, nextTick, onActivated } from "vue";
+import { h, ref } from "vue";
 import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
 // import VirtualList from "./VirtualList.vue";
 import Skeleton from "../components/Skeleton.vue";
@@ -86,18 +86,17 @@ const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { messageList, activetab, Conver, userProfile, sessionDraftMap } = useState({
+const { activetab, chat, userProfile, sessionDraftMap } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
   userProfile: (state) => state.user.userProfile,
-  messageList: (state) => state.conversation.currentMessageList,
   activetab: (state) => state.conversation.activetab,
   conversationList: (state) => state.conversation.conversationList,
-  Conver: (state) => state.conversation.currentConversation,
+  chat: (state) => state.conversation.currentConversation,
 });
 
 const isdraft = (item) => {
   return (
-    item.conversationID !== Conver?.value?.conversationID &&
+    item.conversationID !== chat?.value?.conversationID &&
     sessionDraftMap.value.has(item.conversationID)
   );
 };
@@ -112,7 +111,7 @@ const isMention = (item) => {
 };
 
 const fnClass = (item) => {
-  let current = Conver.value;
+  let current = chat.value;
   let select = item?.conversationID == current?.conversationID;
   if (select) {
     return "is-active";
@@ -213,8 +212,8 @@ const dragleaveHandler = (e) => {};
 const handleConvListClick = (data) => {
   console.log(data, "会话点击");
   // return;
-  if (Conver.value) {
-    const { conversationID: id } = Conver.value;
+  if (chat.value) {
+    const { conversationID: id } = chat.value;
     const newId = data?.conversationID;
     if (id == newId) return;
   }
@@ -271,22 +270,12 @@ const pingConv = async (data, off) => {
     isPinned,
   });
 };
-// watch(
-//   () => tabList.value,
-//   (value) => {},
-//   {
-//     deep: true,
-//   }
-// );
-// onActivated(() => {});
-// onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
 .scrollbar-list {
   background: var(--color-body-bg);
   height: 100%;
-  // height: calc(100% - 40px);
 }
 .message-item {
   padding: 12px 12px 12px 16px;

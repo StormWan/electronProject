@@ -14,6 +14,7 @@ const defaultSettings = {
   appearance: "light", // 主题颜色
   isCollapse: true, // 侧边栏是否折叠
   setswitch: false, // 设置按钮开关
+  watermark: false,
 };
 
 // 默认用户信息

@@ -48,6 +48,7 @@
     "nprogress": "^0.2.0",
     "pinyin-pro": "^3.18.5",
     "progress-stream": "^2.0.0",
+    "plyr": "^3.7.8",
     "pure-tools": "^0.0.3",
     "qrcode": "^1.5.3",
     "storejs": "^2.0.1",

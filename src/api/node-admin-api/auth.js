@@ -1,8 +1,9 @@
 import http from "@/utils/http/index";
 
-export const openAuthUrl = () => {
+export const openAuthUrl = (id, params = null) => {
   return http({
-    url: "/auth/qq",
+    url: `/auth/${id}`, // github qq
     method: "get",
+    params,
   });
 };

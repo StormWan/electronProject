@@ -59,9 +59,9 @@ export const dragControllerDiv = (node) => {
   };
 };
 
-export const validatelastMessage = (msglist) => {
+export const validatelastMessage = (list) => {
   return (
-    msglist
+    list
       .slice()
       .reverse()
       .find((msg) => msg.ID) || null
@@ -199,16 +199,8 @@ export const loadMsgModule = (item) => {
  * @returns {string} - 转义后的字符串
  */
 export const html2Escape = (str) => {
-  // 使用对象映射，避免多个 if/else 分支
-  const map = {
-    "<": "&lt;",
-    ">": "&gt;",
-    // "&": "&amp;",
-    '"': "&quot;",
-  };
-  return str.replace(/[<>&"]/g, function (c) {
-    return map[c];
-  });
+  const map = { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" };
+  return str.replace(/[<>&"]/g, (c) => map[c]);
 };
 
 /**
@@ -556,7 +548,7 @@ export function getOperatingSystem(userAgent = navigator.userAgent) {
 export const handleToggleLanguage = () => {
   const systemOs = getOperatingSystem();
   const placeholder = document.querySelector(".w-e-text-placeholder");
-  placeholder.innerHTML = placeholderMap.value[systemOs];
+  if (placeholder) placeholder.innerHTML = placeholderMap.value[systemOs];
 };
 
 export const handleEditorKeyDown = async () => {

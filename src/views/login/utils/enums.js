@@ -26,10 +26,10 @@ const thirdParty = [
     title: "GitHub",
     icon: "github",
   },
-  // {
-  //   title: "QQ",
-  //   icon: "qq",
-  // },
+  {
+    title: "QQ",
+    icon: "qq",
+  },
 ];
 
 export { operates, thirdParty };
