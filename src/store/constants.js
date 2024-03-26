@@ -8,6 +8,8 @@ export const USER_MODEL = "User-Model";
 export const ACCOUNT = "ACCOUNT";
 // 表情包最近使用
 export const EMOJI_RECENTLY = "Emoji-Recently";
+// im数据
+export const TIM_PROXY = "timProxy";
 
 export const CONVERSATIONTYPE = {
   UPDATE_NOMORE: "UPDATE_NOMORE", //更新加载更多

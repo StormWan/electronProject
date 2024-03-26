@@ -5,7 +5,7 @@ import router from "@/router";
 import storage from "@/utils/localforage/index";
 import emitter from "@/utils/mitt-bus";
 import { convertToTree, optimizeTree } from "@/utils/ToTree";
-import { USER_MODEL, USER_SETUP, ACCOUNT } from "@/store/constants";
+import { USER_MODEL, USER_SETUP } from "@/store/constants";
 
 // 默认设置
 const defaultSettings = {
@@ -19,6 +19,7 @@ const defaultSettings = {
 
 // 默认用户信息
 const defaultData = {
+  verifyCode: "",
   user: null,
   elTag: [], // Tag 标签
   routeTable: null, // 路由表  Route Table
@@ -59,11 +60,7 @@ const store = createStore({
     UPDATE_USER_INFO(state, { key, value }) {
       state.data[key] = value;
     },
-    // 保存登录信息 keep
-    ACCOUNT_INFORMATION(state, data) {
-      data?.keep && storage.set(ACCOUNT, data);
-    },
-    // 触发事件
+    // emit触发事件
     EMITTER_EMIT(state, { key, value = "" }) {
       emitter.emit(key, value);
     },

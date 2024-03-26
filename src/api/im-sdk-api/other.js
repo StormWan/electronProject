@@ -37,9 +37,9 @@ export const revokeMsg = async (params) => {
 };
 // 消息免打扰
 export const setMessageRemindType = async (params) => {
-  const { userID, RemindType, type } = params;
+  const { userID, remindType, type } = params;
   let parameter = null;
-  let isDisable = RemindType == "AcceptNotNotify";
+  let isDisable = remindType == "AcceptNotNotify";
   if (type == "C2C") {
     // 单人会话
     parameter = {
@@ -60,7 +60,7 @@ export const setMessageRemindType = async (params) => {
     };
   }
   let { code, data } = await tim.setMessageRemindType(parameter);
-  if (code == 0) {
+  if (code === 0) {
     return data;
   }
 };

@@ -37,6 +37,7 @@ const conversation = {
     outside: "message", // 侧边栏初始状态
     revokeMsgMap: new Map(), // 撤回消息重新编辑
     recently: new Set(),
+    postponeUnread: new Set(),
   },
   mutations: {
     // 设置历史消息
@@ -143,6 +144,11 @@ const conversation = {
             convId,
             message: { unreadCount },
           } = payload;
+          // tab 不为全部不进行消息已读
+          if (state.activetab !== "whole" && state.currentConversation.conversationID === convId) {
+            state.postponeUnread.add(convId);
+            return;
+          }
           if (unreadCount === 0) return;
           console.log("[chat] 消息已读 MARKE_MESSAGE_AS_READED:", payload);
           setMessageRead(convId);
@@ -257,6 +263,9 @@ const conversation = {
     // 回复消息
     setReplyMsg(state, payload) {
       state.currentReplyMsg = payload;
+    },
+    SET_CONVERSATION_VALUE(state, { key, value }) {
+      state[key] = value;
     },
     // 设置会话草稿
     SET_SESSION_DRAFT(state, action) {
@@ -391,12 +400,8 @@ const conversation = {
     // 消息免打扰
     async SET_MESSAGE_REMIND_TYPE({ state }, action) {
       const { type, toAccount, remindType } = action;
-      if (type == "@TIM#SYSTEM") return;
-      await setMessageRemindType({
-        userID: toAccount,
-        RemindType: remindType,
-        type,
-      });
+      if (type === "@TIM#SYSTEM") return;
+      await setMessageRemindType({ userID: toAccount, remindType, type });
     },
     // 会话消息发送
     async SESSION_MESSAGE_SENDING({ commit, dispatch }, action) {

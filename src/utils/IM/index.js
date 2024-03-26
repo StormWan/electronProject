@@ -7,6 +7,7 @@ import { scrollToDomPostion } from "@/utils/chat/index";
 import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import { handleTrayFlashIng, handlesOnShake } from "./utils/app";
+import { TIM_PROXY } from "@/store/constants";
 import {
   kickedOutReason,
   fnCheckoutNetState,
@@ -41,11 +42,11 @@ export class TIMProxy {
     for (const [key, value] of Object.entries(this)) {
       player[key] = value;
     }
-    storage.set("timProxy", player);
+    storage.set(TIM_PROXY, player);
   }
   // 更新IM信息
   loadSelfFromLocalStorage() {
-    const player = storage.get("timProxy");
+    const player = storage.get(TIM_PROXY);
     if (!player) return;
     for (const [key, value] of Object.entries(player)) {
       this[key] = value;

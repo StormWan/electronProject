@@ -41,7 +41,7 @@ export const rules = reactive({
       validator: (rule, value, callback) => {
         if (value === "") {
           callback(new Error("请输入验证码"));
-        } else if (store.state.user.verifyCode !== value) {
+        } else if (store.state.data.verifyCode !== value) {
           callback(new Error("请输入正确的验证码"));
         } else {
           callback();

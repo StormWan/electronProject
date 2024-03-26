@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 });
 
 watch(imgCode, (value) => {
-  commit("SET_VERIFYCODE", value);
+  commit("UPDATE_USER_INFO", { key: "verifyCode", value });
   // 测试环境自动填充图形验证码
   if (!production) {
     user.verifyCode = value;

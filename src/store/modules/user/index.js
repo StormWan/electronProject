@@ -6,16 +6,16 @@ import chat from "@/utils/IM/im-sdk/tim";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
 import { USER_MODEL } from "@/store/constants";
+import { TIM_PROXY, ACCOUNT } from "@/store/constants";
 import storage from "@/utils/localforage/index";
 
 const user = {
   state: {
     timProxy,
-    verifyCode: "",
     message: null,
     showload: false, // 登录按钮加载状态
     currentPage: 0,
-    userProfile: {}, // IM用户信息
+    userProfile: storage.get(TIM_PROXY).userProfile || {}, // IM用户信息
   },
   mutations: {
     setCurrentPage(state, num) {
@@ -27,7 +27,6 @@ const user = {
     reset(state) {
       Object.assign(state, {
         showload: false,
-        verifyCode: "",
         currentPage: 0,
         userProfile: {},
       });
@@ -42,10 +41,6 @@ const user = {
         duration: options.duration || 2000,
         offset: 30,
       });
-    },
-    // 设置验证码
-    SET_VERIFYCODE(state, code) {
-      state.verifyCode = code;
     },
   },
   actions: {
@@ -65,7 +60,8 @@ const user = {
           userSig: result.userSig,
         });
         commit("UPDATE_USER_INFO", { key: "user", value: result });
-        commit("ACCOUNT_INFORMATION", data);
+        // 保存登录信息 keep
+        data?.keep && storage.set(ACCOUNT, data);
         router.push("/welcome");
       } else {
         verification(code, msg);

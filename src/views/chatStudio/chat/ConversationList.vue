@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { h, ref } from "vue";
+import { h, ref, watch } from "vue";
 import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
 // import VirtualList from "./VirtualList.vue";
 import Skeleton from "../components/Skeleton.vue";
@@ -75,7 +75,7 @@ import { Contextmenu, ContextmenuItem } from "v-contextmenu";
 import { timeFormat } from "@/utils/chat/index";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { pinConversation } from "@/api/im-sdk-api/index";
+import { pinConversation, setMessageRead } from "@/api/im-sdk-api/index";
 import Label from "../components/Label.vue";
 import emitter from "@/utils/mitt-bus";
 import { chatName } from "../utils/utils";
@@ -86,12 +86,13 @@ const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { activetab, chat, userProfile, sessionDraftMap } = useState({
+const { activetab, chat, userProfile, sessionDraftMap, postponeUnread } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
   userProfile: (state) => state.user.userProfile,
   activetab: (state) => state.conversation.activetab,
   conversationList: (state) => state.conversation.conversationList,
   chat: (state) => state.conversation.currentConversation,
+  postponeUnread: (state) => state.conversation.postponeUnread,
 });
 
 const isdraft = (item) => {
@@ -203,19 +204,21 @@ const handleContextMenuEvent = (e, item) => {
 };
 
 const dropHandler = (e, item) => {
-  console.log(e, item);
+  console.log("drop", e, item);
 };
-const dragenterHandler = (e) => {};
-const dragleaveHandler = (e) => {};
+const dragenterHandler = (e) => {
+  console.log("dragenter", e);
+};
+const dragleaveHandler = (e) => {
+  console.log("dragleave", e);
+};
 
 // 会话点击
 const handleConvListClick = (data) => {
   console.log(data, "会话点击");
-  // return;
   if (chat.value) {
     const { conversationID: id } = chat.value;
-    const newId = data?.conversationID;
-    if (id == newId) return;
+    if (id == data?.conversationID) return;
   }
   // 切换会话
   commit("SET_CONVERSATION", {
@@ -224,7 +227,7 @@ const handleConvListClick = (data) => {
   });
   // 群详情信息
   dispatch("getGroupProfile", data);
-  // 获取会话列表
+  // 获取会话列表 read
   dispatch("GET_MESSAGE_LIST", data);
   commit("EMITTER_EMIT", { key: "updataScroll" });
   commit("setReplyMsg", null);
@@ -249,27 +252,30 @@ const handleClickMenuItem = (item) => {
   }
 };
 // 消息免打扰
-const disableRecMsg = async (data, off) => {
+const disableRecMsg = async (data) => {
   const { type, toAccount, messageRemindType: remindType } = data;
-  dispatch("SET_MESSAGE_REMIND_TYPE", {
-    type,
-    toAccount,
-    remindType,
-  });
+  dispatch("SET_MESSAGE_REMIND_TYPE", { type, toAccount, remindType });
 };
 // 删除会话
 const removeConv = async (data) => {
   const { conversationID } = data;
   dispatch("DELETE_SESSION", { convId: conversationID });
 };
-// 置顶
-const pingConv = async (data, off) => {
-  const { conversationID, isPinned } = data;
-  await pinConversation({
-    conversationID,
-    isPinned,
+const fnPostpone = (data) => {
+  if (data !== "whole") return;
+  if (postponeUnread.value.size === 0) return;
+  [...postponeUnread.value].map((item) => {
+    setMessageRead(item);
   });
+  commit("SET_CONVERSATION_VALUE", { key: "postponeUnread", value: new Set() });
 };
+// 置顶
+const pingConv = async (data) => {
+  await pinConversation(data);
+};
+watch(activetab, (data) => {
+  fnPostpone(data);
+});
 </script>
 
 <style lang="scss" scoped>
