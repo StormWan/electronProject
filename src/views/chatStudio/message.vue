@@ -44,24 +44,14 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  onActivated,
-  onDeactivated,
-  onBeforeMount,
-  onMounted,
-  onBeforeUnmount,
-  onUnmounted,
-  watch,
-  watchEffect,
-  nextTick,
-} from "vue";
+import { ref, onActivated, onDeactivated, onMounted, onUnmounted, watchEffect } from "vue";
 import { $t } from "@/plugins/i18n";
 import TIM from "@/utils/IM/chat/index";
 import { useEventListener } from "@vueuse/core";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { dragControllerDiv, isallStaff } from "./utils/utils";
 import { useStore } from "vuex";
+import { Favico } from "pure-tools";
 
 import EmptyMessage from "./components/EmptyMessage.vue";
 import Editor from "./chat/Editor.vue";
@@ -79,6 +69,7 @@ const unread = ref("");
 const ChatRef = ref(null);
 const activeName = ref("whole");
 const { dispatch, commit } = useStore();
+const favicon = new Favico({ animation: "none" });
 
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
 const { networkStatus, conver, showMsgBox, totalUnreadMsg } = useState({
@@ -93,6 +84,7 @@ const fnTotalUnreadMsg = () => {
   const isUnread = unreadCount > 0;
   const num = unreadCount > 99 ? "99+" : unreadCount;
   unread.value = isUnread ? `${$t("chat.unread")}(${num})` : $t("chat.unread");
+  isUnread ? favicon.badge(num) : favicon.reset();
 };
 const handleClick = ({ props }, event) => {
   const { label, name } = props;

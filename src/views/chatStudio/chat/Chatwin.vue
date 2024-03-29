@@ -114,7 +114,8 @@ import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/constants";
 import { deleteMsgList, revokeMsg, translateText, getMsgList } from "@/api/im-sdk-api/index";
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
-import { download, timeFormat } from "@/utils/chat/index";
+import { download } from "@/utils/chat/index";
+import { timeFormat } from "pure-tools";
 
 const timeout = ref(false);
 const isRight = ref(true);
@@ -399,23 +400,19 @@ const handlRightClick = (data) => {
 };
 const handleAt = (data) => {
   const { from, nick, conversationType: type } = data;
-  if (type == "C2C") return;
+  if (type === "C2C") return;
   emitter.emit("handleAt", { id: from, name: nick });
 };
 const handleSendMessage = (data) => {
   dispatch("CHEC_OUT_CONVERSATION", { convId: `C2C${data.from}` });
 };
 // 另存为
-const handleSave = (data) => {
-  const {
-    payload: { fileName, fileUrl },
-  } = data;
-  download(fileUrl, fileName);
+const handleSave = ({ payload }) => {
+  download(payload.fileUrl, payload.fileName);
 };
 
 const handleTranslate = (data) => {
-  const data1 = translateText({ textList: data.payload.text });
-  console.log(data1);
+  translateText({ textList: data.payload.text });
 };
 // 转发
 const handleForward = (data) => {};
@@ -429,15 +426,12 @@ const handleDeleteMsg = async (data) => {
   try {
     const message = { message: "确定删除?", iconType: "warning" };
     const result = await showConfirmationBox(message);
-    if (result == "cancel") return;
+    if (result === "cancel") return;
     const { code } = await deleteMsgList([data]);
     if (code !== 0) return;
     const { conversationID } = data;
     const payload = { convId: conversationID, message: data };
-    commit("SET_HISTORYMESSAGE", {
-      type: "DELETE_MESSAGE",
-      payload,
-    });
+    commit("SET_HISTORYMESSAGE", { type: "DELETE_MESSAGE", payload });
   } catch (error) {
     console.log(error);
   }

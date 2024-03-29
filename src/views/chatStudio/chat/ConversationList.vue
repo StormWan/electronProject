@@ -6,11 +6,13 @@
       class="message-item"
       v-for="item in tabList"
       :key="item.conversationID"
+      :id="`message_${item.conversationID}`"
       :class="fnClass(item)"
       @click="handleConvListClick(item)"
-      @drop="dropHandler($evevt, item)"
-      @dragenter="dragenterHandler"
-      @dragleave="dragleaveHandler"
+      @drop="dropHandler($event, item, handleConvListClick)"
+      @dragover="dragoverHandler($event)"
+      @dragenter="dragenterHandler($event, item)"
+      @dragleave="dragleaveHandler($event, item)"
       v-contextmenu:contextmenu
       @contextmenu.prevent="handleContextMenuEvent($event, item)"
     >
@@ -72,13 +74,19 @@ import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
 import Skeleton from "../components/Skeleton.vue";
 import EmptyMessage from "../components/EmptyMessage.vue";
 import { Contextmenu, ContextmenuItem } from "v-contextmenu";
-import { timeFormat } from "@/utils/chat/index";
+import { timeFormat } from "pure-tools";
 import { useStore } from "vuex";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { pinConversation, setMessageRead } from "@/api/im-sdk-api/index";
 import Label from "../components/Label.vue";
 import emitter from "@/utils/mitt-bus";
-import { chatName } from "../utils/utils";
+import {
+  chatName,
+  dropHandler,
+  dragoverHandler,
+  dragenterHandler,
+  dragleaveHandler,
+} from "../utils/utils";
 
 const loading = ref(true);
 const isShowMenu = ref(true);
@@ -183,7 +191,6 @@ const CustomMention = (props) => {
     innerHTML: `${unreadCount !== 0 ? createElement() : ""}${lastMessage.nick}: ${messageForShow}`,
   });
 };
-
 // 消息列表 右键菜单
 const handleContextMenuEvent = (e, item) => {
   const { type } = item;
@@ -201,16 +208,6 @@ const handleContextMenuEvent = (e, item) => {
       t.text = off ? "关闭消息免打扰" : "消息免打扰";
     }
   });
-};
-
-const dropHandler = (e, item) => {
-  console.log("drop", e, item);
-};
-const dragenterHandler = (e) => {
-  console.log("dragenter", e);
-};
-const dragleaveHandler = (e) => {
-  console.log("dragleave", e);
 };
 
 // 会话点击
@@ -367,6 +364,9 @@ watch(activetab, (data) => {
   }
 }
 .is-active {
+  background: var(--color-message-active) !important;
+}
+.over-style {
   background: var(--color-message-active) !important;
 }
 </style>

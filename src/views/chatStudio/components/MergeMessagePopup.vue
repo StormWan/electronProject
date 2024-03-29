@@ -50,7 +50,7 @@
 import { ref } from "vue";
 import emitter from "@/utils/mitt-bus";
 import { useBoolean } from "@/utils/hooks/index";
-import { timeFormat } from "@/utils/chat/index";
+import { timeFormat } from "pure-tools";
 import { msgType, msgOne } from "../utils/utils";
 import { circleUrl } from "../utils/menu";
 import { downloadMergerMessage } from "@/api/im-sdk-api/index";

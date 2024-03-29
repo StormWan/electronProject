@@ -26,10 +26,9 @@
 
 <script>
 import { defineComponent, toRefs, reactive, onMounted, onBeforeUnmount } from "vue";
-import { mapGetters, mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import { useDataThemeChange } from "@/utils/hooks/useDataThemeChange";
 import { useBoolean } from "@/utils/hooks/index";
-import pure from "pure-tools";
 
 export default defineComponent({
   name: "Test",
@@ -90,19 +89,9 @@ export default defineComponent({
       this.UPDATE_USER_SETUP({ key: "setswitch", value: true });
     },
     test() {},
-    test1() {
-      // this.getGroupList();
-      // this.$api.stream();
-    },
-    async test3() {
-      // const data = await this.$api.restApi({
-      //   funName: "getappInfo",
-      // });
-      // console.log(data);
-    },
-    setCookies() {
-      console.log(pure);
-    },
+    test1() {},
+    async test3() {},
+    setCookies() {},
     getCookies() {},
     sendMsg() {},
     async test2() {},
