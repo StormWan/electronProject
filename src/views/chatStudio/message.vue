@@ -23,10 +23,10 @@
       <EmptyMessage classNmae="empty" v-if="!conver" />
       <Header />
       <!-- 聊天窗口 -->
-      <Chatwin ref="ChatRef" />
+      <Chatwin ref="chatRef" />
       <!-- 消息回复框 -->
       <ReplyBox />
-      <div id="svgResize" @mouseover="dragControllerDiv(ChatRef)" v-if="showMsgBox"></div>
+      <div id="svgResize" @mouseover="dragControllerDiv(chatRef)" v-if="showMsgBox"></div>
       <!-- 多选框 -->
       <MultiChoiceBox />
       <!-- 编辑器 -->
@@ -36,7 +36,7 @@
     <MergeMessagePopup />
     <!-- 群详情 -->
     <GroupDetails
-      v-if="currentType === TIM.TYPES.CONV_GROUP"
+      v-if="isGroupChat"
       :groupProfile="conver.groupProfile"
       :staff="isallStaff(conver)"
     />
@@ -46,7 +46,6 @@
 <script setup>
 import { ref, onActivated, onDeactivated, onMounted, onUnmounted, watchEffect } from "vue";
 import { $t } from "@/plugins/i18n";
-import TIM from "@/utils/IM/chat/index";
 import { useEventListener } from "@vueuse/core";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { dragControllerDiv, isallStaff } from "./utils/utils";
@@ -66,12 +65,16 @@ import MultiChoiceBox from "./components/MultiChoiceBox.vue";
 import MergeMessagePopup from "./components/MergeMessagePopup.vue";
 
 const unread = ref("");
-const ChatRef = ref(null);
+const chatRef = ref(null);
 const activeName = ref("whole");
 const { dispatch, commit } = useStore();
 const favicon = new Favico({ animation: "none" });
 
-const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
+const { toAccount, isGroupChat, currentType } = useGetters([
+  "toAccount",
+  "isGroupChat",
+  "currentType",
+]);
 const { networkStatus, conver, showMsgBox, totalUnreadMsg } = useState({
   networkStatus: (state) => state.conversation.networkStatus,
   totalUnreadMsg: (state) => state.conversation.totalUnreadMsg,

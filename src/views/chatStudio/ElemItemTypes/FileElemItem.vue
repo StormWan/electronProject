@@ -122,29 +122,29 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(0, 0, 0, 0.12);
   user-select: none;
   cursor: pointer;
-  .file-data {
+}
+.file-data {
+  display: flex;
+  .file-box__content {
+    position: relative;
+    margin-left: 12px;
     display: flex;
-    .file-box__content {
-      position: relative;
-      margin-left: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: space-around;
-      .file-name {
-        color: #000000ad;
-        font-size: 14px;
-        width: 160px;
-        @include text-ellipsis;
-      }
-      .file-box__size {
-        font-weight: 400;
-        color: #999999;
-        line-height: 18px;
-        font-size: 12px;
-        .file-status,
-        .file-icon {
-          margin-left: 5px;
-        }
+    flex-wrap: wrap;
+    align-content: space-around;
+    .file-name {
+      color: #000000ad;
+      font-size: 14px;
+      width: 160px;
+      @include text-ellipsis;
+    }
+    .file-box__size {
+      font-weight: 400;
+      color: #999999;
+      line-height: 18px;
+      font-size: 12px;
+      .file-status,
+      .file-icon {
+        margin-left: 5px;
       }
     }
   }

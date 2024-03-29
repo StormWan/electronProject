@@ -379,14 +379,14 @@ const conversation = {
       dispatch("GET_MESSAGE_LIST", conversation);
     },
     // 删除会话列表
-    async DELETE_SESSION({ state }, action) {
+    async DELETE_SESSION({ dispatch }, action) {
       const { convId } = action;
       const { code } = await deleteConversation({ convId });
       if (code !== 0) return;
       dispatch("CLEAR_CURRENT_MSG");
     },
     // 清除当前消息记录
-    async CLEAR_CURRENT_MSG({ state }) {
+    async CLEAR_CURRENT_MSG({ state, commit }) {
       state.currentConversation = null;
       state.currentMessageList = [];
       commit("SET_SHOW_MSG_BOX", false);
@@ -439,10 +439,10 @@ const conversation = {
     },
   },
   getters: {
-    toAccount: (state) => {
-      const { currentConversation: Conve } = state;
-      if (!Conve || !Conve.conversationID) return "";
-      const { type, conversationID: ID } = Conve;
+    toAccount(state) {
+      const { currentConversation: conve } = state;
+      if (!conve || !conve.conversationID) return "";
+      const { type, conversationID: ID } = conve;
       switch (type) {
         case "C2C":
           return ID.replace("C2C", "");
@@ -470,6 +470,7 @@ const conversation = {
       if (!state.currentConversation || !state.currentConversation.type) {
         return "";
       }
+      console.log(state.currentConversation.type);
       return state.currentConversation.type;
     },
     totalUnreadCount(state) {
@@ -494,6 +495,11 @@ const conversation = {
         return urls;
       }, []);
       return reversedUrls;
+    },
+    // 是否群会话
+    isGroupChat(state) {
+      if (!state.currentConversation || !state.currentConversation.type) return false;
+      return state.currentConversation.type === TIM.TYPES.CONV_GROUP;
     },
   },
 };

@@ -40,7 +40,7 @@ export default {
   },
   actions: {
     // 获取群成员列表
-    async getGroupMemberList({ state, commit, getters }, payload) {
+    async getGroupMemberList({ state, getters }, payload) {
       const groupID = getters.toAccount;
       const { memberList, code } = await getGroupMemberList({ groupID });
       let sortlist = memberList;
@@ -66,7 +66,7 @@ export default {
       await createGroup({ groupName });
     },
     // 解散群组
-    async DISMISS_GROUP({ state, dispatch, commit }, payload) {
+    async DISMISS_GROUP({ dispatch }, payload) {
       const { groupId, convId } = payload;
       const { code, groupID } = await dismissGroup(groupId);
       if (code !== 0) return;
@@ -79,7 +79,7 @@ export default {
       dispatch("DELETE_SESSION", { convId });
     },
     // 获取群详细资料
-    async getGroupProfile({ state, commit }, payload) {
+    async getGroupProfile({ commit }, payload) {
       const { type } = payload;
       if (type !== "GROUP") return;
       const { groupID } = payload.groupProfile;

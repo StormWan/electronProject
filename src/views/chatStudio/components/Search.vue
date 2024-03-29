@@ -13,65 +13,37 @@
       >
       </el-input>
       <div class="header-search-add">
-        <el-icon @click="opendialog">
-          <Plus />
-        </el-icon>
+        <el-icon @click="opendialog"><Plus /></el-icon>
       </div>
     </div>
     <!-- 搜索结果 -->
     <SearchBox ref="searchBoxRef" />
-    <el-dialog
-      v-model="dialogVisible"
-      :title="$t('common.createGroupChat')"
-      width="400px"
-      :before-close="handleClose"
-    >
-      <div>
-        <el-input v-model="input" placeholder="请输入群名" clearable />
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">{{ $t("el.messagebox.cancel") }}</el-button>
-          <el-button type="primary" @click="createGroupBtn">
-            {{ $t("el.messagebox.confirm") }}
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
 import { Search, Plus } from "@element-plus/icons-vue";
+import { showConfirmationBox } from "@/utils/message";
 import { useStore } from "vuex";
 import SearchBox from "./SearchBox.vue";
+
 const appoint = ref("");
-const input = ref("");
 const searchBoxRef = ref();
-const dialogVisible = ref(false);
-const { state, commit, dispatch } = useStore();
+const { dispatch } = useStore();
+
+const createGroup = async () => {
+  const data = { message: "创建群聊" };
+  const result = await showConfirmationBox(data, "prompt");
+  if (result === "cancel") return;
+  dispatch("CREATE_GROUP", { groupName: result.value });
+};
 
 const opendialog = () => {
-  dialogVisible.value = true;
-};
-const createGroupBtn = () => {
-  dialogVisible.value = false;
-  dispatch("CREATE_GROUP", {
-    groupName: input.value,
-  });
-  input.value = "";
-};
-const handleClose = (done) => {
-  done();
+  createGroup();
 };
 const onBlur = () => {};
-const onFocus = () => {
-  // searchBoxRef.value.setModal(true);
-};
-watch(appoint, (value) => {
-  console.log(value);
-});
+const onFocus = () => {};
 </script>
 
 <style lang="scss" scoped>

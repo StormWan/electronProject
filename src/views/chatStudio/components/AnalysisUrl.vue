@@ -1,11 +1,10 @@
 <template>
   <AnalysisUrl :text="text" />
-  <!-- <AnalysisUrlCopy :text="text" /> -->
 </template>
-
+<!-- <AnalysisUrlCopy :text="text" /> -->
 <script setup>
-import { html2Escape } from "../utils/utils";
 import { h } from "vue";
+import { html2Escape } from "../utils/utils";
 import linkifyUrls from "@/utils/linkifyUrls";
 // eslint-disable-next-line no-undef
 const props = defineProps({
