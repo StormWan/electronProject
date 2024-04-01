@@ -15,6 +15,8 @@ const defaultSettings = {
   isCollapse: true, // 侧边栏是否折叠
   setswitch: false, // 设置按钮开关
   watermark: false,
+  arrowRight: true,
+  fullscreenInputEnabled: false, // 全屏输入框是否启用
 };
 
 // 默认用户信息

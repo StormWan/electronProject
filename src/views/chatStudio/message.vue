@@ -1,11 +1,11 @@
 <template>
   <div class="flex w-full">
     <!-- 聊天列表 -->
-    <div class="message-left">
+    <div class="message-left" :class="{ 'style-layoutkit': !arrowRight }">
       <!-- 搜索框 -->
-      <Search />
+      <Search v-show="arrowRight" />
       <!-- tabs切换 -->
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" v-show="arrowRight">
         <el-tab-pane :label="$t('chat.whole')" name="whole"></el-tab-pane>
         <el-tab-pane :label="unread" name="unread"></el-tab-pane>
         <el-tab-pane :label="$t('chat.mention')" name="mention"></el-tab-pane>
@@ -17,13 +17,21 @@
         <!-- 会话列表 -->
         <ConversationList />
       </div>
+      <div class="layoutkit-center">
+        <div @click="onRight(arrowRight)">
+          <el-icon>
+            <ArrowLeft v-if="arrowRight" />
+            <ArrowRight v-else />
+          </el-icon>
+        </div>
+      </div>
     </div>
     <!-- 聊天框 -->
-    <div class="message-right" id="svgBox">
+    <div class="message-right" :class="{ 'style-full': !arrowRight }" id="svgBox">
       <EmptyMessage classNmae="empty" v-if="!conver" />
       <Header />
       <!-- 聊天窗口 -->
-      <Chatwin ref="chatRef" />
+      <Chatwin ref="chatRef" :class="{ 'style-h-full': !fullscreen }" />
       <!-- 消息回复框 -->
       <ReplyBox />
       <div id="svgResize" @mouseover="dragControllerDiv(chatRef)" v-if="showMsgBox"></div>
@@ -70,16 +78,14 @@ const activeName = ref("whole");
 const { dispatch, commit } = useStore();
 const favicon = new Favico({ animation: "none" });
 
-const { toAccount, isGroupChat, currentType } = useGetters([
-  "toAccount",
-  "isGroupChat",
-  "currentType",
-]);
-const { networkStatus, conver, showMsgBox, totalUnreadMsg } = useState({
+const { isGroupChat } = useGetters(["isGroupChat"]);
+const { networkStatus, conver, showMsgBox, totalUnreadMsg, arrowRight, fullscreen } = useState({
   networkStatus: (state) => state.conversation.networkStatus,
   totalUnreadMsg: (state) => state.conversation.totalUnreadMsg,
   conver: (state) => state.conversation.currentConversation,
   showMsgBox: (state) => state.conversation.showMsgBox,
+  arrowRight: (state) => state.settings.arrowRight,
+  fullscreen: (state) => state.settings.fullscreenInputEnabled,
 });
 
 const fnTotalUnreadMsg = () => {
@@ -92,6 +98,9 @@ const fnTotalUnreadMsg = () => {
 const handleClick = ({ props }, event) => {
   const { label, name } = props;
   commit("TOGGLE_LIST", name);
+};
+const onRight = (value) => {
+  commit("UPDATE_USER_SETUP", { key: "arrowRight", value: !value });
 };
 useEventListener(window, "online", () => {
   commit("SET_NETWORK_STATUS", true);
@@ -135,6 +144,17 @@ watchEffect(() => {
 }
 .message-left {
   width: 280px;
+  position: relative;
+  transition: width 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.style-layoutkit {
+  width: 0px;
+}
+.style-h-full {
+  height: 0px !important;
+}
+.style-full {
+  width: 100% !important;
 }
 .message-right {
   background: var(--color-body-bg);
@@ -154,13 +174,16 @@ watchEffect(() => {
 }
 
 #svgResize {
-  position: relative;
-  height: 5px;
+  position: absolute;
+  height: 3px;
+  z-index: 10;
   width: 100%;
-  // cursor: s-resize;
-  cursor: row-resize;
-  font-size: 12px;
-  background: var(--color-toolbar);
+  cursor: s-resize;
+  border-radius: 5px;
+  transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+  &:hover {
+    background: #22222230;
+  }
 }
 .back-to-the-bottom {
   position: absolute;
@@ -176,5 +199,35 @@ watchEffect(() => {
   align-items: center;
   color: #fff;
   cursor: pointer;
+}
+.layoutkit-center {
+  pointer-events: all;
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  top: 0;
+  right: -16px;
+  width: 16px;
+  height: 100%;
+  display: flex;
+  & > div {
+    align-items: center;
+    display: flex;
+    width: 16px;
+    height: 40px;
+    border-radius: 0 4px 4px 0;
+    pointer-events: all;
+    cursor: pointer;
+    color: #999999;
+    background: rgba(0, 0, 0, 0.03);
+    border-color: #e3e3e3;
+    border-style: solid;
+    border-width: 1px;
+    display: none;
+  }
+  &:hover > div {
+    display: flex !important;
+  }
 }
 </style>

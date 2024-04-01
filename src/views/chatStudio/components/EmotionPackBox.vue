@@ -35,6 +35,7 @@
         </div>
         <!-- 抖音表情包 -->
         <div class="emoji_Tiktok" v-show="table == 'Tiktok'">
+          <p class="title">抖音表情</p>
           <span
             v-for="item in emojiDouyin.emojiName"
             class="emoji scroll-content"

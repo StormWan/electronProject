@@ -1,59 +1,43 @@
 <template>
   <div class="toolbar">
     <!-- 表情包 -->
-    <span :data-title="$t('chat.emoji')" class="emoticon icon" @click="sendEmojiClick">
+    <span :title="$t('chat.emoji')" class="emoticon" @click="sendEmojiClick">
       <svg-icon iconClass="iconxiaolian" class="icon-hover" />
     </span>
     <!-- 图片 -->
-    <span
-      v-show="!isRobot(toAccount)"
-      :data-title="$t('chat.picture')"
-      class="icon"
-      @click="SendImageClick"
-    >
+    <span v-show="!isRobot(toAccount)" :title="$t('chat.picture')" @click="SendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span
-      v-show="!isRobot(toAccount)"
-      :data-title="$t('chat.file')"
-      class="icon"
-      @click="SendFileClick"
-    >
+    <span v-show="!isRobot(toAccount)" :title="$t('chat.file')" @click="SendFileClick">
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span :data-title="$t('chat.screenshot')" class="icon" @click="clickCscreenshot">
+    <span :title="$t('chat.screenshot')" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->
-    <span
-      v-show="isRobot(toAccount)"
-      :data-title="$t('chat.configuration')"
-      class="icon"
-      @click="openRobotBox"
-    >
+    <span v-show="isRobot(toAccount)" :title="$t('chat.configuration')" @click="openRobotBox">
       <svg-icon iconClass="robot" class="icon-hover robot" />
     </span>
     <!-- 窗口抖动 -->
-    <span
-      v-show="currentType === 'C2C' && !isRobot(toAccount)"
-      :data-title="$t('chat.windowJitter')"
-      class="icon"
-      @click="onShake"
-    >
+    <span v-show="currentType === 'C2C' && false" :title="$t('chat.windowJitter')" @click="onShake">
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
     <!-- 滚动到底部 -->
     <span
-      :data-title="$t('chat.scrollToTheBottom')"
-      class="chat_vot icon"
+      :title="$t('chat.scrollToTheBottom')"
+      class="chat_vot"
       @click="onTobBottom"
       v-show="tobottom"
     >
       <el-icon class="svg-left icon-hover">
         <DArrowLeft />
       </el-icon>
+    </span>
+    <span title="全屏输入" class="style-enlarge" @click="onEnlarge(fullscreen)">
+      <svg-icon v-if="fullscreen" iconClass="enlarge" class="icon-hover" />
+      <svg-icon v-else iconClass="narrow" class="icon-hover" />
     </span>
     <input
       type="file"
@@ -99,7 +83,8 @@ const { commit, dispatch } = useStore();
 
 const emit = defineEmits(["setToolbar"]);
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
-const { currentConversation } = useState({
+const { currentConversation, fullscreen } = useState({
+  fullscreen: (state) => state.settings.fullscreenInputEnabled,
   currentConversation: (state) => state.conversation.currentConversation,
 });
 
@@ -156,6 +141,10 @@ const onShake = () => {
   dispatch("SESSION_MESSAGE_SENDING", {
     payload: { convId: currentConversation.value.conversationID, message },
   });
+};
+const onEnlarge = (value) => {
+  commit("UPDATE_USER_SETUP", { key: "fullscreenInputEnabled", value: !value });
+  console.log(value);
 };
 
 async function sendImage(e) {
@@ -226,6 +215,9 @@ emitter.on("onisbot", (state) => {
   .svg-left {
     transform: rotate(-90deg);
   }
+}
+.style-enlarge {
+  margin-left: auto;
 }
 
 @keyframes chat_top {

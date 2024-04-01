@@ -497,6 +497,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
   border-bottom: 1px solid var(--color-border-default);
+  transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .style-MsgBox {
   height: calc(100% - 60px) !important;

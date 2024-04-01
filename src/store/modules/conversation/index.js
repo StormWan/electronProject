@@ -470,7 +470,6 @@ const conversation = {
       if (!state.currentConversation || !state.currentConversation.type) {
         return "";
       }
-      console.log(state.currentConversation.type);
       return state.currentConversation.type;
     },
     totalUnreadCount(state) {

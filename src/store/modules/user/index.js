@@ -15,7 +15,7 @@ const user = {
     message: null,
     showload: false, // 登录按钮加载状态
     currentPage: 0,
-    userProfile: storage.get(TIM_PROXY).userProfile || {}, // IM用户信息
+    userProfile: storage.get(TIM_PROXY)?.userProfile || {}, // IM用户信息
   },
   mutations: {
     setCurrentPage(state, num) {
