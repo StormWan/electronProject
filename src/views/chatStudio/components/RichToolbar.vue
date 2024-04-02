@@ -5,11 +5,11 @@
       <svg-icon iconClass="iconxiaolian" class="icon-hover" />
     </span>
     <!-- 图片 -->
-    <span v-show="!isRobot(toAccount)" :title="$t('chat.picture')" @click="SendImageClick">
+    <span v-show="!isRobot(toAccount)" :title="$t('chat.picture')" @click="sendImageClick">
       <svg-icon iconClass="icontupian" class="icon-hover" />
     </span>
     <!-- 文件 -->
-    <span v-show="!isRobot(toAccount)" :title="$t('chat.file')" @click="SendFileClick">
+    <span v-show="!isRobot(toAccount)" :title="$t('chat.file')" @click="sendFileClick">
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
@@ -35,22 +35,24 @@
         <DArrowLeft />
       </el-icon>
     </span>
-    <span title="全屏输入" class="style-enlarge" @click="onEnlarge(fullscreen)">
-      <svg-icon v-if="fullscreen" iconClass="enlarge" class="icon-hover" />
-      <svg-icon v-else iconClass="narrow" class="icon-hover" />
+    <span
+      :title="fullScreen ? '恢复' : '全屏输入'"
+      class="style-enlarge"
+      @click="onEnlarge(fullScreen)"
+    >
+      <svg-icon v-if="fullScreen" iconClass="narrow" class="icon-hover" />
+      <svg-icon v-else iconClass="enlarge" class="icon-hover" />
     </span>
     <input
       type="file"
-      id="imagePicker"
       ref="imagePicker"
       accept=".jpg, .jpeg, .png, .gif, .bmp"
       @change="sendImage"
       hidden
     />
-    <input type="file" id="filePicker" ref="filePicker" @change="sendFile" hidden />
+    <input type="file" ref="filePicker" @change="sendFile" hidden />
     <!-- <input
       type="file"
-      id="videoPicker"
       ref="videoPicker"
       @change="sendVideo"
       accept=".mp4"
@@ -83,8 +85,8 @@ const { commit, dispatch } = useStore();
 
 const emit = defineEmits(["setToolbar"]);
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
-const { currentConversation, fullscreen } = useState({
-  fullscreen: (state) => state.settings.fullscreenInputEnabled,
+const { currentConversation, fullScreen } = useState({
+  fullScreen: (state) => state.settings.fullScreen,
   currentConversation: (state) => state.conversation.currentConversation,
 });
 
@@ -105,12 +107,12 @@ const setEmoji = (item, table) => {
   }
   emit("setToolbar", { data: { url, item }, key: "setEmoj" });
 };
-const SendImageClick = () => {
+const sendImageClick = () => {
   let $el = imagePicker.value;
   $el.value = null;
   $el.click();
 };
-const SendFileClick = () => {
+const sendFileClick = () => {
   let $el = filePicker.value;
   $el.value = null;
   $el.click();
@@ -143,8 +145,7 @@ const onShake = () => {
   });
 };
 const onEnlarge = (value) => {
-  commit("UPDATE_USER_SETUP", { key: "fullscreenInputEnabled", value: !value });
-  console.log(value);
+  commit("UPDATE_USER_SETUP", { key: "fullScreen", value: !value });
 };
 
 async function sendImage(e) {

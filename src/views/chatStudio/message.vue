@@ -1,11 +1,11 @@
 <template>
   <div class="flex w-full">
     <!-- 聊天列表 -->
-    <div class="message-left" :class="{ 'style-layoutkit': !arrowRight }">
+    <div class="message-left" :class="{ 'style-layoutkit': arrowRight }">
       <!-- 搜索框 -->
-      <Search v-show="arrowRight" />
+      <Search v-show="!arrowRight" />
       <!-- tabs切换 -->
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" v-show="arrowRight">
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" v-show="!arrowRight">
         <el-tab-pane :label="$t('chat.whole')" name="whole"></el-tab-pane>
         <el-tab-pane :label="unread" name="unread"></el-tab-pane>
         <el-tab-pane :label="$t('chat.mention')" name="mention"></el-tab-pane>
@@ -20,18 +20,18 @@
       <div class="layoutkit-center">
         <div @click="onRight(arrowRight)">
           <el-icon>
-            <ArrowLeft v-if="arrowRight" />
-            <ArrowRight v-else />
+            <ArrowRight v-if="arrowRight" />
+            <ArrowLeft v-else />
           </el-icon>
         </div>
       </div>
     </div>
     <!-- 聊天框 -->
-    <div class="message-right" :class="{ 'style-full': !arrowRight }" id="svgBox">
+    <div class="message-right" :class="{ 'style-full': arrowRight }" id="svgBox">
       <EmptyMessage classNmae="empty" v-if="!conver" />
       <Header />
       <!-- 聊天窗口 -->
-      <Chatwin ref="chatRef" :class="{ 'style-h-full': !fullscreen }" />
+      <Chatwin ref="chatRef" :class="{ 'style-h-full': fullScreen }" />
       <!-- 消息回复框 -->
       <ReplyBox />
       <div id="svgResize" @mouseover="dragControllerDiv(chatRef)" v-if="showMsgBox"></div>
@@ -79,13 +79,13 @@ const { dispatch, commit } = useStore();
 const favicon = new Favico({ animation: "none" });
 
 const { isGroupChat } = useGetters(["isGroupChat"]);
-const { networkStatus, conver, showMsgBox, totalUnreadMsg, arrowRight, fullscreen } = useState({
+const { networkStatus, conver, showMsgBox, totalUnreadMsg, arrowRight, fullScreen } = useState({
   networkStatus: (state) => state.conversation.networkStatus,
   totalUnreadMsg: (state) => state.conversation.totalUnreadMsg,
   conver: (state) => state.conversation.currentConversation,
   showMsgBox: (state) => state.conversation.showMsgBox,
   arrowRight: (state) => state.settings.arrowRight,
-  fullscreen: (state) => state.settings.fullscreenInputEnabled,
+  fullScreen: (state) => state.settings.fullScreen,
 });
 
 const fnTotalUnreadMsg = () => {

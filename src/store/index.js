@@ -14,9 +14,9 @@ const defaultSettings = {
   appearance: "light", // 主题颜色
   isCollapse: true, // 侧边栏是否折叠
   setswitch: false, // 设置按钮开关
-  watermark: false,
-  arrowRight: true,
-  fullscreenInputEnabled: false, // 全屏输入框是否启用
+  watermark: false, // 水印
+  arrowRight: false, // 聊天会话列表折叠 true ？'折叠' : '不折叠'
+  fullScreen: false, // 全屏输入框是否启用
 };
 
 // 默认用户信息
