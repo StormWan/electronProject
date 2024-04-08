@@ -62,7 +62,7 @@ const user = {
         commit("UPDATE_USER_INFO", { key: "user", value: result });
         // 保存登录信息 keep
         data?.keep && storage.set(ACCOUNT, data);
-        router.push("/welcome");
+        router.push("/chatstudio");
       } else {
         verification(code, msg);
       }
