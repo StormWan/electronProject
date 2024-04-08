@@ -1,4 +1,4 @@
-import { USER_SETUP } from "@/store/constants";
+import { USER_SETUP } from "@/constants/index";
 import { createI18n } from "vue-i18n";
 import storage from "@/utils/localforage/index";
 

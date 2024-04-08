@@ -5,7 +5,7 @@ import router from "@/router";
 import storage from "@/utils/localforage/index";
 import emitter from "@/utils/mitt-bus";
 import { convertToTree, optimizeTree } from "@/utils/ToTree";
-import { USER_MODEL, USER_SETUP } from "@/store/constants";
+import { USER_MODEL, USER_SETUP } from "@/constants/index";
 
 // 默认设置
 const defaultSettings = {

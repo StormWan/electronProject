@@ -31,6 +31,8 @@ export default {
     configuration: "Configuration",
     windowJitter: "Window Jitter",
     scrollToTheBottom: "Scroll To The Bottom",
+    launch: "Launch",
+    recover: "Recover",
   },
   group: {
     GroupDetails: "Group Details",
@@ -46,6 +48,7 @@ export default {
     auto: "Auto",
     light: "Light",
     dark: "Dark",
+    watermark: "Watermark",
   },
   status: {
     hsLoad: "Loading...",

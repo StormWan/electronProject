@@ -110,7 +110,7 @@ import Checkbox from "../components/Checkbox.vue";
 import Stateful from "../components/Stateful.vue";
 import LoadMore from "../components/LoadMore.vue";
 import MyPopover from "@/views/components/MyPopover/index.vue";
-import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/store/constants";
+import { HISTORY_MESSAGE_COUNT, MULTIPLE_CHOICE_MAX } from "@/constants/index";
 import { deleteMsgList, revokeMsg, translateText, getMsgList } from "@/api/im-sdk-api/index";
 import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
@@ -497,7 +497,7 @@ defineExpose({ updateScrollbar, updateScrollBarHeight });
 .message-info-view-content {
   height: calc(100% - 70px - 206px);
   border-bottom: 1px solid var(--color-border-default);
-  transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+  // transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .style-MsgBox {
   height: calc(100% - 60px) !important;

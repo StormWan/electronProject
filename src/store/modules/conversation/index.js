@@ -1,4 +1,4 @@
-import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/store/constants";
+import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/constants/index";
 import { addTimeDivider, getBaseTime, checkTextNotEmpty, transformData } from "@/utils/chat/index";
 import { imCallback, restApi } from "@/api/node-admin-api/index";
 import TIM from "@/utils/IM/chat/index";
@@ -13,7 +13,7 @@ import {
   getUnreadMsg,
 } from "@/api/im-sdk-api/index";
 import storage from "@/utils/localforage/index";
-import { EMOJI_RECENTLY } from "@/store/constants";
+import { EMOJI_RECENTLY } from "@/constants/index";
 
 const conversation = {
   // namespaced: true, //命名空间

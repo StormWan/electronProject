@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     v-model="drawer"
-    size="360px"
+    size="320px"
     :title="t('common.setup')"
     :with-header="true"
     :show-close="true"
@@ -53,7 +53,7 @@
         </el-select>
       </li>
       <li>
-        <span>水印</span>
+        <span>{{ t("common.watermark") }}</span>
         <el-switch
           v-model="mark"
           inline-prompt
@@ -167,7 +167,7 @@ const mark = computed({
   align-items: center;
   margin: 20px 0;
   .el-select {
-    max-width: 230px;
+    max-width: 180px;
   }
 }
 </style>

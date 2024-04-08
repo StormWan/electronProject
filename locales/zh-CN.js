@@ -31,6 +31,9 @@ export default {
     configuration: "配置",
     windowJitter: "窗口抖动",
     scrollToTheBottom: "滚动到底部",
+
+    launch: "展开",
+    recover: "收起",
   },
   group: {
     GroupDetails: "群详情",
@@ -46,6 +49,7 @@ export default {
     auto: "自动",
     light: "浅色",
     dark: "深色",
+    watermark: "水印",
   },
   status: {
     hsLoad: "加载中...",

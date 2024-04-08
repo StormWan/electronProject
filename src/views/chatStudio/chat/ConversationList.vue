@@ -17,7 +17,7 @@
       @contextmenu.prevent="handleContextMenuEvent($event, item)"
     >
       <!-- 置顶图标 -->
-      <div class="pinned-tag" v-show="item.isPinned"></div>
+      <div class="pinned-tag" v-show="item.isPinned && !arrowRight"></div>
       <!-- 头像 -->
       <el-badge is-dot :hidden="isShowCount(item) || !isNotify(item)">
         <UserAvatar
@@ -94,8 +94,9 @@ const contextMenuItemInfo = ref([]);
 
 const { dispatch, commit } = useStore();
 const { tabList } = useGetters(["tabList"]);
-const { activetab, chat, userProfile, sessionDraftMap, postponeUnread } = useState({
+const { activetab, chat, userProfile, sessionDraftMap, postponeUnread, arrowRight } = useState({
   sessionDraftMap: (state) => state.conversation.sessionDraftMap,
+  arrowRight: (state) => state.settings.arrowRight,
   userProfile: (state) => state.user.userProfile,
   activetab: (state) => state.conversation.activetab,
   conversationList: (state) => state.conversation.conversationList,

@@ -5,8 +5,8 @@ import { login, register, logout, getMenu } from "@/api/node-admin-api/index";
 import chat from "@/utils/IM/im-sdk/tim";
 import emitter from "@/utils/mitt-bus";
 import { verification } from "@/utils/message/index";
-import { USER_MODEL } from "@/store/constants";
-import { TIM_PROXY, ACCOUNT } from "@/store/constants";
+import { USER_MODEL } from "@/constants/index";
+import { TIM_PROXY, ACCOUNT } from "@/constants/index";
 import storage from "@/utils/localforage/index";
 
 const user = {

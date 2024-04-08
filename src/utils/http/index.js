@@ -2,7 +2,7 @@
 import axios from "axios";
 import storage from "@/utils/localforage/index";
 import NProgress from "@/utils/progress";
-import { ACCESS_TOKEN } from "@/store/constants";
+import { ACCESS_TOKEN } from "@/constants/index";
 import { errorHandler } from "./tools";
 
 const service = axios.create({

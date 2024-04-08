@@ -36,7 +36,7 @@
       </el-icon>
     </span>
     <span
-      :title="fullScreen ? '恢复' : '全屏输入'"
+      :title="fullScreen ? $t('chat.recover') : $t('chat.launch')"
       class="style-enlarge"
       @click="onEnlarge(fullScreen)"
     >

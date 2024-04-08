@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import store from "@/store/index";
 import storage from "@/utils/localforage/index";
 import { $t } from "@/plugins/i18n";
-import { ACCOUNT } from "@/store/constants";
+import { ACCOUNT } from "@/constants/index";
 
 /** 6位数字验证码正则 */
 const REGEXP_SIX = /^\d{6}$/;

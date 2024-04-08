@@ -3,9 +3,14 @@
     <!-- 聊天列表 -->
     <div class="message-left" :class="{ 'style-layoutkit': arrowRight }">
       <!-- 搜索框 -->
-      <Search v-show="!arrowRight" />
+      <Search :class="{ 'opacity-0': arrowRight }" />
       <!-- tabs切换 -->
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" v-show="!arrowRight">
+      <el-tabs
+        v-model="activeName"
+        class="demo-tabs"
+        :class="{ 'opacity-0': arrowRight }"
+        @tab-click="handleClick"
+      >
         <el-tab-pane :label="$t('chat.whole')" name="whole"></el-tab-pane>
         <el-tab-pane :label="unread" name="unread"></el-tab-pane>
         <el-tab-pane :label="$t('chat.mention')" name="mention"></el-tab-pane>
@@ -19,10 +24,7 @@
       </div>
       <div class="layoutkit-center">
         <div @click="onRight(arrowRight)">
-          <el-icon>
-            <ArrowRight v-if="arrowRight" />
-            <ArrowLeft v-else />
-          </el-icon>
+          <el-icon> <ArrowRight v-if="arrowRight" /><ArrowLeft v-else /> </el-icon>
         </div>
       </div>
     </div>
@@ -34,7 +36,12 @@
       <Chatwin ref="chatRef" :class="{ 'style-h-full': fullScreen }" />
       <!-- 消息回复框 -->
       <ReplyBox />
-      <div id="svgResize" @mouseover="dragControllerDiv(chatRef)" v-if="showMsgBox"></div>
+      <div
+        id="svgResize"
+        :class="{ 'resize-hover': !fullScreen }"
+        @mouseover="dragControllerDiv(chatRef)"
+        v-if="showMsgBox"
+      ></div>
       <!-- 多选框 -->
       <MultiChoiceBox />
       <!-- 编辑器 -->
@@ -152,6 +159,7 @@ watchEffect(() => {
 }
 .style-h-full {
   height: 0px !important;
+  border-bottom: none;
 }
 .style-full {
   width: 100% !important;
@@ -175,15 +183,15 @@ watchEffect(() => {
 
 #svgResize {
   position: absolute;
-  height: 3px;
+  height: 2.5px;
   z-index: 10;
   width: 100%;
-  cursor: s-resize;
   border-radius: 5px;
   transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
-  &:hover {
-    background: #22222230;
-  }
+}
+.resize-hover:hover {
+  cursor: s-resize;
+  background: #22222230;
 }
 .back-to-the-bottom {
   position: absolute;
@@ -203,7 +211,7 @@ watchEffect(() => {
 .layoutkit-center {
   pointer-events: all;
   position: absolute;
-  z-index: 100;
+  z-index: 1;
   display: flex;
   align-items: center;
   top: 0;

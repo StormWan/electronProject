@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!isElectron"
+    v-show="!isMobile && !isElectron"
     class="full"
     @click="toggle"
     :title="isFullscreen ? '退出全屏' : '打开全屏'"
@@ -12,6 +12,7 @@
 <script setup>
 import { isElectron } from "@/electron/utils/index";
 import { useFullscreen } from "@vueuse/core";
+import { isMobile } from "@/utils/common";
 const { isFullscreen, toggle } = useFullscreen();
 </script>
 
