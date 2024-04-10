@@ -13,7 +13,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span :title="$t('chat.screenshot')" @click="clickCscreenshot">
+    <span v-show="isElectron" :title="$t('chat.screenshot')" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->
@@ -21,7 +21,11 @@
       <svg-icon iconClass="robot" class="icon-hover robot" />
     </span>
     <!-- 窗口抖动 -->
-    <span v-show="currentType === 'C2C' && false" :title="$t('chat.windowJitter')" @click="onShake">
+    <span
+      v-show="currentType === 'C2C' && isElectron"
+      :title="$t('chat.windowJitter')"
+      @click="onShake"
+    >
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
     <!-- 滚动到底部 -->
@@ -72,9 +76,10 @@ import { ref } from "vue";
 import { dataURLtoFile } from "@/utils/chat/index";
 import { isRobot } from "@/utils/chat/index";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
+import { isElectron } from "@/utils/common";
+import { createCustomMsg } from "@/api/im-sdk-api/message";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
-import { createCustomMsg } from "@/api/im-sdk-api/message";
 const { production } = require("@/config/vue.custom.config");
 
 const emjRef = ref();

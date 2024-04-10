@@ -28,6 +28,7 @@ export default {
       return this.from === "@TLS#NOT_FOUND";
     },
     shouldDisplay() {
+      if (this.chatType === "C2C") return true;
       return this.item.isRevoked || this.item.type === "TIMGroupTipElem";
     },
   },

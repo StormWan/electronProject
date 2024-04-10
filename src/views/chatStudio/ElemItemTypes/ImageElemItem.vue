@@ -93,7 +93,7 @@ const loadImg = (e) => {};
 }
 .image_preview {
   width: fit-content;
-  // max-width: 140px;
+  max-width: 140px;
   // padding: 10px 14px;
   box-sizing: border-box;
   border-radius: 5px;

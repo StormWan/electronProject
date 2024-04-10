@@ -52,10 +52,10 @@ export const createTextMsg = (params) => {
   return message;
 };
 // 创建 @提醒功能的文本消息
-export const createTextAtMsg = async (params) => {
+export const createTextAtMsg = (params) => {
   const { convId, convType, textMsg, atUserList, reply } = params;
   const replyMsgContent = getReplyMsgContent(reply);
-  return await tim.createTextAtMessage({
+  return tim.createTextAtMessage({
     to: convId,
     conversationType: convType,
     payload: { text: textMsg, atUserList: atUserList },
@@ -76,7 +76,7 @@ export const createImgtMsg = (params) => {
   return message;
 };
 // 创建文件消息
-export const createFiletMsg = async (params) => {
+export const createFiletMsg = (params) => {
   const { convId, convType, files } = params;
   const message = tim.createFileMessage({
     to: convId,

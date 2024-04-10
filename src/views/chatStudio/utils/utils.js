@@ -4,6 +4,7 @@ import { match } from "pinyin-pro";
 import { useClipboard } from "@vueuse/core";
 import { dataURLtoFile } from "@/utils/chat/index";
 import { getBlob } from "@/utils/chat/message-input-utils";
+import { emojiName } from "@/utils/emoji/emoji-map";
 import emitter from "@/utils/mitt-bus";
 import {
   createTextMsg,
@@ -228,7 +229,7 @@ export async function sendChatMessage(options) {
   if (files) {
     const { fileName, src } = files;
     let file = dataURLtoFile(src, fileName);
-    TextMsg = await createFiletMsg({
+    TextMsg = createFiletMsg({
       convId: convId,
       convType: convType,
       files: file,
@@ -238,7 +239,7 @@ export async function sendChatMessage(options) {
   // 如果包含图片，则创建相应的图片消息
   if (image) {
     let file = dataURLtoFile(image[0].src);
-    TextMsg = await createImgtMsg({
+    TextMsg = createImgtMsg({
       convId: convId,
       convType: convType,
       image: file,
@@ -247,7 +248,7 @@ export async function sendChatMessage(options) {
   }
   // 如果包含艾特，则创建相应的艾特消息
   if (aitStr) {
-    TextMsg = await createTextAtMsg({
+    TextMsg = createTextAtMsg({
       convId: convId,
       convType: convType,
       textMsg: aitStr,
@@ -257,7 +258,7 @@ export async function sendChatMessage(options) {
   }
   // 否则创建文本消息
   else if (flag) {
-    TextMsg = await createTextMsg({
+    TextMsg = createTextMsg({
       convId: convId,
       convType: convType,
       textMsg: textMsg,
@@ -305,27 +306,117 @@ export const chatName = (item) => {
 export const isallStaff = (item, field = "all_staff") => {
   return item?.groupProfile?.groupCustomField?.[0]?.value == field;
 };
+
+function mergeData(data) {
+  let mergedData = {
+    elem_type: "text",
+    text_content: "",
+    aitlist: [],
+    replyMsg: null,
+  };
+  let otherData = [];
+  data.forEach((item) => {
+    if (item.elem_type === "text") {
+      mergedData.text_content += item.text_content;
+      if (item.aitlist) {
+        mergedData.aitlist = item.aitlist;
+      }
+      if (item.replyMsg) {
+        mergedData.replyMsg = item.replyMsg;
+      }
+    } else {
+      otherData.push(item);
+    }
+  });
+  return [mergedData, ...otherData];
+}
 /**
  * 将给定的 HTML 字符串解析为 数组
  * @param {string} html - 要解析的 HTML 字符串
  * @returns {Array} - 解析后的 数组
  */
-export function parseHTMLToArr(html) {
+export function parseHTMLToArr(editor) {
+  let flag = false;
+  const html = editor.getHtml(); // 非格式化的 html
+  // const image = editor.getElemsByType("image"); // 所有图片
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const elements = Array.from(doc.body.children[0].childNodes);
+  const { aitStr, aitlist } = extractAitInfo(editor);
+  const replyMsg = store.state.conversation.currentReplyMsg;
   const arr = elements.map((element) => {
+    console.log(element);
     const obj = {};
     if (element.tagName === "IMG") {
-      obj.elem_type = 1;
-      obj.image_path = element.getAttribute("src");
+      if (emojiName.includes(element.alt)) {
+        obj.elem_type = "text";
+        obj.text_content = element.alt;
+      } else {
+        obj.elem_type = "img";
+        obj.file_path = element.getAttribute("src");
+      }
+    } else if (element.dataset?.["wEType"] === "attachment") {
+      obj.elem_type = "file";
+      obj.file_name = element.dataset["filename"];
+      obj.file_path = element.dataset["link"];
     } else {
-      obj.elem_type = 0;
+      obj.elem_type = "text";
       obj.text_content = element.textContent.trim();
+      if (!flag) {
+        obj.aitlist = aitlist;
+        if (replyMsg) obj.replyMsg = replyMsg;
+        flag = true;
+      }
     }
     return obj;
   });
-  return arr;
+  console.log(arr);
+  return mergeData(arr);
+}
+export function getMessageElemItem({ elementArray, convId, convType }) {
+  let msg = [];
+  // msg = elementArray;
+  elementArray.map((item) => {
+    // debugger;
+    if (item.elem_type === "text" && item.text_content !== "") {
+      let data = null;
+      if (item.aitlist.length) {
+        data = createTextAtMsg({
+          convId,
+          convType,
+          textMsg: item.text_content,
+          atUserList: item.aitlist,
+          reply: item.replyMsg,
+        });
+      } else {
+        data = createTextMsg({
+          convId,
+          convType,
+          textMsg: item.text_content,
+          reply: item.replyMsg,
+        });
+      }
+      msg.push(data);
+    } else if (item.elem_type === "img") {
+      msg.push(
+        createImgtMsg({
+          convId,
+          convType,
+          image: dataURLtoFile(item.file_path),
+        })
+      );
+    } else if (item.elem_type === "file") {
+      console.log(dataURLtoFile(item.file_path, item.file_name));
+      msg.push(
+        createFiletMsg({
+          convId,
+          convType,
+          files: dataURLtoFile(item.file_path, item.file_name),
+        })
+      );
+    }
+  });
+  return msg;
 }
 
 export function parseContentFromHTML(html) {

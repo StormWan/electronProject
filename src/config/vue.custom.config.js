@@ -35,7 +35,7 @@ const vueDefaultConfig = {
       overlay: false,
     },
     // 是否自动打开浏览器.
-    // open: false,
+    open: true,
     // 局域网和本地访问.
     // host: "0.0.0.0",
     // 端口.

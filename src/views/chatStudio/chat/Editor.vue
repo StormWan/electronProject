@@ -57,6 +57,7 @@ import {
 import {
   sendChatMessage,
   customAlert,
+  getMessageElemItem,
   parseHTMLToArr,
   extractFilesInfo,
   extractAitInfo,
@@ -106,8 +107,7 @@ const handleEditor = (editor, created = true) => {
   if (created) {
     editorRef.value = editor;
   } else {
-    if (editor == null) return;
-    // 组件销毁时，及时销毁编辑器
+    if (editor === null) return;
     editor.destroy();
   }
 };
@@ -294,7 +294,7 @@ const handleEnter = (event) => {
   const empty = editor.isEmpty(); // 判断当前编辑器内容是否为空
   const { textMsg, aitStr, files, image } = sendMsgBefore();
   if ((!empty && !isEmpty(textMsg)) || image || aitStr || files) {
-    sendMessage();
+    sendMessage(editor);
   } else {
     clearInputInfo();
   }
@@ -314,7 +314,6 @@ const sendMsgBefore = () => {
   const { aitStr, aitlist } = extractAitInfo(editor);
   const { fileName, link } = extractFilesInfo(HtmlText);
   const emoticons = convertEmoji(HtmlText, image);
-  // const ElementArray = parseHTMLToArr(HtmlText);
   return {
     convId: toAccount.value,
     convType: currentConversation.value.type,
@@ -327,17 +326,33 @@ const sendMsgBefore = () => {
   };
 };
 // 发送消息
-const sendMessage = async () => {
-  const data = sendMsgBefore();
-  console.log("sendMsgBefore:", data);
-  const message = await sendChatMessage(data);
-  console.log("sendChatMessage:", message);
+const sendMessage = async (editor) => {
+  // const data = sendMsgBefore();
+  // console.log("sendMsgBefore:", data);
+  // const message = await sendChatMessage(data);
+  // console.log("sendChatMessage:", message);
+  // clearInputInfo();
+  // dispatch("SESSION_MESSAGE_SENDING", {
+  //   payload: {
+  //     convId: currentConversation.value.conversationID,
+  //     message,
+  //   },
+  // });
+  const elementArray = parseHTMLToArr(editor);
+  const data = {
+    convId: toAccount.value,
+    convType: currentConversation.value.type,
+    elementArray,
+  };
+  const elemItem = getMessageElemItem(data);
   clearInputInfo();
-  dispatch("SESSION_MESSAGE_SENDING", {
-    payload: {
-      convId: currentConversation.value.conversationID,
-      message,
-    },
+  elemItem.map((message) => {
+    dispatch("SESSION_MESSAGE_SENDING", {
+      payload: {
+        convId: currentConversation.value.conversationID,
+        message,
+      },
+    });
   });
 };
 const setEditHtml = (text) => {

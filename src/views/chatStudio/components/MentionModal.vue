@@ -203,6 +203,7 @@ export default {
 <style lang="scss" scoped>
 .mention-modal {
   position: fixed;
+  z-index: 11;
   width: 168px;
   background-color: var(--color-body-bg);
   padding: 5px;
