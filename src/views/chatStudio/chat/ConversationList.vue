@@ -332,7 +332,8 @@ watch(activetab, (data) => {
         line-height: 18px;
         max-width: 140px;
         .name-title {
-          @include ellipsisBasic(1);
+          padding-right: 5px;
+          @include text-ellipsis();
         }
       }
       .message-time {

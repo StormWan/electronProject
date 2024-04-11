@@ -220,33 +220,6 @@ export function findNonImageString(arr) {
 }
 
 /**
- * 将包含表情图像的 HTML 字符串转换为对应的表情符号文本
- * @param {string} html - 待转换的 HTML 字符串
- * @param {Array} emojiMap - 表情符号和对应的图像数据数组
- * @returns {string} - 转换后的结果
- * <p>12<img src="*" alt="[我最美]" />333</p>
- * 12[我最美]333
- */
-export function convertEmoji(html, emojiMap) {
-  if (!html || !emojiMap || !Array.isArray(emojiMap)) return "";
-  const filteredData = emojiMap.filter((item) => item.class === "EmoticonPack");
-  if (filteredData.length == 0) return false;
-  const convertedData = filteredData.map((item) => ({
-    [item.src]: item.alt,
-  }));
-  const emojiMapExtended = {
-    ...Object.assign(...convertedData),
-  };
-  const regex = /<img src="([^"]+)"[^>]+>/g;
-  const result = html.replace(regex, (match, src) => {
-    const emojiText = emojiMapExtended[src] || "";
-    return emojiText;
-  });
-  const text = result.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, "");
-  return text;
-}
-
-/**
  * 将字节数转换为可读性更强的单位
  * @param {number} bytes - 需要转换的字节数值
  * @returns {string} - 转换后的字符串，表示合适的单位和对应的数值

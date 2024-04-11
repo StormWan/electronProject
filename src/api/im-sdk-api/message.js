@@ -82,7 +82,7 @@ export const createFiletMsg = (params) => {
     to: convId,
     conversationType: convType,
     payload: { file: files },
-    onProgress: async (event) => {
+    onProgress(event) {
       fileUploading(message, event * 100);
     },
   });
