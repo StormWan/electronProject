@@ -43,13 +43,12 @@ export const createTextMsg = (params) => {
   const { convId, convType = "C2C", textMsg, reply } = params;
   let replyMsgContent = "";
   if (reply) replyMsgContent = getReplyMsgContent(reply);
-  const message = tim.createTextMessage({
+  return tim.createTextMessage({
     to: convId,
     conversationType: convType,
     payload: { text: textMsg },
     cloudCustomData: replyMsgContent,
   });
-  return message;
 };
 // 创建 @提醒功能的文本消息
 export const createTextAtMsg = (params) => {
@@ -65,7 +64,7 @@ export const createTextAtMsg = (params) => {
 // 创建图片消息
 export const createImgtMsg = (params) => {
   const { convId, convType, image } = params;
-  const message = tim.createImageMessage({
+  return tim.createImageMessage({
     to: convId,
     conversationType: convType,
     payload: { file: image },
@@ -73,7 +72,6 @@ export const createImgtMsg = (params) => {
       console.log("file uploading:", event);
     },
   });
-  return message;
 };
 // 创建文件消息
 export const createFiletMsg = (params) => {
@@ -82,8 +80,21 @@ export const createFiletMsg = (params) => {
     to: convId,
     conversationType: convType,
     payload: { file: files },
-    onProgress(event) {
+    onProgress: (event) => {
       fileUploading(message, event * 100);
+    },
+  });
+  return message;
+};
+// 创建视频消息
+export const createVideoMsg = (params) => {
+  const { convId, convType, video } = params;
+  const message = tim.createVideoMessage({
+    to: convId,
+    conversationType: convType,
+    payload: { file: video },
+    onProgress: (event) => {
+      console.log("file uploading:", event);
     },
   });
   return message;
@@ -115,7 +126,7 @@ export const createForwardMsg = async (params) => {
 export const downloadMergerMessage = async (message) => {
   if (message.type === TIM.TYPES.MSG_MERGER && message.payload.downloadKey !== "") {
     try {
-      const data = await tim.downloadMergerMessage(message);
+      await tim.downloadMergerMessage(message);
     } catch (imError) {
       console.warn("downloadMergerMessage error:", imError);
     }

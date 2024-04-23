@@ -49,7 +49,6 @@ function renderMention(elem, children, editor) {
   const divVnode = h(
     "div",
     {
-      props: {},
       style: {
         marginLeft: "12px",
         display: "flex",
@@ -71,8 +70,6 @@ function renderMention(elem, children, editor) {
         display: "inline-flex",
         alignItems: "center",
         borderRadius: "3px",
-        // border: "1px solid #eeeeee",
-        // background: "#fafafa",
         border: selected // 选中/不选中，样式不一样
           ? "1px solid var(--w-e-textarea-selected-border-color)" // wangEditor 提供了 css var https://www.wangeditor.com/v5/theme.html
           : "1px solid #eeeeee",

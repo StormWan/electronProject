@@ -1,7 +1,7 @@
 <template>
   <span :class="['label', labelClass()]">
-    <span class="all" v-show="isallStaff(item)">全员</span>
-    <svg-icon iconClass="robot" v-show="isRobot(userID)" />
+    <span class="all" v-if="isallStaff(item)">全员</span>
+    <svg-icon iconClass="robot" v-else-if="isRobot(userID)" />
   </span>
 </template>
 

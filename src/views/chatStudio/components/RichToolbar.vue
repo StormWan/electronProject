@@ -13,7 +13,7 @@
       <svg-icon iconClass="iconwenjianjia" class="icon-hover" />
     </span>
     <!-- 截图 -->
-    <span v-show="isElectron" :title="$t('chat.screenshot')" @click="clickCscreenshot">
+    <span v-show="!isRobot(toAccount)" :title="$t('chat.screenshot')" @click="clickCscreenshot">
       <svg-icon iconClass="iconjietu" class="icon-hover" />
     </span>
     <!-- 机器人配置 -->
@@ -68,19 +68,18 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import emitter from "@/utils/mitt-bus";
 import EmotionPackBox from "./EmotionPackBox.vue";
 import RobotOptions from "./RobotOptions.vue";
 import { useStore } from "vuex";
-import { ref } from "vue";
-import { dataURLtoFile } from "@/utils/chat/index";
 import { isRobot } from "@/utils/chat/index";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { isElectron } from "@/utils/common";
+import { screenshot } from "@/utils/chat/index";
 import { createCustomMsg } from "@/api/im-sdk-api/message";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
-const { production } = require("@/config/vue.custom.config");
 
 const emjRef = ref();
 const tobottom = ref();
@@ -90,7 +89,7 @@ const { commit, dispatch } = useStore();
 
 const emit = defineEmits(["setToolbar"]);
 const { toAccount, currentType } = useGetters(["toAccount", "currentType"]);
-const { currentConversation, fullScreen } = useState({
+const { fullScreen, currentConversation } = useState({
   fullScreen: (state) => state.settings.fullScreen,
   currentConversation: (state) => state.conversation.currentConversation,
 });
@@ -153,20 +152,16 @@ const onEnlarge = (value) => {
   commit("UPDATE_USER_SETUP", { key: "fullScreen", value: !value });
 };
 
-async function sendImage(e) {
+function sendImage(e) {
   emit("setToolbar", {
-    data: {
-      files: e.target.files[0],
-    },
     key: "setPicture",
+    data: { files: e.target.files[0] },
   });
 }
-async function sendFile(e) {
+function sendFile(e) {
   emit("setToolbar", {
-    data: {
-      files: e.target.files[0],
-    },
     key: "setParsefile",
+    data: { files: e.target.files[0] },
   });
 }
 const onTobBottom = () => {

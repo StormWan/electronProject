@@ -6,6 +6,7 @@ import store from "@/store";
 import { useAccessStore } from "@/api/openai/constant";
 import { api } from "@/api/openai/api";
 import { createTextMsg } from "@/api/im-sdk-api/index";
+import { CHATGPT_ROBOT } from "@/constants/index";
 
 export const createForData = ({ files }) => {
   const formData = new FormData();
@@ -39,7 +40,7 @@ export const uploadFiles = async (params) => {
 export const imCallback = async (params) => {
   console.log(params, "imCallback");
   const { Text, From, To, type } = params;
-  if (To !== "@RBT#001") return;
+  if (To !== CHATGPT_ROBOT) return;
   sendMessages(params);
 };
 
@@ -71,7 +72,7 @@ const updataMessage = (msg, message) => {
   store.commit("SET_HISTORYMESSAGE", {
     type: "UPDATE_MESSAGES",
     payload: {
-      convId: "C2C@RBT#001",
+      convId: `C2C${CHATGPT_ROBOT}`,
       message: cloneDeep(msg),
     },
   });

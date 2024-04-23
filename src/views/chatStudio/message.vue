@@ -65,7 +65,7 @@ import { useEventListener } from "@vueuse/core";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { dragControllerDiv, isallStaff } from "./utils/utils";
 import { useStore } from "vuex";
-import { Favico } from "pure-tools";
+// import { Favico } from "pure-tools";
 
 import EmptyMessage from "./components/EmptyMessage.vue";
 import Editor from "./chat/Editor.vue";
@@ -83,7 +83,7 @@ const unread = ref("");
 const chatRef = ref(null);
 const activeName = ref("whole");
 const { dispatch, commit } = useStore();
-const favicon = new Favico({ animation: "none" });
+// const favicon = new Favico({ animation: "none" });
 
 const { isGroupChat } = useGetters(["isGroupChat"]);
 const { networkStatus, conver, showMsgBox, totalUnreadMsg, arrowRight, fullScreen } = useState({
@@ -100,7 +100,7 @@ const fnTotalUnreadMsg = () => {
   const isUnread = unreadCount > 0;
   const num = unreadCount > 99 ? "99+" : unreadCount;
   unread.value = isUnread ? `${$t("chat.unread")}(${num})` : $t("chat.unread");
-  isUnread ? favicon.badge(num) : favicon.reset();
+  // isUnread ? favicon.badge(num) : favicon.reset();
 };
 const handleClick = ({ props }, event) => {
   const { label, name } = props;
@@ -131,7 +131,9 @@ onActivated(() => {
   commit("TOGGLE_LIST", "whole");
 });
 onDeactivated(() => {});
-onMounted(() => {});
+onMounted(() => {
+  commit("UPDATE_USER_SETUP", { key: "arrowRight", value: false });
+});
 onUnmounted(() => {});
 watchEffect(() => {
   fnTotalUnreadMsg();

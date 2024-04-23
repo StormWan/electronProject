@@ -56,7 +56,7 @@
     </el-button>
   </el-form>
   <!-- other hidden -->
-  <div class="mt-20 flex justify-between">
+  <div class="mt-20 flex justify-between" hidden>
     <el-button
       v-for="item in operates"
       :key="item.title"
@@ -124,13 +124,13 @@ const onClick = async ({ icon }) => {
 };
 
 const onHandle = (index) => {
-  if (index === 3) {
-    commit("showMessage", {
-      message: "待开发",
-      type: "warning",
-    });
-    return;
-  }
+  // if (index === 3) {
+  //   commit("showMessage", {
+  //     message: "待开发",
+  //     type: "warning",
+  //   });
+  //   return;
+  // }
   commit("setCurrentPage", index);
 };
 

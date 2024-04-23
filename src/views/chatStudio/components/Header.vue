@@ -3,10 +3,12 @@
     <div class="message-info-views">
       <p v-if="currentType">
         <span v-if="chatType('C2C')" @click="openUser" class="single">
-          {{ chatNick("C2C", chat) }}
+          <span class="nick">{{ chatNick("C2C", chat) }}</span>
+          <Label :userID="chat?.conversationID" />
         </span>
         <span v-else-if="chatType('GROUP')" @click="openSetup" class="group">
-          {{ chatNick("GROUP", chat) }}
+          <span class="nick"> {{ chatNick("GROUP", chat) }}</span>
+          <Label :item="chat" />
         </span>
         <span v-else-if="chatType('@TIM#SYSTEM')" class="system"> 系统通知 </span>
       </p>
@@ -25,7 +27,7 @@
 <script setup>
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { useStore } from "vuex";
-
+import Label from "@/views/chatStudio/components/Label.vue";
 const { commit } = useStore();
 const { currentType } = useGetters(["currentType"]);
 const { chat, groupProfile } = useState({
@@ -75,6 +77,9 @@ const openUser = () => {};
       max-width: 200px;
       display: inline-block;
       @include text-ellipsis();
+      .nick {
+        margin-right: 5px;
+      }
     }
   }
 }

@@ -26,7 +26,6 @@
 
 [web-url]: https://pureadmin.cn
 [download-url]: https://github.com/Hyk260/PureChat/releases
-[Web-image]: https://img.shields.io/badge/Web-PWA-orange?logo=microsoftedge
 [Windows-image]: https://img.shields.io/badge/-Windows-blue?logo=windows
 [MacOS-image]: https://img.shields.io/badge/-MacOS-black?logo=apple
 
@@ -79,18 +78,6 @@ yarn serve
 
 ```
 yarn build
-```
-
-生成文件结构、模块大小以及依赖关系等信息
-
-```
-yarn report
-```
-
-自动修复一些代码问题，例如缩进、空格、引号等
-
-```
-yarn lint
 ```
 
 ### 🖼️ 截图

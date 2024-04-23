@@ -27,6 +27,10 @@ const thirdParty = [
     icon: "github",
   },
   {
+    title: "Gitee",
+    icon: "gitee",
+  },
+  {
     title: "QQ",
     icon: "qq",
   },

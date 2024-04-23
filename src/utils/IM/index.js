@@ -278,7 +278,7 @@ export class TIMProxy {
     const isRobot = this.robotList.includes(data?.[0].conversationID);
     if (isRobot) {
       store.dispatch("GET_ROBOT_MESSAGE_LIST", {
-        convId: "C2C@RBT#001",
+        convId: `C2C${CHATGPT_ROBOT}`,
       });
     } else {
       // 更新会话消息

@@ -60,6 +60,7 @@ import {
   sendChatMessage,
   customAlert,
   extractFilesInfo,
+  extractVideoInfo,
   extractAitInfo,
   getOperatingSystem,
   handleToggleLanguage,
@@ -109,7 +110,7 @@ const handleEditor = (editor, created = true) => {
     editorRef.value = editor;
   } else {
     if (editor === null) return;
-    editor.destroy();
+    editor?.destroy();
   }
 };
 
@@ -139,10 +140,10 @@ const setToolbar = (item) => {
       setEmoj(data.url, data.item);
       break;
     case "setPicture":
-      setPicture(data.files);
+      parsePicture(data.files);
       break;
     case "setParsefile":
-      setParsefile(data.files);
+      parseFile(data.files);
       break;
   }
 };
@@ -159,7 +160,6 @@ const insertDraft = (value) => {
     editor.insertNode(item.children);
   });
 };
-
 // 更新草稿
 const updateDraft = debounce((data) => {
   commit("SET_SESSION_DRAFT", {
@@ -179,21 +179,36 @@ const onChange = (editor) => {
   handleAt(editor);
 };
 
+const parsetext = (text, editor) => {
+  // console.log(text);
+  // console.log("trimStart:", text.trimStart());
+  let str = "";
+  str = text.trimStart();
+  editor.insertText(str);
+};
+
 const handleFile = (item) => {
   const type = item.type;
   let trans = Object.prototype.toString.call(item) === "[object DataTransferItem]";
   let pasteFile = trans ? item.getAsFile() : item;
   if (type.match("^image/")) {
-    parsepicture(pasteFile);
+    parsePicture(pasteFile);
   } else {
-    parsefile(pasteFile);
+    parseFile(pasteFile);
   }
 };
 
 const handleString = (item, editor) => {
-  item.getAsString((str) => {
-    parsetext(str, editor);
-  });
+  if (item.type === "text/plain") {
+    item.getAsString((text) => {
+      parsetext(text, editor);
+      // console.log("plain:", text);
+    });
+  } else if (item.type === "text/html") {
+    item.getAsString((html) => {
+      // console.log("html:", html);
+    });
+  }
 };
 
 const kindHandlers = {
@@ -203,16 +218,13 @@ const kindHandlers = {
 
 const customPaste = (editor, event, callback) => {
   console.log("ClipboardEvent 粘贴事件对象", event);
-  const text = event.clipboardData?.getData("text/plain"); // 获取粘贴的纯文本
+  // const text = event.clipboardData?.getData("text/plain"); // 获取粘贴的纯文本
   // https://developer.mozilla.org/zh-CN/docs/Web/API/DragEvent DragEvent 拖拽
   // https://developer.mozilla.org/zh-CN/docs/Web/API/ClipboardEvent ClipboardEvent 粘贴
   const items = event?.clipboardData?.items ?? event?.dataTransfer?.items;
   for (const item of items) {
-    const { kind } = item;
-    const handler = kindHandlers[kind];
-    handler && handler(item, editor);
+    kindHandlers[item.kind]?.(item, editor);
   }
-  text && editor.insertText(text);
   event.preventDefault();
   callback?.(false);
 };
@@ -221,30 +233,34 @@ const dropHandler = (event) => {
   customPaste(editorRef.value, event);
 };
 // 插入文件
-const parsefile = async (file) => {
+const parseFile = async (file, editor = editorRef.value) => {
+  if (file.size / (1024 * 1024) > 100) {
+    commit("showMessage", { message: "文件不能大于100MB", type: "warning" });
+    return;
+  }
   try {
+    const editor = editorRef.value;
     const { size, name } = file;
     const fileSize = bytesToSize(size);
     const base64Url = await fileImgToBase64Url(file);
-    const FileElement = {
+    const element = {
       type: "attachment",
       fileName: name,
       fileSize: fileSize,
       link: base64Url,
-      children: [{ text: "" }], // void 元素必须有一个 children ，其中只有一个空字符串，重要！！！
+      children: [{ text: "" }],
     };
-    editorRef.value.restoreSelection(); // 恢复选区
-    editorRef.value.insertNode(FileElement);
-    editorRef.value.move(1); // 移动光标
+    editor.restoreSelection(); // 恢复选区
+    editor.insertNode(element);
+    editor.move(1); // 移动光标
   } catch (error) {
-    console.log(error);
+    console.log("parseFile:", error);
   }
 };
-const parsetext = (item) => {
-  console.log(item);
-};
+// 插入表情包
 const setEmoj = (url, item) => {
-  const ImageElement = {
+  const editor = editorRef.value;
+  const element = {
     type: "image",
     class: "EmoticonPack",
     src: url,
@@ -253,24 +269,14 @@ const setEmoj = (url, item) => {
     style: { width: "26px" },
     children: [{ text: "" }],
   };
-
-  editorRef.value.restoreSelection();
-  editorRef.value.insertNode(ImageElement);
-  editorRef.value.focus(true);
-  // editorRef.value.showProgressBar(100); // 进度条
-};
-const setPicture = (data) => {
-  parsepicture(data);
-  const editor = editorRef.value;
-  editor && editor.focus();
-};
-const setParsefile = (data) => {
-  parsefile(data);
+  editor.restoreSelection();
+  editor.insertNode(element);
+  editor.focus(true);
 };
 // 插入图片
-const parsepicture = async (file) => {
-  let base64Url = await fileImgToBase64Url(file);
-  const ImageElement = {
+const parsePicture = async (file, editor = editorRef.value) => {
+  const base64Url = await fileImgToBase64Url(file);
+  const element = {
     type: "image",
     class: "img",
     src: base64Url,
@@ -279,7 +285,8 @@ const parsepicture = async (file) => {
     style: { width: "125px" },
     children: [{ text: "" }],
   };
-  editorRef.value?.insertNode(ImageElement);
+  editor?.insertNode(element);
+  editor?.focus();
 };
 // 回车
 const handleEnter = (event) => {
@@ -308,9 +315,11 @@ const sendMsgBefore = (editor = editorRef.value) => {
   const text = editor.getText(); // 纯文本内容
   const { aitStr, aitlist } = extractAitInfo(editor);
   const { files } = extractFilesInfo(editor);
+  const { video } = extractVideoInfo(editor);
   const { images } = extractImageInfo(editor);
   const emoticons = convertEmoji(editor);
-  const have = images.length || files.length || aitlist.length || aitStr || emoticons || text;
+  const have =
+    video.length || images.length || files.length || aitlist.length || aitStr || emoticons || text;
   return {
     convId: toAccount.value,
     convType: currentType.value,
@@ -319,6 +328,7 @@ const sendMsgBefore = (editor = editorRef.value) => {
     aitStr: aitlist.length ? emoticons || aitStr : "",
     aitlist,
     files: files,
+    video,
     reply: currentReplyMsg.value,
     isHave: Boolean(have),
   };

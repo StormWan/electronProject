@@ -2,13 +2,12 @@ import { nextTick } from "vue";
 import store from "@/store/index";
 import { match } from "pinyin-pro";
 import { useClipboard } from "@vueuse/core";
-import { dataURLtoFile } from "@/utils/chat/index";
-import { getBlob } from "@/utils/chat/message-input-utils";
-import { emojiName } from "@/utils/emoji/emoji-map";
+import { dataURLtoFile, getBlob, getFileType } from "@/utils/chat/index";
 import emitter from "@/utils/mitt-bus";
 import {
   createTextMsg,
   createTextAtMsg,
+  createVideoMsg,
   createFiletMsg,
   createImgtMsg,
   createCustomMsg,
@@ -20,6 +19,7 @@ import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
 import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
 import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
 import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
+import VideoElemItem from "../ElemItemTypes/VideoElemItem.vue";
 import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
 import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
 import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
@@ -184,6 +184,7 @@ export const loadMsgModule = (item) => {
     TIMRelayElem: RelayElemItem, // 合并转发消息
     TIMImageElem: ImageElemItem, // 图片消息
     TIMFileElem: FileElemItem, // 文件消息
+    TIMVideoFileElem: VideoElemItem, // 视频消息
     TIMCustomElem: CustomElemItem, // 自定义消息
     TIMGroupTipElem: groupTipElement, // 群消息提示
     TIMGroupSystemNoticeElem: GroupSystemNoticeElem, // 系统通知
@@ -211,7 +212,7 @@ export const html2Escape = (str) => {
 export function sendChatMessage(options) {
   console.log("options", options);
   let Message = [];
-  const { convId, convType, textMsg, aitStr, aitlist, files, image, reply } = options;
+  const { convId, convType, textMsg, aitStr, aitlist, files, video, image, reply } = options;
   // @消息
   if (aitStr) {
     Message.push(
@@ -222,16 +223,22 @@ export function sendChatMessage(options) {
   else if (textMsg) {
     Message.push(createTextMsg({ convId, convType, textMsg, reply }));
   }
+  // 图片消息
+  if (image.length) {
+    image.map((t) => {
+      Message.push(createImgtMsg({ convId, convType, image: dataURLtoFile(t.src) }));
+    });
+  }
   // 文件消息
   if (files.length) {
     files.map((t) => {
       Message.push(createFiletMsg({ convId, convType, files: dataURLtoFile(t.link, t.fileName) }));
     });
   }
-  // 图片消息
-  if (image.length) {
-    image.map((t) => {
-      Message.push(createImgtMsg({ convId, convType, image: dataURLtoFile(t.src) }));
+  // 视频消息
+  if (video.length) {
+    video.map((t) => {
+      Message.push(createVideoMsg({ convId, convType, video: dataURLtoFile(t.link, t.fileName) }));
     });
   }
   return Message;
@@ -314,13 +321,29 @@ export const extractImageInfo = (editor) => {
   images = image.filter((item) => item.class !== "EmoticonPack");
   return { images };
 };
-
+function isVideoFile(fileName) {
+  const video = ["mp4", "wmv", "webm"];
+  const name = fileName.toLowerCase();
+  const regex = new RegExp(`(${video.join("|")})$`, "i");
+  return regex.test(name);
+}
 /**
  * 提取文件信息
  */
 export const extractFilesInfo = (editor) => {
+  const file = [];
   const files = editor.getElemsByType("attachment");
-  return { files };
+  files.map((t) => !isVideoFile(getFileType(t.fileName)) && file.push(t));
+  return { files: file };
+};
+/**
+ * 提取视频信息
+ */
+export const extractVideoInfo = (editor) => {
+  const video = [];
+  const files = editor.getElemsByType("attachment");
+  files.map((t) => isVideoFile(getFileType(t.fileName)) && video.push(t));
+  return { video };
 };
 
 /**

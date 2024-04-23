@@ -10,6 +10,8 @@ export const ACCOUNT = "ACCOUNT";
 export const EMOJI_RECENTLY = "Emoji-Recently";
 // im数据
 export const TIM_PROXY = "timProxy";
+// chatgpt机器人id
+export const CHATGPT_ROBOT = "@RBT#001";
 
 export const GET_MESSAGE_LIST = "GET_MESSAGE_LIST"; //获取消息列表
 export const HISTORY_MESSAGE_COUNT = 20; //历史消息计数

@@ -30,10 +30,9 @@
           clearable
           v-model="ruleForm.verifyCode"
           :placeholder="$t('login.smsVerifyCode')"
-          :prefix-icon=""
         />
-        <el-button :disabled="isDisabled" class="ml-2" @click="">
-          {{ text.length > 0 ? text + $t("login.info") : $t("login.getVerifyCode") }}
+        <el-button :disabled="isDisabled" class="ml-2">
+          {{ true ? $t("login.info") : $t("login.getVerifyCode") }}
         </el-button>
       </div>
     </el-form-item> -->
@@ -91,7 +90,7 @@ import { Lock, User, Key, Iphone } from "@element-plus/icons-vue";
 const checked = ref(false);
 const loading = ref(false);
 const ruleFormRef = ref();
-const { dispatch, commit } = useStore();
+const { commit } = useStore();
 
 const onBack = () => {
   commit("setCurrentPage", 0);
@@ -105,11 +104,11 @@ const onUpdate = async (formEl) => {
       // } else {
       //   loading.value = false;
       // }
-      setTimeout(() => {
-        loading.value = false;
-        console.log(ruleForm);
-      }, 2000);
-      dispatch("REGISTER", ruleForm);
+      // setTimeout(() => {
+      //   loading.value = false;
+      //   console.log(ruleForm);
+      // }, 2000);
+      // dispatch("REGISTER", ruleForm);
     } else {
       loading.value = false;
       return fields;

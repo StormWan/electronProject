@@ -1,3 +1,5 @@
+import ScreenShot from "js-web-screen-shot";
+
 export function checkTextNotEmpty(arr) {
   return arr.some((obj) => {
     return obj.children.some((child) => {
@@ -48,3 +50,12 @@ export const renderFileIcon = (fileType = "") => {
   }
   return require(`@/assets/message/${type}.png`);
 };
+
+export function screenshot(fn) {
+  new ScreenShot({
+    enableWebRtc: true,
+    level: 999,
+    completeCallback: fn,
+    closeCallback: fn,
+  });
+}
