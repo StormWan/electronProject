@@ -35,7 +35,7 @@ const isShowCheck = computed(() => {
     showCheckbox.value &&
     !isRevoked.value &&
     item.value.type !== "TIMGroupTipElem" &&
-    item.value.payload?.data !== "dithering"
+    item.value.payload?.description !== "dithering"
   );
 });
 </script>

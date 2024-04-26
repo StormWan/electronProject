@@ -6,7 +6,7 @@
     PureChat
   </h2>
   <p align="center">
-    <span>使用 vue3 + Element-Plus开发 用于学习参考</span>
+    <span>聊天应用与开发框架</span>
     <br />
     <a href="https://pureadmin.cn" target="blank">
       <strong>🌎 在线预览</strong>
@@ -26,28 +26,37 @@
 
 [web-url]: https://pureadmin.cn
 [download-url]: https://github.com/Hyk260/PureChat/releases
+[Web-image]: https://img.shields.io/badge/Web-orange?logo=microsoftedge
 [Windows-image]: https://img.shields.io/badge/-Windows-blue?logo=windows
 [MacOS-image]: https://img.shields.io/badge/-MacOS-black?logo=apple
 
-[![GitHub license](https://img.shields.io/github/license/Hyk260/PureChat)](https://github.com/Hyk260/PureChat/blob/master/LICENSE) [![Stars](https://img.shields.io/github/stars/Hyk260/PureChat.svg)](https://github.com/Hyk260/PureChat/stargazers) [![Forks](https://img.shields.io/github/forks/Hyk260/PureChat.svg)](https://github.com/Hyk260/PureChat/network/members)
+[![GitHub license](https://img.shields.io/github/license/Hyk260/PureChat)](https://github.com/Hyk260/PureChat/blob/master/LICENSE)
+[![Stars](https://img.shields.io/github/stars/Hyk260/PureChat.svg)](https://github.com/Hyk260/PureChat/stargazers)
+[![Forks](https://img.shields.io/github/forks/Hyk260/PureChat.svg)](https://github.com/Hyk260/PureChat/network/members)
 
 ## 简介
 
-[反馈](https://github.com/Hyk260/PureChat/issues) / [QQ 群](https://github.com/Hyk260/PureChat/discussions/2) / [打赏开发者](./images/weix.png) / [文档](https://hyk260.github.io/pure-docs)
+[反馈](https://github.com/Hyk260/PureChat/issues) / 
+[QQ 群](https://github.com/Hyk260/PureChat/discussions/2) / 
+[打赏开发者](./images/weix.png) / 
+[文档](https://hyk260.github.io/pure-docs) /
+[更新日志](https://hyk260.github.io/pure-docs/other/logs.html)
 
-[PureChat](https://github.com/Hyk260/PureChat) 是一个基于 Vue3、Element-Plus 的清新优雅的聊天工作室(腾讯 IM 即时通讯) 用于学习参考。
+
+[PureChat](https://github.com/Hyk260/PureChat) 是一个聊天工作室(腾讯IM即时通讯) 集成ChatGPT(openai)
 
 ### 🎉 特性
 
 - 📦️ 使用 Vue CLI 5 构建
 - 📃 RBAC 模型 + JWT 权限控制
+- 🤖 接入openai语言模型
 - ☁️ 聊天工作室 `基于IM即时通讯sdk`
 - 🌚 光明/黑暗 模式主题切换`自动根据系统主题改变`
 - ⚡️ 自定义 SVG 图标组件`svg-sprite-loader`
 - 🔴 国际化`vue-i18n` 支持 English, 简体中文
 - 🔧 Prettier + ESLint 规范
 - 💡 Commitlint 提交规范
-- ✨ electron 版本 支持 macOS、Windows 双平台
+- ✨ electron版本 支持macOS(.dmg)、Windows(.exe)双平台
 - 🛠 更多特性开发中
 
 环境配置

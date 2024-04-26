@@ -1,6 +1,6 @@
 {
   "name": "purechat",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "PureChat",
   "author": {
     "name": "Hyk260",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
     "@fortaine/fetch-event-source": "^3.0.6",
-    "@tencentcloud/chat": "3.3.0",
+    "@tencentcloud/chat": "3.3.2",
     "@vueuse/components": "^10.7.0",
     "@vueuse/core": "^8.4.2",
     "@wangeditor/editor": "^5.0.1",
@@ -43,8 +43,8 @@
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.4",
-    "element-plus": "^2.4.3",
     "fs-extra": "^11.2.0",
+    "element-plus": "^2.7.0",
     "js-web-screen-shot": "^1.9.9-rc.18",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
@@ -58,12 +58,12 @@
     "svg-sprite-loader": "^6.0.11",
     "tim-upload-plugin": "^1.0.5",
     "v-contextmenu": "3.0.0",
-    "vue": "^3.2.36",
+    "vue": "3.4.21",
     "vue-draggable-next": "^2.1.1",
     "vue-i18n": "^9.1.9",
-    "vue-router": "^4.0.0-0",
+    "vue-router": "4.3.2",
     "vue-virtual-scroller": "2.0.0-beta.8",
-    "vuex": "^4.0.0-0"
+    "vuex": "4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

@@ -116,6 +116,7 @@ import emitter from "@/utils/mitt-bus";
 import NameComponent from "../components/NameComponent.vue";
 import { download } from "@/utils/chat/index";
 import { timeFormat } from "pure-tools";
+import { isRobot } from "@/utils/chat/index";
 
 const timeout = ref(false);
 const isRight = ref(true);
@@ -123,7 +124,7 @@ const MenuItemInfo = ref([]);
 const scrollbarRef = ref(null);
 const messageViewRef = ref(null);
 const { dispatch, commit } = useStore();
-const { isOwner, currentType } = useGetters(["isOwner", "currentType"]);
+const { isOwner, toAccount, currentType } = useGetters(["isOwner", "toAccount", "currentType"]);
 const {
   noMore,
   showMsgBox,
@@ -161,7 +162,9 @@ const updateLoadMore = (newValue) => {
 };
 
 const showAvatar = (item) => {
-  return !item.isRevoked && item.type !== "TIMGroupTipElem" && item?.payload?.data !== "dithering";
+  return (
+    !item.isRevoked && item.type !== "TIMGroupTipElem" && item?.payload?.description !== "dithering"
+  );
 };
 
 const getElementById = (ID) => {
@@ -176,7 +179,7 @@ const handleSelect = (e, item, type = "initial") => {
     !showCheckbox.value ||
     item.type == "TIMGroupTipElem" ||
     item.isRevoked ||
-    item.payload?.data === "dithering"
+    item.payload?.description === "dithering"
   ) {
     return;
   }
@@ -323,7 +326,7 @@ const handleContextMenuEvent = (event, item) => {
   const isTip = type == "TIMGroupTipElem";
   const isFile = type == "TIMFileElem";
   const isRelay = type == "TIMRelayElem";
-  const isDithering = payload?.data === "dithering";
+  const isDithering = payload?.description === "dithering";
   const isCheckStatus = showCheckbox.value; // 多选状态
   // 撤回消息 提示类型消息
   if (isRevoked || isTip || isCheckStatus || isDithering) {
@@ -360,6 +363,10 @@ const handleContextMenuEvent = (event, item) => {
     RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "saveAs");
   } else {
     RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "copy");
+  }
+  // 机器人消息过滤回复
+  if (isRobot(toAccount.value)) {
+    RIGHT_CLICK_MENU_LIST.value = RIGHT_CLICK_MENU_LIST.value.filter((t) => t.id !== "reply");
   }
 };
 const handlRightClick = (data) => {

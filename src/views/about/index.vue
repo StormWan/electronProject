@@ -126,6 +126,11 @@ const data = [
     url: "https://gitee.com/H260788/PureChat",
     title: "gitee",
   },
+  {
+    label: "更新日志",
+    url: "https://hyk260.github.io/pure-docs/other/logs.html",
+    title: "更新日志",
+  },
   // {
   //   label: "打开应用",
   //   url: "pure://openapp?name=1&pwd=2",

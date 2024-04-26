@@ -8,6 +8,7 @@ import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import { handleTrayFlashIng, handlesOnShake } from "./utils/app";
 import { TIM_PROXY } from "@/constants/index";
+import { CHATGPT_ROBOT } from "@/constants/index";
 import {
   kickedOutReason,
   fnCheckoutNetState,

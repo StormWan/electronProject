@@ -66,7 +66,7 @@ export default {
     },
     getChangeType(message = this.message) {
       const { conversationType: type, nick, from, revokerInfo, payload } = message;
-      if (payload?.data === "dithering") {
+      if (payload?.description === "dithering") {
         return "[窗口抖动]";
       }
       const isGroup = type === "GROUP";

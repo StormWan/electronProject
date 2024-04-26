@@ -4,11 +4,17 @@
     :class="self ? 'is-text-self' : 'is-text-other'"
     @click="onClick"
   >
-    {{ customMessage() }}
+    <div v-if="message.payload.description === 'loading'">
+      <loading />
+    </div>
+    <div v-else>
+      {{ customMessage() }}
+    </div>
   </div>
 </template>
 
 <script>
+import loading from "../customMsgBody/loading.vue";
 export default {
   name: "CustomElemItem",
   props: {
@@ -20,6 +26,9 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  components: {
+    loading,
   },
   methods: {
     customMessage(payload = this.message.payload) {

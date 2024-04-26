@@ -4,7 +4,7 @@
       <p v-if="currentType">
         <span v-if="chatType('C2C')" @click="openUser" class="single">
           <span class="nick">{{ chatNick("C2C", chat) }}</span>
-          <Label :userID="chat?.conversationID" />
+          <Label :model="model" :userID="chat?.conversationID" />
         </span>
         <span v-else-if="chatType('GROUP')" @click="openSetup" class="group">
           <span class="nick"> {{ chatNick("GROUP", chat) }}</span>
@@ -30,9 +30,10 @@ import { useStore } from "vuex";
 import Label from "@/views/chatStudio/components/Label.vue";
 const { commit } = useStore();
 const { currentType } = useGetters(["currentType"]);
-const { chat, groupProfile } = useState({
+const { chat, model, groupProfile } = useState({
   groupProfile: (state) => state.groupinfo.groupProfile,
   chat: (state) => state.conversation.currentConversation,
+  model: (state) => state.robot.model,
 });
 
 const chatType = (type) => {

@@ -26,14 +26,14 @@ export const sendMsg = async (params) => {
 };
 // 创建自定义消息
 export const createCustomMsg = (params) => {
-  const { convId, convType, textMsg, customType } = params;
+  const { convId, convType, customType } = params;
   const customData = getCustomMsgContent(customType);
   return tim.createCustomMessage({
     to: convId,
     conversationType: convType,
     payload: {
-      data: customType,
-      description: customData,
+      data: customData,
+      description: customType,
       extension: "",
     },
   });

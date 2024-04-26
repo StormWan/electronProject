@@ -81,7 +81,12 @@ const clickMenuItem = (item) => {
 };
 
 const onClick = (path) => {
-  router.push(path);
+  console.log(path);
+  try {
+    router.push(path);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 function findMenuItemByPath(menu, path) {

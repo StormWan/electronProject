@@ -28,6 +28,10 @@
     >
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
+    <!-- 自定义消息 -->
+    <!-- <span @click="customMessage">
+      <el-icon class="icon-hover"><Sunny /></el-icon>
+    </span> -->
     <!-- 滚动到底部 -->
     <span
       :title="$t('chat.scrollToTheBottom')"
@@ -77,7 +81,7 @@ import { isRobot } from "@/utils/chat/index";
 import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { isElectron } from "@/utils/common";
 import { screenshot } from "@/utils/chat/index";
-import { createCustomMsg } from "@/api/im-sdk-api/message";
+import { createCustomMsg } from "@/api/im-sdk-api/index";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
@@ -151,6 +155,20 @@ const onShake = () => {
 const onEnlarge = (value) => {
   commit("UPDATE_USER_SETUP", { key: "fullScreen", value: !value });
 };
+
+function customMessage() {
+  const message = createCustomMsg({
+    convId: toAccount.value,
+    convType: currentType.value,
+    customType: "loading",
+  });
+  dispatch("SESSION_MESSAGE_SENDING", {
+    payload: {
+      convId: currentConversation.value.conversationID,
+      message,
+    },
+  });
+}
 
 function sendImage(e) {
   emit("setToolbar", {

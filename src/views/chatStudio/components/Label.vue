@@ -2,6 +2,7 @@
   <span :class="['label', labelClass()]">
     <span class="all" v-if="isallStaff(item)">全员</span>
     <svg-icon iconClass="robot" v-else-if="isRobot(userID)" />
+    <span class="model" v-if="isRobot(userID) && model">{{ model }}</span>
   </span>
 </template>
 
@@ -19,6 +20,10 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  model: {
+    type: String,
+    default: "",
+  },
 });
 
 const labelClass = (data) => {
@@ -35,7 +40,11 @@ const labelClass = (data) => {
   svg {
     stroke: unset;
   }
-  .all {
+  .model {
+    margin-left: 5px;
+  }
+  .all,
+  .model {
     white-space: nowrap;
     background: #e6f7ff;
     border: 1px solid rgb(145, 213, 255);

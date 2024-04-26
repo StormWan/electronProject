@@ -8,7 +8,7 @@
     v-if="
       !item.isRevoked &&
       item.type !== 'TIMGroupTipElem' &&
-      item.payload?.data !== 'dithering' &&
+      item.payload?.description !== 'dithering' &&
       isShow('unSend')
     "
   >

@@ -51,7 +51,9 @@ import emitter from "@/utils/mitt-bus";
 import { cloneDeep } from "lodash-es";
 import storage from "@/utils/localforage/index";
 import { StoreKey, modelValue, useAccessStore } from "@/api/openai/constant";
+import { useStore } from "vuex";
 
+const { commit } = useStore();
 const [state, setState] = useBoolean();
 const Settings = ref(null);
 
@@ -76,6 +78,7 @@ function handleConfirm() {
     model[value.ID] = value.defaultValue;
   });
   storage.set(StoreKey.Access, model);
+  commit("setModel", model.model);
 }
 emitter.on("onRobotBox", (state) => {
   initModel();

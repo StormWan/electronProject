@@ -1,3 +1,4 @@
+import { nextTick } from "vue";
 import router from "@/router";
 import { ElMessage } from "element-plus";
 import { timProxy } from "@/utils/IM/index";
@@ -63,16 +64,19 @@ const user = {
         // 保存登录信息 keep
         data?.keep && storage.set(ACCOUNT, data);
         router.push("/chatstudio");
+        verification(code, msg);
       } else {
         verification(code, msg);
       }
     },
     // 退出登录
     async LOG_OUT({ state, commit, dispatch }) {
-      logout();
-      emitter.all.clear();
-      dispatch("TIM_LOG_OUT");
       router.push("/login");
+      nextTick(() => {
+        logout();
+        emitter.all.clear();
+        dispatch("TIM_LOG_OUT");
+      });
     },
     // 登录im
     async TIM_LOG_IN({ state, commit, dispatch }, user) {
