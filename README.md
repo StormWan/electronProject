@@ -36,27 +36,26 @@
 
 ## 简介
 
-[反馈](https://github.com/Hyk260/PureChat/issues) / 
-[QQ 群](https://github.com/Hyk260/PureChat/discussions/2) / 
-[打赏开发者](./images/weix.png) / 
+[反馈](https://github.com/Hyk260/PureChat/issues) /
+[QQ 群](https://github.com/Hyk260/PureChat/discussions/2) /
+[打赏开发者](./images/weix.png) /
 [文档](https://hyk260.github.io/pure-docs) /
 [更新日志](https://hyk260.github.io/pure-docs/other/logs.html)
 
-
-[PureChat](https://github.com/Hyk260/PureChat) 是一个聊天工作室(腾讯IM即时通讯) 集成ChatGPT(openai)
+[PureChat](https://github.com/Hyk260/PureChat) 是一个聊天工作室(腾讯 IM 即时通讯) 集成 ChatGPT(openai)
 
 ### 🎉 特性
 
 - 📦️ 使用 Vue CLI 5 构建
 - 📃 RBAC 模型 + JWT 权限控制
-- 🤖 接入openai语言模型
+- 🤖 接入 openai 语言模型
 - ☁️ 聊天工作室 `基于IM即时通讯sdk`
 - 🌚 光明/黑暗 模式主题切换`自动根据系统主题改变`
 - ⚡️ 自定义 SVG 图标组件`svg-sprite-loader`
 - 🔴 国际化`vue-i18n` 支持 English, 简体中文
 - 🔧 Prettier + ESLint 规范
 - 💡 Commitlint 提交规范
-- ✨ electron版本 支持macOS(.dmg)、Windows(.exe)双平台
+- ✨ electron 版本 支持 macOS(.dmg)、Windows(.exe)双平台
 - 🛠 更多特性开发中
 
 环境配置
@@ -74,19 +73,19 @@ git clone https://github.com/Hyk260/PureChat.git
 安装依赖
 
 ```
-yarn install
+pnpm install
 ```
 
 启动项目
 
 ```
-yarn serve
+pnpm dev
 ```
 
 打包
 
 ```
-yarn build
+pnpm build
 ```
 
 ### 🖼️ 截图
@@ -98,9 +97,3 @@ yarn build
 <img src="./images/chatgpt.png">
 
 <img src="./images/about.png">
-
-### 浏览器支持
-
-本地开发推荐使用`Chrome 90+` 浏览器
-
-支持现代浏览器, 不支持 IE
