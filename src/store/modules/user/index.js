@@ -45,6 +45,23 @@ const user = {
     },
   },
   actions: {
+    authorized({ commit, dispatch }, data) {
+      const { code, msg, result } = data;
+      console.log({ code, msg, result }, "授权登录信息");
+      if (code == 200) {
+        window.TIMProxy.init();
+        dispatch("GET_MENU");
+        dispatch("TIM_LOG_IN", {
+          userID: result.username,
+          userSig: result.userSig,
+        });
+        commit("UPDATE_USER_INFO", { key: "user", value: result });
+        router.push("/chatstudio");
+        verification(code, msg);
+      } else {
+        verification(code, msg);
+      }
+    },
     // 注册
     async REGISTER({ state }, data) {
       const result = await register(data);

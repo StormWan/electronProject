@@ -9,13 +9,13 @@ const outsideList = [
     if_fixed: 1,
     type: "el-icon",
   },
-  // {
-  //   only: "notebook",
-  //   icon: "Notebook",
-  //   locale: "",
-  //   title: "通讯录",
-  //   type: "el-icon",
-  // },
+  {
+    only: "notebook",
+    icon: "Notebook",
+    locale: "",
+    title: "通讯录",
+    type: "el-icon",
+  },
   {
     only: "document",
     icon: "Document",

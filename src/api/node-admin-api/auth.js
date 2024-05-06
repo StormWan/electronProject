@@ -7,3 +7,11 @@ export const openAuthUrl = (id, params = null) => {
     params,
   });
 };
+
+export const githubAuth = (params) => {
+  return http({
+    url: "/github/callback",
+    method: "get",
+    params,
+  });
+};

@@ -89,7 +89,7 @@ const setUserProfile = async () => {
     userProfile.value = chat.value.userProfile;
   }
   const userID = cardData.value?.from;
-  const { code, data } = await getUserProfile(userID);
+  const { code, data } = await getUserProfile([userID]);
   if (code == 0) {
     userProfile.value = data?.[0];
     console.log(data);

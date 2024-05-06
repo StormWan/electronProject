@@ -67,7 +67,7 @@
     </el-button>
   </div>
   <!-- 第三方登录 -->
-  <el-form-item v-if="false">
+  <el-form-item>
     <el-divider>
       <p class="text-gray-500 text-xs">{{ $t("login.thirdLogin") }}</p>
     </el-divider>
@@ -80,17 +80,19 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { Lock, User, Key } from "@element-plus/icons-vue";
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { getuser } from "@/api/node-admin-api/index";
 import { operates, thirdParty } from "../utils/enums";
-import { oauthAuthorize } from "../utils/auth";
+import { oauthAuthorize, authorizedLogin } from "../utils/auth";
 import { useStore } from "vuex";
 import { user, rules } from "../utils/validation";
 import ImageVerify from "@/views/components/ImageVerify/index.vue";
 import loadingSvg from "./loadingSvg";
 const { production } = require("@/config/vue.custom.config");
 
+const router = useRouter();
 const restaurants = ref([]);
 const ruleFormRef = ref();
 const imgCode = ref("");
@@ -124,13 +126,6 @@ const onClick = async ({ icon }) => {
 };
 
 const onHandle = (index) => {
-  // if (index === 3) {
-  //   commit("showMessage", {
-  //     message: "待开发",
-  //     type: "warning",
-  //   });
-  //   return;
-  // }
   commit("setCurrentPage", index);
 };
 
@@ -157,6 +152,16 @@ watch(imgCode, (value) => {
     user.verifyCode = value;
   }
 });
+watch(
+  () => router.currentRoute.value.query,
+  (data) => {
+    authorizedLogin(data?.code);
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 </script>
 
 <style lang="scss" scoped>

@@ -6,7 +6,8 @@ import { ACCESS_TOKEN } from "@/constants/index";
 import { errorHandler } from "./tools";
 
 const service = axios.create({
-  // baseURL: "https://node-admin.cn/",
+  // baseURL: "https://apichat.fun/", // 生产
+  // baseURL: "http://localhost:8081/", // 开发
   baseURL: process.env.VUE_APP_PROXY_DOMAIN_REAL, // 公共地址
   timeout: 50000, // 请求超时时间
 });

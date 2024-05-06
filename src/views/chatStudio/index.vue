@@ -31,7 +31,7 @@ const frame = [
 const Component = {
   electron: application, // 应用
   test: test, // 测试
-  // notebook: AddressBook,
+  notebook: AddressBook,
 };
 const { outside, outsideList } = useState({
   outsideList: (state) => state.sidebar.outsideList,
