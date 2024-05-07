@@ -5,11 +5,18 @@ export const StoreKey = {
   Access: "access-control",
 };
 
+export const ModelProvider = {
+  GPT: "GPT",
+  GeminiPro: "GeminiPro",
+  Claude: "Claude",
+};
+
 export const OpenaiPath = {
-  ChatPath: "v1/chat/completions",
-  UsagePath: "dashboard/billing/usage",
-  SubsPath: "dashboard/billing/subscription",
-  ListModelPath: "v1/models",
+  ChatPath: "v1/chat/completions", // chatgpt 聊天接口
+  UsagePath: "v1/dashboard/billing/usage", // 用量查询，数据单位为 token
+  SubsPath: "v1/dashboard/billing/subscription", // 总量查询，数据单位为 token
+  ListModelPath: "v1/models", // 查询可用模型
+  EmbeddingPath: "v1/embeddings", // 文本向量化
 };
 // 默认配置
 export const modelConfig = {

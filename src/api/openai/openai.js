@@ -36,6 +36,19 @@ export class ChatGPTApi {
   extractMessage(res) {
     return res.choices?.at(0)?.message?.content ?? "";
   }
+  generateRequestPayload(messages, modelConfig, options) {
+    return {
+      messages: messages.slice(-Number(modelConfig.historyMessageCount)), // 上下文
+      stream: options.stream, // 流式传输
+      model: modelConfig.model, // 模型
+      // max_tokens: modelConfig.max_tokens, // 单次回复限制
+      temperature: Number(modelConfig.temperature), // 随机性
+      presence_penalty: modelConfig.presence_penalty, //话题新鲜度
+      frequency_penalty: modelConfig.frequency_penalty, // 频率惩罚度
+      top_p: modelConfig.top_p, // 核采样
+    };
+  }
+  // 生成聊天消息
   async chat(options) {
     const messages = options.messages.map((v) => ({
       role: v.role,
@@ -49,16 +62,7 @@ export class ChatGPTApi {
       },
     };
 
-    const requestPayload = {
-      messages: messages.slice(-Number(modelConfig.historyMessageCount)), // 上下文
-      stream: options.config.stream, // 流式传输
-      model: modelConfig.model, // 模型
-      // max_tokens: modelConfig.max_tokens, // 单次回复限制
-      temperature: Number(modelConfig.temperature), // 随机性
-      presence_penalty: modelConfig.presence_penalty, //话题新鲜度
-      frequency_penalty: modelConfig.frequency_penalty, // 频率惩罚度
-      top_p: modelConfig.top_p, // 核采样
-    };
+    const requestPayload = this.generateRequestPayload(messages, modelConfig, options.config);
 
     console.log("[Request] openai payload: ", requestPayload);
 
@@ -194,18 +198,16 @@ export class ChatGPTApi {
   }
   // 列出模型
   async models() {
-    const res = await fetch(this.path(OpenaiPath.ListModelPath), {
-      method: "GET",
-      headers: { ...getHeaders() },
-    });
-
+    const url = this.path(OpenaiPath.ListModelPath);
+    const res = await fetch(url, { method: "GET", headers: { ...getHeaders() } });
     const resJson = await res.json();
     const chatModels = resJson.data.filter((m) => m.id.startsWith("gpt-"));
-    console.log("[Models]", chatModels);
-
-    return chatModels.map((m) => ({
+    // console.log("[Models]", chatModels);
+    const formattedModels = chatModels.map((m) => ({
       name: m.id,
       available: true,
     }));
+    // console.log("[formattedModels]", formattedModels);
+    return formattedModels;
   }
 }

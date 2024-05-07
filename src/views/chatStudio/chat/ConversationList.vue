@@ -298,10 +298,11 @@ watch(activetab, (data) => {
   .pinned-tag {
     display: block;
     position: absolute;
-    left: 0;
-    top: 0;
-    border: 8px solid rgb(84, 180, 239);
-    border-right-color: transparent;
+    right: 3px;
+    top: 3px;
+    border-radius: 2px;
+    border: 5px solid rgb(84, 180, 239);
+    border-left-color: transparent;
     border-bottom-color: transparent;
   }
   .portrait {

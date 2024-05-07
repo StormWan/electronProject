@@ -3,8 +3,8 @@
     class="wangeditor"
     :class="{ 'style-wang': fullScreen }"
     id="svgDown"
-    v-if="showMsgBox"
     v-show="!showCheckbox"
+    v-if="showMsgBox"
   >
     <!-- 自定义工具栏 -->
     <RichToolbar @setToolbar="setToolbar" />
@@ -20,8 +20,8 @@
       @customAlert="customAlert"
       @keyup.enter="handleEnter"
     />
-    <!-- @ mention弹框 -->
-    <mention-modal
+    <!-- @提及弹框 -->
+    <MentionModal
       ref="mentionRef"
       v-if="isShowModal"
       :pinyinSearch="true"
@@ -45,6 +45,7 @@ import { Editor } from "@wangeditor/editor-for-vue";
 import RichToolbar from "../components/RichToolbar.vue";
 import { editorConfig, placeholderMap } from "../utils/configure";
 import emitter from "@/utils/mitt-bus";
+import { isMobile } from "@/utils/common";
 import {
   ref,
   shallowRef,
@@ -79,7 +80,6 @@ const { ipcRenderer } = require("electron");
 
 const editorRef = shallowRef(); // 编辑器实例，必须用 shallowRef
 const valueHtml = ref(""); // 内容 HTML
-// const messages = ref(null); //编辑器内容 对象格式
 const mode = "simple"; // 'default' 或 'simple'
 const mentionRef = ref();
 
@@ -133,6 +133,7 @@ const insertMention = ({ id, name, backward = true, deleteDigit = 0 }) => {
   editor.insertNode(mentionNode); // 插入 mention
   editor.move(1); // 移动光标
 };
+
 const setToolbar = (item) => {
   const { data, key } = item;
   switch (key) {
@@ -147,11 +148,12 @@ const setToolbar = (item) => {
       break;
   }
 };
+
 // 插入草稿
 const insertDraft = (value) => {
   if (!value) return;
   const editor = editorRef.value;
-  editor && editor.focus(true);
+  editor && !isMobile && editor.focus(true);
   const { conversationID: ID } = value;
   const draftMap = sessionDraftMap.value;
   const draft = draftMap.get(ID);
@@ -174,14 +176,11 @@ const handleAt = debounce((editor) => {
 
 const onChange = (editor) => {
   const content = editor.children;
-  // messages.value = content;
   updateDraft(content);
   handleAt(editor);
 };
 
 const parsetext = (text, editor) => {
-  // console.log(text);
-  // console.log("trimStart:", text.trimStart());
   let str = "";
   str = text.trimStart();
   editor.insertText(str);

@@ -66,6 +66,7 @@ const fnCreateTextMsg = (params) => {
   msg.status = "success";
   return msg;
 };
+
 const updataMessage = (msg, message) => {
   if (!msg) return;
   msg.payload.text = message;

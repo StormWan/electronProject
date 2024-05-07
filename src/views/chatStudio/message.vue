@@ -117,11 +117,10 @@ useEventListener(window, "offline", () => {
 });
 useEventListener(window, "focus", () => {
   if (!conver.value) return;
-  const { conversationID } = conver?.value;
   commit("SET_HISTORYMESSAGE", {
     type: "MARKE_MESSAGE_AS_READED",
     payload: {
-      convId: conversationID,
+      convId: conver?.value.conversationID,
       message: conver.value,
     },
   });
