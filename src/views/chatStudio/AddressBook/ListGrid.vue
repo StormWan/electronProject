@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import emitter from "@/utils/mitt-bus";
 export default {
   name: "ListGrid",
   data() {
@@ -40,7 +41,7 @@ export default {
   methods: {
     onClick({ icon }) {
       this.active = icon;
-      this.$emit("onActive", icon);
+      emitter.emit("onActive", icon);
     },
   },
 };

@@ -322,7 +322,7 @@ export class TIMProxy {
     });
   }
   /**
-   * 群详情 @好友 @全体成员 系统通知tis
+   * 群详情 @好友 @全体成员 系统通知tips
    */
   handleNotificationTip(data) {
     const { userID } = this.userProfile || {};

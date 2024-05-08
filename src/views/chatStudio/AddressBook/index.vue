@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div class="aside">
-      <ListGrid @onActive="onActive" />
+      <ListGrid />
     </div>
     <div class="main">
       <el-scrollbar class="h-full">
@@ -16,6 +16,7 @@
 <script>
 import CardGrid from "./CardGrid";
 import ListGrid from "./ListGrid";
+import emitter from "@/utils/mitt-bus";
 import { restApi } from "@/api/node-admin-api/index";
 import { getUserProfile } from "@/api/im-sdk-api/index";
 import { mapState } from "vuex";
@@ -40,6 +41,9 @@ export default {
   },
   async mounted() {
     this.init();
+    emitter.on("onActive", (icon) => {
+      this.active = icon;
+    });
     // this.getGroupList();
     this.$store.dispatch("getGroupList");
   },
@@ -71,9 +75,6 @@ export default {
         if (!dom) return;
         dom.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 300);
-    },
-    onActive(icon) {
-      this.active = icon;
     },
   },
 };

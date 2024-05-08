@@ -106,23 +106,22 @@ export default {
   word-break: break-all;
   margin-top: 5px;
   line-height: 16px;
-  justify-content: center;
-  .withdraw {
-    // border-radius: 3px;
-    // background: rgba(0, 0, 0, 0.05);
-    color: var(--color-time-divider);
-    padding: 4px 6px;
-    .close {
-      margin-left: 4px;
-      cursor: pointer;
-      vertical-align: text-top;
-    }
-  }
-  .edit {
-    user-select: none;
-    color: #337ecc;
-    // padding-left: 10px;
+  display: flex;
+  align-items: center;
+}
+.withdraw {
+  display: flex;
+  align-items: center;
+  color: var(--color-time-divider);
+  padding: 4px 6px;
+  .close {
+    margin-left: 4px;
     cursor: pointer;
   }
+}
+.edit {
+  user-select: none;
+  color: #337ecc;
+  cursor: pointer;
 }
 </style>
