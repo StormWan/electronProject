@@ -71,21 +71,20 @@
 import { h, ref, watch } from "vue";
 import { RIGHT_CLICK_CHAT_LIST } from "../utils/menu";
 // import VirtualList from "./VirtualList.vue";
-import Skeleton from "../components/Skeleton.vue";
-import EmptyMessage from "../components/EmptyMessage.vue";
-import { Contextmenu, ContextmenuItem } from "v-contextmenu";
-import { timeFormat } from "pure-tools";
-import { useStore } from "vuex";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
 import { pinConversation, setMessageRead } from "@/api/im-sdk-api/index";
-import Label from "../components/Label.vue";
+import { useGetters, useState } from "@/utils/hooks/useMapper";
 import emitter from "@/utils/mitt-bus";
+import { timeFormat } from "pure-tools";
+import { Contextmenu, ContextmenuItem } from "v-contextmenu";
+import { useStore } from "vuex";
+import EmptyMessage from "../components/EmptyMessage.vue";
+import Label from "../components/Label.vue";
 import {
   chatName,
-  dropHandler,
-  dragoverHandler,
   dragenterHandler,
   dragleaveHandler,
+  dragoverHandler,
+  dropHandler,
 } from "../utils/utils";
 
 const loading = ref(true);
@@ -227,9 +226,9 @@ const handleConvListClick = (data) => {
   dispatch("getGroupProfile", data);
   // 获取会话列表 read
   dispatch("GET_MESSAGE_LIST", data);
-  commit("EMITTER_EMIT", { key: "updataScroll" });
   commit("setReplyMsg", null);
   emitter.emit("handleInsertDraft", data);
+  emitter.emit("updataScroll");
 };
 
 const handleClickMenuItem = (item) => {

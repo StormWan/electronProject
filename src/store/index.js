@@ -1,11 +1,11 @@
-import { createStore } from "vuex";
-import saveToLocalStorage from "./plugins/localStorage"; // 自定义插件
+import { USER_MODEL, USER_SETUP } from "@/constants/index";
+import { convertToTree } from "@/utils/ToTree";
 import { changeAppearance } from "@/utils/common";
-import router from "@/router";
 import storage from "@/utils/localforage/index";
 import emitter from "@/utils/mitt-bus";
-import { convertToTree, optimizeTree } from "@/utils/ToTree";
-import { USER_MODEL, USER_SETUP } from "@/constants/index";
+import { createStore } from "vuex";
+import { importModules } from "./importModules";
+import saveToLocalStorage from "./plugins/localStorage"; // 自定义插件
 
 // 默认设置
 const defaultSettings = {
@@ -27,31 +27,11 @@ const defaultData = {
   routeTable: null, // 路由表  Route Table
 };
 
-// 获取本地存储中的设置和用户信息，如果没有则使用默认值
-const settings = storage.get(USER_SETUP) || defaultSettings;
-const data = storage.get(USER_MODEL) || defaultData;
-
-const modules = {};
-const plugins = [saveToLocalStorage];
-// 自动导入指定目录下的所有以index.js结尾的文件
-const requireModules = require.context("./modules/", true, /index\.(ts|js)$/iu);
-
-// 自动导入模块文件中的所有vuex模块
-requireModules.keys().forEach((filePath) => {
-  const modular = requireModules(filePath);
-  // 从文件路径中提取模块名称，如'./modules/user/index.ts' => 'user'
-  const name = filePath.replace(/\.\/|\/index.(js|ts)/g, "");
-  modules[name] = {
-    // namespaced: true,
-    ...modular.default,
-  };
-});
-
 const store = createStore({
-  modules,
+  modules: importModules(),
   state: {
-    data,
-    settings,
+    data: storage.get(USER_MODEL) || defaultData,
+    settings: storage.get(USER_SETUP) || defaultSettings,
   },
   mutations: {
     // 更新用户设置
@@ -79,25 +59,25 @@ const store = createStore({
       commit("UPDATE_USER_INFO", { key: "routeTable", value: root.children });
     },
     // 页面刷新重新加载路由
-    reloadRoute({ state }, route) {
-      try {
-        const { routeTable } = storage.get(USER_MODEL) || {};
-        if (!routeTable) return;
-        optimizeTree(routeTable);
-        routeTable.forEach((item) => {
-          router.addRoute(item);
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    // reloadRoute({ state }, route) {
+    //   try {
+    //     const { routeTable } = storage.get(USER_MODEL) || {};
+    //     if (!routeTable) return;
+    //     optimizeTree(routeTable);
+    //     routeTable.forEach((item) => {
+    //       router.addRoute(item);
+    //     });
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
     // 清除 eltag 标签
     CLEAR_EL_TAG({ state }) {
       state.data.elTag = [];
     },
   },
   // 自定义属性
-  plugins,
+  plugins: [saveToLocalStorage],
 });
 
 // 刷新页面保存当前主题色

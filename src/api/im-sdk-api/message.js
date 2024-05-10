@@ -26,7 +26,7 @@ export const sendMsg = async (params) => {
 };
 // 创建自定义消息
 export const createCustomMsg = (params) => {
-  const { convId, convType, customType } = params;
+  const { convId, convType = "C2C", customType } = params;
   const customData = getCustomMsgContent(customType);
   return tim.createCustomMessage({
     to: convId,

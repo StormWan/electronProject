@@ -1,19 +1,18 @@
+import { CHATGPT_ROBOT, TIM_PROXY } from "@/constants/index";
 import store from "@/store";
 import TIM from "@/utils/IM/chat/index";
 import tim from "@/utils/IM/im-sdk/tim";
+import { scrollToDomPostion } from "@/utils/chat/index";
 import storage from "@/utils/localforage/index";
 import { useWindowFocus } from "@vueuse/core";
-import { scrollToDomPostion } from "@/utils/chat/index";
 import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import { handleTrayFlashIng, handlesOnShake } from "./utils/app";
-import { TIM_PROXY } from "@/constants/index";
-import { CHATGPT_ROBOT } from "@/constants/index";
 import {
-  kickedOutReason,
   fnCheckoutNetState,
   getConversationID,
   getConversationList,
+  kickedOutReason,
 } from "./utils/index";
 
 const isFocused = useWindowFocus(); // 判断浏览器窗口是否在前台可见状态
@@ -294,7 +293,7 @@ export class TIMProxy {
     // 消息已读
     read && this.reportedMessageRead(data);
     // 更新滚动条位置到底部
-    store.commit("EMITTER_EMIT", { key: "updataScroll", value: "bottom" });
+    emitter.emit("updataScroll", "bottom");
   }
   // 上报消息已读
   reportedMessageRead(data) {

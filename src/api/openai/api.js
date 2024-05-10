@@ -1,8 +1,6 @@
 import { ChatGPTApi } from "./openai";
 import { ModelProvider } from "./constant";
 
-export const api = new ChatGPTApi();
-
 export class ClientApi {
   constructor(provider = ModelProvider.GPT) {
     switch (provider) {

@@ -23,7 +23,7 @@ function useDataThemeChange() {
     setTheme(prefersDark ? "dark" : "light");
   };
 
-  initTheme(store.state.settings.appearance);
+  initTheme();
 
   const updateTheme = () => {
     initTheme();

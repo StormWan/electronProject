@@ -1,3 +1,4 @@
+import remainingRouter from "./modules/remaining";
 // hack router push callback
 // const originalPush = createRouter.prototype.push;
 // createRouter.prototype.push = function push(location, onResolve, onReject) {
@@ -18,4 +19,15 @@ export const scrollBehavior = (to, from) => {
       }
     }
   });
+};
+
+export const generateRoutes = () => {
+  const routes = [];
+  const files = require.context("./modules/", false, /\.js$/);
+  files.keys().forEach((key) => {
+    if (key === "./remaining.js") return;
+    routes.push(...files(key).default);
+  });
+  routes.unshift(...remainingRouter);
+  return routes;
 };

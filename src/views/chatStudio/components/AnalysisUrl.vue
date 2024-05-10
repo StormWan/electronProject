@@ -6,7 +6,7 @@
 import { h } from "vue";
 import { html2Escape } from "../utils/utils";
 import linkifyUrls from "@/utils/linkifyUrls";
-// eslint-disable-next-line no-undef
+
 const props = defineProps({
   text: {
     type: String,

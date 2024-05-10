@@ -59,25 +59,26 @@
 </template>
 
 <script setup>
-import { ref, onActivated, onDeactivated, onMounted, onUnmounted, watchEffect } from "vue";
 import { $t } from "@/plugins/i18n";
+import { useGetters, useState } from "@/utils/hooks/useMapper";
+import emitter from "@/utils/mitt-bus";
 import { useEventListener } from "@vueuse/core";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { dragControllerDiv, isallStaff } from "./utils/utils";
+import { onActivated, onDeactivated, onMounted, onUnmounted, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
+import { dragControllerDiv, isallStaff } from "./utils/utils";
 // import { Favico } from "pure-tools";
 
-import EmptyMessage from "./components/EmptyMessage.vue";
-import Editor from "./chat/Editor.vue";
-import Search from "./components/Search.vue";
-import Header from "./components/Header.vue";
-import ReplyBox from "./components/ReplyBox.vue";
 import Chatwin from "./chat/Chatwin.vue";
-import GroupDetails from "./chat/GroupDetails.vue";
-import networklink from "./components/networklink.vue";
 import ConversationList from "./chat/ConversationList.vue";
-import MultiChoiceBox from "./components/MultiChoiceBox.vue";
+import Editor from "./chat/Editor.vue";
+import GroupDetails from "./chat/GroupDetails.vue";
+import EmptyMessage from "./components/EmptyMessage.vue";
+import Header from "./components/Header.vue";
 import MergeMessagePopup from "./components/MergeMessagePopup.vue";
+import MultiChoiceBox from "./components/MultiChoiceBox.vue";
+import ReplyBox from "./components/ReplyBox.vue";
+import Search from "./components/Search.vue";
+import networklink from "./components/networklink.vue";
 
 const unread = ref("");
 const chatRef = ref(null);
@@ -126,7 +127,7 @@ useEventListener(window, "focus", () => {
   });
 });
 onActivated(() => {
-  commit("EMITTER_EMIT", { key: "updataScroll" });
+  emitter.emit("updataScroll");
   commit("TOGGLE_LIST", "whole");
 });
 onDeactivated(() => {});

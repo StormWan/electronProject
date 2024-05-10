@@ -25,13 +25,12 @@
 </template>
 
 <script setup>
-import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { useStore } from "vuex";
+import { useGetters, useState } from "@/utils/hooks/useMapper";
+import emitter from "@/utils/mitt-bus";
 import Label from "@/views/chatStudio/components/Label.vue";
-const { commit } = useStore();
+
 const { currentType } = useGetters(["currentType"]);
-const { chat, model, groupProfile } = useState({
-  groupProfile: (state) => state.groupinfo.groupProfile,
+const { chat, model } = useState({
   chat: (state) => state.conversation.currentConversation,
   model: (state) => state.robot.model,
 });
@@ -53,7 +52,7 @@ const chatNick = (type, chat) => {
 };
 
 const openSetup = () => {
-  commit("EMITTER_EMIT", { key: "onGroupDrawer", value: true });
+  emitter.emit("onGroupDrawer", true);
 };
 const openUser = () => {};
 </script>

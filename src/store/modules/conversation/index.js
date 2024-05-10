@@ -1,8 +1,14 @@
-import { CONVERSATIONTYPE, GET_MESSAGE_LIST, HISTORY_MESSAGE_COUNT } from "@/constants/index";
+import {
+  CONVERSATIONTYPE,
+  GET_MESSAGE_LIST,
+  HISTORY_MESSAGE_COUNT,
+  CHATGPT_ROBOT,
+} from "@/constants/index";
 import { addTimeDivider, getBaseTime, checkTextNotEmpty, transformData } from "@/utils/chat/index";
-import { imCallback, restApi } from "@/api/node-admin-api/index";
+import { chatService } from "@/api/openai/index";
 import TIM from "@/utils/IM/chat/index";
 import { cloneDeep } from "lodash-es";
+import emitter from "@/utils/mitt-bus";
 import {
   deleteConversation,
   getConversationProfile,
@@ -323,7 +329,7 @@ const conversation = {
             message: addTimeDivider(messageList).reverse(), // 添加时间
           },
         });
-        commit("EMITTER_EMIT", { key: "updataScroll" });
+         emitter.emit("updataScroll");
         if (type == "GROUP") {
           const { groupID } = action.groupProfile;
           dispatch("getGroupMemberList", { groupID });
@@ -360,7 +366,7 @@ const conversation = {
           message: cloneDeep(message[0]),
         },
       });
-      commit("EMITTER_EMIT", { key: "updataScroll" });
+       emitter.emit("updataScroll");
     },
     // 新增会话列表
     async CHEC_OUT_CONVERSATION({ commit, dispatch }, action) {
@@ -404,18 +410,22 @@ const conversation = {
       await setMessageRemindType({ userID: toAccount, remindType, type });
     },
     // 会话消息发送
-    async SESSION_MESSAGE_SENDING({ commit, dispatch }, action) {
+    async SESSION_MESSAGE_SENDING({ state, commit, dispatch }, action) {
       const { payload } = action;
       const { convId, message } = payload;
       commit("SET_HISTORYMESSAGE", {
         type: "UPDATE_MESSAGES",
         payload: { convId, message },
       });
-      commit("EMITTER_EMIT", { key: "updataScroll" });
+      emitter.emit("updataScroll");
       // 发送消息
       const { code, message: result } = await sendMsg(message);
       if (code === 0) {
         dispatch("SENDMSG_SUCCESS_CALLBACK", { convId, message: result });
+        dispatch("IM_CHAT_CALLBACK", {
+          list: transformData(state.currentMessageList),
+          message: result,
+        });
       } else {
         console.log("发送失败", code, result);
       }
@@ -428,14 +438,14 @@ const conversation = {
         type: "UPDATE_MESSAGES",
         payload: { convId, message },
       });
-      commit("EMITTER_EMIT", { key: "updataScroll" });
-      imCallback({
-        messages: transformData(state.currentMessageList),
-        Text: message.payload.text,
-        From: message.from,
-        To: message.to,
-        type: message.type,
-      });
+      emitter.emit("updataScroll");
+    },
+    IM_CHAT_CALLBACK({ state }, action) {
+      console.log("IM_CHAT_CALLBACK", action);
+      const { message, list } = action;
+      const { to } = message;
+      if (to !== CHATGPT_ROBOT) return;
+      chatService({ messages: list, chat: message });
     },
   },
   getters: {

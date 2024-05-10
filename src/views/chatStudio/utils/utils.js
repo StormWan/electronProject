@@ -1,28 +1,27 @@
-import { nextTick } from "vue";
-import store from "@/store/index";
-import { match } from "pinyin-pro";
-import { useClipboard } from "@vueuse/core";
-import { dataURLtoFile, getBlob, getFileType } from "@/utils/chat/index";
-import emitter from "@/utils/mitt-bus";
 import {
-  createTextMsg,
-  createTextAtMsg,
-  createVideoMsg,
   createFiletMsg,
   createImgtMsg,
-  createCustomMsg,
+  createTextAtMsg,
+  createTextMsg,
+  createVideoMsg,
 } from "@/api/im-sdk-api/index";
+import store from "@/store/index";
+import { dataURLtoFile, getBlob, getFileType } from "@/utils/chat/index";
+import emitter from "@/utils/mitt-bus";
+import { useClipboard } from "@vueuse/core";
+import { match } from "pinyin-pro";
+import { nextTick } from "vue";
 import { placeholderMap } from "./configure";
 
-import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
-import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
-import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
-import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
-import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
-import VideoElemItem from "../ElemItemTypes/VideoElemItem.vue";
 import CustomElemItem from "../ElemItemTypes/CustomElemItem.vue";
-import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
+import FileElemItem from "../ElemItemTypes/FileElemItem.vue";
 import GroupSystemNoticeElem from "../ElemItemTypes/GroupSystemNoticeElem.vue";
+import ImageElemItem from "../ElemItemTypes/ImageElemItem.vue";
+import RelayElemItem from "../ElemItemTypes/RelayElemItem.vue";
+import TextElemItem from "../ElemItemTypes/TextElemItem.vue";
+import TipsElemItem from "../ElemItemTypes/TipsElemItem.vue";
+import VideoElemItem from "../ElemItemTypes/VideoElemItem.vue";
+import groupTipElement from "../ElemItemTypes/groupTipElement.vue";
 
 export const dragControllerDiv = (node) => {
   let svgResize = document.getElementById("svgResize"); //滑块
@@ -395,10 +394,7 @@ export function searchByPinyin(searchStr) {
   );
   // 如果过滤后的列表为空，触发空结果的事件并返回
   if (!filteredList || filteredList.length === 0) {
-    store.commit("EMITTER_EMIT", {
-      key: "setMentionModal",
-      value: { type: "empty" },
-    });
+    emitter.emit("setMentionModal", { type: "empty" });
     return "empty";
   }
   // 存储匹配项的索引
@@ -419,13 +415,10 @@ export function searchByPinyin(searchStr) {
   if (!isShowModal && eventType === "success") {
     // store.commit("SET_MENTION_MODAL", true);
   }
-  store.commit("EMITTER_EMIT", {
-    key: "setMentionModal",
-    value: {
-      content: indices,
-      type: eventType,
-      searchlength: searchStr.length + 1, // +1 包含@长度
-    },
+  emitter.emit("setMentionModal", {
+    content: indices,
+    type: eventType,
+    searchlength: searchStr.length + 1, // +1 包含@长度
   });
   return eventType;
 }
@@ -456,7 +449,7 @@ export function filterMentionList(Str, Html) {
     store.commit("SET_MENTION_MODAL", false);
     return;
   }
-  const inputHtml = parseContentFromHTML(Html);
+  // const inputHtml = parseContentFromHTML(Html);
   console.log("inputStr:", Str);
   // console.log("inputHtml:", inputHtml);
   const isShowModal = store.state?.conversation.isShowModal;
@@ -465,22 +458,9 @@ export function filterMentionList(Str, Html) {
   // console.log("endsWith@:", inputStr.endsWith("@"));
   // 如果输入字符串仅包含 "@" 符号，或则字符结尾，触发 setMentionModal 操作并返回
   if (inputStr === "@" && inputStr.endsWith("@")) {
-    // if (!isShowModal) {
-    //   store.commit("SET_MENTION_MODAL", true);
-    // }
-    // store.commit("EMITTER_EMIT", {
-    //   key: "setMentionModal",
-    //   value: {
-    //     type: "all",
-    //     searchValue: inputStr,
-    //   },
-    // });
     return "all";
   }
-  store.commit("EMITTER_EMIT", {
-    key: "setMentionModal",
-    value: { type: "updata" },
-  });
+  emitter.emit("setMentionModal", { type: "updata" });
   // 获取最后一个 "@" 符号的索引位置
   const lastAtIndex = inputStr.lastIndexOf("@");
   // 如果找不到 "@" 符号，关闭提及模态框并返回

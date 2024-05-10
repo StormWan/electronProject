@@ -29,9 +29,9 @@
       <el-icon class="icon-hover"><Iphone /></el-icon>
     </span>
     <!-- 自定义消息 -->
-    <!-- <span @click="customMessage">
+    <span @click="customMessage" v-if="false">
       <el-icon class="icon-hover"><Sunny /></el-icon>
-    </span> -->
+    </span>
     <!-- 滚动到底部 -->
     <span
       :title="$t('chat.scrollToTheBottom')"
@@ -72,16 +72,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { createCustomMsg } from "@/api/im-sdk-api/index";
+import { isRobot, screenshot } from "@/utils/chat/index";
+import { isElectron } from "@/utils/common";
+import { useGetters, useState } from "@/utils/hooks/useMapper";
 import emitter from "@/utils/mitt-bus";
+import { ref } from "vue";
+import { useStore } from "vuex";
 import EmotionPackBox from "./EmotionPackBox.vue";
 import RobotOptions from "./RobotOptions.vue";
-import { useStore } from "vuex";
-import { isRobot } from "@/utils/chat/index";
-import { useState, useGetters } from "@/utils/hooks/useMapper";
-import { isElectron } from "@/utils/common";
-import { screenshot } from "@/utils/chat/index";
-import { createCustomMsg } from "@/api/im-sdk-api/index";
 const emojiQq = require("@/utils/emoji/emoji-map-qq");
 const emojiDouyin = require("@/utils/emoji/emoji-map-douyin");
 
@@ -107,10 +106,8 @@ function openRobotBox() {
 const setEmoji = (item, table) => {
   let url = "";
   if (table == "QQ") {
-    // url = emojiQq.emojiUrl + emojiQq.emojiMap[item];
     url = require("@/assets/emoji/" + emojiQq.emojiMap[item]);
   } else {
-    // url = emojiDouyin.emojiUrl + emojiDouyin.emojiMap[item];
     url = require("@/assets/emoji/" + emojiDouyin.emojiMap[item]);
   }
   emit("setToolbar", { data: { url, item }, key: "setEmoj" });
@@ -183,7 +180,7 @@ function sendFile(e) {
   });
 }
 const onTobBottom = () => {
-  commit("EMITTER_EMIT", { key: "updataScroll" });
+  emitter.emit("updataScroll");
 };
 emitter.on("onisbot", (state) => {
   tobottom.value = !state;
