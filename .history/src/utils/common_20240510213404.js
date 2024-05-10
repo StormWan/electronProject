@@ -49,20 +49,3 @@ export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Oper
 );
 
 export const isElectron = window && window.process && window.process.type;
-
-export const visitorName = "visitorId";
-/**
- * @description 存储visitorId
- * @param visitorId
- * @returns {void|*}
- */
-export function setVisitorId(visitorId) {
-  return localStorage.setItem(visitorName, visitorId);
-}
-
-/**
- * @description 获取visitorId
- */
-export function getVisitorId() {
-  return localStorage.getItem(visitorName);
-}

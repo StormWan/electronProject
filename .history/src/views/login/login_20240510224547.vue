@@ -15,7 +15,7 @@
             <el-input
               v-model.trim="form.loginAcct"
               v-focus
-              placeholder="请输入用户名"
+              :placeholder="translateTitle('请输入用户名')"
               tabindex="1"
               type="text"
             />
@@ -23,7 +23,7 @@
           <el-form-item v-if="step == 0" prop="password" label="密码">
             <el-input
               v-model.trim="form.password"
-              placeholder=""
+              :placeholder="translateTitle('请输入密码')"
               autocomplete="new-password"
               show-password
               type="password"
@@ -34,7 +34,7 @@
             <el-input
               v-model.trim="form.toAddress"
               v-focus
-              placeholder="请输入你的登录邮箱地址"
+              :placeholder="translateTitle('请输入你的登录邮箱地址')"
               tabindex="1"
               type="text"
             />
@@ -43,14 +43,14 @@
           <el-form-item v-if="step !== 2" prop="code" label="验证码">
             <el-input
               v-model.trim="form.code"
-              :placeholder="'验证码' + previewText"
+              :placeholder="translateTitle('验证码') + previewText"
               tabindex="3"
               type="text"
               style="width: calc(100% - 110px)"
             />
             <div class="code">
               <el-image v-if="codeUrl" :src="codeUrl" @click="changeCode" />
-              <div v-else>加载中</div>
+              <div v-else>{{ translateTitle("加载中") }}</div>
             </div>
           </el-form-item>
 
@@ -62,7 +62,7 @@
               style="width: 100%"
               @click="handleLogin"
             >
-              登录
+              {{ translateTitle("登录") }}
             </el-button>
           </el-form-item>
 
@@ -100,7 +100,9 @@
             </el-button>
             <el-row style="width: 100%" flex justify="space-between">
               <el-col span="12">
-                <router-link to="/register"> 注册 </router-link>
+                <router-link to="/register">
+                  {{ translateTitle("注册") }}
+                </router-link>
               </el-col>
               <el-col v-if="step === 0" span="12">
                 <span style="color: gray; cursor: pointer" @click="handleChangeStep(1)">
@@ -119,177 +121,211 @@
   </div>
 </template>
 
-<script setup>
+<script>
+import { useSettingsStore } from "@/store/modules/settings";
 import { useUserStore } from "@/store/modules/user";
-import { getVisitorId } from "@/utils/common.js";
-import { login, sendEmail } from "@/api/node-admin-api/user";
-import { useState } from "@/utils/hooks/useMapper";
-import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
-import { ref, onMounted, watchEffect } from "vue";
-import storage from "@/utils/localforage/index";
+import { translate } from "@/i18n";
+import { isPassword } from "@/utils/validate";
+import { getVisitorId } from "@/utils";
+import { login, sendEmail } from "@/api/user";
 
-const route = useRoute();
-const router = useRouter();
-const form = ref({ loginAcct: "", password: "", code: "", deviceId: "" });
-const formRef = ref();
-const step = ref(0); // 0-正常登录， 1-找回密码 2-发送邮件
-const codeUrl = ref(`http://api.kefu.xurj.top/captcha/image?deviceId=${getVisitorId()}`);
-const visitorId = ref(getVisitorId());
-const rules = {
-  loginAcct: [
-    {
-      required: true,
-      trigger: "blur",
-      message: "请输入用户名",
+export default defineComponent({
+  name: "Login",
+  directives: {
+    focus: {
+      mounted(el) {
+        el.querySelector("input").focus();
+      },
     },
-  ],
-  password: [
-    {
-      required: true,
-      trigger: "blur",
-      message: "请输入密码",
-    },
-    {
-      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$/,
-      message: "密码必须采用数字、字母混合，不得少于8位、不得超过20位",
-      trigger: ["blur", "change"],
-    },
-  ],
-  code: [{ required: true, trigger: "blur", message: "验证码不能空" }],
-  toAddress: [
-    { required: true, trigger: "blur", message: "邮箱地址不能为空" },
-    {
-      pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
-      message: "请输入正确的邮箱地址",
-      trigger: ["blur", "change"],
-    },
-  ],
-};
-const loading = ref(false);
-const redirect = ref(undefined);
-const timer = ref(0);
-const previewText = ref("");
+  },
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
 
-onMounted(() => {
-  storage.set(
-    "Access-Token",
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzE1MzQ3NzMwLCJleHAiOjE3MTU5NTI1MzB9.WzUdVsSbmWtuwUX9eVZmPDf6PwDxVmU48lp8kgtcKq8"
-  );
-  router.push("/chatstudio");
+    const userStore = useUserStore();
+    const settingsStore = useSettingsStore();
 
-  // getCodeByPhone()
-  // if (route.query.step) {
-  //   step.value = route.query.step
-  // }
-});
+    const login = (form) => userStore.login(form);
 
-const changeCode = () => {
-  const temp = new Date().getTime();
-  getCodeByPhone(temp);
-};
-
-const getCodeByPhone = (temp) => {
-  if (!visitorId.value) return;
-  const deviceId = temp ? visitorId.value + temp : visitorId.value;
-  visitorId.value = deviceId;
-  codeUrl.value = `http://api.kefu.xurj.top/captcha/image?deviceId=${deviceId}`;
-};
-
-const handleRoute = () => {
-  return redirect.value === "/404" || redirect.value === "/403" ? "/" : redirect.value;
-};
-const handlePassword = () => {
-  state.passwordType === "password" ? (state.passwordType = "") : (state.passwordType = "password");
-  nextTick(() => {
-    state["passwordRef"].focus();
-  });
-};
-const handleLogin = async () => {
-  Promise.all([
-    formRef.value.validateField("loginAcct"),
-    formRef.value.validateField("password"),
-    formRef.value.validateField("code"),
-  ])
-    .then(async () => {
-      try {
-        loading.value = true;
-        const params = { ...form.value, deviceId: visitorId.value };
-        await login(params).catch(() => {});
-        await router.push(handleRoute());
-      } finally {
-        loading.value = false;
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-      loading.value = false;
+    const state = reactive({
+      formRef: null,
+      passwordRef: null,
+      form: {
+        loginAcct: "",
+        password: "",
+        code: "",
+        deviceId: "",
+      },
+      step: 0, // 0-正常登录， 1-找回密码 2-发送邮件
+      codeUrl: `http://api.kefu.xurj.top/captcha/image?deviceId=${getVisitorId()}`,
+      visitorId: getVisitorId(),
+      rules: {
+        loginAcct: [
+          {
+            required: true,
+            trigger: "blur",
+            message: translate("请输入用户名"),
+          },
+        ],
+        password: [
+          {
+            required: true,
+            trigger: "blur",
+            message: translate("请输入密码"),
+          },
+          {
+            pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$/,
+            message: "密码必须采用数字、字母混合，不得少于8位、不得超过20位",
+            trigger: ["blur", "change"],
+          },
+        ],
+        code: [{ required: true, trigger: "blur", message: "验证码不能空" }],
+        toAddress: [
+          { required: true, trigger: "blur", message: "邮箱地址不能为空" },
+          {
+            pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+            message: "请输入正确的邮箱地址",
+            trigger: ["blur", "change"],
+          },
+        ],
+      },
+      loading: false,
+      passwordType: "password",
+      redirect: undefined,
+      timer: 0,
+      previewText: "",
     });
-};
 
-const handleSendEmail = () => {
-  Promise.all([formRef.value.validateField("email"), formRef.value.validateField("code")])
-    .then(async () => {
-      try {
-        loading.value = true;
-        const params = {
-          code: form.value.code,
-          deviceId: visitorId.value,
-          toAddress: form.value.toAddress,
-        };
-        sendEmail(params)
-          .then((response) => {
-            if (response.code === 20000) {
-              step.value = 2;
-            }
-          })
-          .catch(() => {});
-      } finally {
-        loading.value = false;
+    onMounted(() => {
+      getCodeByPhone();
+      if (route.query.step) {
+        state.step = route.query.step;
       }
-    })
-    .catch((e) => {
-      console.log(e);
-      loading.value = false;
     });
-};
 
-const handleChangeStep = (index) => {
-  step.value = index;
-};
+    const changeCode = () => {
+      const temp = new Date().getTime();
+      getCodeByPhone(temp);
+    };
 
-// 国家法律法规要求显示备案号 实际项目请自行为自己的备案信息及域名
-const beianShow = ref(false);
+    const getCodeByPhone = (temp) => {
+      if (!state.visitorId) return;
+      const deviceId = temp ? state.visitorId + temp : state.visitorId;
+      state.visitorId = deviceId;
+      state.codeUrl = `http://api.kefu.xurj.top/captcha/image?deviceId=${deviceId}`;
+    };
 
-// onBeforeMount(() => {
-//   form.value.loginAcct = 'admin'
-//   form.value.password = '123456'
-//   // 为了演示效果，会在官网演示页自动登录到首页，正式开发可删除
-//   if (
-//     location.hostname === 'vue-admin-beautiful.com' ||
-//     location.hostname === 'chu1204505056.gitee.io'
-//   ) {
-//     beianShow.value = true
-//     previewText.value = '（演示地址验证码可不填）'
-//     timer.value = setTimeout(() => {
-//       handleLogin()
-//     }, 5000)
-//   }
-// })
+    const handleRoute = () => {
+      return state.redirect === "/404" || state.redirect === "/403" ? "/" : state.redirect;
+    };
+    const handlePassword = () => {
+      state.passwordType === "password"
+        ? (state.passwordType = "")
+        : (state.passwordType = "password");
+      nextTick(() => {
+        state["passwordRef"].focus();
+      });
+    };
+    const handleLogin = async () => {
+      Promise.all([
+        state["formRef"].validateField("loginAcct"),
+        state["formRef"].validateField("password"),
+        state["formRef"].validateField("code"),
+      ])
+        .then(async () => {
+          try {
+            state.loading = true;
+            const params = { ...state.form, deviceId: state.visitorId };
+            await login(params).catch(() => {});
+            await router.push(handleRoute());
+          } finally {
+            state.loading = false;
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          state.loading = false;
+        });
+    };
 
-watchEffect(() => {
-  redirect.value = (route.query && route.query.redirect) || "/";
-});
+    const handleSendEmail = () => {
+      Promise.all([state["formRef"].validateField("email"), state["formRef"].validateField("code")])
+        .then(async () => {
+          try {
+            state.loading = true;
+            const params = {
+              code: state.form.code,
+              deviceId: state.visitorId,
+              toAddress: state.form.toAddress,
+            };
+            sendEmail(params)
+              .then((response) => {
+                if (response.code === 20000) {
+                  state.step = 2;
+                }
+              })
+              .catch(() => {});
+          } finally {
+            state.loading = false;
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          state.loading = false;
+        });
+    };
 
-onBeforeRouteLeave((to, from, next) => {
-  clearInterval(timer.value);
-  next();
+    const handleChangeStep = (index) => {
+      state.step = index;
+    };
+
+    // 国家法律法规要求显示备案号 实际项目请自行为自己的备案信息及域名
+    const beianShow = ref(false);
+
+    // onBeforeMount(() => {
+    //   state.form.loginAcct = 'admin'
+    //   state.form.password = '123456'
+    //   // 为了演示效果，会在官网演示页自动登录到首页，正式开发可删除
+    //   if (
+    //     location.hostname === 'vue-admin-beautiful.com' ||
+    //     location.hostname === 'chu1204505056.gitee.io'
+    //   ) {
+    //     beianShow.value = true
+    //     state.previewText = '（演示地址验证码可不填）'
+    //     state.timer = setTimeout(() => {
+    //       handleLogin()
+    //     }, 5000)
+    //   }
+    // })
+
+    watchEffect(() => {
+      state.redirect = (route.query && route.query.redirect) || "/";
+    });
+
+    onBeforeRouteLeave((to, from, next) => {
+      clearInterval(state.timer);
+      next();
+    });
+
+    return {
+      translateTitle: translate,
+      ...toRefs(state),
+      title: settingsStore.getTitle,
+      handlePassword,
+      handleLogin,
+      changeCode,
+      getCodeByPhone,
+      handleChangeStep,
+      handleSendEmail,
+    };
+  },
 });
 </script>
 
 <style lang="scss" scoped>
 .login-container {
   height: 100vh;
-  background: url("~@/assets/images/login_bg.png") center center fixed no-repeat;
+  background: url("~@/assets/login_images/login_bg.png") center center fixed no-repeat;
   background-size: cover;
 
   .login-form {
@@ -329,7 +365,7 @@ onBeforeRouteLeave((to, from, next) => {
 
     .tips {
       margin-bottom: 10px;
-      font-size: 14px;
+      font-size: $base-font-size-default;
       color: var(--el-color-white);
 
       span {
@@ -399,15 +435,15 @@ onBeforeRouteLeave((to, from, next) => {
         border-radius: 2px;
 
         &__content {
-          min-height: 32px;
-          line-height: 32px;
+          min-height: $base-input-height;
+          line-height: $base-input-height;
         }
 
         &__error {
           position: absolute;
           top: 100%;
           left: 18px;
-          font-size: 12px;
+          font-size: $base-font-size-small;
           line-height: 18px;
           color: var(--el-color-error);
         }
@@ -438,7 +474,7 @@ onBeforeRouteLeave((to, from, next) => {
         top: 4px;
         right: 4px;
         cursor: pointer;
-        border-radius: 2.5px;
+        border-radius: $base-border-radius;
       }
     }
   }

@@ -5,7 +5,13 @@
         <div style="color: transparent">占位符</div>
       </el-col>
       <el-col :lg="9" :md="12" :sm="24" :xl="9" :xs="24">
-        <el-form ref="formRef" class="login-form" :model="form" :rules="rules" label-position="top">
+        <el-form
+          :ref="formRef"
+          class="login-form"
+          :model="form"
+          :rules="rules"
+          label-position="top"
+        >
           <div class="title">智能在线客服系统</div>
           <template v-if="step == 1">
             <div class="last-title">找回密码</div>
@@ -126,7 +132,6 @@ import { login, sendEmail } from "@/api/node-admin-api/user";
 import { useState } from "@/utils/hooks/useMapper";
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { ref, onMounted, watchEffect } from "vue";
-import storage from "@/utils/localforage/index";
 
 const route = useRoute();
 const router = useRouter();
@@ -171,16 +176,10 @@ const timer = ref(0);
 const previewText = ref("");
 
 onMounted(() => {
-  storage.set(
-    "Access-Token",
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzE1MzQ3NzMwLCJleHAiOjE3MTU5NTI1MzB9.WzUdVsSbmWtuwUX9eVZmPDf6PwDxVmU48lp8kgtcKq8"
-  );
-  router.push("/chatstudio");
-
-  // getCodeByPhone()
-  // if (route.query.step) {
-  //   step.value = route.query.step
-  // }
+  getCodeByPhone();
+  if (route.query.step) {
+    step.value = route.query.step;
+  }
 });
 
 const changeCode = () => {
@@ -232,9 +231,9 @@ const handleSendEmail = () => {
       try {
         loading.value = true;
         const params = {
-          code: form.value.code,
+          code: state.form.code,
           deviceId: visitorId.value,
-          toAddress: form.value.toAddress,
+          toAddress: state.form.toAddress,
         };
         sendEmail(params)
           .then((response) => {
@@ -261,8 +260,8 @@ const handleChangeStep = (index) => {
 const beianShow = ref(false);
 
 // onBeforeMount(() => {
-//   form.value.loginAcct = 'admin'
-//   form.value.password = '123456'
+//   state.form.loginAcct = 'admin'
+//   state.form.password = '123456'
 //   // 为了演示效果，会在官网演示页自动登录到首页，正式开发可删除
 //   if (
 //     location.hostname === 'vue-admin-beautiful.com' ||

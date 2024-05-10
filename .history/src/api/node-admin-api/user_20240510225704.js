@@ -14,6 +14,15 @@ export const getuser = async () => {
   };
 };
 
+// 退出登录
+export const logout = () => {
+  // storage.clear();
+  storage.remove(USER_SETUP);
+  storage.remove(USER_MODEL);
+  storage.remove(ACCESS_TOKEN);
+  storage.remove(StoreKey.Access);
+};
+
 //  客服登录
 export async function login(data) {
   return request({
@@ -57,10 +66,6 @@ export function getUserInfo() {
 }
 
 export function logout() {
-  storage.remove(USER_SETUP);
-  storage.remove(USER_MODEL);
-  storage.remove(ACCESS_TOKEN);
-  storage.remove(StoreKey.Access);
   return request({
     url: "/account/logout",
     method: "get",

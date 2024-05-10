@@ -11,8 +11,6 @@ import { ElConfigProvider } from "element-plus";
 import { appIpcEmit } from "@/utils/appEmit";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import en from "element-plus/dist/locale/en.mjs";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { setVisitorId } from "@/utils/common.js";
 
 export default defineComponent({
   name: "app",
@@ -31,17 +29,8 @@ export default defineComponent({
     appIpcEmit();
     // dispatch("reloadRoute");
     this.loginAgain(this.$route);
-    this.visitorIdByFingerprintJS();
   },
   methods: {
-    async visitorIdByFingerprintJS() {
-      const fp = await FingerprintJS.load();
-      const result = await fp.get();
-
-      // 这就是生成的访客ID (浏览器指纹)
-      const visitorId = result.visitorId;
-      setVisitorId(visitorId);
-    },
     loginAgain({ name }) {
       if (!name) return;
       this.$nextTick(() => {

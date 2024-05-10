@@ -50,19 +50,23 @@ export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Oper
 
 export const isElectron = window && window.process && window.process.type;
 
-export const visitorName = "visitorId";
 /**
  * @description 存储visitorId
  * @param visitorId
  * @returns {void|*}
  */
-export function setVisitorId(visitorId) {
-  return localStorage.setItem(visitorName, visitorId);
-}
-
-/**
- * @description 获取visitorId
- */
-export function getVisitorId() {
-  return localStorage.getItem(visitorName);
+export function setVisitorId(visitorId: string) {
+  if (visitorIdStorage) {
+    if ("localStorage" === visitorIdStorage) {
+      return localStorage.setItem(visitorName, visitorId);
+    } else if ("sessionStorage" === visitorIdStorage) {
+      return sessionStorage.setItem(visitorName, visitorId);
+    } else if ("cookie" === visitorIdStorage) {
+      return cookie.set(visitorName, visitorId);
+    } else {
+      return localStorage.setItem(visitorName, visitorId);
+    }
+  } else {
+    return localStorage.setItem(visitorName, visitorId);
+  }
 }

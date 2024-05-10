@@ -1,7 +1,6 @@
 # npm源 https://registry.npmjs.org
 # 淘宝镜像 https://registry.npmmirror.com
 registry=https://registry.npmmirror.com
-# electron_mirror=https://npmmirror.com/mirrors/electron
-# electron_mirror=https://registry.npmmirror.com/electron/
+electron_mirror=https://registry.npmmirror.com/electron/
 chromedriver_cdnurl=https://npm.taobao.org/mirrors/chromedriver
 shamefully-hoist=true

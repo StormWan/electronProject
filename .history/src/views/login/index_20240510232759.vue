@@ -124,17 +124,15 @@ import { useUserStore } from "@/store/modules/user";
 import { getVisitorId } from "@/utils/common.js";
 import { login, sendEmail } from "@/api/node-admin-api/user";
 import { useState } from "@/utils/hooks/useMapper";
-import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted, watchEffect } from "vue";
-import storage from "@/utils/localforage/index";
 
 const route = useRoute();
 const router = useRouter();
 const form = ref({ loginAcct: "", password: "", code: "", deviceId: "" });
-const formRef = ref();
 const step = ref(0); // 0-正常登录， 1-找回密码 2-发送邮件
-const codeUrl = ref(`http://api.kefu.xurj.top/captcha/image?deviceId=${getVisitorId()}`);
-const visitorId = ref(getVisitorId());
+const codeUrl = `http://api.kefu.xurj.top/captcha/image?deviceId=${getVisitorId()}`;
+const visitorId = getVisitorId();
 const rules = {
   loginAcct: [
     {
@@ -171,16 +169,10 @@ const timer = ref(0);
 const previewText = ref("");
 
 onMounted(() => {
-  storage.set(
-    "Access-Token",
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzE1MzQ3NzMwLCJleHAiOjE3MTU5NTI1MzB9.WzUdVsSbmWtuwUX9eVZmPDf6PwDxVmU48lp8kgtcKq8"
-  );
-  router.push("/chatstudio");
-
-  // getCodeByPhone()
-  // if (route.query.step) {
-  //   step.value = route.query.step
-  // }
+  getCodeByPhone();
+  if (route.query.step) {
+    step.value = route.query.step;
+  }
 });
 
 const changeCode = () => {
@@ -206,14 +198,14 @@ const handlePassword = () => {
 };
 const handleLogin = async () => {
   Promise.all([
-    formRef.value.validateField("loginAcct"),
-    formRef.value.validateField("password"),
-    formRef.value.validateField("code"),
+    state["formRef"].validateField("loginAcct"),
+    state["formRef"].validateField("password"),
+    state["formRef"].validateField("code"),
   ])
     .then(async () => {
       try {
         loading.value = true;
-        const params = { ...form.value, deviceId: visitorId.value };
+        const params = { ...state.form, deviceId: visitorId.value };
         await login(params).catch(() => {});
         await router.push(handleRoute());
       } finally {
@@ -227,14 +219,14 @@ const handleLogin = async () => {
 };
 
 const handleSendEmail = () => {
-  Promise.all([formRef.value.validateField("email"), formRef.value.validateField("code")])
+  Promise.all([state["formRef"].validateField("email"), state["formRef"].validateField("code")])
     .then(async () => {
       try {
         loading.value = true;
         const params = {
-          code: form.value.code,
+          code: state.form.code,
           deviceId: visitorId.value,
-          toAddress: form.value.toAddress,
+          toAddress: state.form.toAddress,
         };
         sendEmail(params)
           .then((response) => {
@@ -261,8 +253,8 @@ const handleChangeStep = (index) => {
 const beianShow = ref(false);
 
 // onBeforeMount(() => {
-//   form.value.loginAcct = 'admin'
-//   form.value.password = '123456'
+//   state.form.loginAcct = 'admin'
+//   state.form.password = '123456'
 //   // 为了演示效果，会在官网演示页自动登录到首页，正式开发可删除
 //   if (
 //     location.hostname === 'vue-admin-beautiful.com' ||

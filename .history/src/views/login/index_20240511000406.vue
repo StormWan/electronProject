@@ -175,12 +175,10 @@ onMounted(() => {
     "Access-Token",
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzE1MzQ3NzMwLCJleHAiOjE3MTU5NTI1MzB9.WzUdVsSbmWtuwUX9eVZmPDf6PwDxVmU48lp8kgtcKq8"
   );
-  router.push("/chatstudio");
-
-  // getCodeByPhone()
-  // if (route.query.step) {
-  //   step.value = route.query.step
-  // }
+  getCodeByPhone();
+  if (route.query.step) {
+    step.value = route.query.step;
+  }
 });
 
 const changeCode = () => {

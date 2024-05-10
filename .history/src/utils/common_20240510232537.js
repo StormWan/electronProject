@@ -50,7 +50,7 @@ export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Oper
 
 export const isElectron = window && window.process && window.process.type;
 
-export const visitorName = "visitorId";
+export let visitorName = "visitorId";
 /**
  * @description 存储visitorId
  * @param visitorId

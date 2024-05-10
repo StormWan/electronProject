@@ -50,14 +50,25 @@ export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Oper
 
 export const isElectron = window && window.process && window.process.type;
 
-export const visitorName = "visitorId";
 /**
  * @description 存储visitorId
  * @param visitorId
  * @returns {void|*}
  */
 export function setVisitorId(visitorId) {
-  return localStorage.setItem(visitorName, visitorId);
+  if (visitorIdStorage) {
+    if ("localStorage" === visitorIdStorage) {
+      return localStorage.setItem(visitorName, visitorId);
+    } else if ("sessionStorage" === visitorIdStorage) {
+      return sessionStorage.setItem(visitorName, visitorId);
+    } else if ("cookie" === visitorIdStorage) {
+      return cookie.set(visitorName, visitorId);
+    } else {
+      return localStorage.setItem(visitorName, visitorId);
+    }
+  } else {
+    return localStorage.setItem(visitorName, visitorId);
+  }
 }
 
 /**
