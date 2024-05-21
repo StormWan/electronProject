@@ -39,3 +39,5 @@ components.d.ts
 
 # TypeScript declaration file for auto-imports
 auto-imports.d.ts
+
+.history*
